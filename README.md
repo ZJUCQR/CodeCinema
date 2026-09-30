@@ -122,7 +122,6 @@ SilverGrass/
 │   ├── tools/              # contact sheets, single-act previews, flash QC
 │   └── render_supervisor.py
 ├── docs/                   # customizing guide, film plan, staging rules, frame-by-frame shot breakdowns
-├── site/                   # project homepage (GitHub Pages)
 ├── assets/                 # README images; film/ receives the mastered film
 ├── pyproject.toml          # dependencies and every tunable setting
 └── out/                    # generated and git-ignored: scene, events, frames, audio, previews

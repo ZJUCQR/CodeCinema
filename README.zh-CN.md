@@ -122,7 +122,6 @@ SilverGrass/
 │   ├── tools/              # 联系表、单幕预览、闪光质检
 │   └── render_supervisor.py
 ├── docs/                   # 定制指南、制作规划、调度规则、逐帧分镜
-├── site/                   # 项目主页（GitHub Pages）
 ├── assets/                 # README 图片；film/ 存放成片
 ├── pyproject.toml          # 依赖和全部可调设置
 └── out/                    # 生成文件，已被 git 忽略：场景、事件、帧、音频、预览
