@@ -92,7 +92,7 @@ The film is data plus code, so every part of it can be changed. The timeline, st
 | Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config; score and instrument modules |
 | Resolution, samples, motion blur, encoding, loudness | `[tool.silvergrass]` settings |
 
-Settings can be overridden without touching tracked files. Use a git-ignored `silvergrass.local.toml` in the repo root (same keys, without the `tool.silvergrass.` prefix), or environment variables:
+You can create your own configuration or override any setting:
 
 ```toml
 # silvergrass.local.toml

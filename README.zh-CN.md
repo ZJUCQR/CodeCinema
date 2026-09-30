@@ -92,7 +92,7 @@ python src/run.py all       # 构建 → 渲染 → 音频 → 字幕 → 合成
 | 旋律、调式、乐器 | config 里的 `LEITMOTIFS`、`SCALE_IN`、`SCALE_YO`；编曲和乐器模块 |
 | 分辨率、采样数、运动模糊、编码、响度 | `[tool.silvergrass]` 设置 |
 
-不想改动受版本管理的文件时，可以在项目根目录新建 `silvergrass.local.toml`（已被 git 忽略，键名相同，只是去掉 `tool.silvergrass.` 前缀），也可以用环境变量覆盖：
+你可以自己创建相应的配置，或者覆盖已有设置：
 
 ```toml
 # silvergrass.local.toml
