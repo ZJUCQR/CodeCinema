@@ -1,0 +1,45 @@
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "assets/images/**", ".github/workflows/pages.yml"]
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble the site (the film comes from the "film" release)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p _site/assets/film
+          cp -r site/. _site/
+          cp -r assets/images _site/assets/images
+          gh release download film --repo "${{ github.repository }}" --pattern SilverGrass.mp4 --dir _site/assets/film
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
