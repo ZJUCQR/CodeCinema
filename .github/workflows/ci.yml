@@ -1,0 +1,23 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install .
+      - name: Byte-compile every module
+        run: python -m compileall -q src
+      - name: Import the pure-Python modules (settings, config, helpers, audio, post)
+        run: >
+          python -c "import sys; sys.path[:0]=['src/common','src/audio','src/post'];
+          import settings, config, procutil, dsp, instruments, timeline, assemble, titles;
+          print('shots', len(config.SHOTS), 'frames', config.FRAME_END)"

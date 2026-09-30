@@ -1,0 +1,121 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "silvergrass"
+version = "1.0.0"
+description = "Duel in the Silver Grass (芒原决战): a fully procedural animated samurai duel made with Blender, Python and a synthesized score"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "ZJUCQR" }]
+requires-python = ">=3.12"
+keywords = ["blender", "procedural-animation", "generative-art", "sound-synthesis", "samurai", "short-film"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Multimedia :: Graphics :: 3D Rendering",
+  "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis",
+]
+# Python packages for the audio engine, title cards, assembly and QC (`pip install .`).
+# External tools (not pip-installable): Blender >= 5.2 and ffmpeg/ffprobe.
+dependencies = ["numpy>=2.0", "scipy>=1.13", "pillow>=10.0", "matplotlib>=3.8", "pyloudnorm>=0.1.1"]
+
+[project.urls]
+Homepage = "https://github.com/ZJUCQR/SilverGrass"
+Documentation = "https://github.com/ZJUCQR/SilverGrass/blob/main/docs/CUSTOMIZING.md"
+
+# Not an importable package: installing only pulls in the dependencies. Run the pipeline with `python src/run.py`.
+[tool.setuptools]
+py-modules = []
+packages = []
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["out", ".venv"]
+
+# ------------------------------------------------------------------------------------------------------------
+# SilverGrass settings. Precedence (later wins): built-in defaults < this section < silvergrass.local.toml
+# (optional, git-ignored, same keys without the "tool.silvergrass." prefix) < SILVERGRASS_<SECTION>_<KEY>
+# environment variables < src/run.py flags. Empty strings mean "auto-detect"; relative paths start at the repo root.
+# ------------------------------------------------------------------------------------------------------------
+[tool.silvergrass.paths]
+out_dir = "out"                                   # every generated file (scene, frames, audio, previews)
+final_video = "assets/film/芒原决战_Final.mp4"     # the mastered film
+lock_dir = ""                                     # render-slot lock files shared by every process; "" = <out_dir>/.locks
+
+[tool.silvergrass.tools]
+blender = ""        # Blender >= 5.2; auto: $BLENDER_BIN, `blender` on PATH, standard install folders
+ffmpeg = ""         # auto: $FFMPEG, `ffmpeg` on PATH
+ffprobe = ""        # auto: $FFPROBE, `ffprobe` on PATH
+python = ""         # interpreter for plots launched from Blender; auto: .venv, then python3 on PATH
+
+[tool.silvergrass.fonts]
+# Title-card fonts (TTF/OTF/TTC). Auto-detection searches the OS font folders and assets/fonts/ for known file
+# names (e.g. STXingkai, Weibei, Kaiti, Songti, Zhi Mang Xing, Ma Shan Zheng, LXGW WenKai, Noto Serif CJK).
+calligraphy = ""    # main title, name cards, act cards, "End"
+weibei = ""         # heavy display face
+kaiti = ""          # epigraph, credit line
+song = ""           # small print
+ui = ""             # labels on diagnostic sheets (pose atlas); auto: Arial / Helvetica / DejaVu Sans
+mono = ""           # contact-sheet captions; auto: Menlo / Consolas / DejaVu Sans Mono
+
+[tool.silvergrass.render]
+width = 1920                        # render size (2.35:1), letterboxed to the delivery size in post
+height = 816
+preview_scale = 0.3333              # preview / layout renders
+samples_final = 16                  # EEVEE samples (32+ = cleaner, roughly linearly slower)
+samples_preview = 8
+motion_blur = true
+mb_shutter = 0.5                    # motion-blur shutter (fraction of a frame)
+mb_steps = 1                        # motion-blur time steps (per-shot overrides in config.SHOT_RENDER)
+mb_steps_sparks = 2                 # steps on frames with fast spark / trail VFX
+mb_max_px = 40                      # motion-blur length cap in pixels
+filter_size = 1.5                   # pixel filter width
+shadow_pool_mb = 1024               # EEVEE shadow pool (lower on GPUs with little memory)
+volumetric_tile = 8                 # volumetric tile size in px (smaller = sharper, slower)
+volumetric_samples = 64
+png_depth = "8"                     # frame PNG bit depth: "8" or "16"
+png_compression = 15                # frame PNG compression (0-100)
+grass_density_final = 1.0           # fraction of grass instances
+grass_density_preview = 0.25
+grass_density_layout = 0.12
+slots = 2                           # concurrent Blender renders
+lock = true                         # share render slots between processes through lock files
+min_free_mem_gb = 4.5               # free memory needed before another render slot starts
+expected_seconds_per_frame = 12.0   # watchdog estimate before real timings exist
+retries = 2                         # render retries per chunk before the fallback
+watchdog_factor = 3.0               # a chunk is stuck after factor x expected time + grace
+watchdog_grace_s = 120.0
+progress_interval_s = 30.0          # supervisor progress line interval
+tmp_max_age_s = 600.0               # orphaned temporary frames older than this are swept
+
+[tool.silvergrass.video]
+delivery_width = 1920
+delivery_height = 1080
+codec = "libx264"
+crf = 16                            # final master quality (lower = larger, better)
+preset = "slow"
+pix_fmt = "yuv420p"
+audio_bitrate = "320k"
+preview_width = 960                 # `assemble --preview`
+preview_height = 540
+preview_crf = 23
+preview_preset = "veryfast"
+preview_audio_bitrate = "192k"
+review_crf = 20                     # single-act review clips (`preview <lane>`)
+review_audio_bitrate = "128k"
+
+[tool.silvergrass.audio]
+sample_rate = 48000
+target_lufs = -14.0                 # integrated loudness of the master
+true_peak_db = -1.0                 # true-peak ceiling (dBTP)
+loudness_tolerance_lu = 1.0         # QC tolerance around target_lufs
+aac_pre_limiter_db = -2.5           # limiter before AAC encoding when the encoded true peak overshoots
+
+[tool.silvergrass.post]
+title_jobs = 0                      # parallel title-card workers; 0 = auto
+titles_lock_timeout_s = 900.0
+
+[tool.silvergrass.dev]
+demo_raise = false                  # make the demo lane raise on QA warnings

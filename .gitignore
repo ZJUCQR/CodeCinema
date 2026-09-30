@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Rendered master film (too large for git: attach it to a GitHub Release)
+assets/film/*.mp4
+
+# Generated output (renders, builds, audio stems, previews) — regenerate with `python src/run.py all`
+# Rendered frames are never uploaded
+out/frames/
+out/
+*.mp4
+*.mov
+*.wav
+!docs/**/*.wav
+
+# Blender
+*.blend1
+*.blend@
+.render_snapshot_*.blend
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Local settings overrides
+silvergrass.local.toml
