@@ -11,6 +11,7 @@ assets/film/*.mp4
 out/frames/
 out/
 *.mp4
+!site/media/*.mp4
 *.mov
 *.wav
 !docs/**/*.wav
