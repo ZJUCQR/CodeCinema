@@ -1,0 +1,27 @@
+# __FILM_TITLE__: a CodeCinema film. Run it with `codecinema run __FILM_ID__ all` (or `python src/run.py all` here).
+# [film] is read by the framework CLI; [settings.*] are this film's settings (override them in film.local.toml or
+# with __ENV_PREFIX___<SECTION>_<KEY> / CODECINEMA_<SECTION>_<KEY> environment variables).
+
+[film]
+id = "__FILM_ID__"
+title = "__FILM_TITLE__"
+description = "A new CodeCinema film (started from the template)."
+entry = "src/run.py"
+env_prefix = "__ENV_PREFIX__"
+steps = ["render", "audio", "assemble", "all"]
+requires = ["ffmpeg"]
+
+[settings.paths]
+out_dir = "out"
+final_video = "assets/film/__FILM_ID__.mp4"
+
+[settings.video]
+width = 1920
+height = 1080
+fps = 24
+duration_s = 6.0
+crf = 16
+
+[settings.audio]
+sample_rate = 48000
+true_peak_db = -1.0

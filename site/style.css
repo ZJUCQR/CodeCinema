@@ -143,9 +143,6 @@ p { margin: 0 0 16px; }
 .act::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(10,11,14,0) 25%, rgba(10,11,14,0.92) 100%); transition: opacity 0.5s; }
 .act .img { position: absolute; inset: 0; background: inherit; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
 .act:hover .img { transform: scale(1.06); }
-.act.blade { background-image: url("assets/images/still_597.jpg"); }
-.act.fire { background-image: url("assets/images/still_2100.jpg"); }
-.act.thunder { background-image: url("assets/images/still_2500.jpg"); }
 .act .txt { position: relative; z-index: 2; padding: 22px 24px; }
 .act .n { font: 600 0.72rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; }
 .act.blade .n { color: var(--gold-2); } .act.fire .n { color: #f08a63; } .act.thunder .n { color: var(--storm); }

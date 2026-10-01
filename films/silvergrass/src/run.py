@@ -13,7 +13,7 @@ run.py — one entry point for the whole Duel in the Silver Grass (SilverGrass) 
 
 Lanes: prologue, act1a, act1b, act2, act3, finale (see src/common/config.py and docs/CUSTOMIZING.md).
 Run it with the project's Python environment (e.g. `.venv/bin/python src/run.py ...`). Tools, fonts, render and
-encoding settings come from [tool.silvergrass] in pyproject.toml (+ silvergrass.local.toml, SILVERGRASS_*
+encoding settings come from [settings] in film.toml (+ film.local.toml, SILVERGRASS_*
 environment variables).
 """
 import argparse
@@ -72,10 +72,10 @@ def cmd_check(a):
             row(f"py:{mod}", True, "")
         except ImportError:
             row(f"py:{mod}", False, "missing - run: pip install .")
-    print("fonts (titles; set [fonts] in silvergrass.local.toml or $SILVERGRASS_FONTS_<ROLE>)")
+    print("fonts (titles; set [fonts] in film.local.toml or $SILVERGRASS_FONTS_<ROLE>)")
     for k in ("FONT_CALLIGRAPHY", "FONT_WEIBEI", "FONT_KAITI", "FONT_SONG"):
         p = getattr(config, k)
-        row(k, bool(p) and os.path.exists(p), p or "not found - set it in silvergrass.local.toml")
+        row(k, bool(p) and os.path.exists(p), p or "not found - set it in film.local.toml")
     print("optional fonts (diagnostic + contact sheets; a default font is used when missing)")
     for k in ("FONT_UI", "FONT_MONO"):
         p = getattr(config, k)

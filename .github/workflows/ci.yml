@@ -12,12 +12,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install dependencies
+      - name: Install the framework and its dependencies
         run: pip install .
-      - name: Byte-compile every module
-        run: python -m compileall -q src
-      - name: Import the pure-Python modules (settings, config, helpers, audio, post)
+      - name: Byte-compile the framework and both example films
+        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src
+      - name: List the films
+        run: codecinema list
+      - name: Import the framework and the pure-Python film modules
         run: >
-          python -c "import sys; sys.path[:0]=['src/common','src/audio','src/post'];
-          import settings, config, procutil, dsp, instruments, timeline, assemble, titles;
-          print('shots', len(config.SHOTS), 'frames', config.FRAME_END)"
+          python -c "import sys; sys.path[:0]=['films/silvergrass/src/common','films/silvergrass/src/audio','films/silvergrass/src/post'];
+          import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
+          from codecinema import media, films, cli;
+          print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"

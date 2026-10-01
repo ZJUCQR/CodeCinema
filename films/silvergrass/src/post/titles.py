@@ -140,7 +140,7 @@ def _face_index(path, family, style):
             found = next((i for i, n in enumerate(names) if n[1] == style), 0 if names else None)
         if found is None:
             raise RuntimeError(f"font face {family} {style}: no usable font file ({path!r}); set it in [fonts] "
-                               f"(silvergrass.local.toml) or $SILVERGRASS_FONTS_<ROLE>")
+                               f"(film.local.toml) or $SILVERGRASS_FONTS_<ROLE>")
         _face_idx_cache[key] = found
     return _face_idx_cache[key]
 

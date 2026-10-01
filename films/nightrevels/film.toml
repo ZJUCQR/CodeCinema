@@ -1,0 +1,35 @@
+# The Night Revels of Han Xizai, Cat Edition: an example film for CodeCinema (2D painted-scroll pipeline).
+# [film] is read by the framework CLI; [settings.*] are this film's machine and taste settings.
+# Override them in a git-ignored film.local.toml or with NIGHTREVELS_<SECTION>_<KEY> / CODECINEMA_<SECTION>_<KEY>.
+
+[film]
+id = "nightrevels"
+title = "The Night Revels of Han Xizai, Cat Edition"
+title_zh = "韩熙载夜宴图 · 猫"
+description = "A 128-second living handscroll: gongbi cats in Tang court costume, drawn as 2D vector puppets on silk."
+entry = "src/run.py"
+env_prefix = "NIGHTREVELS"
+steps = ["build", "still", "render", "audio", "assemble", "all"]
+requires = ["ffmpeg"]
+
+[settings.paths]
+out_dir = "out"                                 # generated files (events, notes, silk cache, video chunks, audio)
+final_video = "assets/film/NightRevels.mp4"     # the mastered film
+
+[settings.tools]
+ffmpeg = ""          # auto: $FFMPEG, `ffmpeg` on PATH
+ffprobe = ""
+
+[settings.render]
+jobs = 0             # parallel render processes; 0 = all CPU cores but two
+chunk = 96           # frames per encoded chunk (the resumable unit)
+crf = 15             # x264 quality of the picture chunks (lower = larger, better)
+preset = "medium"
+
+[settings.video]
+audio_bitrate = "320k"
+
+[settings.audio]
+sample_rate = 48000
+target_lufs = -14.0
+true_peak_db = -1.0

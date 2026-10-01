@@ -1,6 +1,6 @@
 # Customizing the film
 
-Every part of the film is generated from code and data. This guide is organised as *what to change → where → how to regenerate*. After a change you usually only need:
+Every part of the film is generated from code and data. This guide is organised as *what to change → where → how to regenerate*. Commands are run inside `films/silvergrass/` (from the repo root, `codecinema run silvergrass <step>` does the same). After a change you usually only need:
 
 ```bash
 python src/run.py preview <lane>     # low-resolution preview of one act, a few minutes
@@ -14,7 +14,7 @@ python src/run.py all                # rebuild and render incrementally: only sh
 ## 1. On-screen text and fonts
 - **Text and timing:** `TITLES` in `src/common/config.py`. Each card has `text` (main text), `sub` (small text), `start` / `end` (frames) and `style` (`epigraph` / `main` / `name` / `act` / `end`).
 - **Position and layout:** the `LAYOUT` dict in `src/post/titles.py` sets the centre and glyph size per card id.
-- **Fonts:** found automatically in the OS font folders and in `assets/fonts/`. To pin a font, create `silvergrass.local.toml` in the repo root (git-ignored):
+- **Fonts:** found automatically in the OS font folders and in `assets/fonts/`. To pin a font, create `film.local.toml` in the repo root (git-ignored):
   ```toml
   [fonts]
   calligraphy = "~/fonts/ZhiMangXing-Regular.ttf"   # main title, name cards, act cards
@@ -107,9 +107,9 @@ Sound is driven entirely by `out/events.json`, which the build writes: every mov
 - **Film QC:** `out/final_qc.json` reports photosensitivity flashes, black frames and loudness.
 
 ## 10. Settings and environment variables
-All machine and taste settings live in `pyproject.toml` under `[tool.silvergrass]`. They apply in this order, later ones winning:
+All machine and taste settings live in `film.toml` under `film.toml [settings]`. They apply in this order, later ones winning:
 
-built-in defaults → `pyproject.toml` → `silvergrass.local.toml` (optional, git-ignored; same keys without the `tool.silvergrass.` prefix) → environment variables → `src/run.py` flags
+built-in defaults → `film.toml` → `film.local.toml` (optional, git-ignored; same keys without the `tool.silvergrass.` prefix) → environment variables → `src/run.py` flags
 
 | Section | Keys |
 |---|---|

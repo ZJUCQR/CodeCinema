@@ -20,7 +20,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))) if os.path.dirname(os.path.abspath(__file__)) not in sys.path else None
-import settings as _settings   # noqa: E402  (machine / taste settings: [tool.silvergrass] in pyproject.toml, env overrides)
+import settings as _settings   # noqa: E402  (machine / taste settings: [settings] in film.toml, env overrides)
 
 S = _settings.SETTINGS
 

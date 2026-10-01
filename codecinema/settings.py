@@ -1,16 +1,22 @@
 """
-settings.py - project settings for SilverGrass (pure standard library; Python 3.11+ incl. Blender's Python).
+codecinema.settings - per-film settings (pure standard library; Python 3.11+, including Blender's Python).
 
-Precedence (later wins):
-    DEFAULTS  <  [tool.silvergrass] in pyproject.toml  <  silvergrass.local.toml (optional, git-ignored)
-    <  environment (SILVERGRASS_<SECTION>_<KEY>)
+Every film lives in films/<id>/ with a film.toml. Its [settings.<section>] tables hold the machine and taste
+settings; precedence (later wins):
+    framework DEFAULTS  <  film.toml [settings]  <  film.local.toml (optional, git-ignored)
+    <  environment: <ENV_PREFIX>_<SECTION>_<KEY> (prefix from film.toml [film] env_prefix), CODECINEMA_<SECTION>_<KEY>
+       and the aliases BLENDER_BIN / FFMPEG / FFPROBE
+
+The active film is $CODECINEMA_FILM_DIR (set by the CLI and by each film's own entry point) or, failing that, the
+nearest directory above the working directory that contains a film.toml.
 
 Usage:
-    import settings
+    from codecinema import settings
     settings.get("render", "slots")          # -> 2
     settings.tool("ffmpeg")                  # -> absolute path or the bare name (let the OS resolve it)
     settings.font("calligraphy")             # -> absolute path of a matching font file, or "" if none found
 """
+import copy
 import glob
 import os
 import shutil
@@ -21,31 +27,35 @@ try:
 except ModuleNotFoundError:          # Python < 3.11
     tomllib = None
 
-ROOT = os.environ.get("SILVERGRASS_ROOT") or os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+def _find_film_dir():
+    d = os.environ.get("CODECINEMA_FILM_DIR")
+    if d:
+        return os.path.abspath(d)
+    cur = os.path.abspath(os.getcwd())
+    while True:
+        if os.path.isfile(os.path.join(cur, "film.toml")):
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            return REPO
+        cur = parent
+
+
+ROOT = _find_film_dir()               # the active film's directory (paths in its settings are relative to it)
 
 DEFAULTS = {
-    "paths": {"out_dir": "out", "final_video": "assets/film/芒原决战_Final.mp4", "lock_dir": ""},
+    "paths": {"out_dir": "out"},
     "tools": {"blender": "", "ffmpeg": "", "ffprobe": "", "python": ""},
     "fonts": {"calligraphy": "", "weibei": "", "kaiti": "", "song": "", "ui": "", "mono": ""},
-    "render": {"width": 1920, "height": 816, "preview_scale": 0.3333, "samples_final": 16, "samples_preview": 8,
-               "motion_blur": True, "mb_shutter": 0.5, "mb_steps": 1, "mb_steps_sparks": 2, "mb_max_px": 40,
-               "filter_size": 1.5, "shadow_pool_mb": 1024, "volumetric_tile": 8, "volumetric_samples": 64,
-               "png_depth": "8", "png_compression": 15,
-               "grass_density_final": 1.0, "grass_density_preview": 0.25, "grass_density_layout": 0.12,
-               "slots": 2, "lock": True, "min_free_mem_gb": 4.5, "expected_seconds_per_frame": 12.0, "retries": 2,
-               "watchdog_factor": 3.0, "watchdog_grace_s": 120.0, "progress_interval_s": 30.0,
-               "tmp_max_age_s": 600.0},
-    "video": {"delivery_width": 1920, "delivery_height": 1080, "codec": "libx264", "crf": 16, "preset": "slow",
-              "pix_fmt": "yuv420p", "audio_bitrate": "320k", "preview_width": 960, "preview_height": 540,
-              "preview_crf": 23, "preview_preset": "veryfast", "preview_audio_bitrate": "192k",
-              "review_crf": 20, "review_audio_bitrate": "128k"},
-    "audio": {"sample_rate": 48000, "target_lufs": -14.0, "true_peak_db": -1.0, "loudness_tolerance_lu": 1.0,
-              "aac_pre_limiter_db": -2.5},
-    "post": {"title_jobs": 0, "titles_lock_timeout_s": 900.0},
-    "dev": {"demo_raise": False},
+    "video": {"width": 1920, "height": 1080, "fps": 24, "codec": "libx264", "crf": 16, "preset": "slow",
+              "pix_fmt": "yuv420p", "audio_bitrate": "320k"},
+    "audio": {"sample_rate": 48000, "target_lufs": -14.0, "true_peak_db": -1.0},
 }
 
-# conventional aliases that are honoured in addition to SILVERGRASS_<SECTION>_<KEY>
+# conventional aliases honoured in addition to the prefixed variables
 ENV_ALIASES = {("tools", "blender"): "BLENDER_BIN", ("tools", "ffmpeg"): "FFMPEG", ("tools", "ffprobe"): "FFPROBE"}
 
 
@@ -73,17 +83,28 @@ def _merge(base, extra):
     return base
 
 
-def load(root=ROOT):
-    data = {sec: dict(vals) for sec, vals in DEFAULTS.items()}
-    _merge(data, _load_toml(os.path.join(root, "pyproject.toml")).get("tool", {}).get("silvergrass", {}))
-    _merge(data, _load_toml(os.path.join(root, "silvergrass.local.toml")))
+def film_meta(film_dir=None):
+    """The [film] table of a film.toml (id, title, entry, steps, env_prefix ...)."""
+    return _load_toml(os.path.join(film_dir or ROOT, "film.toml")).get("film", {})
+
+
+def load(film_dir=None):
+    film_dir = film_dir or ROOT
+    data = copy.deepcopy(DEFAULTS)
+    _merge(data, _load_toml(os.path.join(film_dir, "film.toml")).get("settings", {}))
+    _merge(data, _load_toml(os.path.join(film_dir, "film.local.toml")))
+    prefix = str(film_meta(film_dir).get("env_prefix", "")).upper()
     for sec, vals in data.items():
         for key, val in list(vals.items()):
-            env = os.environ.get(f"SILVERGRASS_{sec}_{key}".upper())
+            env = None
+            for pre in ([prefix] if prefix else []) + ["CODECINEMA"]:
+                env = os.environ.get(f"{pre}_{sec}_{key}".upper())
+                if env is not None:
+                    break
             if env is None and (sec, key) in ENV_ALIASES:
                 env = os.environ.get(ENV_ALIASES[(sec, key)])
             if env is not None and env != "":
-                vals[key] = _coerce(env, DEFAULTS.get(sec, {}).get(key, val))
+                vals[key] = _coerce(env, val)
     return data
 
 
@@ -116,7 +137,8 @@ def tool(name):
     if explicit:
         return os.path.expanduser(explicit)
     if name == "python":            # the project's interpreter (numpy/scipy/matplotlib), also when called from Blender
-        for cand in (os.path.join(ROOT, ".venv", "Scripts", "python.exe"), os.path.join(ROOT, ".venv", "bin", "python")):
+        for cand in [os.path.join(d, ".venv", sub) for d in (ROOT, REPO)
+                     for sub in (os.path.join("Scripts", "python.exe"), os.path.join("bin", "python"))]:
             if os.path.exists(cand):
                 return cand
         return shutil.which("python3") or shutil.which("python") or sys.executable
@@ -149,7 +171,7 @@ FONT_CANDIDATES = {
 
 def _font_dirs():
     home = os.path.expanduser("~")
-    dirs = [os.path.join(ROOT, "assets", "fonts")]
+    dirs = [os.path.join(ROOT, "assets", "fonts"), os.path.join(REPO, "assets", "fonts")]
     if sys.platform == "darwin":
         dirs += ["/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
                  os.path.join(home, "Library", "Fonts")]

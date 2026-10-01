@@ -1,8 +1,8 @@
 """
-dsp.py -- core DSP toolkit for the Duel in the Silver Grass procedural audio engine.
+codecinema.audio.dsp -- core DSP toolkit shared by the CodeCinema films.
 
 Conventions
-    * sample rate SR = config.AUDIO_SR (settings audio.sample_rate, 48 kHz), float64 numpy arrays
+    * sample rate SR = the active film's audio.sample_rate setting (48 kHz by default), float64 numpy arrays
     * mono  = shape (n,)      stereo = shape (2, n)
     * times in seconds unless a name ends in _n (samples)
     * every random process takes a numpy Generator (see rng()) -> fully deterministic renders
@@ -21,12 +21,9 @@ import sys
 import numpy as np
 from scipy import signal
 
-_COMMON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "common")
-if _COMMON not in sys.path:
-    sys.path.insert(0, _COMMON)
-import config  # noqa: E402
+from codecinema import settings as _settings
 
-SR = config.AUDIO_SR                # the single sample-rate definition of the audio lane
+SR = int(_settings.get("audio", "sample_rate", 48000))   # the active film's sample rate
 NYQ = SR / 2.0
 LN1000 = 6.907755278982137          # ln(1000): exp(-LN1000*t/T60) is -60 dB at T60
 TWO_PI = 2.0 * np.pi

@@ -2,7 +2,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", "assets/images/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "assets/images/**", "films/*/assets/images/**", ".github/workflows/pages.yml"]
   release:
     types: [published, edited]
   workflow_dispatch:
@@ -21,14 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Assemble the site (the film comes from the "film" release)
+      - name: Assemble the site (the films come from their releases)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p _site/assets/film
+          mkdir -p _site/img/silvergrass _site/img/nightrevels _site/films
           cp -r site/. _site/
-          cp -r assets/images _site/assets/images
-          gh release download film --repo "${{ github.repository }}" --pattern SilverGrass.mp4 --dir _site/assets/film
+          cp assets/images/* _site/img/
+          cp films/silvergrass/assets/images/* _site/img/silvergrass/
+          cp films/nightrevels/assets/images/* _site/img/nightrevels/
+          gh release download film --repo "${{ github.repository }}" --pattern SilverGrass.mp4 --dir _site/films
+          gh release download nightrevels --repo "${{ github.repository }}" --pattern NightRevels.mp4 --dir _site/films
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

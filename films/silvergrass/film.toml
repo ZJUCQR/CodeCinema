@@ -1,0 +1,95 @@
+# SilverGrass: an example film for CodeCinema (Blender 3D pipeline).
+# [film] is read by the framework CLI; [settings.*] are this film's machine and taste settings.
+# Override them without editing this file in a git-ignored film.local.toml (same tables without the "settings."
+# prefix) or with SILVERGRASS_<SECTION>_<KEY> / CODECINEMA_<SECTION>_<KEY> environment variables.
+
+[film]
+id = "silvergrass"
+title = "Duel in the Silver Grass"
+title_zh = "芒原决战"
+description = "A 160-second animated samurai duel: Blender 3D characters, choreography and VFX, a synthesized score."
+entry = "src/run.py"
+env_prefix = "SILVERGRASS"
+steps = ["check", "build", "preview", "render", "audio", "titles", "assemble", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[settings.paths]
+out_dir = "out"                                   # every generated file (scene, frames, audio, previews)
+final_video = "assets/film/芒原决战_Final.mp4"     # the mastered film
+lock_dir = ""                                     # render-slot lock files shared by every process; "" = <out_dir>/.locks
+
+[settings.tools]
+blender = ""        # Blender >= 5.2; auto: $BLENDER_BIN, `blender` on PATH, standard install folders
+ffmpeg = ""         # auto: $FFMPEG, `ffmpeg` on PATH
+ffprobe = ""        # auto: $FFPROBE, `ffprobe` on PATH
+python = ""         # interpreter for plots launched from Blender; auto: .venv, then python3 on PATH
+
+[settings.fonts]
+# Title-card fonts (TTF/OTF/TTC). Auto-detection searches the OS font folders and assets/fonts/ for known file
+# names (e.g. STXingkai, Weibei, Kaiti, Songti, Zhi Mang Xing, Ma Shan Zheng, LXGW WenKai, Noto Serif CJK).
+calligraphy = ""    # main title, name cards, act cards, "End"
+weibei = ""         # heavy display face
+kaiti = ""          # epigraph, credit line
+song = ""           # small print
+ui = ""             # labels on diagnostic sheets (pose atlas); auto: Arial / Helvetica / DejaVu Sans
+mono = ""           # contact-sheet captions; auto: Menlo / Consolas / DejaVu Sans Mono
+
+[settings.render]
+width = 1920                        # render size (2.35:1), letterboxed to the delivery size in post
+height = 816
+preview_scale = 0.3333              # preview / layout renders
+samples_final = 16                  # EEVEE samples (32+ = cleaner, roughly linearly slower)
+samples_preview = 8
+motion_blur = true
+mb_shutter = 0.5                    # motion-blur shutter (fraction of a frame)
+mb_steps = 1                        # motion-blur time steps (per-shot overrides in config.SHOT_RENDER)
+mb_steps_sparks = 2                 # steps on frames with fast spark / trail VFX
+mb_max_px = 40                      # motion-blur length cap in pixels
+filter_size = 1.5                   # pixel filter width
+shadow_pool_mb = 1024               # EEVEE shadow pool (lower on GPUs with little memory)
+volumetric_tile = 8                 # volumetric tile size in px (smaller = sharper, slower)
+volumetric_samples = 64
+png_depth = "8"                     # frame PNG bit depth: "8" or "16"
+png_compression = 15                # frame PNG compression (0-100)
+grass_density_final = 1.0           # fraction of grass instances
+grass_density_preview = 0.25
+grass_density_layout = 0.12
+slots = 2                           # concurrent Blender renders
+lock = true                         # share render slots between processes through lock files
+min_free_mem_gb = 4.5               # free memory needed before another render slot starts
+expected_seconds_per_frame = 12.0   # watchdog estimate before real timings exist
+retries = 2                         # render retries per chunk before the fallback
+watchdog_factor = 3.0               # a chunk is stuck after factor x expected time + grace
+watchdog_grace_s = 120.0
+progress_interval_s = 30.0          # supervisor progress line interval
+tmp_max_age_s = 600.0               # orphaned temporary frames older than this are swept
+
+[settings.video]
+delivery_width = 1920
+delivery_height = 1080
+codec = "libx264"
+crf = 16                            # final master quality (lower = larger, better)
+preset = "slow"
+pix_fmt = "yuv420p"
+audio_bitrate = "320k"
+preview_width = 960                 # `assemble --preview`
+preview_height = 540
+preview_crf = 23
+preview_preset = "veryfast"
+preview_audio_bitrate = "192k"
+review_crf = 20                     # single-act review clips (`preview <lane>`)
+review_audio_bitrate = "128k"
+
+[settings.audio]
+sample_rate = 48000
+target_lufs = -14.0                 # integrated loudness of the master
+true_peak_db = -1.0                 # true-peak ceiling (dBTP)
+loudness_tolerance_lu = 1.0         # QC tolerance around target_lufs
+aac_pre_limiter_db = -2.5           # limiter before AAC encoding when the encoded true peak overshoots
+
+[settings.post]
+title_jobs = 0                      # parallel title-card workers; 0 = auto
+titles_lock_timeout_s = 900.0
+
+[settings.dev]
+demo_raise = false                  # make the demo lane raise on QA warnings
