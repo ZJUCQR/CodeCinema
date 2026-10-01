@@ -113,10 +113,10 @@ CodeCinema/
 ## 🧭 工作原理
 
 <div align="center">
-<img src="assets/images/framework.svg" width="100%" alt="CodeCinema：影片文件夹、框架、示例影片和成片">
+<img src="assets/images/pipeline.svg" width="100%" alt="CodeCinema 影片的制作流程：数据规格、场景合成、渲染、声音、后期">
 </div>
 
-<p align="center"><sub><b>图 1.</b> CodeCinema。<b>(a)</b> 一部影片就是一个文件夹：<code>film.toml</code> 声明它的步骤并保存设置，<code>src/</code> 存放故事、渲染器和声音。<b>(b)</b> 框架用影片自己的设置运行它的步骤，并提供共享部件：分层设置、声音工具包、ffmpeg 工具、跨平台进程工具和起步模板。<b>(c)</b> 渲染器属于影片本身，所以两部示例用了不同的引擎：Blender 3D 和 skia 2D。<b>(d)</b> 每部影片的结尾都一样：编码后的画面加上母带处理过的声音，按采样精度混流成一个文件。</sub></p>
+<p align="center"><sub><b>图 1.</b> 一部 CodeCinema 影片是怎样制作出来的。<b>(a)</b> 影片先写成数据：<code>film.toml</code> 声明步骤和设置，一份 config 存放整个故事（时间轴、节拍、角色、写成音符的乐谱）。<b>(b)</b> 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。<b>(c)</b> 渲染器以并行、可续渲的分块绘制画面：一部示例用 Blender 3D，另一部用 skia 2D 绘画。<b>(d)</b> 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。<b>(e)</b> 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。</sub></p>
 
 ## 📜 许可
 

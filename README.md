@@ -113,10 +113,10 @@ CodeCinema/
 ## 🧭 How it works
 
 <div align="center">
-<img src="assets/images/framework.svg" width="100%" alt="CodeCinema: a film folder, the framework, the example films and the final film">
+<img src="assets/images/pipeline.svg" width="100%" alt="How a CodeCinema film is produced: specification, scene synthesis, rendering, sound and post-production">
 </div>
 
-<p align="center"><sub><b>Figure 1.</b> CodeCinema. <b>(a)</b> A film is a folder: <code>film.toml</code> names its steps and holds its settings, and <code>src/</code> holds its story, renderer and sound. <b>(b)</b> The framework runs a film's steps with that film's settings and lends it shared parts: layered settings, the audio toolkit, ffmpeg helpers, cross-platform process tools and a starter template. <b>(c)</b> The renderer belongs to the film, so the two examples use different engines, Blender 3D and skia 2D. <b>(d)</b> Every film ends the same way: encoded picture plus mastered sound, muxed sample-accurately into one file.</sub></p>
+<p align="center"><sub><b>Figure 1.</b> How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>film.toml</code> declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: Blender 3D in one example, skia 2D painting in the other. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</sub></p>
 
 ## 📜 License
 

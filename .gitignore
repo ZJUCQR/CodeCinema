@@ -2,6 +2,8 @@
 .venv/
 __pycache__/
 *.py[cod]
+build/
+*.egg-info/
 
 # Rendered master film (too large for git: attach it to a GitHub Release)
 assets/film/*.mp4
