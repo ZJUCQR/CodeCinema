@@ -1,0 +1,6 @@
+numpy>=2.0
+scipy>=1.13
+pillow>=10.0
+matplotlib>=3.8
+pyloudnorm>=0.1.1
+skia-python>=87.0
