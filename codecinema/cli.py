@@ -83,6 +83,11 @@ def cmd_check(a):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):        # film titles may be non-Latin (Windows consoles default to cp1252)
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser(prog="codecinema", description=f"CodeCinema {__version__}: films made with code.")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("list")
