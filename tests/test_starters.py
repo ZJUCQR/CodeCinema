@@ -1,6 +1,7 @@
 """User-facing creation, editing and media regressions; all projects live in temporary workspaces."""
 from contextlib import redirect_stdout, redirect_stderr
 import hashlib
+import importlib
 import importlib.util
 import io
 import json
@@ -81,6 +82,18 @@ class CreationTests(Workspace):
         before = story.read_bytes()
         self.assertEqual(self.command("new", "keep-me", "--preset", "neon")[0], 1)
         self.assertEqual(story.read_bytes(), before)
+
+    def test_native_loader_error_is_reported_before_creation(self):
+        original = importlib.import_module
+        def unavailable(name):
+            if name == "skia":
+                raise ImportError("libGL.so.1: cannot open shared object file")
+            return original(name)
+        with patch("codecinema.diagnostics.importlib.import_module", side_effect=unavailable):
+            result, output = self.command("new", "missing-runtime", "--render")
+        self.assertEqual(result, 1)
+        self.assertIn("libGL.so.1", output)
+        self.assertFalse((self.root / "films" / "missing-runtime").exists())
 
     def test_customization_preserves_scene_order_and_saves_previous_version(self):
         self.command("new", "editable", "--title", "Original")

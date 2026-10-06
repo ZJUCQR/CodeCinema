@@ -1,5 +1,5 @@
 """Small, actionable dependency checks for first-time film makers."""
-import importlib.util
+import importlib
 import os
 import shutil
 import sys
@@ -21,11 +21,20 @@ def ffmpeg_help():
     return "Install FFmpeg: sudo apt-get install ffmpeg (or use your distribution's package manager)"
 
 
+def graphics_help():
+    if sys.platform.startswith("linux"):
+        return "Skia's Linux runtime needs: sudo apt-get install libgl1 libfontconfig1"
+    return "Install the Python dependencies in this environment: python -m pip install ."
+
+
 def starter_problems():
-    missing = [name for name in STARTER_MODULES if importlib.util.find_spec(name) is None]
     problems = []
-    if missing:
-        problems.append(f"Missing Python packages: {', '.join(missing)}. Run: python -m pip install .")
+    for name in STARTER_MODULES:
+        try:
+            importlib.import_module(name)
+        except (ImportError, OSError) as exc:
+            problems.append(f"Could not load {name}: {exc}. " +
+                            (graphics_help() if name == "skia" else "Run: python -m pip install ."))
     tools = [name for name in ("ffmpeg", "ffprobe") if not tool_available(settings.tool(name))]
     if tools:
         problems.append(f"Missing tools: {', '.join(tools)}. {ffmpeg_help()}")

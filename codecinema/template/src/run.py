@@ -23,7 +23,8 @@ try:
     import skia
     from scipy.io import wavfile
 except ImportError as exc:
-    raise SystemExit(f"Missing Python dependency: {exc.name}. Run: python -m pip install .") from None
+    from codecinema.diagnostics import graphics_help
+    raise SystemExit(f"Could not load a Python dependency: {exc}. {graphics_help()}") from None
 
 from codecinema import diagnostics, media, settings, starters
 from codecinema.audio import dsp

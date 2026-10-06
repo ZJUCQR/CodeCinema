@@ -16,7 +16,7 @@ jobs:
         run: pip install .
       - name: Install FFmpeg for the Linux media integration tests
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core libgl1 libfontconfig1
       - name: Test creation, customization, Studio and rendered media
         run: python -m unittest discover -s tests -v
       - name: Byte-compile the framework and films

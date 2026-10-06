@@ -115,23 +115,27 @@ def cmd_studio(a):
 
 def cmd_check(a):
     ok = True
+    missing_tools = False
     for mod in ("numpy", "scipy", "PIL", "matplotlib", "pyloudnorm", "skia"):
         try:
             __import__(mod)
             print(f"  [ok] py:{mod}")
-        except ImportError:
+        except (ImportError, OSError) as exc:
             ok = False
-            print(f"  [!!] py:{mod}  missing - run: pip install .")
+            print(f"  [!!] py:{mod}  {exc}")
+            print("       " + (diagnostics.graphics_help() if mod == "skia" else "Run: python -m pip install ."))
     for tool in ("ffmpeg", "ffprobe", "blender"):
         p = settings.tool(tool)
         found = os.path.isabs(p) and os.path.exists(p) or shutil.which(p)
         need = tool != "blender"
+        missing_tools |= bool(need and not found)
         ok &= bool(found) or not need
         print(f"  [{'ok' if found else ('!!' if need else '--')}] {tool:8s} {p if found else 'not found'}"
               + ("" if need else "   (only needed by Blender films)"))
     print("\nall good" if ok else "\nsome checks failed")
-    if not ok:
+    if missing_tools:
         print(diagnostics.ffmpeg_help())
+    if not ok:
         print("Setup guide: docs/GETTING_STARTED.md")
     return 0 if ok else 1
 
