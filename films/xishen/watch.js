@@ -10,7 +10,8 @@
   const cards=[...document.querySelectorAll("[data-episode]")];
   const next=document.getElementById("autonext"), complete=document.getElementById("complete");
   const mediaVersion=document.documentElement.dataset.mediaVersion;
-  function filmUrl(id){return `assets/film/${id}.mp4`+(mediaVersion?`?v=${mediaVersion}`:"");}
+  function mediaUrl(path){return path+(mediaVersion?`?v=${mediaVersion}`:"");}
+  function filmUrl(id){return mediaUrl(`assets/film/${id}.mp4`);}
   let selected=0, pendingSeek=null;
   function time(seconds){return `${String(Math.floor(seconds/60)).padStart(2,"0")}:${String(seconds%60).padStart(2,"0")}`;}
   function chapters(episode){
@@ -33,7 +34,7 @@
     complete.setAttribute("aria-pressed",String(index===3));
     next.disabled=index===3;
     player.pause(); player.src=filmUrl(episode.id);
-    player.poster=`assets/images/${episode.poster||episode.id}.jpg`;
+    player.poster=mediaUrl(`assets/images/${episode.poster||episode.id}.jpg`);
     player.setAttribute("aria-label",episode.title); player.load();
     document.getElementById("episode-title").textContent=episode.title;
     document.getElementById("duration").textContent=episode.duration;
