@@ -32,6 +32,7 @@ Studio provides a simple path from a template to a finished MP4. The example fil
 - 🪄 **Choose, personalize, render.** The local Studio offers eight animated looks, editable scene cards, titles, captions, colors, three frame shapes and one-click MP4 production. No API key is needed.
 - 🧩 **A small contract, any renderer.** A film declares its steps in `film.toml`, and `codecinema run <film> <step>` runs them with that film's settings. Blender, 2D vector drawing, shaders or anything else that writes frames will fit.
 - 🎼 **A shared sound toolkit.** The DSP library behind the films is part of the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.
+- 🎙️ **Optional expressive voices.** Add spoken lines and acting directions in Studio, or use your own recordings. The [speech guide](docs/SPEECH.md) covers the local speech pack and reusable mouth-timing API.
 - ♻️ **Reproducible and configurable.** Deterministic renders, resumable parallel jobs, layered settings that never require editing tracked files, and helpers that work on macOS, Linux and Windows.
 
 ## 🚀 Quick start

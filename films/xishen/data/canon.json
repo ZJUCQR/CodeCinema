@@ -5,31 +5,245 @@
   "book_url": "https://fanqienovel.com/page/7276384138653862966",
   "adaptation": "开篇六章的压缩改编。旁白和对白重新创作；镜头、面部造型、建筑细节及配乐为本项目的视觉设计。",
   "sources": {
-    "ch01": {"chapter": 1, "title": "戏鬼回家", "url": "https://fanqienovel.com/reader/7276663560427471412"},
-    "ch02": {"chapter": 2, "title": "我们在看着你", "url": "https://fanqienovel.com/reader/7276826981654921789"},
-    "ch03": {"chapter": 3, "title": "灾厄", "url": "https://fanqienovel.com/reader/7277563721739108875"},
-    "ch04": {"chapter": 4, "title": "它们存在", "url": "https://fanqienovel.com/reader/7277919377109090871"},
-    "ch05": {"chapter": 5, "title": "灰界", "url": "https://fanqienovel.com/reader/7278135486026416676"},
-    "ch06": {"chapter": 6, "title": "《陈氏编导法则》", "url": "https://fanqienovel.com/reader/7278881764896932363"}
+    "ch01": {
+      "chapter": 1,
+      "title": "戏鬼回家",
+      "url": "https://fanqienovel.com/reader/7276663560427471412"
+    },
+    "ch02": {
+      "chapter": 2,
+      "title": "我们在看着你",
+      "url": "https://fanqienovel.com/reader/7276826981654921789"
+    },
+    "ch03": {
+      "chapter": 3,
+      "title": "灾厄",
+      "url": "https://fanqienovel.com/reader/7277563721739108875"
+    },
+    "ch04": {
+      "chapter": 4,
+      "title": "它们存在",
+      "url": "https://fanqienovel.com/reader/7277919377109090871"
+    },
+    "ch05": {
+      "chapter": 5,
+      "title": "灰界",
+      "url": "https://fanqienovel.com/reader/7278135486026416676"
+    },
+    "ch06": {
+      "chapter": 6,
+      "title": "《陈氏编导法则》",
+      "url": "https://fanqienovel.com/reader/7278881764896932363"
+    }
   },
   "characters": {
     "chen_ling": {
-      "name": "陈伶", "role": "protagonist", "face": "young", "hair": "wet_fringe", "skin": "#d3c5be", "eyes": "#182328",
-      "canonical": ["前世 28 岁，京城剧院实习编导", "今生为少年，具体年龄不在这六章内擅自确定", "雨夜红戏袍、湿黑发垂至眉梢、赤脚、额角流血", "恐惧、求医、观察、试验，尚未成为掌控一切的强者"],
-      "costumes": ["red_robe", "black_coat", "memory_shirt"],
-      "visual_design": "同一套面部和骨骼；细长眉、黑色眼瞳、额角细伤。衣服在明确的出门镜头后换成黑色棉大衣。"
+      "name": "陈伶",
+      "role": "protagonist",
+      "face": "young",
+      "hair": "wet_fringe",
+      "skin": "#d3c5be",
+      "eyes": "#182328",
+      "canonical": [
+        "前世 28 岁，京城剧院实习编导",
+        "今生为少年，具体年龄不在这六章内擅自确定",
+        "雨夜红戏袍、湿黑发垂至眉梢、赤脚、额角流血",
+        "恐惧、求医、观察、试验，尚未成为掌控一切的强者"
+      ],
+      "costumes": [
+        "red_robe",
+        "black_coat",
+        "memory_shirt"
+      ],
+      "visual_design": "清瘦修长；湿黑发不规则贴额，长眉，狭长黑眸，淡唇与尖而自然的下颌。",
+      "speech": {
+        "voice": "Dylan",
+        "direction": "年轻男性，音色清亮而克制，普通话无方言。像面对眼前的人说话，保留自然呼吸，不用播音腔。"
+      }
     },
-    "chen_tan": {"name": "陈坛", "role": "father", "face": "angular", "hair": "receding", "skin": "#b6a79b", "eyes": "#212327", "costumes": ["father_home", "raincoat"], "canonical": ["与李秀春同住三区寒霜街 128 号", "隐瞒杀害与埋尸的事情", "穿黑色雨衣出门验证"]},
-    "li_xiuchun": {"name": "李秀春", "role": "mother", "face": "soft", "hair": "bun", "skin": "#c4b1a5", "eyes": "#292329", "costumes": ["mother_home", "raincoat"], "canonical": ["见到陈伶归家惊恐", "与陈坛一起前往乱葬岗"]},
-    "han_meng": {"name": "韩蒙", "role": "officer", "face": "square", "hair": "short", "skin": "#bcaaa1", "eyes": "#162229", "costumes": ["officer_coat"], "canonical": ["黑色大衣、粗卷烟", "根据路程、时间和埋葬地点识破父母的说辞", "灾厄指针爆炸后才出现脸颊血痕"]},
-    "jiang_qin": {"name": "江勤", "role": "enforcer", "face": "young", "hair": "short", "skin": "#c4b5a6", "eyes": "#23292b", "costumes": ["uniform"], "canonical": ["黑红执法者服饰", "记录陈坛、李秀春的姓名住址"]},
-    "doctor_lin": {"name": "林医生", "role": "doctor", "face": "slender", "hair": "neat", "skin": "#c6b9ab", "eyes": "#252831", "costumes": ["white_coat"], "canonical": ["白大褂、黑框眼镜", "寒霜街诊所", "通过变成血液的茶水确认异常", "介绍灰界并写下转介信"], "visual_design": "保持本阶段的林医生身份，不提前揭示后续身份。"},
-    "zhao_yi": {"name": "赵乙", "role": "neighbor", "face": "round", "hair": "messy", "skin": "#c4ad99", "eyes": "#29251e", "costumes": ["work_jacket"], "canonical": ["与陈伶同街长大，善妒，撒盐恶作剧", "融雪报酬二十铜币，只分小六两枚"]},
-    "uncle_zhao": {"name": "赵叔", "role": "vendor", "face": "round", "hair": "balding", "skin": "#bb9f85", "eyes": "#272321", "costumes": ["apron"], "canonical": ["早餐铺老板，头上缠毛巾", "请陈伶吃豆浆油条", "被陈伶制造的误会激怒"]},
-    "xiao_liu": {"name": "小六", "role": "worker", "face": "young", "hair": "short", "skin": "#c5b4a1", "eyes": "#24322d", "costumes": ["green_jacket"], "canonical": ["替赵乙骑三轮车撒盐", "受到不公分账及威胁", "接受陈伶建议，加入这场误会"]}
+    "chen_tan": {
+      "name": "陈坛",
+      "role": "father",
+      "face": "angular",
+      "hair": "receding",
+      "skin": "#b6a79b",
+      "eyes": "#212327",
+      "costumes": [
+        "father_home",
+        "raincoat"
+      ],
+      "canonical": [
+        "与李秀春同住三区寒霜街 128 号",
+        "隐瞒杀害与埋尸的事情",
+        "穿黑色雨衣出门验证"
+      ],
+      "speech": {
+        "voice": "Uncle_Fu",
+        "direction": "中年男性，低哑、压着音量，心虚而警惕，声音偶尔发紧。标准普通话。"
+      },
+      "visual_design": "窄长脸，高额头与后退发际线，浓眉，眼袋，削瘦肩膀与微微前倾的站姿。"
+    },
+    "li_xiuchun": {
+      "name": "李秀春",
+      "role": "mother",
+      "face": "soft",
+      "hair": "bun",
+      "skin": "#c4b1a5",
+      "eyes": "#292329",
+      "costumes": [
+        "mother_home",
+        "raincoat"
+      ],
+      "canonical": [
+        "见到陈伶归家惊恐",
+        "与陈坛一起前往乱葬岗"
+      ],
+      "speech": {
+        "voice": "Vivian",
+        "direction": "中年女性，轻而紧绷的声线，惊惧时呼吸不稳，尽力压住哭腔。标准普通话。"
+      },
+      "visual_design": "椭圆脸，紧束低发髻，弯眉、疲倦的眼尾，朴素衣领，紧张时双肩内收。"
+    },
+    "han_meng": {
+      "name": "韩蒙",
+      "role": "officer",
+      "face": "square",
+      "hair": "short",
+      "skin": "#bcaaa1",
+      "eyes": "#162229",
+      "costumes": [
+        "officer_coat"
+      ],
+      "canonical": [
+        "黑色大衣、粗卷烟",
+        "根据路程、时间和埋葬地点识破父母的说辞",
+        "灾厄指针爆炸后才出现脸颊血痕"
+      ],
+      "speech": {
+        "voice": "Eric",
+        "direction": "成熟男性，低沉沙哑，短句有停顿，判断冷静而果断。标准普通话，无四川口音。"
+      },
+      "visual_design": "宽肩与结实下颌，短侧分黑发，沉静窄眼，挺直的深色大衣，粗卷烟。"
+    },
+    "jiang_qin": {
+      "name": "江勤",
+      "role": "enforcer",
+      "face": "young",
+      "hair": "short",
+      "skin": "#c4b5a6",
+      "eyes": "#23292b",
+      "costumes": [
+        "uniform"
+      ],
+      "canonical": [
+        "黑红执法者服饰",
+        "记录陈坛、李秀春的姓名住址"
+      ],
+      "speech": {
+        "voice": "Dylan",
+        "direction": "年轻男性，简洁利落，严谨的工作语气，标准普通话。"
+      },
+      "visual_design": "匀称利落的体态，平直短发，端正脸型，黑红制服与整齐的领口。"
+    },
+    "doctor_lin": {
+      "name": "林医生",
+      "role": "doctor",
+      "face": "slender",
+      "hair": "neat",
+      "skin": "#c6b9ab",
+      "eyes": "#252831",
+      "costumes": [
+        "white_coat"
+      ],
+      "canonical": [
+        "白大褂、黑框眼镜",
+        "寒霜街诊所",
+        "通过变成血液的茶水确认异常",
+        "介绍灰界并写下转介信"
+      ],
+      "visual_design": "细长脸，中分梳理的黑发，轻巧黑框眼镜，舒展的眉眼，白大褂与胸前钢笔。",
+      "speech": {
+        "voice": "Ryan",
+        "direction": "男性医生，流利自然的标准普通话，清晰温和，思考后才下判断，避免英语口音。"
+      }
+    },
+    "zhao_yi": {
+      "name": "赵乙",
+      "role": "neighbor",
+      "face": "round",
+      "hair": "messy",
+      "skin": "#c4ad99",
+      "eyes": "#29251e",
+      "costumes": [
+        "work_jacket"
+      ],
+      "canonical": [
+        "与陈伶同街长大，善妒，撒盐恶作剧",
+        "融雪报酬二十铜币，只分小六两枚"
+      ],
+      "speech": {
+        "voice": "Dylan",
+        "direction": "年轻男性，轻浮、急躁，咬字快，标准普通话。"
+      },
+      "visual_design": "瘦长身形，凌乱上翘短发，单边扬眉，棕色工装外套，前倾且张扬的姿态。"
+    },
+    "uncle_zhao": {
+      "name": "赵叔",
+      "role": "vendor",
+      "face": "round",
+      "hair": "balding",
+      "skin": "#bb9f85",
+      "eyes": "#272321",
+      "costumes": [
+        "apron"
+      ],
+      "canonical": [
+        "早餐铺老板，头上缠毛巾",
+        "请陈伶吃豆浆油条",
+        "被陈伶制造的误会激怒"
+      ],
+      "speech": {
+        "voice": "Uncle_Fu",
+        "direction": "年长男性，厚实的烟火气，亲切时松弛，生气时短促而有力。标准普通话。"
+      },
+      "visual_design": "圆脸，厚眉与笑纹，头缠毛巾，宽腰与围裙，厚实前臂。"
+    },
+    "xiao_liu": {
+      "name": "小六",
+      "role": "worker",
+      "face": "young",
+      "hair": "short",
+      "skin": "#c5b4a1",
+      "eyes": "#24322d",
+      "costumes": [
+        "green_jacket"
+      ],
+      "canonical": [
+        "替赵乙骑三轮车撒盐",
+        "受到不公分账及威胁",
+        "接受陈伶建议，加入这场误会"
+      ],
+      "speech": {
+        "voice": "Dylan",
+        "direction": "年轻男性，朴实、谨慎，轻声说话，标准普通话。"
+      },
+      "visual_design": "偏窄脸，短而微翘的头发，较低的肩膀，绿色旧夹克与瘦削双手。"
+    }
   },
-  "offscreen": {"chen_yan": {"name": "陈宴", "status": "二区医院住院；仅在诊所对白中提到", "rule": "这六章里不设计出场，不提前透露第十二章及之后的真相。"}},
-  "expectation_order": [29, 30, 27, 29, 32],
+  "offscreen": {
+    "chen_yan": {
+      "name": "陈宴",
+      "status": "二区医院住院；仅在诊所对白中提到",
+      "rule": "这六章里不设计出场，不提前透露第十二章及之后的真相。"
+    }
+  },
+  "expectation_order": [
+    29,
+    30,
+    27,
+    29,
+    32
+  ],
   "rules": [
     "同一套角色资产用于每一集；前世镜头仅陈伶换成年姿态和普通衬衣。",
     "第 1 集：夜雨、红袍赤脚。第 2 集：同一夜进入剧院，次日换黑棉大衣。第 3 集：同一天清晨，黑棉大衣不变。",

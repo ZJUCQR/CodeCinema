@@ -6,8 +6,8 @@ A complete procedural motion-comic film in three connected episodes, adapting ch
 | --- | --- |
 | Runtime | 11:00 (660 seconds) · 3 episodes |
 | Picture | 1920 × 1080 · 24 fps · H.264 |
-| Audio | Stereo AAC · synthesized Mandarin speech · original score and sound effects |
-| Renderer | Skia motion comic · 67 shots |
+| Audio | Stereo AAC · emotion-directed Mandarin voices · original score and sound effects |
+| Renderer | Skia motion comic · 67 shots · shared, individually designed cast |
 
 ## Downloads
 
@@ -28,6 +28,6 @@ Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/docs/GET
 codecinema run xishen all --narration required
 ```
 
-Mandarin speech uses installed macOS voices or supplied WAV recordings. Use `--narration off` for a captions-and-music edition.
+Published voices use local Qwen3-TTS CustomVoice on Apple Silicon, with waveform-gated, syllable-aligned mouth animation. Install the optional speech pack with `python -m pip install -e ".[speech]"` and add `--speech-engine local` to reproduce this edition. Other platforms can supply WAV recordings. Use `--narration off` for a captions-and-music edition.
 
 Repository author: **ZJUCQR**. Repository code: [MIT](https://github.com/ZJUCQR/CodeCinema/blob/main/LICENSE). Original novel: **Sanjiu Yinyu**, [official edition](https://fanqienovel.com/page/7276384138653862966); the novel's rights remain with its respective rights holders.

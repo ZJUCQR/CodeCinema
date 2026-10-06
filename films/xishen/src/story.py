@@ -94,7 +94,9 @@ def digest(extra=""):
     """Invalidate generated work when any story, renderer, audio or setting changes."""
     h = hashlib.sha256(extra.encode())
     paths = [ROOT / "film.toml", *sorted((ROOT / "data").glob("*.json")),
-             *sorted((ROOT / "src").glob("*.py"))]
+             *sorted((ROOT / "src").glob("*.py")),
+             *sorted((ROOT.parents[1] / "codecinema/audio").glob("*.py")),
+             *sorted((ROOT / "assets/voices").glob("*.wav"))]
     for path in paths:
         h.update(path.name.encode())
         h.update(path.read_bytes())

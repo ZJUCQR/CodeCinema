@@ -71,6 +71,7 @@ The module is pure standard library, so it also works inside Blender's Python.
 
 | Module | Provides |
 |---|---|
+| `codecinema.audio.speech` / `performance` | Optional local emotional voices, recordings, syllable alignment and waveform-gated mouth shapes; see the [speech guide](SPEECH.md) |
 | `codecinema.audio.dsp` | Oscillators, noise, envelopes, filters, Karplus-Strong and modal synthesis, resampling, convolution reverb, panning, a compressor, a true-peak lookahead limiter, and loudness helpers. `dsp.SR` is the film's `audio.sample_rate` |
 | `codecinema.media` | `probe()`, `encoder()` (raw RGBA frames on stdin, H.264 out), `concat()` and `mux()` |
 | `codecinema.procutil` | Cross-platform file locks, process liveness, command lines, free memory, process-group termination and link-or-copy |
@@ -123,4 +124,4 @@ To grow it into a real film:
 | Full render | Hours (Blender) | About two minutes |
 | Guide | [README](../films/silvergrass/README.md), [docs](../films/silvergrass/docs/) | [README](../films/nightrevels/README.md), [plan](../films/nightrevels/docs/FILM_PLAN.md) |
 
-The [opening trilogy](../films/xishen/README.md) adds a longer 2D motion-comic pipeline: 67 shots across three episodes, a sourced character ledger, offline speech, subtitles, chapters and media/continuity QC. It shares the framework's settings, DSP and FFmpeg helpers while keeping its story-specific renderer separate from the generic starter.
+The [opening trilogy](../films/xishen/README.md) adds a longer 2D motion-comic pipeline: 67 shots across three episodes, a sourced character ledger, local emotional speech and aligned dialogue, subtitles, chapters and media/continuity QC. It shares the framework's settings, DSP and FFmpeg helpers while keeping its story-specific renderer separate from the generic starter.

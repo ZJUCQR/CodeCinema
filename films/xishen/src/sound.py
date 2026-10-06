@@ -29,89 +29,131 @@ def read_voice(path):
         return np.frombuffer(fh.readframes(fh.getnframes()),np.int16).astype(np.float32)/32768
 
 
-def voice_for(shot, fallback):
+def direction_for(shot, profile):
+    scene = shot.data["scene"]
+    emotion = shot.data.get("emotion", "neutral")
+    directions = {
+        "afraid": "害怕但努力克制，语尾稍发紧，在标点处自然换气。",
+        "lost": "困惑、记忆混乱，关键词稍停顿，像努力辨认自己的处境。",
+        "tired": "疲惫、气息较轻，语句仍清楚，不夸张呻吟。",
+        "thinking": "边观察边推理，后半句逐渐坚定，克制地流露好奇。",
+        "neutral": "自然、有变化的日常说话语气，不机械匀速。",
+    }
     if not shot.data.get("speaker"):
-        return fallback
-    if shot.data["speaker"] == "李秀春":
-        return fallback
-    return "Reed (中文（中国大陆）)"
+        tone = ("紧张而有悬念，句尾稍收，关键变化前短暂停顿。" if scene in
+                ("rain_fall", "memory_fall", "water_echo", "audience", "curtain", "water_message", "device", "tea")
+                else "清晰自然地讲故事，随情节变化重音，画面留有呼吸感。")
+        return "女性故事讲述者，标准普通话。" + tone + "约每秒五个汉字，完整读出文本，不增添话语。"
+    return profile.get("direction", "标准普通话。") + directions[emotion] + "自然中等语速，完整读出文本，不增添话语。"
 
 
-def prepare_voices(episode, out, mode="auto"):
-    out=Path(out); cache=out/"voices"; cache.mkdir(parents=True,exist_ok=True)
-    say=shutil.which("say")
-    fallback=str(settings.get("audio","voice","Tingting"))
-    rate=int(settings.get("audio","speech_rate",185))
-    available=set()
-    if say and mode!="off":
-        listing=subprocess.run([say,"-v","?"],capture_output=True,text=True,check=True).stdout
-        for row in listing.splitlines():
-            available.add(row.split("#")[0].rsplit(None,1)[0].strip())
-    report={"episode":episode["id"],"mode":mode,"engine":"macOS say" if say else None,"cues":[]}
-    result={}
-    for shot in timeline(episode):
-        if not shot.text:
-            continue
-        provided=ROOT/"assets/voices"/f"{shot.id}.wav"
-        voice=voice_for(shot,fallback)
-        if voice not in available and fallback in available:
-            voice=fallback
-        if mode=="off":
-            report["cues"].append({"shot":shot.id,"status":"disabled"})
-            continue
-        if not provided.exists() and (not say or voice not in available):
-            message=f"No Mandarin speech engine or recording available for {shot.id}"
-            if mode=="required":
-                raise RuntimeError(message)
-            report["cues"].append({"shot":shot.id,"status":"unavailable","message":message})
-            continue
-        payload=provided.read_bytes() if provided.exists() else f"{shot.text}|{voice}|{rate}|{SR}".encode()
-        key=hashlib.sha256(payload).hexdigest()[:18]
-        wav=cache/f"{shot.id}_{key}.wav"
-        if not wav.exists():
-            raw=cache/f"{shot.id}_{key}.aiff"
-            script=cache/f"{shot.id}_{key}.txt"
+def prepare_voices(episode, out, mode="auto", engine="auto"):
+    from codecinema.audio.speech import SpeechEngine, ForcedAligner, read_wave, write_wave
+    from codecinema.audio.performance import describe
+    from scipy.signal import resample_poly
+    from story import CANON
+
+    out = Path(out)
+    cache = out / "voices"
+    performance_dir = out / "performance"
+    performance_dir.mkdir(parents=True, exist_ok=True)
+    speech = SpeechEngine(cache, engine=engine) if mode != "off" else None
+    report = {"episode": episode["id"], "mode": mode, "engine": speech.engine if speech else None, "cues": []}
+    result, pending = {}, []
+    names = {spec["name"]: key for key, spec in CANON["characters"].items()}
+    try:
+        for shot in timeline(episode):
+            performance_path = performance_dir / f"{shot.id}.json"
+            if not shot.text or mode == "off":
+                performance_path.write_text("{}\n")
+                if shot.text:
+                    report["cues"].append({"shot": shot.id, "status": "disabled"})
+                continue
+            who = names.get(shot.data.get("speaker"))
+            profile = CANON["characters"][who].get("speech", {}) if who else {"voice": "Serena"}
+            voice = profile.get("voice", "Dylan")
+            provided = ROOT / "assets/voices" / f"{shot.id}.wav"
             try:
-                if provided.exists():
-                    source=provided
+                take_direction = direction_for(shot, profile)
+                source, key = speech.take(shot.text, voice=voice, direction=take_direction,
+                                         recording=provided, seed=43+shot.index,
+                                         system_voice="Tingting" if who in (None, "li_xiuchun") else "Reed (中文（中国大陆）)",
+                                         rate=int(settings.get("audio", "speech_rate", 185)))
+            except RuntimeError as exc:
+                if mode == "required" or speech.engine == "local":
+                    raise RuntimeError(f"{shot.id}: {exc}") from exc
+                report["cues"].append({"shot": shot.id, "status": "unavailable", "message": str(exc)})
+                performance_path.write_text("{}\n")
+                continue
+            slot = shot.duration - 1.25
+            final = cache / f"{key}_slot{round(slot*1000)}_{SR}.wav"
+            if not final.exists():
+                y, rate = read_wave(source)
+                y = resample_poly(y, SR, rate).astype(np.float32) if rate != SR else y
+                indices = np.flatnonzero(np.abs(y) > .0025)
+                if len(indices):
+                    y = y[max(0, int(indices[0])-round(SR*.045)):min(len(y), int(indices[-1])+round(SR*.12))]
+                seconds = len(y) / SR
+                if seconds > slot * 1.25 and speech.engine == "local" and not provided.exists():
+                    # A slow or repeated take is auditioned again before changing a shot's clock.
+                    retry_direction = take_direction + "语速稍快，停顿简洁，每句只读一遍。"
+                    source, retry_key = speech.take(shot.text, voice=voice, direction=retry_direction, seed=103+shot.index)
+                    y, rate = read_wave(source)
+                    y = resample_poly(y, SR, rate).astype(np.float32) if rate != SR else y
+                    indices = np.flatnonzero(np.abs(y) > .0025)
+                    if len(indices):
+                        y = y[max(0, int(indices[0])-round(SR*.045)):min(len(y), int(indices[-1])+round(SR*.12))]
+                    seconds = len(y)/SR
+                    # Keep the first-take cache key for the selected final waveform.
+                if seconds > slot:
+                    ratio = seconds / slot
+                    if ratio > 1.25:
+                        raise ValueError(f"{shot.id}: emotional take is {seconds:.2f}s for a {slot:.2f}s slot; extend the shot")
+                    trimmed = cache / f"{key}_trim.wav"
+                    write_wave(trimmed, y, SR)
+                    subprocess.run([settings.tool("ffmpeg"), "-v", "error", "-y", "-i", str(trimmed),
+                                    "-af", f"atempo={ratio:.8f}", "-ar", str(SR), "-ac", "1", str(final)], check=True)
+                    trimmed.unlink(missing_ok=True)
+                    y, _ = read_wave(final)
+                    if len(y)/SR > slot + .05:
+                        raise ValueError(f"{shot.id}: speech still exceeds its slot")
+                peak = float(np.max(np.abs(y))) if len(y) else 0
+                if peak < .001:
+                    raise ValueError(f"Empty voice: {shot.id}")
+                write_wave(final, y * (.44/peak), SR)
+            y, _ = read_wave(final)
+            result[shot.id] = y
+            # Thoughts and narration are audible without animating the on-screen mouth.
+            visible_speaker = who if shot.data.get("delivery") != "thought" else None
+            pending.append((shot, y, visible_speaker, key, performance_path))
+            report["cues"].append({"shot": shot.id, "status": "recording" if provided.exists() else "synthesized",
+                                   "voice": voice, "character": who, "seconds": round(len(y)/SR, 3),
+                                   "start": shot.start+.65, "file": str(final.relative_to(ROOT)),
+                                   "direction": direction_for(shot, profile)})
+            print(f"{shot.id}: {voice}, {len(y)/SR:.2f}s", flush=True)
+    finally:
+        if speech:
+            speech.close()
+    # Free the TTS model before loading the aligner or any frame workers.
+    aligner = ForcedAligner() if speech and speech.engine == "local" else None
+    try:
+        for shot, y, who, key, performance_path in pending:
+            alignment = []
+            if who and aligner:
+                aligned_cache = cache / f"{key}_aligned{round(shot.duration*1000)}.json"
+                if aligned_cache.exists():
+                    alignment = json.loads(aligned_cache.read_text())
                 else:
-                    script.write_text(shot.text,encoding="utf-8")
-                    subprocess.run([say,"-v",voice,"-r",str(rate),"-f",str(script),"-o",str(raw)],check=True)
-                    source=raw
-                subprocess.run([settings.tool("ffmpeg"),"-v","error","-y","-i",str(source),"-ar",str(SR),
-                                "-ac","1","-c:a","pcm_s16le",str(wav)],check=True)
-            finally:
-                raw.unlink(missing_ok=True); script.unlink(missing_ok=True)
-        y=read_voice(wav)
-        # Trim TTS lead/tail silence, then preserve every word without overlapping the next shot.
-        indices=np.flatnonzero(np.abs(y)>.003)
-        if len(indices):
-            y=y[max(0,int(indices[0])-round(SR*.04)):min(len(y),int(indices[-1])+round(SR*.13))]
-        duration=len(y)/SR
-        slot=shot.duration-1.25
-        if duration>slot:
-            ratio=duration/slot
-            if ratio>1.25:
-                raise ValueError(f"{shot.id}: speech needs {duration:.2f}s, only {slot:.2f}s available; shorten the line")
-            adjusted=cache/f"{shot.id}_{key}_fit{round(slot*1000)}.wav"
-            if not adjusted.exists():
-                subprocess.run([settings.tool("ffmpeg"),"-v","error","-y","-i",str(wav),
-                                "-af",f"atempo={ratio:.6f}","-ar",str(SR),"-ac","1",str(adjusted)],check=True)
-            y=read_voice(adjusted)
-            indices=np.flatnonzero(np.abs(y)>.003)
-            if len(indices):
-                y=y[max(0,int(indices[0])-round(SR*.02)):int(indices[-1])+round(SR*.04)]
-            if len(y)/SR>slot+.05:
-                raise ValueError(f"{shot.id}: fitted speech still exceeds the available slot")
-        peak=float(np.max(np.abs(y))) if len(y) else 0
-        if peak<.001:
-            raise ValueError(f"Empty narration for {shot.id}")
-        y=y*(.44/peak)
-        result[shot.id]=y
-        report["cues"].append({"shot":shot.id,"status":"recording" if provided.exists() else "synthesized",
-                               "voice":voice,"seconds":round(len(y)/SR,3),"start":shot.start+.65})
-    (out/f"{episode['id']}_speech.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
-    return result,report
+                    alignment = aligner.align(y, SR, shot.text)
+                    aligned_cache.write_text(json.dumps(alignment, ensure_ascii=False))
+            data = describe(y, SR, text=shot.text, speaker=who, alignment=alignment,
+                            method="forced-aligned" if alignment else "envelope")
+            performance_path.write_text(json.dumps(data, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+    finally:
+        if aligner:
+            aligner.close()
+    (out/f"{episode['id']}_speech.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    return result, report
 
 
 def pluck(freq, seconds, gain=.1):
@@ -185,9 +227,9 @@ def music(episode, shot):
     return mix
 
 
-def synthesize(episode, out, mode="auto"):
+def synthesize(episode, out, mode="auto", engine="auto"):
     out=Path(out); out.mkdir(parents=True,exist_ok=True)
-    voices,report=prepare_voices(episode,out,mode)
+    voices,report=prepare_voices(episode,out,mode,engine)
     raw=out/f"{episode['id']}_mix.wav"; final=out/f"{episode['id']}.wav"
     with wave.open(str(raw),"wb") as fh:
         fh.setnchannels(2); fh.setsampwidth(2); fh.setframerate(SR)

@@ -12,7 +12,7 @@ Run commands from your project root. The finished MP4 is `assets/film/__FILM_ID_
 
 ## Make it yours
 
-In Studio, choose the film, edit the title, captions, runtime, frame and colors, then click **Render my film**. Expand **Personalize every scene** to add or reorder scenes, mix looks, and change individual captions and camera moves.
+In Studio, choose the film, edit the title, captions, runtime, frame and colors, then click **Render my film**. Expand **Personalize every scene** to add or reorder scenes, mix looks, and change individual captions and camera moves. **Add a voice** accepts optional spoken text, a voice and acting direction; leave it blank for music only. See the [speech guide](../../docs/SPEECH.md) for the optional local speech pack and supplied recordings.
 
 The command line works too:
 

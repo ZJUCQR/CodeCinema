@@ -22,7 +22,7 @@ A rain-soaked return. An audience with crimson eyes. A director learning to surv
 
 Chen Ling comes home with two broken sets of memories. Behind a curtain, strangers are waiting for his performance. By morning, the nightmare has begun to leave traces in the real world.
 
-This trilogy condenses **chapters 1–6** of Sanjiu Yinyu's novel in their original order, with newly written dialogue and narration. Shared character models, a continuity ledger and one story clock connect all three episodes. The film combines code-drawn puppets and camera motion with offline Mandarin speech, an original synthesized score and foley.
+This trilogy condenses **chapters 1–6** of Sanjiu Yinyu's novel in their original order, with newly written dialogue and narration. Shared character models, a continuity ledger and one story clock connect all three episodes. The film combines a shared, individually designed cast and camera motion with emotion-directed Mandarin voices, an original synthesized score and foley. Dialogue mouths follow the final waveform and aligned syllable timestamps; narration and thoughts leave them closed. Footage keeps only the bottom captions and story props, without persistent titles or explanatory overlays.
 
 ## See the atmosphere
 
@@ -57,7 +57,8 @@ Each master includes burned-in captions, a selectable subtitle track and chapter
 Install CodeCinema and FFmpeg using the [getting-started guide](../../docs/GETTING_STARTED.md), then run these commands from the repository root:
 
 ```bash
-python -m codecinema run xishen all --narration required
+python -m pip install -e ".[speech]"
+python -m codecinema run xishen all --narration required --speech-engine local
 python -m codecinema run xishen serve
 ```
 
@@ -65,7 +66,9 @@ Open **http://127.0.0.1:8000/watch.html**. The local server supports byte-range 
 
 The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git; the [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
-**Voices and fonts:** macOS uses installed Mandarin `say` voices offline. On Linux or Windows, supply recordings as `assets/voices/<shot_id>.wav`; `--narration required` checks that every spoken cue is present. Use `--narration off` for an explicit captions-and-music edition. Install a CJK font such as Noto Serif CJK, or point `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms.
+**Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use; after that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
+
+**Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../docs/SPEECH.md) for reusable framework APIs and starter controls.
 
 ## Character and story continuity
 
@@ -89,8 +92,8 @@ The faces are this adaptation's visual designs. Clothing, props, locations and e
 | File | What to change |
 | --- | --- |
 | [data/episodes.json](data/episodes.json) | Shot order, durations, dialogue, narration, costumes and events |
-| [data/canon.json](data/canon.json) | Source references, character details and continuity constraints |
-| [film.toml](film.toml) | Picture dimensions, frame rate, encoding, voices and worker count |
+| [data/canon.json](data/canon.json) | Source references, character designs, persistent voices and acting directions |
+| [film.toml](film.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
 | [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
 
 For a quick, independent first film, use the [configurable starter](../../docs/GETTING_STARTED.md#make-it-yours) instead. This trilogy's source ledger and timeline are tailored to the novel.
@@ -101,18 +104,18 @@ For a quick, independent first film, use the [configurable starter](../../docs/G
 ```bash
 python -m codecinema run xishen plan
 python -m codecinema run xishen stills
-python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required
-python -m codecinema run xishen audio --episode ep01 --narration required
-python -m codecinema run xishen assemble --episode ep01 --narration required
-python -m codecinema run xishen qc --episode ep01 --narration required
+python -m codecinema run xishen audio --episode ep01 --narration required --speech-engine local
+python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required --speech-engine local
+python -m codecinema run xishen assemble --episode ep01 --narration required --speech-engine local
+python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
-Keep picture settings and narration mode consistent across stages. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`.
+Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`.
 
 </details>
 
 ## Verification and credits
 
-Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, loudness, true peak and full decoding of all four masters. The browser review also checks chapter seeking, episode continuation and mobile layout. Results are generated in `assets/film/qc.json` and `out/browser_qc.json`.
+Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. The browser review also checks chapter seeking, episode continuation and mobile layout. Results are generated in `assets/film/qc.json` and `out/browser_qc.json`.
 
 Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](data/canon.json) and [production plan](docs/FILM_PLAN.md). The novel's rights remain with its respective rights holders; the [MIT license](../../LICENSE) covers this repository's code.

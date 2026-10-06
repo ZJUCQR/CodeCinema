@@ -42,6 +42,7 @@ QUALITIES = {
     "standard": {"short_side": 720, "crf": 20, "preset": "fast"},
     "high": {"short_side": 1080, "crf": 16, "preset": "medium"},
 }
+VOICES = ("Serena", "Dylan", "Vivian", "Uncle_Fu", "Eric", "Ryan", "Aiden", "Ono_Anna", "Sohee")
 
 
 def duration(value):
@@ -105,6 +106,18 @@ def validate_story(data):
                 raise ValueError(f"{field}.{key} must be a string")
         if "accent" in scene and not re.fullmatch(r"#[0-9a-fA-F]{6}", str(scene["accent"])):
             raise ValueError(f"{field}.accent must be a hex color such as #e8c89d")
+        narration = scene.get("narration", {})
+        if not isinstance(narration, dict):
+            raise ValueError(f"{field}.narration must be an object")
+        for key in ("text", "direction", "recording"):
+            if not isinstance(narration.get(key, ""), str) or len(narration.get(key, "")) > 2000:
+                raise ValueError(f"{field}.narration.{key} must be text of at most 2000 characters")
+        if narration.get("voice", "Serena") not in VOICES:
+            raise ValueError(f"{field}.narration.voice must be one of: {', '.join(VOICES)}")
+        if narration.get("language", "Chinese") not in ("Chinese", "English", "Japanese", "Korean", "French", "German", "Spanish", "Italian", "Portuguese", "Russian"):
+            raise ValueError(f"{field}.narration.language is unsupported")
+        if narration.get("recording") and not re.fullmatch(r"[a-zA-Z0-9_-]+\.wav", narration["recording"]):
+            raise ValueError(f"{field}.narration.recording must be a filename such as scene-1.wav in assets/voices/")
         total += sec
     duration(total)
     return total

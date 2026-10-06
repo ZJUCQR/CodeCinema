@@ -1,7 +1,12 @@
 """Shot-specific staging, performance, camera movement and on-screen captions."""
 import math
+from functools import lru_cache
 
 import skia
+
+from codecinema import settings
+from codecinema.audio.performance import activate, Performance
+from pathlib import Path
 
 from art import (TOP, BOTTOM, BLUE, GOLD, INK, IVORY, RED, aurora, background, barrel, character, col,
                  cup, curve, ellipse, glow, grade, lamp, line, paint, path, rain, rect, shape, smooth,
@@ -46,30 +51,12 @@ def bg_for(scene):
 def title(c, episode, shot, t, end=False):
     c.drawImage(background("stage"),0,0)
     glow(c,1460,590,560,RED,.14)
+    # Quiet visual bookends; title, episode and credits live in player metadata.
+    x=1200+math.sin(t*.17)*35 if not end else 960
     if not end:
-        s=1.7
-        character(c,"chen_ling",1470,941,s,t,shot.costume,emotion="thinking" if episode["number"]==3 else "lost")
-        spotlight(c,1480,935,t)
-        # Independent title baseline keeps Chinese, Latin and episode typography readable.
-        text(c,"三九音域 原著",157,287,27,GOLD)
-        line(c,158,324,633,324,GOLD,.45,1)
-        text(c,"我不是戏神",150,465,115,IVORY)
-        text(c,"I AM NOT THE GOD OF DRAMA",158,519,25,GOLD,.8,role="ui")
-        text(c,f"0{episode['number']}",151,681,116,RED,.82,role="ui")
-        line(c,344,586,344,693,GOLD,.4,1)
-        text(c,episode["title"],376,653,52,IVORY)
-        text(c,"第一卷 · 戏中人",159,779,27,GOLD,.9)
-        text(c,shot.data.get("label",""),159,880,29,IVORY,.65)
-    else:
-        spotlight(c,960,875,t)
-        text(c,"我不是戏神",960,398,76,IVORY,align="center")
-        text(c,f"第 {episode['number']} 集 · {episode['title']}",960,477,35,GOLD,align="center")
-        line(c,664,536,1256,536,GOLD,.5,1)
-        text(c,shot.data.get("label",""),960,610,34,IVORY,align="center")
-        chapters="、".join(map(str,episode["chapters"]))
-        text(c,f"改编自原著第 {chapters} 章 · 台词与旁白重新创作",960,743,25,GOLD,.8,align="center")
-        text(c,"原著 / 三九音域    画面 · 动作 · 配乐 / CodeCinema",960,805,25,IVORY,.6,align="center")
-        text(c,"开篇三集 · 动态漫画",960,883,23,IVORY,.45,align="center")
+        character(c,"chen_ling",x,941,1.7,t,shot.costume,
+                  emotion="thinking" if episode["number"]==3 else "lost", injured=episode["number"]!=1)
+    spotlight(c,x,935,t)
 
 
 def monitor(c, value, u, warning=False):
@@ -107,7 +94,6 @@ def device(c, t, u):
             shape(c,[(xx,yy),(xx+18,yy+9),(xx+8,yy+29),(xx-10,yy+16)],"#82948f",None,rounded=False)
         line(c,x-170,y-85,x+165,y+117,"#050b12",1,12)
         line(c,x-58,y+167,x+48,y-185,"#050b12",1,7)
-    text(c,"灾厄指针",x,888,30,IVORY,align="center")
 
 
 def food(c,x,y,t):
@@ -211,7 +197,6 @@ def layout(c, episode, shot, t):
             c.saveLayer(skia.Rect.MakeWH(1920,1080),paint(IVORY,.13))
             hero(1380,940,1.66,pose="offer")
             c.restore()
-            text(c,"声音来自身后",1430,431,30,GOLD,.7,align="center")
         ellipse(c,1050,909,260,21,"#739795",.2)
     elif scene=="lamp":
         lamp(c,955,841,3.5,t)
@@ -262,7 +247,6 @@ def layout(c, episode, shot, t):
                 line(c,xx,150,xx+side*23,652,"#485568",.15,17)
         spotlight(c,960,908,t)
         hero(960,923,1.7)
-        text(c,"中场休息结束",960,343,44,RED,.8,align="center")
     elif scene in ("water_debris","water_message"):
         hero(1322,1075,1.45,rotation=-16,pose="hold")
         barrel(c,489,814,2.05,t,True)
@@ -277,7 +261,6 @@ def layout(c, episode, shot, t):
                 ellipse(c,720+j*47,856+math.sin(j)*7,3,9,RED,a*.6)
     elif scene=="coat":
         hero(1060,930,1.93,pose="hold")
-        text(c,"黑色棉大衣",1370,493,31,GOLD,.62)
     elif scene=="aurora":
         aurora(c,t)
         hero(1070,939,1.54,rotation=-4)
@@ -298,8 +281,6 @@ def layout(c, episode, shot, t):
     elif scene=="han":
         character(c,"han_meng",1140,1685,3.42,t,costume="officer_coat",emotion="thinking",injured=False,
                   speaking=shot.data.get("speaker")=="韩蒙")
-        text(c,"韩蒙",343,444,59,IVORY)
-        text(c,"三区 · 执法者",348,495,26,GOLD)
         line(c,349,537,647,537,GOLD,.4,1)
         snow(c,t)
     elif scene=="device":
@@ -347,7 +328,6 @@ def layout(c, episode, shot, t):
         cup(c,1280,659,4.0,"#682531" if u>.26 else "#65533a")
         if u>.3:
             ellipse(c,1300,861,191,17,RED,.5)
-        text(c,"茶水被改变了",1282,421,35,IVORY,.72,align="center")
     elif scene in ("gray","domains"):
         # These images are explicitly an illustration of the doctor's explanation.
         if scene=="gray":
@@ -362,7 +342,6 @@ def layout(c, episode, shot, t):
                 c.drawPath(p,paint("#c3c8bd",.45,1.3))
             line(c,349,292,1320,175,RED,.7,3)
             glow(c,1322,175,122,RED,.2)
-            text(c,"灰界 / 与现实交汇",955,871,40,IVORY,align="center")
         else:
             for j in range(9):
                 angle=j*math.tau/9-.5
@@ -371,15 +350,12 @@ def layout(c, episode, shot, t):
                 glow(c,x,y-12,110,GOLD,.22)
                 shape(c,[(x-8,y),(x-11,y-14),(x+math.sin(t+j)*4,y-40),(x+9,y-11),(x+8,y)],GOLD,None)
                 line(c,x,y,960,544,"#80959a",.13,1)
-            text(c,"九座域",960,557,70,IVORY,align="center")
-            text(c,"人类的火种",960,617,30,GOLD,align="center")
     elif scene=="paper":
         cup(c,951,671,3.8,"#748f90")
         shape(c,[(676,463),(1196,452),(1220,563),(700,572)],"#d9d1b7",None,rounded=False)
         for j in range(11):
             x=728+j*42; y=530+math.sin(j*2+t)*10
             ellipse(c,x,y,21+u*12,12+u*10,"#738b8b",smooth((u-j*.025)/.7)*.5)
-        text(c,"交汇像水渍，逐渐浸透纸面",960,863,38,IVORY,align="center")
     elif scene=="letter":
         character(c,"doctor_lin",1460,977,1.8,t,costume="white_coat",pose="offer",speaking=True)
         rect(c,391,465,699,334,"#cbc2a6",radius=3)
@@ -392,13 +368,9 @@ def layout(c, episode, shot, t):
         aurora(c,t)
         if scene=="thinking":
             hero(1370,941,1.85,pose="walk")
-            text(c,"29 → 30 → 27 → 29",662,534,61,IVORY,.85,align="center",role="ui")
-            text(c,"恐惧 · 平静 · 恶作剧",662,603,30,GOLD,.75,align="center")
         else:
             hero(1208,1760,3.7)
-            text(c,"情节",373,532,105,IVORY,.78)
             line(c,374,580,716,580,GOLD,.5,1)
-            text(c,"主动设计一场戏",377,641,32,GOLD)
     elif scene in ("breakfast","breakfast_close"):
         if scene=="breakfast_close":
             hero(615,1470,2.87,pose="hold")
@@ -426,11 +398,7 @@ def layout(c, episode, shot, t):
         aurora(c,t)
         rect(c,0,TOP,1920,BOTTOM-TOP,INK,.6)
         hero(1525,961,1.89)
-        text(c,"陈氏编导法则",181,349,73,IVORY)
-        text(c,"第 九 条",191,451,32,GOLD)
         line(c,191,493,1067,493,GOLD,.35,1)
-        text(c,"矛盾推动情节",185,589,62,IVORY)
-        text(c,"制造误会，让人物走进冲突。",191,680,37,GOLD)
     elif scene=="coins":
         tricycle(c,822,874,t,1)
         character(c,"xiao_liu",596,894,1.21,t,costume="green_jacket",emotion="tired",pose="hold")
@@ -440,7 +408,6 @@ def layout(c, episode, shot, t):
             ellipse(c,x,y,20,20,"#b39160")
             ellipse(c,x,y,15,15,"#6d674e",1,1)
             rect(c,x-4,y-4,8,8,"#39463f")
-        text(c,"20 枚报酬 / 只分 2 枚",1477,811,30,GOLD,align="center")
     elif scene=="chase":
         movement=math.sin(u*math.pi)*260
         character(c,"zhao_yi",990+movement,925,1.5,t,costume="work_jacket",pose="run",emotion="afraid",rotation=8)
@@ -448,7 +415,6 @@ def layout(c, episode, shot, t):
         line(c,646+movement,684,774+movement,477,"#857661",1,14)
         for j in range(6):
             character(c,"jiang_qin",120+j*325,924,.9,t+j,silhouette=True)
-        text(c,"观众期待值 +1",1360,338,34,RED,.85)
     elif scene=="recruit":
         hero(730,1226,2.3,pose="point")
         character(c,"xiao_liu",1300,1240,2.35,t,costume="green_jacket",emotion="thinking")
@@ -460,14 +426,10 @@ def layout(c, episode, shot, t):
         character(c,"xiao_liu",1240-smooth(u)*71,955,1.78,t,costume="green_jacket",pose="hold",rotation=-16)
         for j in range(4):
             character(c,"jiang_qin",1540+j*86,943,.8,t+j,silhouette=True)
-        text(c,"观众期待值 +2",1348,340,37,RED,.86)
     elif scene=="director":
         aurora(c,t)
         hero(1250,1738,3.7)
-        text(c,"情节开始由他推动",203,408,49,IVORY,.9)
-        text(c,"观众期待值 +2",208,500,39,RED,.9)
         line(c,208,552,707,552,GOLD,.35,1)
-        text(c,"他仍不知道，观众究竟是谁。",209,619,31,GOLD)
     else:
         raise ValueError(f"Unimplemented scene: {scene}")
 
@@ -500,26 +462,20 @@ def draw_frame(c, episode, shot, t, width=1920, height=1080):
     c.save(); c.scale(width/1920,height/1080)
     c.save(); c.clipRect(skia.Rect.MakeLTRB(0,TOP,1920,BOTTOM))
     scene=shot.data["scene"]
-    if scene in ("title","end"):
-        title(c,episode,shot,t,scene=="end")
-    else:
-        # Subtle shot-specific pans and dolly movement preserve the puppets' model sheets.
-        u=t/shot.duration
-        z=1.01+.035*smooth(u)
-        direction=-1 if shot.index%2 else 1
-        c.translate(960+direction*(u-.5)*17,552)
-        c.scale(z,z); c.translate(-960,-552)
-        layout(c,episode,shot,t)
+    with activate(performance(shot.id), t):
+        if scene in ("title","end"):
+            title(c,episode,shot,t,scene=="end")
+        else:
+            # Subtle shot-specific pans and dolly movement preserve the cast sheets.
+            u=t/shot.duration
+            z=1.01+.035*smooth(u)
+            direction=-1 if shot.index%2 else 1
+            c.translate(960+direction*(u-.5)*17,552)
+            c.scale(z,z); c.translate(-960,-552)
+            layout(c,episode,shot,t)
     grade(c)
     c.restore()
     if scene not in ("title","end"):
-        text(c,f"0{episode['number']} / {episode['title']}",91,104,22,GOLD,.8)
-        text(c,"我不是戏神",1830,104,25,IVORY,.52,align="right")
-        label=shot.data.get("label")
-        if label:
-            a=1-smooth((t-3)/1.5)
-            rect(c,88,166,math_min_label_width(label),49,INK,a*.67)
-            text(c,label,109,199,25,IVORY,a*.9)
         captions(c,shot,t)
     fade=0
     if scene=="title":
@@ -531,5 +487,6 @@ def draw_frame(c, episode, shot, t, width=1920, height=1080):
     c.restore()
 
 
-def math_min_label_width(label):
-    return 42+len(label)*26
+@lru_cache(maxsize=128)
+def performance(shot_id):
+    return Performance.load(Path(settings.path("paths","out_dir"))/"audio/performance"/f"{shot_id}.json")

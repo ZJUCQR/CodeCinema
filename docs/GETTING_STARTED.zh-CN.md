@@ -116,3 +116,5 @@ python -m codecinema run myfilm all --quality preview
 | 想撤回修改 | 把 `out/edits/<时间戳>/` 中的 `scenes.json` 和 `film.toml` 复制回影片目录，再生成一次 |
 
 生成的视频、音频和中间文件默认不提交 Git。可以分享代码、镜头数据和文档；成片适合放在 GitHub Release 中。
+
+可选配音：展开“**逐个定制分镜 → 添加配音**”，输入台词和情绪，再点击生成。[语音教程](SPEECH.zh-CN.md)介绍情绪声音和自录音的用法。

@@ -65,7 +65,8 @@
           "speaker": "陈伶",
           "text": "陈伶。对，我叫陈伶。可这些记忆……究竟属于谁？",
           "emotion": "lost",
-          "motif": "陈伶"
+          "motif": "陈伶",
+          "delivery": "thought"
         },
         {
           "id": "memory",
@@ -97,7 +98,7 @@
           "seconds": 10,
           "source": "ch01",
           "speaker": "陈伶",
-          "text": "先回去。弟弟的诊所……这条路，我应该每天都走过。",
+          "text": "先回去。寒霜街……这条路，我应该每天都走过。",
           "emotion": "tired"
         },
         {
@@ -560,7 +561,8 @@
           "speaker": "陈伶",
           "text": "它们看的，是情节。如果我主动设计一场戏，能不能把危险往后推？",
           "costume": "black_coat",
-          "emotion": "thinking"
+          "emotion": "thinking",
+          "delivery": "thought"
         },
         {
           "id": "breakfast",

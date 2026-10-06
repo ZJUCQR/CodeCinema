@@ -129,7 +129,16 @@ def configure(options):
         FINAL = FINAL.with_name(FINAL.stem + "_preview.mp4")
     data = {"story": STORY, "width": W, "height": H, "fps": FPS, "duration": DUR,
             "settings": settings.SETTINGS, "quality": options.quality}
-    KEY = hashlib.sha256(Path(__file__).read_bytes() + json.dumps(data, sort_keys=True).encode()).hexdigest()
+    has_speech = any(s[0].get("narration", {}).get("text") for s in SCENES)
+    shared = b""
+    if has_speech:
+        from codecinema.audio import speech
+        engine = options.speech_engine
+        data["speech_engine"] = ("local" if speech.local_available() else "system") if engine=="auto" else engine
+        shared = Path(speech.__file__).read_bytes()
+        for path in sorted((FILM / "assets/voices").glob("*.wav")):
+            shared += path.name.encode() + path.read_bytes()
+    KEY = hashlib.sha256(Path(__file__).read_bytes() + shared + json.dumps(data, sort_keys=True).encode()).hexdigest()
     FACE = find_typeface(TITLE + "".join(s[0].get("title", "") + s[0].get("subtitle", "") for s in SCENES))
     STARS = np.random.default_rng(STORY.get("seed", 7)).random((90, 3))
     LAYER = skia.Surface(W, H)
@@ -443,7 +452,44 @@ def score():
 def cmd_audio():
     OUT.mkdir(parents=True, exist_ok=True)
     temporary = SOUND.with_name("sound.partial.wav")
-    wavfile.write(temporary, dsp.SR, (np.clip(score().T, -1, 1) * 32767).astype(np.int16))
+    mix = score()
+    cues = [(spec, start, end) for spec, start, end in SCENES if spec.get("narration", {}).get("text")]
+    if cues:
+        from codecinema.audio.speech import SpeechEngine, read_wave
+        from scipy.signal import resample_poly
+        from scipy.ndimage import uniform_filter1d
+        speech = SpeechEngine(FILM/"out/voices", OPTIONS.speech_engine)
+        dialogue = np.zeros(mix.shape[1], dtype=np.float32)
+        try:
+            for spec, start, end in cues:
+                cue = spec["narration"]
+                recording = FILM/"assets/voices"/cue["recording"] if cue.get("recording") else None
+                if recording and not recording.is_file():
+                    raise ValueError(f"The narration recording is missing: {recording}")
+                path, _ = speech.take(cue["text"], voice=cue.get("voice", "Serena"),
+                                      direction=cue.get("direction", "Speak naturally, with warmth and varied emphasis."),
+                                      language=cue.get("language", "Chinese"), recording=recording,
+                                      system_voice="Samantha" if cue.get("language")=="English" else "Tingting")
+                samples, rate = read_wave(path)
+                samples = resample_poly(samples, dsp.SR, rate).astype(np.float32)
+                indices = np.flatnonzero(np.abs(samples)>.0025)
+                if len(indices):
+                    samples = samples[max(0,indices[0]-round(dsp.SR*.04)):min(len(samples),indices[-1]+round(dsp.SR*.1))]
+                slot=(end-start)/FPS-.55
+                if len(samples)/dsp.SR > slot:
+                    raise ValueError(f"{spec.get('name','Scene')}: narration needs {len(samples)/dsp.SR+.55:.1f}s. "
+                                     "Increase this scene's length or shorten the voice text.")
+                at=round(start/FPS*dsp.SR+.3*dsp.SR)
+                peak=max(float(np.max(np.abs(samples))),.001)
+                dialogue[at:at+len(samples)]+=samples*(.55/peak)
+        finally:
+            speech.close()
+        activity=uniform_filter1d(np.abs(dialogue),size=max(1,round(.1*dsp.SR)))
+        mix*=1-.72*np.clip(activity/.018,0,1)[None,:]
+        mix+=dsp.pan_mono(dialogue)
+        limited=dsp.limiter(mix,float(settings.get("audio","true_peak_db",-1)))
+        mix=limited[0] if isinstance(limited,tuple) else limited
+    wavfile.write(temporary, dsp.SR, (np.clip(mix.T, -1, 1) * 32767).astype(np.int16))
     temporary.replace(SOUND)
     marker("sound").write_text(json.dumps({"signature": KEY}), encoding="utf-8")
     print(f"Sound: {SOUND}", flush=True)
@@ -497,6 +543,7 @@ def main():
     parser.add_argument("--format", choices=starters.FORMATS)
     parser.add_argument("--duration", type=float, help="Scale the whole timeline to this number of seconds")
     parser.add_argument("--fps", type=int)
+    parser.add_argument("--speech-engine", choices=("auto", "local", "system", "recording"), default="auto")
     parser.add_argument("--open", action="store_true", help="Open the finished film in the default player")
     OPTIONS = parser.parse_args()
     try:
@@ -514,7 +561,7 @@ def main():
             function()
         if OPTIONS.open:
             open_film()
-    except (ValueError, OSError, subprocess.SubprocessError) as exc:
+    except (ValueError, RuntimeError, OSError, subprocess.SubprocessError) as exc:
         print(f"Film could not be completed: {exc}", file=sys.stderr)
         return 1
     return 0

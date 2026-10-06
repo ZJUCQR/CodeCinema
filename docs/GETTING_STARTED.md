@@ -116,3 +116,5 @@ Supported cameras: `wide`, `drift`, `close`. Each scene lasts at least 0.5 secon
 | An edit needs undoing | Copy `scenes.json` and `film.toml` from a saved `out/edits/<timestamp>/` back into the film folder, then render again |
 
 Generated videos, audio and intermediates are ignored by Git. Source code, scene data and documentation can be shared; finished videos can be attached to a GitHub Release.
+
+Optional voice: open **Personalize every scene → Add a voice**, enter your line and its mood, then render. See the [short speech guide](SPEECH.md) for expressive local voices or your own recordings.

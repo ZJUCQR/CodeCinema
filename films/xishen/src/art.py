@@ -131,188 +131,286 @@ def text(c, s, x, y, size=32, color=IVORY, a=1, align="left", role="song"):
     c.drawTextBlob(blob, xx, y, paint(color, a))
 
 
-def hair(c, kind, t):
+# Each face has its own silhouette and body proportions, shared across all shots.
+CAST = {
+    "chen_ling": dict(cheek=25, jaw=15, chin=5, eye=11, shoulder=40, waist=26, hip=30, hair="fringe", age=0),
+    "chen_tan": dict(cheek=26, jaw=20, chin=10, eye=11.5, shoulder=42, waist=30, hip=31, hair="receding", age=2),
+    "li_xiuchun": dict(cheek=25, jaw=17, chin=5, eye=10.5, shoulder=36, waist=28, hip=35, hair="bun", age=1),
+    "han_meng": dict(cheek=29, jaw=25, chin=13, eye=12, shoulder=54, waist=36, hip=37, hair="side", age=1),
+    "jiang_qin": dict(cheek=25, jaw=20, chin=8, eye=11, shoulder=46, waist=30, hip=32, hair="crop", age=0),
+    "doctor_lin": dict(cheek=24, jaw=16, chin=6, eye=10.5, shoulder=40, waist=27, hip=31, hair="part", age=1),
+    "zhao_yi": dict(cheek=25, jaw=17, chin=7, eye=11, shoulder=40, waist=26, hip=29, hair="messy", age=0),
+    "uncle_zhao": dict(cheek=31, jaw=26, chin=14, eye=13, shoulder=50, waist=43, hip=43, hair="balding", age=2),
+    "xiao_liu": dict(cheek=24, jaw=17, chin=6, eye=10, shoulder=37, waist=25, hip=28, hair="soft", age=0),
+}
+
+
+def stroke(c, points, color, a=1, width=1):
+    c.drawPath(curve(points, False), paint(color, a, width))
+
+
+def hair(c, kind, t=0):
+    dark, sheen = "#101923", "#566578"
     if kind == "bun":
-        ellipse(c, 23, -369, 25, 24, "#1a2024")
-        shape(c, [(-39,-333),(-38,-358),(-18,-378),(20,-375),(39,-350),(37,-322),(29,-341),
-                  (0,-353),(-22,-348),(-33,-319)], "#171f25")
-        line(c, -20, -359, 18, -365, "#607078", .35, 1.2)
+        ellipse(c, 25, -349, 13, 14, dark)
+        shape(c, [(-27,-323),(-29,-345),(-19,-361),(4,-367),(25,-357),(29,-337),(25,-316),
+                  (22,-342),(9,-349),(-5,-347),(-20,-338),(-24,-316)], dark, "#090f19", .8)
+        for j in range(4):
+            stroke(c, [(-20+j*6,-352),(-3+j*4,-359),(17,-352)], sheen, .27, .65)
     elif kind in ("receding", "balding"):
-        shape(c, [(-39,-320),(-40,-348),(-31,-360),(-24,-338),(-28,-316)], "#262d31")
-        shape(c, [(37,-320),(39,-350),(29,-358),(26,-337),(29,-314)], "#262d31")
+        for side in (-1, 1):
+            shape(c, [(side*24,-318),(side*29,-328),(side*28,-346),(side*22,-352),
+                      (side*20,-339),(side*22,-326)], "#302f30", None)
+            for j in range(3):
+                stroke(c, [(side*(23+j),-345),(side*(25+j),-332),(side*25,-325)], "#aaa89e", .5, .6)
         if kind == "receding":
-            c.drawPath(curve([(-26,-363),(-3,-373),(25,-363)], False), paint("#4a4744", .8, 3))
+            stroke(c, [(-17,-357),(-3,-361),(15,-355)], "#514945", .9, 1.3)
+    elif kind == "fringe":
+        shape(c, [(-26,-316),(-32,-337),(-30,-355),(-17,-365),(2,-370),(20,-367),
+                  (30,-355),(31,-333),(25,-310),(21,-337),(16,-325),(10,-348),(6,-327),
+                  (-2,-345),(-8,-329),(-12,-346),(-20,-328),(-24,-311)], dark, "#080e18", .9)
+        for j, x in enumerate((-23,-15,-6,4,13,22)):
+            stroke(c, [(x-5,-358),(x,-349),(x+3,-332+j%2*5)], sheen, .35, .75)
+            stroke(c, [(x-3,-349),(x,-337),(x+1,-329+j%2*4)], "#839198", .18, .45)
+    elif kind in ("side", "part"):
+        shape(c, [(-26,-316),(-29,-345),(-22,-359),(0,-366),(23,-359),(31,-347),(28,-319),
+                  (23,-323),(23,-342),(7,-348),(-1,-354),(-13,-342),(-21,-344),(-22,-318)], dark, "#080e18", .9)
+        if kind == "part":
+            stroke(c, [(1,-364),(-1,-355),(-4,-347)], "#9b9389", .7, 1.1)
+        for j in range(4):
+            stroke(c, [(-18+j*8,-358),(-12+j*7,-353),(12+j*3,-345)], sheen, .34, .8)
+        if kind == "side":
+            for j in range(3):
+                line(c,-25,-338+j*5,-22,-338+j*5,"#879098",.28,.65)
     else:
-        points = [(-41,-308),(-47,-342),(-39,-368),(-21,-383),(2,-382),(20,-388),(42,-365),
-                  (46,-337),(38,-305),(31,-339),(20,-326),(16,-352),(4,-329),(-2,-348),
-                  (-17,-327),(-18,-349),(-30,-330),(-35,-314)]
-        if kind in ("short", "neat"):
-            points = [(-39,-316),(-44,-346),(-32,-371),(2,-379),(33,-368),(44,-344),(35,-317),
-                      (28,-344),(10,-346),(-16,-344),(-30,-339)]
-        shape(c, points, "#101921", "#060b10", 2)
-        for i in range(6):
-            x = -29 + i*11
-            c.drawPath(curve([(x-7,-367),(x,-354),(x+2,-335)], False), paint("#526374", .27, 1.2))
+        messy = kind == "messy"
+        points = [(-25,-316),(-31,-341),(-26,-357),(-15,-360),(-10,-371 if messy else -365),
+                  (0,-365),(8,-372 if messy else -366),(14,-361),(24,-365 if messy else -358),
+                  (30,-346),(28,-320),(23,-316),(22,-342),(13,-340),(6,-344),(-4,-340),(-18,-341),(-22,-316)]
+        shape(c, points, dark, "#080e18", .9)
+        for j in range(5):
+            x = -20+j*9
+            stroke(c, [(x,-359),(x+4,-352),(x+3,-342)], sheen, .3, .65)
+
+
+def hand(c, x, y, skin, side=1, gesture=False):
+    c.save(); c.translate(x,y); c.scale(side,1)
+    if gesture:
+        shape(c,[(-6,-1),(1,-5),(8,-12),(10,-11),(5,-1),(11,3),(14,10),(10,15),
+                 (3,13),(-2,7),(-6,6)],skin,"#765b55",.65)
+        stroke(c,[(5,3),(10,5),(10,10)],"#927067",.65,.55)
+    else:
+        shape(c,[(-5,-3),(5,-3),(7,5),(6,17),(3,19),(-1,17),(-4,9),(-6,3)],skin,"#765b55",.6)
+        for x0 in (0,3):
+            stroke(c,[(x0,6),(x0+1,13),(x0,16)],"#8c6e64",.65,.45)
+        stroke(c,[(-5,2),(-1,3),(1,8)],"#8c6e64",.65,.55)
+    c.restore()
 
 
 def character(c, who, x, y, scale=1.5, t=0, costume=None, emotion="neutral", pose="stand", facing=1,
               rotation=0, injured=True, speaking=False, silhouette=False):
-    """One cast asset, shared across every shot; local coordinates are in puppet units."""
-    spec = CANON["characters"][who]
+    """A consistent graphic-novel cast; dialogue drives the face on its real clock."""
+    from codecinema.audio.performance import current_mouth
+    spec, model = CANON["characters"][who], CAST[who]
     costume = costume or spec["costumes"][0]
     skin = spec["skin"]
     seed = sum(map(ord, who))
-    breath = math.sin(t*1.55 + seed)*1.4
-    walk = math.sin(t*4.3)*13 if pose in ("walk", "run") else 0
-    c.save()
-    c.translate(x, y+breath*scale)
-    c.rotate(rotation)
-    c.scale(scale*facing, scale)
-    if silhouette:
-        ellipse(c, 0, -325, 35, 48, "#101a23")
-        shape(c, [(-42,-268),(-56,-60),(-22,-6),(26,-6),(52,-64),(41,-267)], "#101a23", None)
-        c.restore()
-        return
+    breath = math.sin(t*1.45+seed)*.7
+    walk = math.sin(t*(6.0 if pose=="run" else 3.5))*13 if pose in ("walk","run") else 0
+    shoulder, waist, hip = model["shoulder"], model["waist"], model["hip"]
     robe = costume == "red_robe"
-    colors = {"red_robe": ("#8f2234", "#511929", "#b13546"),
-              "black_coat": ("#202f3a", "#101a25", "#53606a"),
-              "memory_shirt": ("#9d9f9d", "#54606a", "#c3c2b5"),
-              "father_home": ("#4f4e4b", "#303337", "#777268"),
-              "mother_home": ("#70625e", "#403a40", "#92807a"),
-              "raincoat": ("#192630", "#0c151f", "#344651"),
-              "officer_coat": ("#162733", "#0a1520", "#334654"),
-              "uniform": ("#273744", "#13222e", "#842b39"),
-              "white_coat": ("#cdcac0", "#858e91", "#e5e0d0"),
-              "work_jacket": ("#69534b", "#372d2e", "#8c6d57"),
-              "apron": ("#ad8e62", "#50483d", "#c6ad84"),
-              "green_jacket": ("#526963", "#283f3d", "#7e9184")}
+    c.save(); c.translate(x,y+breath*scale); c.rotate(rotation); c.scale(scale*facing,scale)
+    if silhouette:
+        ellipse(c,0,-331,24,31,"#101a23")
+        shape(c,[(-37,-291),(-42,-174),(-26,-5),(21,-5),(37,-174),(35,-291)],"#101a23",None)
+        c.restore(); return
+    colors = {
+        "red_robe": ("#922b40","#451c2d","#d1525a"),
+        "black_coat": ("#243640","#101d28","#637681"),
+        "memory_shirt": ("#b9b5a4","#696c68","#ece4cc"),
+        "father_home": ("#595450","#2c3034","#978a76"),
+        "mother_home": ("#78656a","#40353e","#b08d8b"),
+        "raincoat": ("#1f2d39","#101a25","#566b76"),
+        "officer_coat": ("#172a37","#09151f","#607583"),
+        "uniform": ("#293b48","#101e2b","#647889"),
+        "white_coat": ("#d1d2c6","#788b8e","#f3ecd8"),
+        "work_jacket": ("#856153","#422d30","#b08766"),
+        "apron": ("#947854","#514331","#c5a979"),
+        "green_jacket": ("#536d5c","#293f3a","#8b9d7b"),
+    }
     base, dark, light = colors[costume]
-    # Feet and trousers remain anatomically anchored to the same pelvis.
-    for side in (-1, 1):
-        leg_x = side*22
-        swing = walk*side
-        shape(c, [(leg_x-12,-109),(leg_x+13,-110),(leg_x+14+swing,-13),(leg_x-9+swing,-11)], dark)
+    # Long, articulated legs and individual body silhouettes replace the old dolls.
+    ellipse(c,0,-2,62,8,"#060e16",.33)
+    for side in (-1,1):
+        swing=walk*side
+        xx=side*16+swing*.4
+        shape(c,[(side*hip*.65,-168),(side*7,-165),(xx-7,-86),(xx-7,-10),
+                 (xx+8,-9),(xx+10,-81),(side*(hip+2),-157)],"#26343c","#0f1923",.8)
+        stroke(c,[(side*20,-146),(xx+2,-86),(xx+2,-25)],"#657078",.33,.9)
         if robe:
-            shape(c, [(leg_x-10+swing,-15),(leg_x+13+swing,-13),(leg_x+23+swing,-3),
-                      (leg_x+20+swing,1),(leg_x-12+swing,1)], skin)
-            for j in range(3):
-                line(c, leg_x+12+swing+j*3, -5, leg_x+12+swing+j*3, -1, "#897269", .65, .7)
+            shape(c,[(xx-7,-14),(xx+7,-14),(xx+12,-5),(xx+20,-2),(xx+18,2),
+                     (xx-9,2)],skin,"#705d5b",.6)
+            for j in range(3): line(c,xx+8+j*3,-2,xx+8+j*3,1,"#856861",.6,.5)
         else:
-            shape(c, [(leg_x-14+swing,-15),(leg_x+14+swing,-12),(leg_x+28+swing,-3),
-                      (leg_x+24+swing,2),(leg_x-14+swing,2)], "#121b23")
-    hem = -22 if robe else (-47 if costume in ("black_coat", "officer_coat", "raincoat") else -105)
-    drift = math.sin(t*1.8+seed)*8 if robe else 2
-    shape(c, [(-17,-287),(-42,-274),(-52,-218),(-43,-148),(-63+drift,hem),(-26,hem+10),
-              (5,hem+5),(53+drift,hem+6),(48,-143),(47,-219),(38,-274),(15,-287)], base)
+            shape(c,[(xx-8,-18),(xx+8,-17),(xx+12,-5),(xx+22,-2),(xx+21,3),(xx-10,3)],"#101b24","#070e18",.8)
+            line(c,xx-6,-12,xx+8,-11,"#7c8787",.55,.8)
+            line(c,xx-8,1,xx+20,1,"#52616b",.65,1)
+    hem=-40 if robe else -61 if costume in ("black_coat","officer_coat","white_coat","raincoat") else -147
+    drift=math.sin(t*.85)*2.0 if robe else .4
+    body=[(-12,-297),(-shoulder,-289),(-shoulder-3,-244),(-waist-2,-172),
+          (-hip-9+drift,hem),(-10+drift,hem+4),(hip+8+drift,hem),(waist+4,-174),
+          (shoulder+2,-244),(shoulder,-289),(12,-297)]
+    shape(c,body,base,"#0d1722",1)
+    shape(c,[(-shoulder,-277),(-waist,-177),(-hip-8,hem),(-10,hem+1),(-12,-187),(-6,-283)],dark,None,a=.48)
+    shape(c,[(shoulder-5,-279),(waist+1,-176),(hip+4,hem),(hip-5,hem+1),(waist-5,-181)],light,None,a=.16)
     if robe:
-        shape(c, [(-18,-281),(-37,-271),(-26,-233),(20,-192),(27,-199),(-5,-251)], light, None, a=.46)
-        shape(c, [(15,-280),(37,-270),(21,-231),(-18,-197),(-28,-201),(-1,-248)], dark, None)
+        shape(c,[(-12,-295),(-28,-279),(-17,-245),(23,-201),(28,-210),(2,-263)],light,None,a=.72)
+        shape(c,[(12,-295),(27,-278),(19,-253),(-16,-219),(-23,-224),(2,-265)],dark,None)
+        # Subtle woven trim and asymmetrical fabric folds.
+        stroke(c,[(-25,-279),(-12,-249),(21,-208)],"#e5a08c",.54,1.1)
+        stroke(c,[(-13,-181),(-23,-105),(-25,hem+3)],light,.36,1.2)
+        stroke(c,[(21,-198),(9,-124),(3,hem+3)],dark,.9,2.2)
+        for j in range(4):
+            xx=-24+j*16
+            stroke(c,[(xx,-167),(xx+math.sin(j)*6,-98),(xx+drift*1.4,hem+3)],light,.20,.8)
+        rect(c,-waist-4,-186,(waist+4)*2,9,dark)
     else:
-        shape(c, [(-13,-282),(13,-282),(18,-220),(-17,-220)], dark, None)
-        shape(c, [(-15,-283),(-32,-273),(-24,-247),(-8,-237),(-6,-252)], light, None, a=.68)
-        shape(c, [(15,-283),(31,-273),(25,-247),(9,-236),(7,-252)], light, None, a=.59)
-        line(c, 5, -234, 5, hem+6, dark, .85, 1.4)
-        for yy in range(-216,int(hem),27):
-            ellipse(c, 7, yy, 2.2, 2.2, light, .65)
-    for j in range(6):
-        xx = -38+j*14
-        c.drawPath(curve([(xx,-179),(xx+math.sin(j)*8,-100),(xx+drift*.4,hem+2)], False),
-                   paint(dark, .55, 1.6))
-    rect(c, -43, -193, 87, 11, dark)
-    if costume == "uniform":
-        rect(c, -38, -194, 77, 7, RED)
-        rect(c, -35, -269, 15, 6, RED)
-    if costume == "apron":
-        shape(c, [(-27,-250),(27,-250),(40,-72),(-39,-72)], "#dbc6a1", dark, 1.4)
-        rect(c, -20, -157, 40, 32, "#b49b76", .8)
-    if costume == "white_coat":
-        for yy in (-202,-178,-154):
-            ellipse(c, 3, yy, 2, 2, "#57636a")
-        rect(c, 20, -230, 21, 24, "#aab1ac")
-        line(c, 23, -243, 23, -224, "#3b5365", 1, 2)
-    # Two sleeves: wide stage sleeves in red, weighted coat sleeves in daylight.
-    for side in (-1, 1):
-        sy = -180 + (walk*side*.35)
-        reach = 25 if pose in ("hold", "offer", "point") else 0
-        hand_x = side*(70-reach)
-        hand_y = sy-40 if pose in ("hold", "offer") else sy+34
-        width = 29 if robe else 17
-        shape(c, [(side*35,-269),(side*53,-263),(side*(75-reach),sy-20),
-                  (hand_x+side*width,hand_y-6),(hand_x-side*width,hand_y+8),(side*40,-219)], base)
-        c.drawPath(curve([(side*45,-257),(side*57,sy-20),(hand_x,hand_y-8)], False), paint(light,.5,1.4))
-        if robe:
-            line(c, hand_x-side*width, hand_y+6, hand_x+side*width, hand_y-5, dark, 1, 3)
-        shape(c, [(hand_x-8,hand_y),(hand_x+8,hand_y-3),(hand_x+11,hand_y+11),
-                  (hand_x+3,hand_y+21),(hand_x-8,hand_y+14)], skin, "#6f6866", .7)
-        for j in range(3):
-            line(c, hand_x+j*3-2, hand_y+7, hand_x+j*3, hand_y+16, "#8e7970", .6, .7)
-    # Neck, cheek contour, subtle face-plane shading.
-    shape(c, [(-13,-305),(-14,-276),(0,-262),(14,-279),(13,-306)], skin)
-    shape(c, [(-12,-303),(13,-303),(10,-282),(-7,-286)], "#988982", None, a=.52)
-    jaw = 32 if spec["face"] in ("square", "angular") else 22
-    shape(c, [(-35,-350),(-40,-325),(-33,-302),(-jaw,-285),(0,-275),(jaw,-285),(34,-305),
-              (39,-329),(29,-359),(0,-370)], skin, "#19232b", 1.4)
-    shape(c, [(23,-359),(35,-345),(37,-321),(27,-298),(9,-277),(22,-284),(33,-303),
-              (39,-330)], "#a3928e", None, a=.62)
-    ellipse(c, -37, -323, 6, 12, skin)
-    ellipse(c, 36, -323, 5, 12, skin)
-    line(c, -39, -325, -35, -318, "#8b7772", .8, 1)
-    # Expression keeps features fixed while changing only brows, lids and mouth.
-    blink = ((t+seed*.017) % 4.9) > 4.73
-    wide = emotion in ("afraid", "lost")
-    for side in (-1, 1):
-        ex = side*17
-        ey = -327
-        if blink:
-            c.drawPath(curve([(ex-10,ey),(ex,ey+2),(ex+10,ey-1)],False),paint("#222a31",1,1.6))
-        else:
-            shape(c, [(ex-11,ey),(ex-3,ey-5 if wide else ey-3),(ex+9,ey-1),
-                      (ex+6,ey+5),(ex-5,ey+5)], "#ece2d5", "#3c3537", .8)
-            ellipse(c, ex+1, ey+1, 3.6, 5.0 if wide else 4, spec["eyes"])
-            ellipse(c, ex+2, ey-1, 1, 1.5, "#d1ddd9", .85)
-            c.drawPath(curve([(ex-11,ey),(ex-3,ey-5),(ex+10,ey-1)],False),paint("#16232b",1,1.5))
-        by = ey-15
-        tilt = -4*side if emotion in ("afraid", "lost", "tired") else 1*side
-        line(c, ex-10, by-tilt, ex+10, by+tilt, "#263139", 1, 2)
-        c.drawPath(curve([(ex-9,ey+12),(ex,ey+14),(ex+7,ey+11)],False),paint("#958582",.5,.8))
-    c.drawPath(curve([(1,-325),(-2,-311),(3,-307)],False),paint("#8b7470",.9,1.1))
-    line(c, 2,-306,7,-307,"#8b7470",.75,.9)
-    my = -294
-    if speaking:
-        ellipse(c, 1, my, 5.5, 2+2.8*(.5+.5*math.sin(t*13)), "#694b4c")
-    else:
-        c.drawPath(curve([(-8,my),(0,my+1),(8,my-1 if emotion=="thinking" else my+1)],False),paint("#624d4d",.9,1.1))
-    line(c, -3,-290,4,-290,"#e1cec0",.7,.9)
-    if spec["face"] in ("angular", "square", "soft"):
+        shape(c,[(-9,-297),(8,-297),(13,-230),(-14,-230)],"#bbc0b5" if costume=="white_coat" else dark,None)
+        shape(c,[(-12,-295),(-shoulder+8,-277),(-20,-257),(-9,-243),(-4,-260)],light,None,a=.54)
+        shape(c,[(12,-295),(shoulder-8,-277),(21,-257),(9,-243),(4,-260)],light,None,a=.41)
+        stroke(c,[(-12,-295),(-21,-270),(-9,-244)],dark,.65,.8)
+        stroke(c,[(12,-295),(22,-269),(9,-244)],dark,.65,.8)
+        line(c,3,-237,3,hem+1,dark,.9,1)
+        for yy in range(-224,int(hem),30):
+            ellipse(c,5,yy,1.8,1.8,light,.85)
+            ellipse(c,5.3,yy-.4,.45,.45,IVORY,.6)
         for side in (-1,1):
-            line(c, side*29,-310,side*26,-296,"#8a7973",.55,.7)
-    hair(c, spec["hair"], t)
-    if who == "chen_ling" and injured and costume != "memory_shirt":
-        c.drawPath(curve([(29,-347),(27,-337),(31,-330)],False),paint("#942c3a",.85,1.5))
+            stroke(c,[(side*(waist-7),-212),(side*waist,-191),(side*(hip+3),hem+1)],dark,.55,1)
+            if hem < -100:
+                line(c,side*(waist-13),-193,side*(waist-1),-197,light,.65,1.2)
+        if costume in ("black_coat","officer_coat"):
+            for side in (-1,1):
+                line(c,side*(waist-18),-204,side*(waist-2),-201,dark,1,2)
+                line(c,side*(waist-18),-203,side*(waist-2),-200,light,.38,.7)
+        if costume=="uniform":
+            rect(c,-shoulder+4,-278,17,4,RED)
+            rect(c,shoulder-21,-278,17,4,RED)
+            rect(c,-waist-3,-182,(waist+3)*2,6,"#17212b")
+            rect(c,-4,-182,9,6,"#bda479",radius=1)
+        if costume=="white_coat":
+            rect(c,14,-250,17,18,"#bcc6bc",radius=1)
+            line(c,19,-256,19,-238,"#345369",1,1.7)
+            line(c,22,-255,22,-239,"#6e5146",1,1.2)
+        if costume=="apron":
+            shape(c,[(-29,-265),(28,-265),(39,-153),(43,-92),(-42,-92),(-37,-153)],"#c5b389",dark,.7)
+            rect(c,-23,-179,44,24,"#b59a73",radius=2)
+            line(c,-23,-154,21,-154,light,.7,.8)
+    # Sleeves use elbow bends; hands have slender individual fingers.
+    for side in (-1,1):
+        raised=pose in ("hold","offer","point") and side==1
+        hx=side*(57 if raised else shoulder+11)
+        hy=(-223 if pose=="point" else -203) if raised else -144+walk*side*.28
+        elbowx=side*(shoulder+16)
+        elbowy=-199 if raised else -215
+        cuff=15 if robe else 9
+        shape(c,[(side*(shoulder-4),-286),(side*(shoulder+10),-280),
+                 (elbowx+side*9,elbowy),(hx+side*cuff,hy-3),(hx-side*cuff,hy+5),
+                 (elbowx-side*8,elbowy+7),(side*(shoulder-10),-249)],base,"#12202b",.8)
+        stroke(c,[(side*(shoulder+4),-269),(elbowx,elbowy),(hx,hy-8)],light,.46,1.0)
+        line(c,hx-cuff,hy-1,hx+cuff,hy-2,dark,.8,2 if robe else 1.3)
+        hand(c,hx,hy+2,skin,side,gesture=pose=="point" and raised)
+    # A smaller head, defined jaw and sculpted planes keep human proportions.
+    shape(c,[(-9,-311),(-9,-287),(0,-277),(10,-288),(9,-311)],skin,"#695f5b",.65)
+    shape(c,[(-9,-307),(9,-307),(7,-288),(-6,-286)],"#8a6e65",None,a=.47)
+    cheek,jaw,chin=model["cheek"],model["jaw"],model["chin"]
+    face=[(-cheek+3,-346),(-cheek,-331),(-cheek+2,-317),(-jaw,-307),(-chin,-301),
+          (chin,-301),(jaw,-307),(cheek-1,-319),(cheek,-335),(cheek-4,-349),(1,-357)]
+    face_path=shape(c,face,skin,"#3a3033",.55)
+    c.save(); c.clipPath(face_path,doAntiAlias=True)
+    gradient(c,(-cheek,-358,cheek*2,58),["#f0d6c6",skin,"#a98779"],a=.56,horizontal=True)
+    glow(c,-11,-337,23,"#f7deca",.16,rx=.7)
+    glow(c,cheek+4,-326,28,"#664750",.18,rx=.65)
+    glow(c,0,-352,17,"#7c6061",.22,rx=1.6)
+    c.restore()
+    shape(c,[(cheek-5,-346),(cheek,-333),(cheek-2,-318),(jaw,-307),(chin,-302),
+             (10,-307),(15,-323),(14,-345)],"#96766c",None,a=.36)
+    shape(c,[(-15,-344),(-21,-331),(-18,-319),(-8,-316),(-4,-330),(-6,-345)],"#f4daca",None,a=.14)
+    for side in (-1,1):
+        ellipse(c,side*(cheek+1),-328,3.2,6.5,skin)
+        stroke(c,[(side*(cheek+1),-332),(side*(cheek+2),-328),(side*cheek,-324)],"#936b62",.7,.6)
+    blink=((t+seed*.017)%5.4)>5.27
+    tense=emotion in ("afraid","lost")
+    gaze=math.sin(t*.31+seed)*.6
+    for side in (-1,1):
+        ex=side*model["eye"]; ey=-330
+        outer=ey-(.7 if who in ("chen_ling","zhao_yi") else 0)
+        height=1.9 if tense else 1.05 if who=="han_meng" else 1.4
+        if blink:
+            stroke(c,[(ex-5.6,ey),(ex,ey+1.0),(ex+5.4,outer)],"#30272e",1,1.05)
+        else:
+            shape(c,[(ex-5.6,ey),(ex-2.5,ey-height),(ex+3.0,ey-height+.4),(ex+5.4,outer),
+                     (ex+2.8,ey+height-.3),(ex-2.7,ey+height)],"#e8ded3","#675453",.45)
+            ellipse(c,ex+gaze,ey+.15,1.55,height+.2,spec["eyes"])
+            ellipse(c,ex+gaze+.65,ey-.9,.55,.65,"#dfe9df",.9)
+            stroke(c,[(ex-5.6,ey),(ex-2.5,ey-height),(ex+3,ey-height+.4),(ex+5.4,outer)],"#27242d",1,0.8)
+            stroke(c,[(ex-5.3,ey+4.4),(ex+1,ey+4.7),(ex+5,ey+2.9)],"#a17d73",.45,.6)
+        brow=ey-7.2
+        tilt=side*-1.9 if tense else side*-1.0 if who=="han_meng" else side*.5
+        if who=="zhao_yi" and side==1: brow-=2.0
+        stroke(c,[(ex-6.7,brow-tilt),(ex-1,brow-.3),(ex+6.0,brow+tilt)],
+               "#362d32",1,1.5 if who in ("han_meng","uncle_zhao","chen_tan") else 1.1)
+        if model["age"]:
+            stroke(c,[(ex-6,ey+5.6),(ex+1,ey+6.7),(ex+5,ey+5)],"#8b6c63",.5,.65)
+    # Nose drawn with light planes rather than a cartoon hook.
+    stroke(c,[(1,-330),(-1,-321),(-.5,-318),(4,-317)],"#977469",.82,.65)
+    line(c,-2,-316,1,-315,"#78584f",.8,.55)
+    line(c,1,-325,2,-320,"#efd9ca",.7,.7)
+    mouth=current_mouth(who)
+    my=-310
+    if mouth.opening>.035:
+        width={"a":4.3,"o":2.8,"i":5.1,"e":4.0,"f":4.5}.get(mouth.shape,4)
+        height={"a":3.1,"o":3.2,"i":.8,"e":1.7,"f":.6}.get(mouth.shape,2)*mouth.opening+.3
+        ellipse(c,.4,my,width,height,"#593238")
+        if height>1.3:
+            ellipse(c,.4,my-height*.48,width*.75,.5,"#e2d1bd",.75)
+            ellipse(c,.5,my+height*.44,width*.57,height*.3,"#ae6d71",.65)
+        stroke(c,[(-width,my),(.3,my-height-.4),(width,my)],"#885654",.6,.5)
+    else:
+        stroke(c,[(-5.7,my),(-.8,my-.6),(2.2,my),(5.7,my-.4 if emotion=="thinking" else my+.2)],"#815858",.96,.6)
+        stroke(c,[(-3,my+1.7),(.5,my+2),(3.5,my+1.2)],"#f0d2c4",.7,.6)
+    if model["age"]:
+        for side in (-1,1):
+            stroke(c,[(side*15,-318),(side*12,-311),(side*12,-307)],"#8d6d62",.38,.65)
+        if model["age"]==2:
+            stroke(c,[(-10,-348),(0,-349),(9,-347)],"#9b7c70",.4,.6)
+            stroke(c,[(-12,-343),(-2,-344),(9,-342)],"#9b7c70",.38,.55)
+    hair(c,model["hair"],t)
+    if who=="chen_ling" and injured and costume!="memory_shirt":
+        stroke(c,[(22,-341),(21,-336),(23,-333)],"#972936",.9,1.0)
         if robe:
-            for j in range(5):
-                ellipse(c, -43+j*19, hem+17-j*9, 12, 7, "#34272d", .65)
-    if who == "doctor_lin":
-        for ex in (-17,17):
-            c.drawRoundRect(skia.Rect.MakeXYWH(ex-13,-335,26,17),3,3,paint("#121e28",1,2))
-        line(c, -4,-329,4,-329,INK,1,1.6)
-        line(c, -40,-332,-30,-331,INK,1,1.6)
-        line(c, 30,-331,39,-332,INK,1,1.6)
-    if who == "uncle_zhao":
-        shape(c,[(-40,-363),(-37,-377),(0,-386),(38,-375),(40,-361),(1,-365)],"#ceccc0",dark,1)
-        line(c,-24,-376,27,-370,"#8b948c",.55,1.2)
-    if who == "han_meng":
-        line(c, 6,-294,33,-291,"#bfa889",1,5)
-        ellipse(c,34,-291,2.5,2.5,"#b76246")
-        for j in range(6):
-            glow(c, 37+math.sin(t+j)*9, -312-j*14-(t*7)%20, 17, "#c1cad0", .07)
-        if injured:
-            line(c,25,-315,32,-310,RED,1,1.3)
-    if costume == "raincoat":
-        c.drawPath(curve([(-45,-314),(-56,-348),(-44,-388),(0,-409),(43,-385),(53,-347),(42,-311)],False),
-                   paint("#101c27",1,14))
-    if pose == "hold" and robe:
-        barrel(c,0,-246,.8,t,broken=False)
+            for j in range(4): ellipse(c,-28+j*18,hem+3-j*3,7,3,"#382432",.5)
+    if who=="doctor_lin":
+        for side in (-1,1):
+            ex=side*model["eye"]
+            c.drawRoundRect(skia.Rect.MakeXYWH(ex-8,-335,16,11),2,2,paint("#172732",1,1.2))
+            line(c,ex-5,-333,ex+2,-333,"#c1d7d0",.15,.5)
+        line(c,-3,-332,3,-332,"#172732",1,.9)
+        line(c,-26,-332,-19,-332,"#172732",1,1)
+        line(c,19,-332,26,-332,"#172732",1,1)
+    if who=="uncle_zhao":
+        shape(c,[(-31,-347),(-29,-360),(-2,-367),(28,-358),(31,-344),(0,-350)],"#d4cfb6","#70796c",.7)
+        stroke(c,[(-25,-357),(-4,-359),(23,-353)],"#8c9581",.7,.8)
+        stroke(c,[(-21,-353),(-3,-355),(24,-349)],"#f6efd7",.6,.7)
+    if who=="han_meng":
+        line(c,4,my,26,my+1,"#c8b393",1,3.2)
+        line(c,24,my+1,27,my+1,"#b85c40",1,2.6)
+        for j in range(5):
+            glow(c,29+math.sin(t*.7+j)*5,-327-j*10-(t*4)%12,10,"#c1cad0",.065)
+        if injured: line(c,22,-322,27,-318,RED,.92,.8)
+    if costume=="raincoat":
+        stroke(c,[(-31,-308),(-40,-339),(-29,-372),(0,-382),(31,-365),(38,-336),(30,-308)],"#101e29",1,8)
+        stroke(c,[(-33,-321),(-35,-345),(-23,-365),(0,-375),(23,-361)],light,.26,1.2)
+    if pose=="hold" and robe: barrel(c,5,-244,.8,t,broken=False)
     c.restore()
 
 

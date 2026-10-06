@@ -19,13 +19,13 @@
 从项目根目录运行：
 
 ```bash
-.venv/bin/python -m codecinema check
-.venv/bin/python -m codecinema run xishen all --narration required
+python -m pip install -e ".[speech]"
+python -m codecinema run xishen all --narration required --speech-engine local
 ```
 
-若已安装命令，也可使用 `codecinema run xishen all --narration required`。Mac 使用本机 `say` 的中文声音；默认旁白为 Tingting，对白使用 Reed 中文声音。没有下载素材、API 或付费服务的依赖。
+发布版使用 Apple Silicon 本地 Qwen3-TTS 情绪配音与 Qwen3 ForcedAligner 逐字对齐。首次运行会下载模型，之后缓存每句声音，无需 API key。不同人物固定声线，按镜头的恐惧、犹疑、疲惫和思考调整表演。口型跟随最终配音的实际时间和音节；停顿、旁白和内心独白时闭嘴。
 
-Linux / Windows 可将自己录制的 WAV 放在 `assets/voices/<镜头 id>.wav`；例如 `ep01_lost.wav`。所有有台词的镜头都提供录音后，可使用 `--narration required`。`--narration auto` 在没有可用中文声音时记录缺失配音，`--narration off` 明确生成字幕与配乐版本。配音情况会如实写入 `out/audio/*_speech.json`。
+`--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`；没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../docs/SPEECH.zh-CN.md)。
 
 需要可显示简体中文的字体。Mac 自动查找宋体；其他系统可安装 Noto Serif CJK 或将 `XISHEN_FONTS_SONG`、`XISHEN_FONTS_KAITI` 指向对应字体文件。不同系统的字体和语音引擎可能产生不同的字形与声线；固定素材、版本和设置后，帧与配乐确定。
 
@@ -33,17 +33,17 @@ Linux / Windows 可将自己录制的 WAV 放在 `assets/voices/<镜头 id>.wav`
 # 分步制作或只处理某一集
 .venv/bin/python -m codecinema run xishen plan
 .venv/bin/python -m codecinema run xishen stills
-.venv/bin/python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required
-.venv/bin/python -m codecinema run xishen audio --episode ep01 --narration required
-.venv/bin/python -m codecinema run xishen assemble --episode ep01 --narration required
-.venv/bin/python -m codecinema run xishen qc --episode ep01 --narration required
+.venv/bin/python -m codecinema run xishen audio --episode ep01 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen assemble --episode ep01 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 
 # 低分辨率预览；制作与合成须使用同一套设置和配音选项
 XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
-  .venv/bin/python -m codecinema run xishen all --episode ep01 --narration required
+  .venv/bin/python -m codecinema run xishen all --episode ep01 --narration required --speech-engine local
 ```
 
-`--narration` 属于制作设置。分步运行时保持一致；例如音频使用 `required`，画面与合成也使用 `required`。镜头分块和输入签名支持断点续渲，半成品不会被当作完成的镜头。
+`--narration` 和 `--speech-engine` 属于制作设置。分步运行时保持一致；音频会在画面渲染前准备，例如音频使用 `required`，画面与合成也使用 `required`。镜头分块和输入签名支持断点续渲，半成品不会被当作完成的镜头。
 
 观看页可直接用浏览器打开。需要 HTTP 播放时，在项目根目录运行 `.venv/bin/python -m codecinema run xishen serve`，访问 `http://127.0.0.1:8000/watch.html`。内置服务器支持视频分段请求，段落跳转和拖动进度条都能正常工作。
 
@@ -80,4 +80,4 @@ assets/film/          三集 MP4、合集与 qc.json
 
 质检核对剧情时序、跨集状态、期待值、字体、字幕宽度、67 个镜头的确定性和运动、帧数、画面尺寸、音画时长、字幕轨、章节、响度与真峰值，并完整解码成片检查错误。结果写入 `assets/film/qc.json`。影片和中间音视频不提交 Git，可由上述命令重新生成。
 
-本版为矢量木偶与镜头运动组成的动态漫画，配音来自本机语音合成；人物表演和声线采用这一制作形式。
+本版使用共享的人物设计、独立脸型、发型和体态；画面不再叠加片名、集数与解释性文字，只保留底部字幕和剧情中的道具文字。

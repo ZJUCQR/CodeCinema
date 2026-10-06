@@ -1,4 +1,4 @@
-"""CodeCinema's multi-episode production pipeline: plan → stills → render → sound → master → QC."""
+"""CodeCinema's multi-episode pipeline: plan → acting audio → stills → picture → master → QC."""
 from __future__ import annotations
 
 import argparse
@@ -41,7 +41,12 @@ def dump(path,value):
 
 
 def signature(options):
-    return digest(json.dumps({"settings":settings.SETTINGS,"w":W,"h":H,"fps":FPS,"narration":options.narration},
+    from codecinema.audio.speech import local_available
+    engine=options.speech_engine
+    if engine=="auto":
+        engine="local" if local_available() else "system"
+    return digest(json.dumps({"settings":settings.SETTINGS,"w":W,"h":H,"fps":FPS,"narration":options.narration,
+                             "speech_engine": engine},
                              sort_keys=True,ensure_ascii=False))
 
 
@@ -148,6 +153,7 @@ def render_shot(episode,shot,key):
 
 
 def render(episodes,options):
+    audio(episodes,options)
     key=signature(options); shots=[(e,s) for e in episodes for s in timeline(e)]
     jobs=options.jobs or int(settings.get("render","jobs",3))
     if not 1<=jobs<=16:
@@ -174,10 +180,12 @@ def audio(episodes,options):
     for episode in episodes:
         path=OUT/"audio"/f"{episode['id']}.wav"
         marker=path.with_suffix(".json")
-        if path.exists() and marker.exists() and json.loads(marker.read_text())["signature"]==key:
+        performance_files = [OUT/"audio/performance"/f"{s.id}.json" for s in timeline(episode)]
+        if (path.exists() and marker.exists() and json.loads(marker.read_text())["signature"]==key
+                and all(p.is_file() for p in performance_files)):
             print(f"{episode['id']} audio cached",flush=True)
             continue
-        synthesize(episode,OUT/"audio",options.narration)
+        synthesize(episode,OUT/"audio",options.narration,options.speech_engine)
         dump(marker,{"signature":key})
 
 
@@ -284,6 +292,7 @@ def inspect_master(path,seconds,options):
 
 
 def qc(episodes,options):
+    from codecinema.audio.performance import Performance
     report={"story":validate_all(),"signature":signature(options),"shots":[],"masters":[]}
     for episode in episodes:
         for shot in timeline(episode):
@@ -305,6 +314,21 @@ def qc(episodes,options):
         speech=json.loads(speech_file.read_text())
         if options.narration=="required" and any(c["status"] not in ("synthesized","recording") for c in speech["cues"]):
             raise ValueError(f"Missing required narration: {episode['id']}")
+        for shot in timeline(episode):
+            performance=Performance.load(OUT/"audio/performance"/f"{shot.id}.json")
+            data=performance.data
+            if data.get("speaker"):
+                if speech["engine"]=="local" and data.get("method")!="forced-aligned":
+                    raise ValueError(f"Missing dialogue alignment: {shot.id}")
+                if data["duration"]+.65>shot.duration-.25:
+                    raise ValueError(f"Dialogue escapes its shot: {shot.id}")
+                for at in (-.1,.1,shot.duration):
+                    if performance.mouth(at,data["speaker"]).opening:
+                        raise ValueError(f"Mouth moves outside dialogue: {shot.id}")
+                if performance.mouth(1,"not_the_speaker").opening:
+                    raise ValueError(f"The wrong character is speaking: {shot.id}")
+        report.setdefault("speech",[]).append({"episode":episode["id"],"engine":speech["engine"],
+                                                "cues":len(speech["cues"]),"timing_checked":True})
         print(f"Checking decoded master and sound: {episode['id']}",flush=True)
         report["masters"].append(inspect_master(episode_output(episode),episode["duration_s"],options))
     if len(episodes)==len(STORY["episodes"]):
@@ -324,6 +348,8 @@ def main():
     parser.add_argument("--episode",choices=("all","ep01","ep02","ep03"),default="all")
     parser.add_argument("--jobs",type=int,default=0)
     parser.add_argument("--narration",choices=("auto","off","required"),default=str(settings.get("audio","narration","auto")))
+    parser.add_argument("--speech-engine",choices=("auto","local","system","recording"),default="auto",
+                        help="local: emotional voices and forced alignment on Apple Silicon; recording: supplied WAVs")
     parser.add_argument("--skip-decode",action="store_true",help="Skip full master decoding when repeating an inspection")
     options=parser.parse_args()
     episodes=[e for e in STORY["episodes"] if options.episode in ("all",e["id"])]
@@ -331,7 +357,7 @@ def main():
     if options.step!="plan":
         write_plan(OUT)
     functions={"plan":plan,"stills":stills,"render":render,"audio":audio,"assemble":assemble,"qc":qc}
-    sequence=("plan","stills","render","audio","assemble","qc") if options.step=="all" else (options.step,)
+    sequence=("plan","audio","stills","render","assemble","qc") if options.step=="all" else (options.step,)
     for step in sequence:
         functions[step](episodes,options)
     return 0
