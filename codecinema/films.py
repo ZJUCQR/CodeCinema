@@ -29,6 +29,7 @@ class Film:
         if self.steps and step not in self.steps:
             raise SystemExit(f"{self.id}: unknown step '{step}' (steps: {', '.join(self.steps)})")
         env = dict(os.environ, CODECINEMA_FILM_DIR=self.dir)
+        env.setdefault("PYTHONIOENCODING", "utf-8")
         return subprocess.call([sys.executable, self.entry, step, *args], cwd=self.dir, env=env)
 
 
@@ -37,6 +38,8 @@ def discover(root=None):
     out = {}
     if os.path.isdir(root):
         for name in sorted(os.listdir(root)):
+            if name.startswith("."):
+                continue
             d = os.path.join(root, name)
             if os.path.isfile(os.path.join(d, "film.toml")):
                 f = Film(d)

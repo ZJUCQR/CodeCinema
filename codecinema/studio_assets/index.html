@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <title>CodeCinema Studio</title>
+  <link rel="stylesheet" href="studio.css">
+  <script src="studio.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">CODE<span>CINEMA</span> <b>STUDIO</b></a><button id="language" type="button">中文</button></header>
+  <main>
+    <div class="heading"><p class="eyebrow" data-text="eyebrow">YOUR NEXT LITTLE FILM</p><h1 data-text="heading">Pick a world. Make it yours.</h1><p data-text="intro">Eight looks, your words, an original soundtrack. Your first film starts here.</p></div>
+    <p id="setup" class="notice" hidden></p>
+    <form id="editor">
+      <fieldset id="controls">
+        <section class="choose" aria-labelledby="looks-heading"><div class="section-title"><h2 id="looks-heading" data-text="choose">1. Choose a world</h2><span data-text="looksNote">Change the look any time</span></div><div id="presets" class="preset-grid"></div></section>
+        <div class="workspace">
+          <section class="personalize" aria-labelledby="details-heading">
+            <div class="section-title"><h2 id="details-heading" data-text="personalize">2. Make it personal</h2></div>
+            <label><span data-text="project">My films</span><select id="projects"><option value="" data-text="newFilm">+ Create a new film</option></select></label>
+            <div class="two-fields"><label><span data-text="id">Film ID</span><input id="film-id" required pattern="[a-z][a-z0-9_-]*" value="myfilm" maxlength="80" autocomplete="off"><small data-text="idHelp">A folder name, such as my-trip</small></label><label><span data-text="format">Frame</span><select id="format"><option value="landscape" data-text="landscape">Landscape · 16:9</option><option value="portrait" data-text="portrait">Portrait · 9:16</option><option value="square" data-text="square">Square · 1:1</option></select></label></div>
+            <label><span data-text="title">Film title</span><input id="title" value="A Little Wonder" required maxlength="300"></label>
+            <label><span data-text="subtitle">Opening caption</span><textarea id="subtitle" rows="2" maxlength="600"></textarea></label>
+            <div class="two-fields"><label><span data-text="duration">Length in seconds</span><input id="duration" type="number" min="1.5" max="600" step="any" value="12" required></label><label><span data-text="quality">Picture quality</span><select id="quality"><option value="standard" data-text="standard">720p · Fast</option><option value="high" data-text="high">1080p · Detailed</option><option value="preview" data-text="low">360p · Small file</option></select></label></div>
+            <div class="accent"><label class="checkbox"><input id="custom-accent" type="checkbox"><span data-text="accent">Choose an accent color</span></label><input id="accent" type="color" value="#b1ead0" aria-label="Accent color" disabled></div>
+          </section>
+          <section class="screening" aria-labelledby="render-heading">
+            <div class="section-title"><h2 id="render-heading" data-text="renderTitle">3. Bring it to life</h2><span class="local-tag" data-text="local">Made on your computer</span></div>
+            <div class="screen"><img id="poster" src="presets/aurora.jpg" alt="Selected look"><div id="cover-copy"><strong id="cover-title">A Little Wonder</strong><span id="cover-subtitle"></span></div><video id="video" controls playsinline hidden></video></div>
+            <div class="actions"><button id="render" class="primary" type="submit" data-text="render">Render my film →</button><button id="preview" type="button" data-text="preview">Quick preview</button></div>
+            <p class="hint" data-text="previewHelp">Quick preview makes a separate 360p video. Your finished master stays available.</p>
+            <div id="result" role="status" aria-live="polite"><p id="status" data-text="ready">Ready when you are.</p><div class="progress" hidden><div id="progress-fill"></div></div><a id="download" hidden download data-text="download">Download MP4 ↓</a></div>
+            <details id="log-panel" hidden><summary data-text="details">Production details</summary><pre id="log"></pre></details>
+          </section>
+        </div>
+        <details class="scene-editor"><summary><span data-text="sceneHeading">Personalize every scene</span><span class="summary-note" data-text="sceneNote">Optional · add, reorder or mix looks</span></summary><p class="hint" data-text="sceneHelp">Every card is one scene. Change the words and timing, or mix different worlds in one film.</p><div id="scenes"></div><button id="add-scene" type="button" data-text="addScene">+ Add a scene</button></details>
+      </fieldset>
+    </form>
+    <footer><span data-text="saved">Your project and MP4 are saved in films/&lt;film-id&gt;/. Come back here to edit and render again.</span><span>CODECINEMA / 2026</span></footer>
+  </main>
+</body>
+</html>

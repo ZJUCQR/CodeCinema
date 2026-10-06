@@ -24,12 +24,12 @@ CodeCinema is a small framework for films that exist only as code. A film is a f
 - **Assembly:** ffmpeg helpers that probe, encode, concatenate and mux.
 - **Command line:** one CLI that lists films, runs their steps and starts new ones.
 
-Two complete films come with it as examples, each made with a different technique.
+Three complete film projects come with it, alongside eight configurable starter looks and a local visual editor.
 
 ## ✨ Highlights
 
-- 🤖 **Films made by a coding agent.** Both example films were directed in plain language and built end to end by a coding agent: story, characters, animation, cameras, score, sound and mastering.
-- 🎬 **Two complete example films.** *Duel in the Silver Grass* is a 160-second samurai duel rendered in Blender 3D. *The Night Revels of Han Xizai, Cat Edition* is a 128-second living handscroll painted in 2D with skia.
+- 🪄 **Choose, personalize, render.** The local Studio offers eight animated looks, editable scene cards, titles, captions, colors, three frame shapes and one-click MP4 production. No API key is needed.
+- 🎬 **Three complete film projects.** A 160-second Blender samurai duel, a 128-second living cat handscroll and an 11-minute opening trilogy with shared characters and Mandarin speech.
 - 🧩 **A small contract, any renderer.** A film declares its steps in `film.toml`, and `codecinema run <film> <step>` runs them with that film's settings. Blender, 2D vector drawing, shaders or anything else that writes frames will fit.
 - 🎼 **A shared sound toolkit.** The DSP library behind both scores is part of the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.
 - ♻️ **Reproducible and configurable.** Deterministic renders, resumable parallel jobs, layered settings that never require editing tracked files, and helpers that work on macOS, Linux and Windows.
@@ -39,16 +39,20 @@ Two complete films come with it as examples, each made with a different techniqu
 ```bash
 git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
 python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # installs the `codecinema` command
+python -m pip install -e .                             # installs the `codecinema` command
 
-codecinema check                      # Python packages, ffmpeg, and Blender for the 3D example
-codecinema list                       # the films in films/ and their steps
-codecinema run nightrevels all        # the 2D example: the whole film in a few minutes
-codecinema run silvergrass all        # the 3D example: needs Blender 5.2+, a long render
-codecinema new myfilm                 # start your own film from the template
+codecinema studio                    # opens the local visual editor in your browser
 ```
 
-Each film writes its finished video to its own `assets/film/` folder. `python -m codecinema …` works too, without installing the command.
+Install **FFmpeg** before rendering. The **[three-step tutorial](docs/GETTING_STARTED.md)** has exact macOS, Linux and Windows setup commands. In Studio, choose a look, enter your words and press **Render my film**. Each film writes its finished video to its own `assets/film/` folder. `python -m codecinema …` works too.
+
+<p align="center"><img src="assets/images/starters.jpg" width="100%" alt="Eight actual starter looks: moonrise, sunset, aurora, neon, ocean, ink, cosmos and ember"></p>
+
+Prefer a command? Create and produce your first film at once:
+
+```bash
+codecinema new myfilm --preset aurora --title "My Film" --render --open
+```
 
 ## 🎞 Example films
 
@@ -63,16 +67,31 @@ Each film writes its finished video to its own `assets/film/` folder. `python -m
 
 </div>
 
-Both films can be watched in full on the [homepage](https://zjucqr.github.io/CodeCinema/).
+Watch the films on the [homepage](https://zjucqr.github.io/CodeCinema/), or use `codecinema list` to explore their production steps. `codecinema run nightrevels all` produces the 2D handscroll; `codecinema run silvergrass all` needs Blender 5.2+ and a longer render.
+
+## New scenario: I Am Not the God of Drama
+
+**[The Opening Trilogy](films/xishen/README.md)** adapts chapters 1–6 of Sanjiu Yinyu's *I Am Not the God of Drama* into **11 minutes** of 1080p motion-comic footage. A shared cast and continuity ledger preserve costumes, props and the audience-expectation sequence across three episodes, with Mandarin speech, captions, an original score and foley.
+
+```bash
+python -m codecinema run xishen all --narration required
+```
+
+**[Watch the trilogy](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[Download the masters](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)**
+
+Speech uses macOS voices offline or supplied recordings; `--narration off` explicitly produces a captions-and-music version. After local generation, `python -m codecinema run xishen serve` opens a screening server with episode selection and chapter seeking. Chapter sources and adaptation choices are documented in the film folder.
 
 ## 🎨 Make your own film
 
 ```bash
-codecinema new myfilm --title "My Film"     # creates films/myfilm/ from the template
-codecinema run myfilm all                    # renders a 6-second starter film
+codecinema new myfilm --preset sunset --title "My Film" --duration 15 --render
+codecinema customize myfilm --preset neon --title "City Lights" --format portrait --render
+codecinema run myfilm all --quality preview   # separate preview; preserves the master
 ```
 
-The template is a complete, tiny film: `draw_frame()` draws each frame, `score()` composes the sound, and the framework encodes and muxes them. Replace those two functions with your own film, add steps as it grows, and keep its settings in `film.toml`.
+The starter defaults to **three scenes, 12 seconds and 720p**. Use Studio or edit `scenes.json` to change each scene's look, timing, text and camera motion. Eight looks support landscape, portrait and square frames, with original synthesized music. Earlier settings are saved automatically when you customize.
+
+For a new animation technique, replace `draw_frame()` and `score()` in the generated `src/run.py`, add production steps as needed, and keep technical settings in `film.toml`. The [simple tutorial](docs/GETTING_STARTED.md) covers personalization; the [framework guide](docs/FRAMEWORK.md) covers renderer development.
 
 ```toml
 # films/myfilm/film.toml
@@ -95,7 +114,9 @@ In the film's code, `from codecinema import settings, media` and `from codecinem
 ```
 CodeCinema/
 ├── codecinema/             # the framework
-│   ├── cli.py              # codecinema list | run | new | check
+│   ├── cli.py              # studio | presets | new | customize | list | run | check
+│   ├── studio.py           # local visual editor and render jobs
+│   ├── studio_assets/      # editor UI and actual preset thumbnails
 │   ├── settings.py         # layered per-film settings, tool and font discovery
 │   ├── films.py            # film discovery and step running
 │   ├── media.py            # ffmpeg: probe, encode, concat, mux
@@ -104,7 +125,8 @@ CodeCinema/
 │   └── template/           # the starter film used by `codecinema new`
 ├── films/
 │   ├── silvergrass/        # example: Duel in the Silver Grass (Blender 3D)
-│   └── nightrevels/        # example: The Night Revels of Han Xizai, Cat Edition (2D)
+│   ├── nightrevels/        # example: The Night Revels of Han Xizai, Cat Edition (2D)
+│   └── xishen/             # opening trilogy (motion comic, 11 minutes)
 ├── docs/                   # the framework guide
 ├── site/                   # the homepage
 └── pyproject.toml          # the package and its dependencies

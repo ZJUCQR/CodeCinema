@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "title": "__FILM_TITLE__",
+  "seed": 7,
+  "scenes": [
+    {"name": "Opening", "preset": "moonrise", "duration_s": 4, "camera": "wide", "title": "__FILM_TITLE__", "subtitle": "A little light in the quiet."},
+    {"name": "Drift", "preset": "moonrise", "duration_s": 4, "camera": "drift", "title": "", "subtitle": "The night moves at its own pace."},
+    {"name": "Afterglow", "preset": "moonrise", "duration_s": 4, "camera": "close", "title": "__FILM_TITLE__", "subtitle": "Some nights are worth keeping."}
+  ]
+}

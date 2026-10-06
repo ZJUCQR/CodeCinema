@@ -1,0 +1,410 @@
+{
+  "story": {
+    "episodes": 3,
+    "shots": 67,
+    "duration_s": 660,
+    "expectations": [
+      29,
+      30,
+      27,
+      29,
+      32
+    ]
+  },
+  "signature": "b264b6f76b382300cbda",
+  "shots": [
+    {
+      "id": "ep01_title",
+      "deterministic": true,
+      "motion_delta": 0.157
+    },
+    {
+      "id": "ep01_lost",
+      "deterministic": true,
+      "motion_delta": 2.725
+    },
+    {
+      "id": "ep01_face",
+      "deterministic": true,
+      "motion_delta": 3.107
+    },
+    {
+      "id": "ep01_fall",
+      "deterministic": true,
+      "motion_delta": 2.58
+    },
+    {
+      "id": "ep01_name",
+      "deterministic": true,
+      "motion_delta": 3.117
+    },
+    {
+      "id": "ep01_memory",
+      "deterministic": true,
+      "motion_delta": 3.146
+    },
+    {
+      "id": "ep01_quake",
+      "deterministic": true,
+      "motion_delta": 3.486
+    },
+    {
+      "id": "ep01_two_memories",
+      "deterministic": true,
+      "motion_delta": 2.642
+    },
+    {
+      "id": "ep01_walk",
+      "deterministic": true,
+      "motion_delta": 3.592
+    },
+    {
+      "id": "ep01_door",
+      "deterministic": true,
+      "motion_delta": 2.325
+    },
+    {
+      "id": "ep01_home",
+      "deterministic": true,
+      "motion_delta": 3.458
+    },
+    {
+      "id": "ep01_parents",
+      "deterministic": true,
+      "motion_delta": 2.11
+    },
+    {
+      "id": "ep01_barefeet",
+      "deterministic": true,
+      "motion_delta": 1.808
+    },
+    {
+      "id": "ep01_thirst",
+      "deterministic": true,
+      "motion_delta": 2.132
+    },
+    {
+      "id": "ep01_barrel",
+      "deterministic": true,
+      "motion_delta": 2.169
+    },
+    {
+      "id": "ep01_echo",
+      "deterministic": true,
+      "motion_delta": 2.171
+    },
+    {
+      "id": "ep01_lamp",
+      "deterministic": true,
+      "motion_delta": 2.055
+    },
+    {
+      "id": "ep01_bed",
+      "deterministic": true,
+      "motion_delta": 2.285
+    },
+    {
+      "id": "ep01_silence",
+      "deterministic": true,
+      "motion_delta": 2.305
+    },
+    {
+      "id": "ep01_reveal",
+      "deterministic": true,
+      "motion_delta": 2.802
+    },
+    {
+      "id": "ep01_end",
+      "deterministic": true,
+      "motion_delta": 0.001
+    },
+    {
+      "id": "ep02_title",
+      "deterministic": true,
+      "motion_delta": 0.157
+    },
+    {
+      "id": "ep02_secret",
+      "deterministic": true,
+      "motion_delta": 2.157
+    },
+    {
+      "id": "ep02_departure",
+      "deterministic": true,
+      "motion_delta": 3.86
+    },
+    {
+      "id": "ep02_sleep",
+      "deterministic": true,
+      "motion_delta": 2.361
+    },
+    {
+      "id": "ep02_stage",
+      "deterministic": true,
+      "motion_delta": 2.716
+    },
+    {
+      "id": "ep02_follow",
+      "deterministic": true,
+      "motion_delta": 4.369
+    },
+    {
+      "id": "ep02_screen",
+      "deterministic": true,
+      "motion_delta": 2.728
+    },
+    {
+      "id": "ep02_warning",
+      "deterministic": true,
+      "motion_delta": 3.065
+    },
+    {
+      "id": "ep02_audience",
+      "deterministic": true,
+      "motion_delta": 2.577
+    },
+    {
+      "id": "ep02_pursuit",
+      "deterministic": true,
+      "motion_delta": 8.647
+    },
+    {
+      "id": "ep02_thirty",
+      "deterministic": true,
+      "motion_delta": 2.747
+    },
+    {
+      "id": "ep02_curtain",
+      "deterministic": true,
+      "motion_delta": 4.307
+    },
+    {
+      "id": "ep02_wake",
+      "deterministic": true,
+      "motion_delta": 2.48
+    },
+    {
+      "id": "ep02_debris",
+      "deterministic": true,
+      "motion_delta": 2.184
+    },
+    {
+      "id": "ep02_message",
+      "deterministic": true,
+      "motion_delta": 2.218
+    },
+    {
+      "id": "ep02_coat",
+      "deterministic": true,
+      "motion_delta": 2.107
+    },
+    {
+      "id": "ep02_aurora",
+      "deterministic": true,
+      "motion_delta": 2.451
+    },
+    {
+      "id": "ep02_grave",
+      "deterministic": true,
+      "motion_delta": 3.774
+    },
+    {
+      "id": "ep02_inquiry",
+      "deterministic": true,
+      "motion_delta": 3.637
+    },
+    {
+      "id": "ep02_han",
+      "deterministic": true,
+      "motion_delta": 3.749
+    },
+    {
+      "id": "ep02_device",
+      "deterministic": true,
+      "motion_delta": 3.726
+    },
+    {
+      "id": "ep02_end",
+      "deterministic": true,
+      "motion_delta": 0.001
+    },
+    {
+      "id": "ep03_title",
+      "deterministic": true,
+      "motion_delta": 0.184
+    },
+    {
+      "id": "ep03_salt_cart",
+      "deterministic": true,
+      "motion_delta": 4.275
+    },
+    {
+      "id": "ep03_salt_throw",
+      "deterministic": true,
+      "motion_delta": 4.224
+    },
+    {
+      "id": "ep03_twenty_seven",
+      "deterministic": true,
+      "motion_delta": 2.578
+    },
+    {
+      "id": "ep03_clinic",
+      "deterministic": true,
+      "motion_delta": 3.046
+    },
+    {
+      "id": "ep03_symptoms",
+      "deterministic": true,
+      "motion_delta": 3.581
+    },
+    {
+      "id": "ep03_tea",
+      "deterministic": true,
+      "motion_delta": 3.599
+    },
+    {
+      "id": "ep03_real",
+      "deterministic": true,
+      "motion_delta": 3.867
+    },
+    {
+      "id": "ep03_gray",
+      "deterministic": true,
+      "motion_delta": 2.117
+    },
+    {
+      "id": "ep03_paper",
+      "deterministic": true,
+      "motion_delta": 2.723
+    },
+    {
+      "id": "ep03_domains",
+      "deterministic": true,
+      "motion_delta": 1.568
+    },
+    {
+      "id": "ep03_letter",
+      "deterministic": true,
+      "motion_delta": 2.908
+    },
+    {
+      "id": "ep03_numbers",
+      "deterministic": true,
+      "motion_delta": 2.988
+    },
+    {
+      "id": "ep03_idea",
+      "deterministic": true,
+      "motion_delta": 3.017
+    },
+    {
+      "id": "ep03_breakfast",
+      "deterministic": true,
+      "motion_delta": 3.135
+    },
+    {
+      "id": "ep03_misunderstanding",
+      "deterministic": true,
+      "motion_delta": 3.29
+    },
+    {
+      "id": "ep03_thirty_two",
+      "deterministic": true,
+      "motion_delta": 2.331
+    },
+    {
+      "id": "ep03_rule",
+      "deterministic": true,
+      "motion_delta": 3.702
+    },
+    {
+      "id": "ep03_coins",
+      "deterministic": true,
+      "motion_delta": 3.406
+    },
+    {
+      "id": "ep03_chase",
+      "deterministic": true,
+      "motion_delta": 5.642
+    },
+    {
+      "id": "ep03_recruit",
+      "deterministic": true,
+      "motion_delta": 3.151
+    },
+    {
+      "id": "ep03_intervene",
+      "deterministic": true,
+      "motion_delta": 3.992
+    },
+    {
+      "id": "ep03_director",
+      "deterministic": true,
+      "motion_delta": 3.441
+    },
+    {
+      "id": "ep03_end",
+      "deterministic": true,
+      "motion_delta": 0.001
+    }
+  ],
+  "masters": [
+    {
+      "path": "/Users/knightqr/Desktop/CodeCinema/films/xishen/assets/film/ep01.mp4",
+      "duration_s": 210.0,
+      "frames": 5040,
+      "width": 1920,
+      "height": 1080,
+      "fps": 24,
+      "audio_rate": 48000,
+      "channels": 2,
+      "chapters": 21,
+      "lufs": -16.5,
+      "true_peak_db": -0.9,
+      "decode_checked": true
+    },
+    {
+      "path": "/Users/knightqr/Desktop/CodeCinema/films/xishen/assets/film/ep02.mp4",
+      "duration_s": 210.0,
+      "frames": 5040,
+      "width": 1920,
+      "height": 1080,
+      "fps": 24,
+      "audio_rate": 48000,
+      "channels": 2,
+      "chapters": 22,
+      "lufs": -16.5,
+      "true_peak_db": -1.0,
+      "decode_checked": true
+    },
+    {
+      "path": "/Users/knightqr/Desktop/CodeCinema/films/xishen/assets/film/ep03.mp4",
+      "duration_s": 240.0,
+      "frames": 5760,
+      "width": 1920,
+      "height": 1080,
+      "fps": 24,
+      "audio_rate": 48000,
+      "channels": 2,
+      "chapters": 24,
+      "lufs": -15.8,
+      "true_peak_db": -1.0,
+      "decode_checked": true
+    },
+    {
+      "path": "/Users/knightqr/Desktop/CodeCinema/films/xishen/assets/film/xishen_complete.mp4",
+      "duration_s": 660.021333,
+      "frames": 15840,
+      "width": 1920,
+      "height": 1080,
+      "fps": 24,
+      "audio_rate": 48000,
+      "channels": 2,
+      "chapters": 3,
+      "lufs": -16.2,
+      "true_peak_db": -0.9,
+      "decode_checked": true
+    }
+  ]
+}

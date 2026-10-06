@@ -1,6 +1,6 @@
 # The CodeCinema framework
 
-CodeCinema keeps the parts every code-made film needs (settings, sound tools, assembly, a command line) and leaves the creative pipeline to each film. This guide covers the film contract, the command line, the settings system and the shared modules, and walks through starting a new film.
+CodeCinema keeps the parts every code-made film needs (settings, sound tools, assembly, a command line) and leaves the creative pipeline to each film. Start with the [simple tutorial](GETTING_STARTED.md) for the visual editor and one-command starters. This reference covers the film contract, settings and shared modules for custom renderers.
 
 ## 1. A film is a folder
 
@@ -35,8 +35,11 @@ That is the whole contract. Everything inside `src/` (the story data, the render
 | Command | What it does |
 |---|---|
 | `codecinema list` | Lists the films in `films/`, with their titles, steps and requirements |
+| `codecinema studio` | Opens the local visual editor for starter projects; `--port` and `--no-open` are optional |
+| `codecinema presets` | Lists eight starter looks, formats and quality levels |
 | `codecinema run <film> <step> [args…]` | Runs `python <entry> <step> [args…]` inside the film folder, with `CODECINEMA_FILM_DIR` set |
-| `codecinema new <id> [--title "…"]` | Creates `films/<id>/` from the template |
+| `codecinema new <id> --render` | Creates and produces a complete starter; accepts title, subtitle, preset, duration, format, quality and accent |
+| `codecinema customize <id> --render` | Updates an existing starter, saves previous settings, and renders it again |
 | `codecinema check` | Checks the Python packages, ffmpeg and (optionally) Blender |
 
 `python -m codecinema …` is the same as the installed `codecinema` command. A film can also run its steps directly with `python src/run.py <step>` inside its folder.
@@ -88,14 +91,19 @@ sys.modules[__name__] = _m
 ## 5. Starting a film
 
 ```bash
-codecinema new myfilm --title "My Film"
-codecinema run myfilm all
+codecinema new myfilm --preset aurora --title "My Film" --render
+codecinema customize myfilm --preset ocean --duration 20 --render
+codecinema run myfilm all --quality preview
 ```
 
-The template renders a 6-second sample: a moon rises over layered hills while the title fades in, with a synthesized drone and a bell.
+The template defaults to a 12-second, three-scene film with synthesized stereo music. `scenes.json` holds scene order, durations, titles, captions, preset looks, camera modes and optional accent colors. Studio edits the same file; no Python changes are needed for those choices. Presets are `moonrise`, `sunset`, `aurora`, `neon`, `ocean`, `ink`, `cosmos` and `ember`.
 - `draw_frame(canvas, frame)` draws one frame with skia.
 - `score()` returns the stereo sound track, built with `codecinema.audio.dsp`.
-- `render`, `audio` and `assemble` encode the frames, write the WAV and mux the film with `codecinema.media`.
+- `plan` and `stills` write a timeline and contact sheet; `render`, `audio` and `assemble` produce the MP4; `qc` verifies metadata and fully decodes it. `all` runs those stages in order.
+
+`--quality preview` uses its own `out/preview/` stages and `<id>_preview.mp4`, preserving the master. Other quality overrides write the master. Use identical quality, format, FPS and duration options across individual stages; signatures prevent assembling stale inputs. Scene boundaries are quantized once to frames, and sound uses the resulting clock. Unsupported font glyphs fail before rendering with a font-selection hint. CLI and Studio customizations save the previous JSON and TOML in `out/edits/`.
+
+`customize` and Studio accept films marked `[film] template = "starter-v1"`. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table; `codecinema/starters.py` holds the shared starter JSON validation and choices.
 
 To grow it into a real film:
 1. **Write the story as data first.** Timeline, shots, cue frames, tempo and the score as notes, all in one config module. Both examples derive every frame number from it.
@@ -104,7 +112,7 @@ To grow it into a real film:
 4. **Render in resumable chunks.** Encode frames straight into segments (see `media.encoder`), skip finished ones, and join them at the end with `media.concat`.
 5. **Add steps as you need them.** Previews, stills, QC: list them in `steps` and handle them in `run.py`.
 
-## 6. The two examples
+## 6. The example pipelines
 
 | | Duel in the Silver Grass | The Night Revels of Han Xizai, Cat Edition |
 |---|---|---|
@@ -114,3 +122,5 @@ To grow it into a real film:
 | Length | 160 s, 3840 frames | 128 s, 3072 frames |
 | Full render | Hours (Blender) | About two minutes |
 | Guide | [README](../films/silvergrass/README.md), [docs](../films/silvergrass/docs/) | [README](../films/nightrevels/README.md), [plan](../films/nightrevels/docs/FILM_PLAN.md) |
+
+The [opening trilogy](../films/xishen/README.md) adds a longer 2D motion-comic pipeline: 67 shots across three episodes, a sourced character ledger, offline speech, subtitles, chapters and media/continuity QC. It shares the framework's settings, DSP and FFmpeg helpers while keeping its story-specific renderer separate from the generic starter.

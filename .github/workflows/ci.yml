@@ -14,8 +14,13 @@ jobs:
           python-version: "3.12"
       - name: Install the framework and its dependencies
         run: pip install .
-      - name: Byte-compile the framework and both example films
-        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src
+      - name: Install FFmpeg for the Linux media integration tests
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+      - name: Test creation, customization, Studio and rendered media
+        run: python -m unittest discover -s tests -v
+      - name: Byte-compile the framework and films
+        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src films/xishen/src
       - name: List the films
         run: codecinema list
       - name: Import the framework and the pure-Python film modules
@@ -24,3 +29,7 @@ jobs:
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
           from codecinema import media, films, cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
+      - name: Validate the opening trilogy's chronology and continuity
+        run: >
+          python -c "import sys; sys.path.insert(0,'films/xishen/src');
+          import story; print(story.validate())"

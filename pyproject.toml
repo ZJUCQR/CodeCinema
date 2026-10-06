@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codecinema"
-version = "1.0.0"
+version = "1.1.0"
 description = "CodeCinema: a framework for making complete short films with code (picture, music, sound, titles, master)"
 readme = "README.md"
 license = { text = "MIT" }
@@ -34,7 +34,10 @@ Repository = "https://github.com/ZJUCQR/CodeCinema"
 packages = ["codecinema", "codecinema.audio"]
 
 [tool.setuptools.package-data]
-codecinema = ["template/**/*"]
+codecinema = ["template/**/*", "studio_assets/**/*", "studio_assets/*"]
+
+[tool.setuptools.exclude-package-data]
+codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
 
 [tool.ruff]
 line-length = 120

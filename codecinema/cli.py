@@ -3,7 +3,8 @@ CodeCinema command line.
 
     codecinema list                          the films in films/ and their steps
     codecinema run <film> <step> [args ...]  run one step of a film (e.g. `codecinema run nightrevels all`)
-    codecinema new <id> [--title "..."]      start a new film from the template (films/<id>/)
+    codecinema new <id> --render              create and render a configurable starter film
+    codecinema presets                       list starter looks
     codecinema check                         toolchain and Python packages
 
 `python -m codecinema ...` works the same without installing the console script.
@@ -14,7 +15,7 @@ import re
 import shutil
 import sys
 
-from codecinema import __version__, films, films_dir, settings
+from codecinema import __version__, diagnostics, films, films_dir, projects, settings, starters
 
 
 def cmd_list(a):
@@ -47,19 +48,69 @@ def cmd_new(a):
     if os.path.exists(dest):
         print(f"{dest} already exists")
         return 1
-    src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "template")
-    shutil.copytree(src, dest, ignore=shutil.ignore_patterns("__pycache__"))
+    try:
+        seconds = starters.duration(a.duration)
+        if a.accent is not None and not re.fullmatch(r"#[0-9a-fA-F]{6}", a.accent):
+            raise ValueError("accent must be a hex color such as #c5e8db")
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    if a.open and not a.render:
+        print("--open requires --render; use: codecinema new <id> --render --open", file=sys.stderr)
+        return 1
+    if a.render:
+        problems = diagnostics.starter_problems()
+        if problems:
+            print("\n".join(problems), file=sys.stderr)
+            return 1
     title = a.title or a.id.replace("-", " ").replace("_", " ").title()
-    for root, _, files in os.walk(dest):
-        for fn in files:
-            p = os.path.join(root, fn)
-            with open(p, encoding="utf-8") as fh:
-                s = fh.read()
-            with open(p, "w", encoding="utf-8") as fh:
-                fh.write(s.replace("__FILM_ID__", a.id).replace("__FILM_TITLE__", title)
-                         .replace("__ENV_PREFIX__", re.sub(r"[^A-Z0-9]", "_", a.id.upper())))
-    print(f"created {os.path.relpath(dest)}  ->  codecinema run {a.id} all")
+    w, h = projects.create(dest, title=title, preset=a.preset, seconds=seconds, subtitle=a.subtitle,
+                            format_name=a.format, quality=a.quality, accent=a.accent)
+    print(f"Created {os.path.relpath(dest)} · {a.preset} · {seconds:g}s · {w}×{h}", flush=True)
+    if a.render:
+        args = ["--open"] if a.open else []
+        result = films.Film(dest).run("all", args)
+        if result:
+            print(f"The project is saved. After fixing the error, retry: codecinema run {a.id} all", file=sys.stderr)
+        return result
+    print(f"Render: codecinema run {a.id} all\nCustomize: {os.path.relpath(dest)}/scenes.json")
     return 0
+
+
+def cmd_presets(a):
+    for name, preset in starters.PRESETS.items():
+        print(f"{name:12s} {preset['description']}")
+    print('\nTry: codecinema new myfilm --preset aurora --title "My Film" --render')
+    print("Formats: landscape, portrait, square. Quality: preview (360p), standard (720p), high (1080p).")
+    return 0
+
+
+def cmd_customize(a):
+    found = films.discover()
+    if a.film not in found:
+        print(f"Unknown film '{a.film}'. Run: codecinema list", file=sys.stderr)
+        return 1
+    if a.open and not a.render:
+        print("--open requires --render", file=sys.stderr)
+        return 1
+    if a.render:
+        problems = diagnostics.starter_problems()
+        if problems:
+            print("\n".join(problems), file=sys.stderr)
+            return 1
+    film = found[a.film]
+    projects.customize(film.dir, title=a.title, subtitle=a.subtitle, preset=a.preset, seconds=a.duration,
+                       format_name=a.format, quality=a.quality, accent=a.accent)
+    print(f"Updated {a.film}; the previous settings are saved in out/edits/.", flush=True)
+    if a.render:
+        return film.run("all", ["--open"] if a.open else [])
+    print(f"Render: codecinema run {a.film} all")
+    return 0
+
+
+def cmd_studio(a):
+    from codecinema.studio import serve
+    return serve(port=a.port, open_browser=not a.no_open)
 
 
 def cmd_check(a):
@@ -79,6 +130,9 @@ def cmd_check(a):
         print(f"  [{'ok' if found else ('!!' if need else '--')}] {tool:8s} {p if found else 'not found'}"
               + ("" if need else "   (only needed by Blender films)"))
     print("\nall good" if ok else "\nsome checks failed")
+    if not ok:
+        print(diagnostics.ffmpeg_help())
+        print("Setup guide: docs/GETTING_STARTED.md")
     return 0 if ok else 1
 
 
@@ -93,14 +147,42 @@ def main(argv=None):
     sub.add_parser("list")
     r = sub.add_parser("run")
     r.add_argument("film")
-    r.add_argument("step")
+    r.add_argument("step", nargs="?", default="all")
     r.add_argument("args", nargs=argparse.REMAINDER)
-    n = sub.add_parser("new")
+    n = sub.add_parser("new", help="Create a configurable starter; add --render to produce it immediately")
     n.add_argument("id")
     n.add_argument("--title", default="")
+    n.add_argument("--subtitle", help="Opening caption (edit all captions later in scenes.json)")
+    n.add_argument("--accent", help="Accent color, e.g. '#c5e8db'")
+    n.add_argument("--preset", choices=starters.PRESETS, default="moonrise")
+    n.add_argument("--duration", type=float, default=12.0, metavar="SECONDS", help="Total runtime (default: 12)")
+    n.add_argument("--format", choices=starters.FORMATS, default="landscape")
+    n.add_argument("--quality", choices=starters.QUALITIES, default="standard", help="default: standard (720p)")
+    n.add_argument("--render", action="store_true", help="Create, render, synthesize sound, assemble and verify")
+    n.add_argument("--open", action="store_true", help="Open the finished MP4 with your default player (requires --render)")
+    sub.add_parser("presets", help="List the starter looks and output options")
+    c = sub.add_parser("customize", help="Change a starter's look and content without editing Python")
+    c.add_argument("film")
+    c.add_argument("--title")
+    c.add_argument("--subtitle")
+    c.add_argument("--preset", choices=starters.PRESETS)
+    c.add_argument("--duration", type=float, metavar="SECONDS")
+    c.add_argument("--format", choices=starters.FORMATS)
+    c.add_argument("--quality", choices=starters.QUALITIES)
+    c.add_argument("--accent")
+    c.add_argument("--render", action="store_true")
+    c.add_argument("--open", action="store_true")
+    studio = sub.add_parser("studio", help="Open the local visual editor: choose, customize and render")
+    studio.add_argument("--port", type=int, default=8787)
+    studio.add_argument("--no-open", action="store_true", help="Print the address without opening a browser")
     sub.add_parser("check")
     a = ap.parse_args(argv)
-    return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check}[a.cmd](a)
+    try:
+        return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check,
+                "presets": cmd_presets, "customize": cmd_customize, "studio": cmd_studio}[a.cmd](a)
+    except (OSError, ValueError) as exc:
+        print(f"codecinema: {exc}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

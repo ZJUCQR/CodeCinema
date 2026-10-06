@@ -24,12 +24,12 @@ CodeCinema 是一个小型框架，用来制作完全由代码构成的影片。
 - **合成**：ffmpeg 辅助工具，负责探测、编码、拼接和混流。
 - **命令行**：一个 CLI，可以列出影片、运行影片的步骤，以及创建新影片。
 
-框架自带两部完整的示例影片，分别用两种不同的技术制作。
+框架自带三部完整的影片项目、八种可定制的起步场景，以及本地可视化编辑器。
 
 ## ✨ 亮点
 
-- 🤖 **由 coding agent 创作的影片**：两部示例影片都是用自然语言导演，由 coding agent 从头到尾完成的，包括故事、角色、动画、镜头、配乐、音效和母带。
-- 🎬 **两部完整的示例影片**：《芒原决战》是一部 160 秒的武士决斗，用 Blender 3D 渲染；《韩熙载夜宴图 · 猫》是一幅 128 秒的“活”长卷，用 skia 以 2D 绘制。
+- 🪄 **选模板、改内容、点一下出片**：本地 Studio 提供八种动态场景、可编辑分镜、标题、字幕、颜色、横竖屏与方形画幅，一次点击生成 MP4，无需 API Key。
+- 🎬 **三部完整影片项目**：160 秒的 Blender 武士决斗、128 秒的活体猫咪长卷，以及人物贯穿三集、含中文配音的 11 分钟开篇改编。
 - 🧩 **约定很小，渲染器随意**：影片在 `film.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
 - 🎼 **共享的声音工具包**：两部影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
 - ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑；分层设置无需改动受版本管理的文件；辅助工具支持 macOS、Linux 和 Windows。
@@ -39,16 +39,20 @@ CodeCinema 是一个小型框架，用来制作完全由代码构成的影片。
 ```bash
 git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
 python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # 安装 `codecinema` 命令
+python -m pip install -e .                             # 安装 `codecinema` 命令
 
-codecinema check                      # 检查 Python 依赖、ffmpeg，以及 3D 示例需要的 Blender
-codecinema list                       # 列出 films/ 里的影片和它们的步骤
-codecinema run nightrevels all        # 2D 示例：几分钟生成整部影片
-codecinema run silvergrass all        # 3D 示例：需要 Blender 5.2+，渲染时间较长
-codecinema new myfilm                 # 从模板开始制作你自己的影片
+codecinema studio                    # 自动打开本地可视化编辑器
 ```
 
-每部影片把成片输出到它自己的 `assets/film/` 文件夹。不安装命令也可以用 `python -m codecinema …`。
+制作前需安装 **FFmpeg**。**[三步出片教程](docs/GETTING_STARTED.zh-CN.md)** 提供 Mac、Linux、Windows 的具体安装命令。进入 Studio 后选场景、填文字、点击 **“生成我的影片”** 即可；成片输出到对应影片的 `assets/film/` 文件夹。也可以使用 `python -m codecinema …`。
+
+<p align="center"><img src="assets/images/starters.jpg" width="100%" alt="八种真实模板画面：月夜、落日、极光、霓虹、海浪、水墨、宇宙和萤火森林"></p>
+
+喜欢命令行？一条命令创建并制作：
+
+```bash
+codecinema new myfilm --preset aurora --title "我的影片" --render --open
+```
 
 ## 🎞 示例影片
 
@@ -63,16 +67,31 @@ codecinema new myfilm                 # 从模板开始制作你自己的影片
 
 </div>
 
-两部影片都可以在[主页](https://zjucqr.github.io/CodeCinema/zh/)完整观看。
+影片可在[主页](https://zjucqr.github.io/CodeCinema/zh/)观看，`codecinema list` 会列出各自的制作步骤。猫咪长卷用 `codecinema run nightrevels all` 生成；3D 示例用 `codecinema run silvergrass all`，需要 Blender 5.2+ 和较长渲染时间。
+
+## 新场景：《我不是戏神》开篇三集
+
+新增 **[《我不是戏神 · 开篇三集》](films/xishen/README.zh-CN.md)**，按原著第 1–6 章推进，总长 **11 分钟**。共用人物形象与连续性记录，包含 1080p 动态漫画、中文配音、字幕、原创配乐和音效。
+
+```bash
+python -m codecinema run xishen all --narration required
+```
+
+**[在线观看三集](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[下载完整成片](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)**
+
+Mac 使用本机离线中文语音；其他系统可提供录音，或用 `--narration off` 生成字幕和配乐版本。成片位于 `films/xishen/assets/film/`，生成后运行 `python -m codecinema run xishen serve`，可选集、跳转段落或连续观看。人物依据和逐章来源见影片说明。
 
 ## 🎨 制作你自己的影片
 
 ```bash
-codecinema new myfilm --title "My Film"     # 用模板创建 films/myfilm/
-codecinema run myfilm all                    # 渲染一部 6 秒的起步影片
+codecinema new myfilm --preset sunset --title "我的影片" --duration 15 --render
+codecinema customize myfilm --preset neon --title "城市灯火" --format portrait --render
+codecinema run myfilm all --quality preview   # 另存快速预览，保留正式成片
 ```
 
-模板本身就是一部完整的小影片：`draw_frame()` 绘制每一帧，`score()` 生成声音，框架负责编码和混流。把这两个函数换成你自己的内容，随着影片变大再增加步骤，设置都放在 `film.toml` 里。
+模板默认 **三个镜头、12 秒、720p**。通过 Studio 或 `scenes.json`，可以逐镜头改风格、时长、文字和镜头运动；八种场景均支持横屏、竖屏、方形画幅与原创合成配乐。每次定制都会自动保存上一版设置。
+
+需要新的动画表现时，再修改生成项目 `src/run.py` 中的 `draw_frame()` 和 `score()`。个性化操作看 [简单教程](docs/GETTING_STARTED.zh-CN.md)，渲染器开发看 [框架说明](docs/FRAMEWORK.md)。
 
 ```toml
 # films/myfilm/film.toml
@@ -95,7 +114,9 @@ fps = 24
 ```
 CodeCinema/
 ├── codecinema/             # 框架
-│   ├── cli.py              # codecinema list | run | new | check
+│   ├── cli.py              # studio | presets | new | customize | list | run | check
+│   ├── studio.py           # 本地可视化编辑器与制作任务
+│   ├── studio_assets/      # 编辑器界面与真实场景缩略图
 │   ├── settings.py         # 每部影片的分层设置，工具和字体查找
 │   ├── films.py            # 影片发现和步骤运行
 │   ├── media.py            # ffmpeg：探测、编码、拼接、混流
@@ -104,7 +125,8 @@ CodeCinema/
 │   └── template/           # `codecinema new` 使用的起步影片
 ├── films/
 │   ├── silvergrass/        # 示例：《芒原决战》（Blender 3D）
-│   └── nightrevels/        # 示例：《韩熙载夜宴图 · 猫》（2D）
+│   ├── nightrevels/        # 示例：《韩熙载夜宴图 · 猫》（2D）
+│   └── xishen/             # 《我不是戏神》开篇三集（2D 动态漫画，11 分钟）
 ├── docs/                   # 框架说明
 ├── site/                   # 主页
 └── pyproject.toml          # 包和依赖
