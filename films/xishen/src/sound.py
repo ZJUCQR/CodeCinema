@@ -201,30 +201,8 @@ def event(kind, duration, seed):
 
 
 def music(episode, shot):
-    n=round(shot.duration*SR)
-    t=shot.start+np.arange(n,dtype=np.float32)/SR
-    base=np.sin(math.tau*55*t)*.027+np.sin(math.tau*82.4069*t)*.017+np.sin(math.tau*110.1*t)*.012
-    base*=.68+.21*np.sin(math.tau*.075*t)
-    mix=stereo(base,-.16)
-    # A recurring D-minor pentatonic phrase; all notes use the episode clock.
-    notes=[62,69,65,64,60,62,57,60]
-    beat=3.1 if episode["number"]<3 else 2.7
-    for index in range(math.floor((shot.start-3.8)/beat),math.ceil(shot.end/beat)):
-        at=index*beat
-        if at<0:
-            continue
-        midi=notes[index%len(notes)]
-        freq=440*2**((midi-69)/12)
-        y=pluck(freq,3.8,.073 if index%4==0 else .052)
-        source=max(0,round((shot.start-at)*SR)); destination=max(0,round((at-shot.start)*SR))
-        m=min(len(y)-source,n-destination)
-        if m>0:
-            mix[destination:destination+m]+=stereo(y[source:source+m],-.3 if index%2 else .3)
-    if shot.data["scene"] in ("audience","expectation","curtain","device","water_message"):
-        mix+=stereo(np.sin(math.tau*58.27*t)*.017+np.sin(math.tau*116.8*t)*.006,.2)
-    if shot.data["scene"] in ("soy","rule","coins","chase","recruit","intervene","director"):
-        mix+=stereo(np.sin(math.tau*146.832*t)*.009*(.5+.5*np.sin(t*1.9)),.24)
-    return mix
+    from score import music as scene_score
+    return scene_score(episode, shot)
 
 
 def synthesize(episode, out, mode="auto", engine="auto"):

@@ -339,6 +339,9 @@ def qc(episodes,options):
 
 
 def main():
+    if len(sys.argv)>1 and sys.argv[1]=="blender":
+        from blender_preview import main as blender_study
+        return blender_study(sys.argv[2:])
     if len(sys.argv)>1 and sys.argv[1]=="serve":
         from serve import main as screening_server
         screening_server(sys.argv[2:])

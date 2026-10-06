@@ -47,6 +47,18 @@ XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
 
 观看页可直接用浏览器打开。需要 HTTP 播放时，在项目根目录运行 `.venv/bin/python -m codecinema run xishen serve`，访问 `http://127.0.0.1:8000/watch.html`。内置服务器支持视频分段请求，段落跳转和拖动进度条都能正常工作。
 
+## Blender 人物与动作样片
+
+已发布的三集使用 Skia 渲染。现在可以用 Blender 5.2+ 单独生成陈伶开篇雨夜的三维近景与行走样片，复用原来的剧情时长、情感配音和口型时间数据：
+
+```bash
+python -m codecinema run xishen blender --still
+python -m codecinema run xishen blender --shot ep01_face
+python -m codecinema run xishen blender --shot ep01_lost
+```
+
+两段视频分别为 10 秒和 12 秒，默认 1280 × 720，输出到 `out/blender/`。加上 `--width 640 --samples 16` 可加快动作预览；`--engine cycles --samples 64 --still` 可生成光线追踪近景。当前仅支持开篇红戏服雨夜镜头，属于开发样片，完整三集的 Blender 重制仍需其他人物、服装、场景与表演制作。[Blender 指南](../../docs/BLENDER.md) 说明了 SilverGrass 已有流程、共享工具、缓存和外部人物数据库的授权。
+
 ## 人物与原著依据
 
 [原著官方页面](https://fanqienovel.com/page/7276384138653862966)及逐章链接记录在 [canon.json](data/canon.json)。影片是压缩改编，旁白和对白重新创作。人物面部、建筑细节和镜头属于视觉设计；原文明确的服装、地点、道具和事件顺序作为连续性的依据。

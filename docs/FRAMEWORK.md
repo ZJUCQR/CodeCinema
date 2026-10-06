@@ -75,6 +75,7 @@ The module is pure standard library, so it also works inside Blender's Python.
 | `codecinema.audio.dsp` | Oscillators, noise, envelopes, filters, Karplus-Strong and modal synthesis, resampling, convolution reverb, panning, a compressor, a true-peak lookahead limiter, and loudness helpers. `dsp.SR` is the film's `audio.sample_rate` |
 | `codecinema.media` | `probe()`, `encoder()` (raw RGBA frames on stdin, H.264 out), `concat()` and `mux()` |
 | `codecinema.procutil` | Cross-platform file locks, process liveness, command lines, free memory, process-group termination and link-or-copy |
+| `codecinema.blender` | Headless launching with film settings, assigned action-slot access and temporary modifier suspension; see the [Blender guide](BLENDER.md) |
 | `codecinema.films` | `discover()` and `Film.run(step, args)`, the logic behind the CLI |
 
 A film whose modules import each other by bare name (`import settings`, `import dsp`) can keep doing so with a tiny alias module that points the name at the framework, which is what both examples do:
@@ -125,3 +126,5 @@ To grow it into a real film:
 | Guide | [README](../films/silvergrass/README.md), [docs](../films/silvergrass/docs/) | [README](../films/nightrevels/README.md), [plan](../films/nightrevels/docs/FILM_PLAN.md) |
 
 The [opening trilogy](../films/xishen/README.md) adds a longer 2D motion-comic pipeline: 67 shots across three episodes, a sourced character ledger, local emotional speech and aligned dialogue, subtitles, chapters and media/continuity QC. It shares the framework's settings, DSP and FFmpeg helpers while keeping its story-specific renderer separate from the generic starter.
+
+Its optional `blender` step develops opening rain close-ups and a walk in 3D. Those development studies use the shared Blender tools and speech clock; they do not replace the published trilogy. The [Blender guide](BLENDER.md) covers the existing SilverGrass architecture, reusable APIs, commands, limitations and external actor database license.

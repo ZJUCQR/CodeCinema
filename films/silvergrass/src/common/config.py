@@ -69,8 +69,8 @@ VENV_PY = PYTHON
 
 def blender_cmd(script, *args, blend=None):
     """Headless Blender command line running `script` (path, absolute or relative to the repo root) on `blend`."""
-    return [BLENDER_BIN, "-b", "--factory-startup", *([blend] if blend else []), "--python-exit-code", "1",
-            "--python", os.path.join(ROOT, script), "--", *[str(a) for a in args]]
+    from codecinema.blender import command
+    return command(script, *args, blend=blend, root=ROOT, executable=BLENDER_BIN)
 
 
 FONT_CALLIGRAPHY = _settings.font("calligraphy")   # running-script calligraphy: title, name cards, act cards

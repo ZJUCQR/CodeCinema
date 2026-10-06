@@ -5,7 +5,7 @@ title_zh = "我不是戏神 · 开篇三集"
 description = "Three reproducible motion-comic episodes adapting chapters 1–6, with a shared cast, continuity ledger, Mandarin narration, score and subtitles."
 entry = "src/run.py"
 env_prefix = "XISHEN"
-steps = ["plan", "stills", "render", "audio", "assemble", "qc", "serve", "all"]
+steps = ["plan", "stills", "render", "audio", "assemble", "qc", "serve", "blender", "all"]
 requires = ["ffmpeg"]
 
 [settings.paths]

@@ -70,6 +70,18 @@ The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_compl
 
 **Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../docs/SPEECH.md) for reusable framework APIs and starter controls.
 
+## Blender character and motion studies
+
+The published trilogy uses Skia. An optional Blender 5.2+ step develops Chen Ling's opening rain portrait and walk with an anatomical mesh, curve hair, native IK, speech-driven facial morphs and cinematic lenses:
+
+```bash
+python -m codecinema run xishen blender --still
+python -m codecinema run xishen blender --shot ep01_face
+python -m codecinema run xishen blender --shot ep01_lost
+```
+
+The movies run for 10 and 12 seconds. Outputs go to `out/blender/`, at 1280 × 720 by default; `--width 640 --samples 16` speeds up motion review. These are **development studies**, not finished replacement episodes. The [Blender guide](../../docs/BLENDER.md) explains the existing SilverGrass pipeline, shared tools, Cycles options, supported shots and the external actor database's AGPL license and rendered-image exception.
+
 ## Character and story continuity
 
 <details>

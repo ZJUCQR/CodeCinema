@@ -176,22 +176,16 @@ def srgb_to_linear(c):
 # =============================================================================================
 def channelbag_of(id_or_obj):
     """ActionChannelbag of the action slot assigned to this ID (None if not animated)."""
-    ad = getattr(id_or_obj, "animation_data", None)
-    if ad is None or ad.action is None or ad.action_slot is None:
-        return None
-    return _au.animdata_get_channelbag_for_assigned_slot(ad)
+    from codecinema.blender import channelbag_of as shared_channelbag
+    return shared_channelbag(id_or_obj)
 
 
 def fcurves_of(id_or_obj, prefix=None):
     """List of F-curves of the ID's assigned action slot, optionally filtered by data_path prefix.
     Works for any ID: Object, Camera data (lens/dof), Light data, node groups (compositor/GN keys),
     material.node_tree / world.node_tree (shader node values). Object keys do NOT include obj.data keys."""
-    cb = channelbag_of(id_or_obj)
-    if cb is None:
-        return []
-    if prefix is None:
-        return list(cb.fcurves)
-    return [fc for fc in cb.fcurves if fc.data_path.startswith(prefix)]
+    from codecinema.blender import fcurves_of as shared_fcurves
+    return shared_fcurves(id_or_obj, prefix)
 
 
 def fcurve(id_or_obj, data_path, index=0, create=False, group=None):
@@ -573,17 +567,9 @@ def sample_positions(targets, frames, where="head", scene=None):
 def muted_modifiers(objects=None, types=('NODES',)):
     """Temporarily set show_viewport=False on (GN) modifiers -> frame_set gets much cheaper while sampling
     (renders use show_render, unaffected). objects=None -> all objects."""
-    saved = []
-    for ob in (objects if objects is not None else bpy.data.objects):
-        for m in ob.modifiers:
-            if m.type in types and m.show_viewport:
-                saved.append(m)
-                m.show_viewport = False
-    try:
+    from codecinema.blender import muted_modifiers as shared_modifiers
+    with shared_modifiers(objects, types=types) as saved:
         yield saved
-    finally:
-        for m in saved:
-            m.show_viewport = True
 
 
 # =============================================================================================
