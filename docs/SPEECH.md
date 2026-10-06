@@ -50,7 +50,7 @@ A line that exceeds its scene produces a clear error. Increase the scene length 
 
 For your own recordings on any platform, put a mono WAV in `films/myfilm/assets/voices/arrival.wav`, set `narration.recording` to `arrival.wav`, and run with `--speech-engine recording`. Supply a recording for every scene with spoken text. Use `--speech-engine system` for macOS's basic voice, or `auto` to choose an installed local engine first.
 
-Existing starter projects retain their entry script so customization does not overwrite a custom renderer. To use new renderer features in an older unmodified starter, create a new starter and copy its `scenes.json` across, or deliberately update its `src/run.py` from `codecinema/template/src/run.py` after saving your changes.
+When you add spoken text, an unchanged previous starter renderer is upgraded automatically; its source is saved alongside the previous scene data in `out/edits/`. A custom renderer is preserved. If it lacks narration support, Studio shows an actionable error instead of silently ignoring the voice text. You can create a new starter and copy the scene data, or merge the narration support into your renderer.
 
 ## Reuse voices and mouth timing in a custom renderer
 

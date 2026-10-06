@@ -42,7 +42,7 @@ codecinema run myfilm all --speech-engine local
 
 任何平台都可以使用自己的录音：把单声道 WAV 放进 `films/myfilm/assets/voices/arrival.wav`，在上述对象增加 `"recording": "arrival.wav"`，使用 `--speech-engine recording` 生成。每个有台词的镜头都要提供录音。`system` 指定 Mac 系统声音，`auto` 优先使用已安装的本地情绪模型。
 
-旧模板项目保留自己的入口代码，定制不会覆盖你修改过的渲染器。需要新功能时，可以新建模板项目后复制旧项目的 `scenes.json`；或备份后，将未定制的旧 `src/run.py` 更新为 `codecinema/template/src/run.py`。
+添加配音时，已识别的旧版原始模板会自动升级，并将原渲染器与镜头数据一同备份到 `out/edits/`。自定义代码会保留；若还不支持配音，会显示明确提示，避免台词被悄悄忽略。可以新建模板后复制镜头数据，或把新的配音功能合入自己的渲染器。
 
 ## 自定义人物口型
 

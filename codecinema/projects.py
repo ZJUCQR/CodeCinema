@@ -1,6 +1,7 @@
 """Safe, reversible customization of the editable starter projects."""
 import copy
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,6 +11,10 @@ import tempfile
 import tomllib
 
 from codecinema import settings, starters
+
+# Released starter renderer before spoken scenes. Match its full source so a
+# user-modified renderer is never replaced by an automatic template update.
+LEGACY_SILENT_RENDERERS = {"7c7c775432227b06a7e10a727cabc097af9c10fb32b72a63977cefdef6068915"}
 
 
 def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None):
@@ -105,6 +110,18 @@ def customize(path, *, title=None, subtitle=None, preset=None, seconds=None, for
         for scene in data["scenes"]:
             scene["duration_s"] *= ratio
     starters.validate_story(data)
+    renderer = path / "src/run.py"
+    replacement = None
+    old_renderer = None
+    if any(scene.get("narration", {}).get("text") for scene in data["scenes"]):
+        old_renderer = renderer.read_text(encoding="utf-8")
+        source_hash = hashlib.sha256(old_renderer.encode()).hexdigest()
+        if source_hash in LEGACY_SILENT_RENDERERS:
+            replacement = Path(__file__).with_name("template").joinpath("src/run.py").read_text(encoding="utf-8")
+        elif '"narration"' not in old_renderer and "'narration'" not in old_renderer:
+            raise ValueError("This customized renderer does not support spoken scenes. Your code has been preserved. "
+                             "Create a new starter and copy its scene data, or merge the narration support from "
+                             "codecinema/template/src/run.py. See docs/SPEECH.md.")
     manifest = path / "film.toml"
     previous = manifest.read_text(encoding="utf-8")
     text = replace_value(previous, "film", "title", data["title"])
@@ -128,8 +145,11 @@ def customize(path, *, title=None, subtitle=None, preset=None, seconds=None, for
     backup.mkdir(parents=True, exist_ok=True)
     (backup / "film.toml").write_text(previous, encoding="utf-8")
     (backup / "scenes.json").write_text(json.dumps(original, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    for target, content in ((path / "scenes.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n"),
-                            (manifest, text)):
+    updates = [(path / "scenes.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n"), (manifest, text)]
+    if replacement is not None:
+        (backup / "run.py").write_text(old_renderer, encoding="utf-8")
+        updates.insert(0, (renderer, replacement))
+    for target, content in updates:
         temporary = target.with_suffix(target.suffix + ".tmp")
         temporary.write_text(content, encoding="utf-8", newline="\n")
         temporary.replace(target)
