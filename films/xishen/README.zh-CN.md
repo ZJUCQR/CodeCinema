@@ -1,6 +1,6 @@
 # 我不是戏神 · 开篇三集
 
-以 CodeCinema 制作三九音域《我不是戏神》开篇第 1–6 章的三集动态漫画。当前发布版把 **22 秒 Blender 开场镜头并入第一集**，其余画面保持 Skia，并更新全部三集的室内乐配乐，区分雨夜、剧院、调查、奇观与喜剧场景。总长 **11 分钟**，1920×1080、24 fps、2.35:1 画面，含中文配音、字幕、环境声及道具音效。完整 Blender 三集仍在制作中。
+以 CodeCinema 制作三九音域《我不是戏神》开篇第 1–6 章的三集动态漫画。三集统一使用 Skia 人物造型和画风，并保留随情节变化的室内乐配乐，区分雨夜、剧院、调查、奇观与喜剧场景。总长 **11 分钟**，1920×1080、24 fps、2.35:1 画面，含中文配音、字幕、环境声及道具音效。人物形象、服装状态与剧情时间线在三集间保持连贯。
 
 **[在线观看](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[下载三集与合集](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)** · [English](README.md)
 
@@ -18,16 +18,14 @@
 
 从项目根目录运行：
 
-先按[安装教程](../../docs/GETTING_STARTED.md)配置框架和 FFmpeg，并安装 Blender 5.2+：
+先按[安装教程](../../docs/GETTING_STARTED.md)配置框架和 FFmpeg：
 
 ```bash
 python -m pip install -e ".[speech]"
-python -m codecinema run xishen all --opening-renderer blender --narration required --speech-engine local
+python -m codecinema run xishen all --narration required --speech-engine local
 ```
 
 发布版使用 Apple Silicon 本地 Qwen3-TTS 情绪配音与 Qwen3 ForcedAligner 逐字对齐。首次运行会下载模型，之后缓存每句声音，无需 API key。不同人物固定声线，按镜头的恐惧、犹疑、疲惫和思考调整表演。口型跟随最终配音的实际时间和音节；停顿、旁白和内心独白时闭嘴。
-
-`--opening-renderer skia` 可生成不需要 Blender 的纯 2D 版本。当前发布的 Blender 开场原始画面为 1280×720，在合成时放大到 1080p，并统一上下画幅及底部字幕。Blender 渲染比 2D 场景耗时更长。
 
 `--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`；没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../docs/SPEECH.zh-CN.md)。
 
@@ -49,27 +47,7 @@ XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
 
 `--narration` 和 `--speech-engine` 属于制作设置。分步运行时保持一致；音频会在画面渲染前准备，例如音频使用 `required`，画面与合成也使用 `required`。镜头分块和输入签名支持断点续渲，半成品不会被当作完成的镜头。
 
-复现混合发布版时，音频、画面、合成与质检命令均加上 `--opening-renderer blender`。
-
 观看页可直接用浏览器打开。需要 HTTP 播放时，在项目根目录运行 `.venv/bin/python -m codecinema run xishen serve`，访问 `http://127.0.0.1:8000/watch.html`。内置服务器支持视频分段请求，段落跳转和拖动进度条都能正常工作。
-
-## Blender 开场与快速更新
-
-第一集已并入陈伶开篇雨夜的三维行走与近景，复用原来的剧情时长、情感配音和口型时间数据。可用 Blender 5.2+ 单独检查两个镜头：
-
-```bash
-python -m codecinema run xishen blender --still
-python -m codecinema run xishen blender --shot ep01_face
-python -m codecinema run xishen blender --shot ep01_lost
-```
-
-两段视频分别为 10 秒和 12 秒，默认 1280 × 720，输出到 `out/blender/`。加上 `--width 640 --samples 16` 可加快动作预览；`--engine cycles --samples 64 --still` 可生成光线追踪近景。已有基础画面和两段 Blender 视频时，可直接更新三集配乐与开场，无需重画其他镜头：
-
-```bash
-python -m codecinema run xishen refresh --opening-renderer blender --narration required --speech-engine local
-```
-
-`refresh` 检查画幅、帧数与镜头时间，保留 `out/ep*/picture.mp4` 基础画面，重新合成三集和合集，包含字幕、章节和完整质检。修改剧情或 2D 画面后应运行 `all` 重画基础画面。完整 Blender 三集仍需其他人物、服装、场景与表演制作。[Blender 指南](../../docs/BLENDER.md) 说明了 SilverGrass 已有流程、共享工具、缓存和外部人物数据库的授权。
 
 ## 人物与原著依据
 
@@ -102,6 +80,6 @@ assets/images/        海报、人物形象表、67 格分镜图
 assets/film/          三集 MP4、合集与 qc.json
 ```
 
-质检核对剧情时序、跨集状态、期待值、字体、字幕宽度、67 个镜头的确定性和运动、帧数、画面尺寸、音画时长、字幕轨、章节、响度与真峰值，并完整解码成片检查错误。结果写入 `assets/film/qc.json`。影片和中间音视频不提交 Git，可由上述命令重新生成。
+质检核对剧情时序、跨集状态、期待值、字体、字幕宽度、67 个镜头的确定性和运动、帧数、画面尺寸、音画时长、字幕轨、章节、响度与真峰值，并完整解码成片检查错误。结果写入 `out/qc.json`。影片和中间音视频不提交 Git，可由上述命令重新生成。
 
 本版使用共享的人物设计、独立脸型、发型和体态；画面不再叠加片名、集数与解释性文字，只保留底部字幕和剧情中的道具文字。

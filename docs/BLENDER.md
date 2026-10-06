@@ -1,6 +1,6 @@
 # Blender in CodeCinema
 
-CodeCinema already includes a complete Blender production: [Duel in the Silver Grass](../films/silvergrass/README.md). Blender is one of the framework's supported renderers. The starter uses Skia; the published opening trilogy combines Skia scenes with two Blender opening shots. Choosing a different film does not automatically choose Blender.
+CodeCinema includes a complete Blender production: [Duel in the Silver Grass](../films/silvergrass/README.md). Blender is one of the framework's supported renderers. The starter and the opening trilogy use Skia. Each film declares its own renderer and production steps.
 
 Install [Blender 5.2 or later](https://www.blender.org/download/) and follow the [framework installation guide](GETTING_STARTED.md). Standard installation locations and `PATH` are detected. Set `BLENDER_BIN` if Blender is elsewhere.
 
@@ -56,37 +56,3 @@ for curve in fcurves_of(camera, "location"):
 `muted_modifiers()` restores viewport flags even when baking raises an exception; render visibility is unchanged. `channelbag_of()` and `fcurves_of()` use Blender 5.x's assigned action slots, rather than the removed legacy action API. SilverGrass calls these same shared helpers.
 
 [`codecinema.audio.performance`](../codecinema/audio/performance.py) is also usable inside Blender. Its `Performance.mouth(time, character)` returns speech activity and syllable shapes from the final recorded take. Use the shot's own time in seconds and the same audio start offset when muxing. Narration and thoughts must not drive a visible character's mouth. See the [speech guide](SPEECH.md).
-
-## Opening-sequence Blender studies
-
-The Xishen example now has an explicit `blender` step for developing Chen Ling's opening rain close-ups and walk. It uses the existing story clock and voice takes, with an anatomical mesh, native leg IK, curve hair, facial morphs, lenses and depth of field.
-
-```bash
-codecinema run xishen blender --still
-codecinema run xishen blender --shot ep01_face
-codecinema run xishen blender --shot ep01_lost
-```
-
-The first command produces a still. The other commands produce a 10-second dialogue study and a 12-second walking study at 1280 × 720, 24 fps by default. `--width 640 --samples 16` makes a faster motion review. `--engine cycles --samples 64 --still` produces a path-traced portrait. `--at 2.4` selects a still's time; `--narration off` omits speech, and `--narration required --speech-engine local` requires the expressive local engine.
-
-Outputs live in `films/xishen/out/blender/<shot_id>.jpg` or `.mp4`. Interrupted renders reuse completed PNGs when settings, code, story, Blender version and performance data match. Unsupported scenes and costumes fail explicitly. The first run downloads a pinned actor database; subsequent runs verify and reuse the local cache.
-
-The current published trilogy inserts these two shots into episode 1 at 00:10–00:32, with matching caption bars and the episode's soundtrack. The rest of the picture uses Skia; this is a mixed-renderer edition, not a complete Blender remake or a claim of live-action quality. Other cast members, costumes and sets, acting polish and full-film visual review are still required for a complete Blender production. A scene-led chamber score varies harmony, phrasing and instrumentation across rain, theatre, investigation, wonder and comedy cues.
-
-```bash
-# Reproduce the mixed edition, including the two Blender renders.
-codecinema run xishen all --opening-renderer blender --narration required --speech-engine local
-
-# Reuse existing base picture and Blender clips, refresh sound and assemble.
-codecinema run xishen refresh --opening-renderer blender --narration required --speech-engine local
-```
-
-The second command intentionally reuses `out/ep*/picture.mp4`; run `all` when the story or artwork changes. The 1280 × 720 opening clips are scaled to the 1080p episode canvas. Shot durations, subtitles and chapter boundaries stay on the original story clock, and source movies remain available for later refreshes. `--opening-renderer skia` selects the entirely 2D edition without requiring Blender.
-
-## Actor database provenance
-
-Only the Xishen Blender study downloads the [MB-Lab database](https://github.com/animate1978/MB-Lab), pinned to revision `063bff04e60f3e7c651fda628c30f5d83f3f3078`. [`blender_preview.py`](../films/xishen/src/blender_preview.py) lists the files and SHA-256 hashes. The cache and generated `scene.blend` files stay under ignored `out/`; no add-on is installed and no upstream Python code is imported or copied.
-
-The database's meshes, textures and JSON files are **AGPL-3.0-or-later**, with copyright attributed to Manuel Bastioni (2015–2018) in the [pinned upstream license](https://github.com/animate1978/MB-Lab/blob/063bff04e60f3e7c651fda628c30f5d83f3f3078/license.txt). Generated 3D models retain that database license. They are not covered by this framework's MIT license.
-
-The same upstream license contains a specific exception for rendered two-dimensional images and videos depicting non-reverse-engineering scenes: it treats those renders as original works of their rendering author. Read the upstream terms before redistributing the database or generated 3D models. A machine-readable `source.json` and the upstream `license.txt` accompany the local asset cache.

@@ -63,7 +63,6 @@ def _concat(clips, gap=0.5, lead=0.25):
     """stereo clips -> one stereo buffer, each clip starting `gap` s after the previous one ended"""
     parts, starts = [], []
     t = lead
-    total = n_of(lead)
     for c in clips:
         c = dsp.as_stereo(c)
         starts.append(t)

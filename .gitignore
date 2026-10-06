@@ -5,13 +5,14 @@ __pycache__/
 build/
 *.egg-info/
 
-# Rendered master film (too large for git: attach it to a GitHub Release)
-assets/film/*.mp4
+# Finished masters and production reports belong in local output or Releases.
+films/*/assets/film/
 
 # Generated output (renders, builds, audio stems, previews) — regenerate with `python src/run.py all`
 # Rendered frames are never uploaded
 out/frames/
 out/
+_site/
 *.mp4
 !site/media/*.mp4
 *.mov

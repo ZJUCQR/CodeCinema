@@ -15,9 +15,7 @@ Costume dict keys:
 """
 import math
 
-import numpy as np
-
-from ink import (INK, Xf, edge_fur, ellipse, fill, fur, hexc, mix, outline, poly, shade, shape, smooth, stroke_line,
+from ink import (INK, Xf, edge_fur, ellipse, fill, fur, hexc, outline, poly, shade, shape, smooth, stroke_line,
                  tapered, wash)
 
 HEAD_AT = (-6.0, -50.0)
@@ -127,7 +125,6 @@ def tail(canvas, b, root, phase, amp=1.0, length=150.0, curl=1.0, fluffy=1.0, up
         r = length * t
         pts.append((x0 + math.cos(-a) * r * 0.9 + t * 20, y0 - math.sin(a) * r * (0.8 if up else 0.35) - (t * 60 if up else 0)))
     w0, w1 = 18 * fluffy, 9 * fluffy
-    from ink import poly as _poly
     import skia
     path = smooth(pts, closed=False)
     meas = skia.PathMeasure(path, False)

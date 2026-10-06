@@ -6,8 +6,8 @@ A complete procedural motion-comic film in three connected episodes, adapting ch
 | --- | --- |
 | Runtime | 11:00 (660 seconds) · 3 episodes |
 | Picture | 1920 × 1080 · 24 fps · H.264 |
-| Audio | Stereo AAC · emotion-directed Mandarin voices · original score and sound effects |
-| Renderer | Skia motion comic · 67 shots · shared, individually designed cast |
+| Audio | Stereo AAC · emotion-directed Mandarin voices · scene-led chamber score and sound effects |
+| Renderer | Skia motion comic throughout · 67 shots · shared, individually designed cast |
 
 ## Downloads
 
@@ -19,6 +19,8 @@ A complete procedural motion-comic film in three connected episodes, adapting ch
 | [Episode 3 · Chen's Directing Rules](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4) | 4:00 |
 
 Only finished MP4s are attached to this release. They include burned captions, a selectable subtitle track and chapter markers.
+
+All three episodes share one visual style and cast. Rain, theatre, investigation, wonder and comedy scenes use distinct musical cues.
 
 ## Reproduce
 

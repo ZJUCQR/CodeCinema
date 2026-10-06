@@ -201,7 +201,6 @@ def moth_flutter(ev, r):
 
 def _whoosh(r, dur, f_lo=700.0, f_hi=3500.0, f_end=1200.0, q=1.2, silk=0.3, flutter=0.25):
     n = n_of(dur)
-    t = t_axis(n)
     fc = dsp.env_points([(0, f_lo), (dur * 0.45, f_hi), (dur, f_end)], n, "cos")
     x = r.standard_normal(n)
     y = dsp.tv_biquad(x, "bp", fc, q, block=128)
@@ -413,7 +412,6 @@ def basket_creak(ev, r):
 def blow(ev, r):
     """a soft short breath puff"""
     n = n_of(0.38)
-    t = t_axis(n)
     y = dsp.eq_chain(r.standard_normal(n), [("bp", 1100.0, 0.0, 0.8), ("peak", 2500.0, 3.0, 1.0)])
     y *= dsp.env_points([(0, 0), (0.025, 1.0), (0.1, 0.7), (0.38, 0.0)], n, "cos")
     k = n_of(0.01)

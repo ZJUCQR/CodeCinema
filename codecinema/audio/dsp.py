@@ -15,8 +15,6 @@ Contents
     equal-power pan, compressor, true-peak lookahead limiter, soft clip, Timeline placement helper.
 """
 import hashlib
-import os
-import sys
 
 import numpy as np
 from scipy import signal
@@ -839,7 +837,7 @@ def _block_level(x, block, mode="peak"):
     return lv
 
 
-def _smooth_ar(target, att_coef, rel_coef, init=None, reduce_is_down=True):
+def _smooth_ar(target, att_coef, rel_coef, init=None):
     """attack/release smoothing of a gain-reduction curve in dB (loop over blocks).
     target: desired gain dB (<=0). Attack = moving towards more reduction."""
     out = np.empty_like(target)

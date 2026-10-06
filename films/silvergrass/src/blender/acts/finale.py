@@ -29,7 +29,7 @@ import sys
 import zlib
 
 import bpy
-from mathutils import Euler, Matrix, Quaternion, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 ROOT = (__import__("os").environ.get("SILVERGRASS_ROOT") or str(next(p for p in __import__("pathlib").Path(__file__).resolve().parents if (p / "src" / "common" / "config.py").is_file())))   # repo root (portable)
 for _p in (os.path.join(ROOT, "src", "common"), os.path.join(ROOT, "src", "blender")):
@@ -493,7 +493,6 @@ def shinobi_after(SH):
 # the elder
 # =============================================================================================
 def elder(SA):
-    import characters as CH
     import moves as M
     # ---- S24a-b: gedan in the downpour, unhurried breathing
     _key(SA, 3073, "gedan", hands="pose")
@@ -1249,7 +1248,6 @@ def _local_silence_events(f0, f1):
 
 def build(ctx):
     """Lane entry (acts contract): keys only inside SPAN, cameras through cameras.shot, events through events.emit."""
-    import lane_tools as LT
     sh, sa = ctx["chars"]["shinobi"], ctx["chars"]["saint"]
     stubs = ctx.get("stubs", {})
     missing = [m for m in ("characters", "moves", "environment", "vfx", "poses") if stubs.get(m)]

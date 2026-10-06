@@ -81,7 +81,7 @@ import zlib
 import bpy
 import bmesh
 import numpy as np
-from mathutils import Euler, Matrix, Vector
+from mathutils import Vector
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 for _p in (os.path.join(_HERE, "..", "common"), _HERE):

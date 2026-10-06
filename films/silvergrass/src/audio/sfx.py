@@ -28,7 +28,7 @@ import numpy as np
 import dsp
 import instruments as inst
 import timeline as tl
-from dsp import SR, n_of, t_axis, LN1000, TWO_PI
+from dsp import SR, n_of, t_axis, TWO_PI
 
 SLOWMO_RATE = 0.72
 # Level hierarchy trims (dB), measured with `audition.py --calib` (max momentary loudness of the middle
@@ -205,7 +205,6 @@ def _splash(r, dur=0.25, level=1.0):
 
 def _cloth(r, dur=0.3, fc=900.0, flutter=35.0, level=1.0):
     n = n_of(dur)
-    t = t_axis(n)
     e = dsp.env_points([(0, 0), (dur * 0.2, 1.0), (dur, 0.0)], n, "cos")
     y = dsp.bandpass(_nz(r, n), 150, fc * 2, 2)
     am = 0.5 + 0.5 * np.sin(TWO_PI * dsp.phase_cycles(flutter * (1 + 0.3 * dsp.lp_noise(n, r, 4.0)), n))
@@ -652,7 +651,6 @@ def _koiguchi_click(r, level=1.0):
 
 def _blade_slide(r, dur, f_from, f_to, level=1.0):
     n = n_of(dur)
-    t = t_axis(n)
     fc = np.geomspace(f_from, f_to, n)
     exc = dsp.tv_biquad(_nz(r, n), "bp", fc, 2.2)
     fr = np.sort(np.exp(r.uniform(np.log(2200), np.log(8500), 10)))
@@ -665,7 +663,6 @@ def sfx_draw(e, r, ctx):
     heavy = e.get("who") == "saint"
     D = 0.62 if heavy else 0.42
     n = n_of(D + 0.8)
-    t = t_axis(n)
     y = np.zeros(n)
     ck = _koiguchi_click(r, 0.7)
     y[: len(ck)] += ck
@@ -772,7 +769,6 @@ def sfx_spear_pull(e, r, ctx):
 def sfx_spear_spin(e, r, ctx):
     D = float(np.clip(e["duration_s"] or 1.0, 0.25, 4.0))
     n = n_of(D + 0.25)
-    t = t_axis(n)
     rot = r.uniform(4.2, 5.6) * (1 + 0.08 * dsp.lp_noise(n, r, 1.0))
     ph = dsp.phase_cycles(2 * rot, n)
     am = np.abs(np.sin(np.pi * ph)) ** 3
@@ -824,7 +820,6 @@ def sfx_hat_cut(e, r, ctx):
     straw fibres tearing (0.25 s), then both halves spinning away (flutter + small whooshes L / R)"""
     pre = 0.03
     n = n_of(1.2)
-    t = t_axis(n)
     out = np.zeros((2, n))
     wh = _whoosh_core(r, 0.22, 0.0, pre + 0.02, 1500, 4800, 2000, q=2.0, whistle=0.25)
     out[:, : len(wh)] += 0.45 * wh / (dsp.peak(wh) + 1e-9)
@@ -921,7 +916,6 @@ def sfx_haori_shed(e, r, ctx):
 
 def sfx_spear_draw(e, r, ctx):
     n = n_of(1.1)
-    t = t_axis(n)
     y = np.zeros(n)
     m = n_of(0.38)
     fr = dsp.bandpass(_nz(r, m), 700, 3600, 2)
@@ -938,7 +932,6 @@ def sfx_spear_draw(e, r, ctx):
 
 def sfx_sheath_drop(e, r, ctx):
     n = n_of(1.0)
-    t = t_axis(n)
     y = np.zeros(n)
     m = n_of(0.62)
     tt = t_axis(m)
@@ -1071,7 +1064,6 @@ def sfx_lightning_strike(e, r, ctx):
     """environmental strike (S22 flashes): a whip crack and a short rip, then a MID-distance roll -- deliberately a
     size below the Raikiri, which owns the only full near-thunder body in Act III"""
     y, D = _thunder(r, "mid")
-    n = y.shape[-1]
     k = n_of(0.5)
     sz = np.vstack([_sizzle(r, 0.5), _sizzle(r, 0.5)])
     y[:, :k] += 0.3 * sz[:, :k] / (dsp.peak(sz) + 1e-9)
@@ -1114,7 +1106,6 @@ def sfx_raikiri(e, r, ctx):
     y = np.zeros((2, n))
     y[:, k0:] += 0.85 * y0
     y[:, :k0] += 0.55 * _raikiri_inhale(r, pre)
-    t = t_axis(n - k0)
     # the blade meets the bolt: a D/A steel 'shing' (clustered doublets, T60 <= 0.9 s) + a hard crack
     fr = np.array([1174.7, 1760.0, 2349.3, 3520.0, 4698.6])
     fr = np.concatenate([fr, fr * 1.0035, fr * 0.9972]) * r.uniform(0.998, 1.002)
@@ -1282,7 +1273,6 @@ def sfx_stinger(e, r, ctx):
     s = float(np.clip(e["strength"], 0.2, 1.3))
     pre = 0.45 if s >= 0.5 else 0.0
     n = n_of(pre + 2.5)
-    t = t_axis(n)
     out = np.zeros((2, n))
     k = n_of(pre)
     if pre > 0:

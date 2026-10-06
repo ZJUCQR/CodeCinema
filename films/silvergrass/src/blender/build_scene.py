@@ -43,7 +43,7 @@ for _p in (os.path.join(ROOT, "src", "common"), os.path.join(ROOT, "src", "blend
         sys.path.insert(0, _p)
 
 import bpy  # noqa: E402
-from mathutils import Matrix, Vector  # noqa: E402
+from mathutils import Vector  # noqa: E402
 import config  # noqa: E402
 import bl_util as U  # noqa: E402
 import fxclock  # noqa: E402

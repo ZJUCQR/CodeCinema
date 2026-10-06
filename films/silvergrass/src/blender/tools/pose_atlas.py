@@ -262,7 +262,6 @@ def render_atlas(poses, out_png, chars=("SHINOBI", "SAINT"), views=("front", "ri
                  auto_elbow=False):
     """Render every pose on each rig from each view (Workbench) and tile them into `out_png` (PIL, .venv).
     Every still takes a lane_tools.render_lock() slot. Returns the manifest dict (per-pose QA tags included)."""
-    import math
     import bpy
     from mathutils import Vector
     rigs, cam, C, U = _setup_scene(meshes, lr_tint)

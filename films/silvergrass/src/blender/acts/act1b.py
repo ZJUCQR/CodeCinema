@@ -21,7 +21,7 @@ import math
 import zlib
 
 import bpy
-from mathutils import Matrix, Vector
+from mathutils import Vector
 
 import config
 import bl_util as U
@@ -758,7 +758,6 @@ TRAILS = [  # (owner, f0, f1) - the fast part of each swing up to its contact
 
 
 def effects(SH, SA, marks):
-    import moves as M
     import vfx
     for i, (w, a, b) in enumerate(TRAILS):
         vfx.blade_trail(f"{w}_tip", f"{w}_base", a, b, name=f"S1x_trail_{i}_{a}")

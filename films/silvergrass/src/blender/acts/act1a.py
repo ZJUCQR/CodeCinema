@@ -269,8 +269,6 @@ def _s05_s06(SH, SA, CH, M):
 def _s07(SH, SA, CH, M):
     """S07a the dash + FIRST CLASH 595, S07b the slow-motion grind 595-630, S07c release on 631 + reset to 672."""
     import poses as PZ
-    sh_ctrl = bpy.data.objects["SHINOBI_sword_ctrl"]
-    sa_ctrl = bpy.data.objects["SAINT_sword_ctrl"]
     # ---------------- roots: 588 CONSTANT (the ellipsis cut), 589 mid-dash / cheated
     M.root(SA, 588, H0["saint"]["pos"], 0.0, interp='CONSTANT')
     M.root(SA, 589, (0.0, 1.25), 0.0, interp='LINEAR')

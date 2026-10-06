@@ -853,7 +853,6 @@ def arr_act3(S, doc, C, G, G2=None):
     """140 BPM from the Raikiri to the low point (grid G) and from the low point to the hard stop (grid G2).
     One scale step up (Eb over Bb) -> A -> D at the low point."""
     beat = G.beat
-    fr = 1.0 / doc.fps
     lp = first_event(doc, "rain_split", G.t0, G.t_end + 4.0, tag="low_point") or \
         first_event(doc, "clash_heavy", G.t0, G.t_end + 4.0, tag="low_point")
     t_low = C.get("low_point", G.t(11))

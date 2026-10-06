@@ -26,7 +26,6 @@ Public API
   throw_kunai(i, frame, target, speed=18.0, stick=True, ground_z=0.0)   SHINOBI_kunai_<i> flies point-first
 Deterministic: no randomness except seeds from zlib.crc32 of fixed strings; no Python hash().
 """
-import math
 import os
 import sys
 import zlib
@@ -128,7 +127,7 @@ def toss(obj, f0, p0=None, v0=(0.0, 0.0, 0.0), spin=(0.0, 0.0, 0.0), ground_z=0.
     prev_e = ob.rotation_euler.copy()
     last = f0 + max_frames if f_end is None else f_end
     settling = None
-    q_rest = None
+    q_start = q_rest = None
     f = f0
 
     def lowest(pos, quat):

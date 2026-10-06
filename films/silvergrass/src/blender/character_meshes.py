@@ -51,7 +51,7 @@ import zlib
 
 import bpy
 import numpy as np
-from mathutils import Matrix, Vector
+from mathutils import Matrix
 
 ROOT = (__import__("os").environ.get("SILVERGRASS_ROOT") or str(next(p for p in __import__("pathlib").Path(__file__).resolve().parents if (p / "src" / "common" / "config.py").is_file())))   # repo root (portable)
 for _p in (os.path.join(ROOT, "src", "common"), os.path.join(ROOT, "src", "blender")):
@@ -296,7 +296,7 @@ def loft(stations, n=16, phase=0.0, profile=None, loop=False, cap0=False, cap1=F
         theta = np.arctan2(prof[:, 1], prof[:, 0])
     else:
         theta = np.linspace(0.0, 2.0 * math.pi, n, endpoint=False) + phase
-    V, idx, vpar = [], [], []
+    V, idx = [], []
     per = []
     for si, st in enumerate(stations):
         c, X, Z = _v(st["c"]), _v(st["X"]), _v(st["Z"])
@@ -1174,7 +1174,6 @@ def eye_parts(centre, r, mat_eye, mat_lid, mat_lash, open_up=0.62, open_dn=0.30,
             row = []
             for a in az:
                 edge = (open_up if upper else -open_dn) - tilt * side * math.sin(a) * (1 if upper else 0.5)
-                h = edge + (hh - (1.0 if upper else -1.0)) * 0 if False else None
                 # blend from the pole (hh=+-1) to the edge (hh=0)
                 pole = 1.0 if upper else -1.0
                 hv = pole + (edge - pole) * (1.0 - abs(hh))
@@ -1685,7 +1684,6 @@ def build_shinobi(rig, col, D):
         # bracer (tekko) on the twist bone: flattened sleeve + dorsal plate + two cords
         Xt, Yt, Zt = rr.ax(f"forearm_twist.{side}")
         a0, a1 = Mt - Yt * 0.010, Wr + Yt * 0.016
-        Lb = np.linalg.norm(a1 - a0)
         hZ = rr.ax(f"hand.{side}")[2]
         dors = _unit(-hZ - Yt * np.dot(-hZ, Yt))
         side_ax = np.cross(Yt, dors)
@@ -1752,7 +1750,6 @@ def build_shinobi(rig, col, D):
         sx = 1.0 if side == "L" else -1.0
         K0, A0 = rr.h(f"shin.{side}"), rr.t(f"shin.{side}")
         Xs, Ys, Zs = rr.ax(f"shin.{side}")
-        L = np.linalg.norm(A0 - K0)
 
         def at_z(z):
             t = (K0[2] - z) / (K0[2] - A0[2])
@@ -1789,7 +1786,6 @@ def build_shinobi(rig, col, D):
                           nu=14, nv=8, mat="tabi")
         out[f"SHINOBI_body_foot.{side}"] = rigid_object(f"SHINOBI_body_foot.{side}", Geo().add(foot, ankle), M, rig,
                                                        f"foot.{side}", col)
-        tip = rr.t(f"toe.{side}")
         med = -sx
         parts = []
         for off_x, hw, L_, h in ((med * 0.013, 0.012, 0.074, 0.030), (-med * 0.011, 0.020, 0.064, 0.028)):
@@ -2526,7 +2522,7 @@ def build_haori(rig, haori_obj, col, M):
                                blends=[0.035, 0.08], segs=segs)
             Wa = blend_weights(Wa, {f"upper_arm.{side}": np.ones(len(P))}, 0.35 * Wa[f"shoulder.{side}"])
             # hanging pouch -> sleeve.<side> (distance below the arm axis along world down)
-            Ea, Wr = rr.t(f"upper_arm.{side}"), rr.t(f"forearm.{side}")
+            Wr = rr.t(f"forearm.{side}")
             dist, t = _closest_on_segment(P, rr.h(f"upper_arm.{side}"), Wr)
             axp = rr.h(f"upper_arm.{side}") + np.outer(t, Wr - rr.h(f"upper_arm.{side}"))
             below = -(P[:, 2] - axp[:, 2])
@@ -2674,8 +2670,6 @@ def saya_parts(char, D):
     """Scabbard (origin koiguchi, +Y to the kojiri, -Z edge side), curved with the blade's sori so the sheathed
     blade stays inside; lacquer + koiguchi/kurikata/kojiri fittings."""
     L = D["saya_length"]
-    yt, tt = D["grip_to_tsuba"], D["tsuba_thickness"]
-    y0 = yt + tt * 0.5
     Lb = D["blade_length"]
     X, Z = np.array((1.0, 0.0, 0.0)), np.array((0.0, 0.0, 1.0))
 

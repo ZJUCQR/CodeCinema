@@ -1,4 +1,4 @@
-// CodeCinema homepage: navigation, inline films, copy buttons and gallery.
+// CodeCinema homepage: navigation, inline films, copy buttons.
 (function () {
   var nav = document.querySelector(".nav");
   function onScroll() { nav.classList.toggle("solid", window.scrollY > 40); }
@@ -79,20 +79,6 @@
       });
     });
   });
-
-  var lb = document.querySelector(".lightbox");
-  if (lb) {
-    var img = lb.querySelector("img"), cap = lb.querySelector("p");
-    document.querySelectorAll(".gallery figure").forEach(function (f) {
-      f.addEventListener("click", function () {
-        var i = f.querySelector("img");
-        img.src = i.src; img.alt = i.alt; cap.innerHTML = f.querySelector("figcaption").innerHTML;
-        lb.classList.add("open");
-      });
-    });
-    lb.addEventListener("click", function () { lb.classList.remove("open"); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") lb.classList.remove("open"); });
-  }
 
   var bg = document.querySelector(".hero video.bg");
   if (bg && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { bg.removeAttribute("autoplay"); bg.pause(); }

@@ -14,6 +14,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 FILMS = {
@@ -31,10 +32,8 @@ def sha256(path):
     return h.hexdigest()
 
 
-def assemble(output, repo):
-    output = output.resolve()
-    if output == ROOT or ROOT.is_relative_to(output) or output.is_relative_to(ROOT / "site"):
-        raise ValueError("Choose an output directory outside the site sources and repository ancestors")
+def build(output, repo):
+    """Assemble and verify a complete edition in a fresh staging directory."""
     releases = {}
     for tag, (_, names) in FILMS.items():
         response = subprocess.run(
@@ -51,23 +50,22 @@ def assemble(output, repo):
         releases[tag] = assets
 
     # Copy only homepage files; this build script is not part of the public site.
-    output.mkdir(parents=True, exist_ok=True)
     for source in (ROOT / "site").iterdir():
         if source.name in ("build.py", "__pycache__"):
             continue
         target = output / source.name
         if source.is_dir():
-            shutil.copytree(source, target, dirs_exist_ok=True)
+            shutil.copytree(source, target)
         else:
             shutil.copy2(source, target)
-    shutil.copytree(ROOT / "assets/images", output / "img", dirs_exist_ok=True)
+    shutil.copytree(ROOT / "assets/images", output / "img")
     for film in ("silvergrass", "nightrevels"):
-        shutil.copytree(ROOT / f"films/{film}/assets/images", output / f"img/{film}", dirs_exist_ok=True)
+        shutil.copytree(ROOT / f"films/{film}/assets/images", output / f"img/{film}")
     xishen = output / "xishen"
     xishen.mkdir(exist_ok=True)
     for name in ("watch.html", "watch.css", "watch.js"):
         shutil.copy2(ROOT / "films/xishen" / name, xishen / name)
-    shutil.copytree(ROOT / "films/xishen/assets/images", xishen / "assets/images", dirs_exist_ok=True)
+    shutil.copytree(ROOT / "films/xishen/assets/images", xishen / "assets/images")
 
     ids = []
     for tag, (folder, names) in FILMS.items():
@@ -99,6 +97,44 @@ def assemble(output, repo):
         content = re.sub(r'(\.(?:mp4|jpg|png|gif|svg))(["\'])', rf'\1?v={version}\2', content)
         content = re.sub(r'((?:src|href)="[^"?]+\.(?:js|css))(")', rf'\1?v={version}\2', content)
         path.write_text(content, encoding="utf-8")
+    (output / ".codecinema-site.json").write_text(
+        json.dumps({"kind": "codecinema-site", "revision": revision, "media_version": version}) + "\n",
+        encoding="utf-8",
+    )
+    return version
+
+
+def assemble(output, repo):
+    if output.is_symlink():
+        raise ValueError("Choose a real output directory, not a symbolic link")
+    output = output.resolve()
+    if (output == ROOT or ROOT.is_relative_to(output)
+            or (output.is_relative_to(ROOT) and not output.is_relative_to(ROOT / "out")
+                and output != ROOT / "_site")):
+        raise ValueError("Use out/site, _site or a directory outside the repository sources")
+    if output.exists():
+        if not output.is_dir():
+            raise ValueError("The output path must be a directory")
+        marker = output / ".codecinema-site.json"
+        # Allow the default staging folder from editions before build markers.
+        if any(output.iterdir()) and output != ROOT / "out/site":
+            if (not marker.is_file()
+                    or json.loads(marker.read_text(encoding="utf-8")).get("kind") != "codecinema-site"):
+                raise ValueError("Choose an empty output directory or a previous CodeCinema site build")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".codecinema-site-", dir=output.parent) as temporary:
+        stage = Path(temporary) / "site"
+        stage.mkdir()
+        version = build(stage, repo)
+        previous = Path(temporary) / "previous"
+        if output.exists():
+            output.replace(previous)
+        try:
+            stage.replace(output)
+        except OSError:
+            if previous.exists():
+                previous.replace(output)
+            raise
     print(f"Site ready: {output} (media edition {version})", flush=True)
 
 

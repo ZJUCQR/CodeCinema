@@ -229,7 +229,6 @@ def gate(x, t0, t1, fade_in=0.004, fade_out=0.004):
 
 
 def end_fade(x, t_fade0, t_zero):
-    N = x.shape[-1]
     a, b = n_of(t_fade0), n_of(t_zero)
     if b > a:
         u = np.linspace(0, 1, b - a)

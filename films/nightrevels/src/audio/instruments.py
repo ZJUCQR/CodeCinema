@@ -537,7 +537,6 @@ def sheng(freqs, dur, vel=0.3, r=None, attack=0.35, release=0.5, width=0.6):
     """sheng pad: pairs of slightly beating free-reed pipes; soft swell; stereo"""
     r = _r(r, "sheng", tuple(np.round(freqs, 2)), dur)
     n = n_of(dur + release + 0.05)
-    t = t_axis(n)
     out = np.zeros((2, n))
     for i, f0 in enumerate(freqs):
         for p in range(2):

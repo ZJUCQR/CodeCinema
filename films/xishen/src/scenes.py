@@ -9,7 +9,7 @@ from codecinema.audio.performance import activate, Performance
 from pathlib import Path
 
 from art import (TOP, BOTTOM, BLUE, GOLD, INK, IVORY, RED, aurora, background, barrel, character, col,
-                 cup, curve, ellipse, glow, grade, lamp, line, paint, path, rain, rect, shape, smooth,
+                 cup, ellipse, glow, grade, lamp, line, paint, rain, rect, shape, smooth,
                  snow, spotlight, text, tricycle)
 
 
@@ -115,10 +115,9 @@ def layout(c, episode, shot, t):
     scene=shot.data["scene"]; u=t/shot.duration
     costume=shot.costume
     emotion=shot.data.get("emotion","neutral")
-    talking=.65<t<shot.duration-1 and shot.data.get("speaker")=="陈伶"
     def hero(x=985,y=921,s=1.7,**kwargs):
         injured=not (episode["number"]==1 and (shot.index<3 or (scene=="rain_fall" and u<.45)))
-        character(c,"chen_ling",x,y,s,t,costume=costume,emotion=emotion,speaking=talking,injured=injured,**kwargs)
+        character(c,"chen_ling",x,y,s,t,costume=costume,emotion=emotion,injured=injured,**kwargs)
     c.drawImage(background(bg_for(scene)),0,0)
 
     if scene.startswith("rain"):
@@ -168,11 +167,11 @@ def layout(c, episode, shot, t):
     elif scene in ("parents","parents_close"):
         close=scene=="parents_close"
         if close:
-            character(c,"chen_tan",554,1690,3.6,t,emotion="afraid",speaking=shot.data.get("speaker")=="陈坛")
-            character(c,"li_xiuchun",1320,1662,3.5,t,emotion="afraid",speaking=shot.data.get("speaker")=="李秀春")
+            character(c,"chen_tan",554,1690,3.6,t,emotion="afraid")
+            character(c,"li_xiuchun",1320,1662,3.5,t,emotion="afraid")
             lamp(c,940,916,.95,t)
         else:
-            character(c,"chen_tan",928,965,1.63,t,emotion="afraid",speaking=shot.data.get("speaker")=="陈坛")
+            character(c,"chen_tan",928,965,1.63,t,emotion="afraid")
             character(c,"li_xiuchun",1440,965,1.52,t,emotion="afraid")
             rect(c,719,738,840,67,"#625a48")
             lamp(c,1145,742,.86,t)
@@ -279,8 +278,7 @@ def layout(c, episode, shot, t):
             rect(c,1268,638,130,77,"#c1ba9e")
         snow(c,t)
     elif scene=="han":
-        character(c,"han_meng",1140,1685,3.42,t,costume="officer_coat",emotion="thinking",injured=False,
-                  speaking=shot.data.get("speaker")=="韩蒙")
+        character(c,"han_meng",1140,1685,3.42,t,costume="officer_coat",emotion="thinking",injured=False)
         line(c,349,537,647,537,GOLD,.4,1)
         snow(c,t)
     elif scene=="device":
@@ -316,7 +314,7 @@ def layout(c, episode, shot, t):
             character(c,"doctor_lin",1550,1510,2.8,t,costume="white_coat",facing=-1)
         elif close:
             hero(464,1340,2.3)
-            character(c,"doctor_lin",1230,1690,3.48,t,costume="white_coat",speaking=True)
+            character(c,"doctor_lin",1230,1690,3.48,t,costume="white_coat")
         else:
             hero(601,1010,1.71,pose="hold")
             character(c,"doctor_lin",1327,982,1.79,t,costume="white_coat",pose="hold")
@@ -357,7 +355,7 @@ def layout(c, episode, shot, t):
             x=728+j*42; y=530+math.sin(j*2+t)*10
             ellipse(c,x,y,21+u*12,12+u*10,"#738b8b",smooth((u-j*.025)/.7)*.5)
     elif scene=="letter":
-        character(c,"doctor_lin",1460,977,1.8,t,costume="white_coat",pose="offer",speaking=True)
+        character(c,"doctor_lin",1460,977,1.8,t,costume="white_coat",pose="offer")
         rect(c,391,465,699,334,"#cbc2a6",radius=3)
         shape(c,[(392,465),(741,663),(1090,465)],"#b4ac93",None,rounded=False)
         line(c,392,798,641,653,"#8d8b79",.6,2)

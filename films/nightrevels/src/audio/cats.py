@@ -17,7 +17,7 @@ import re
 import numpy as np
 
 import dsp
-from dsp import SR, n_of, t_axis, TWO_PI
+from dsp import n_of, t_axis, TWO_PI
 
 # pitch multiplier, formant scale, purr rate (Hz), purr brightness
 WHO = {
@@ -209,7 +209,6 @@ def purr(dur=3.0, who=None, r=None):
     r = r if r is not None else dsp.rng("purr", dur, who)
     dur = max(float(dur), 0.6)
     n = n_of(dur)
-    t = t_axis(n)
     rate0 = w["purr"] * r.uniform(0.97, 1.03)
     # breath cycle breakpoints: exhale (loud, rate0), short gap, inhale (softer, ~0.9 rate0), short gap
     lv_pts, rt_pts = [(0.0, 0.0)], [(0.0, rate0)]
@@ -338,7 +337,6 @@ def lick(r=None):
     """single small wet lick 'tlk': tongue pop + tiny slurpy swish"""
     r = r if r is not None else dsp.rng("lick")
     n = n_of(0.13)
-    t = t_axis(n)
     y = np.zeros(n)
     k = n_of(0.025)
     pop = dsp.modal([420.0 * r.uniform(0.9, 1.1), 1150.0 * r.uniform(0.9, 1.1), 2300.0], [1.0, 0.6, 0.3],

@@ -128,4 +128,4 @@ built-in defaults → `film.toml` → `film.local.toml` (optional, git-ignored; 
 | `SILVERGRASS_ROOT` | Repository root (detected automatically; rarely needed) |
 
 ## Publishing your version
-The code is released under the [MIT License](../LICENSE), so you are free to modify and redistribute it. Keep the copyright notice when you publish a derivative, and for commercial use make sure the title fonts you use are licensed for it.
+The code is released under the [MIT License](../../../LICENSE), so you are free to modify and redistribute it. Keep the copyright notice when you publish a derivative, and for commercial use make sure the title fonts you use are licensed for it.

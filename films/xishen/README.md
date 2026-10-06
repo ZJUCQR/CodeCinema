@@ -4,7 +4,7 @@
 
 <p><sub>An example film made with <a href="../../README.md"><b>CodeCinema</b></a></sub></p>
 
-**The Opening Trilogy · Skia scenes with a Blender opening**
+**The Opening Trilogy · Skia motion comic**
 
 A rain-soaked return. An audience with crimson eyes. A director learning to survive his own stage.
 
@@ -24,7 +24,7 @@ Chen Ling comes home with two broken sets of memories. Behind a curtain, strange
 
 This trilogy condenses **chapters 1–6** of Sanjiu Yinyu's novel in their original order, with newly written dialogue and narration. Shared character models, a continuity ledger and one story clock connect all three episodes. The film combines a shared, individually designed cast and camera motion with emotion-directed Mandarin voices, an original synthesized score and foley. Dialogue mouths follow the final waveform and aligned syllable timestamps; narration and thoughts leave them closed. Footage keeps only the bottom captions and story props, without persistent titles or explanatory overlays.
 
-The current finished edition inserts **22 seconds of Blender footage into episode 1**, at the original walk and portrait shot boundaries. The remaining scenes use Skia. All three episodes have a refreshed chamber score, with distinct rain, theatre, investigation, wonder and comedy cues. This is a mixed-renderer edition; a full Blender trilogy remains in development.
+All three episodes use the same Skia character designs and visual style, with a scene-led chamber score that distinguishes rain, theatre, investigation, wonder and comedy cues. Character appearance, shot timing and story state remain continuous throughout the trilogy.
 
 ## See the atmosphere
 
@@ -56,11 +56,11 @@ Each master includes burned-in captions, a selectable subtitle track and chapter
 
 ## Render and watch locally
 
-Install CodeCinema and FFmpeg using the [getting-started guide](../../docs/GETTING_STARTED.md), plus Blender 5.2+ for the opening shots, then run these commands from the repository root:
+Install CodeCinema and FFmpeg using the [getting-started guide](../../docs/GETTING_STARTED.md), then run these commands from the repository root:
 
 ```bash
 python -m pip install -e ".[speech]"
-python -m codecinema run xishen all --opening-renderer blender --narration required --speech-engine local
+python -m codecinema run xishen all --narration required --speech-engine local
 python -m codecinema run xishen serve
 ```
 
@@ -68,29 +68,9 @@ Open **http://127.0.0.1:8000/watch.html**. The local server supports byte-range 
 
 The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git; the [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
-Use `--opening-renderer skia` for an entirely 2D edition without Blender. Blender opening renders take longer than the 2D scenes; the published 1280 × 720 opening footage is scaled to the 1080p episode canvas with matching caption bars.
-
 **Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use; after that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
 
 **Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../docs/SPEECH.md) for reusable framework APIs and starter controls.
-
-## Blender opening and quick refresh
-
-The Blender opening uses an anatomical mesh, curve hair, native IK, speech-driven facial morphs and cinematic lenses. You can review its individual shots separately:
-
-```bash
-python -m codecinema run xishen blender --still
-python -m codecinema run xishen blender --shot ep01_face
-python -m codecinema run xishen blender --shot ep01_lost
-```
-
-The movies run for 10 and 12 seconds. Outputs go to `out/blender/`, at 1280 × 720 by default; `--width 640 --samples 16` speeds up motion review. Once the base picture and both Blender clips exist, refresh the full edition's score and opening without rerendering the other scenes:
-
-```bash
-python -m codecinema run xishen refresh --opening-renderer blender --narration required --speech-engine local
-```
-
-`refresh` checks frame counts, dimensions and shot timing, keeps the base picture in `out/ep*/picture.mp4`, and assembles the three masters and complete film with subtitles, chapters and quality checks. Use `all` after changing the story or 2D artwork so the base picture is regenerated. The [Blender guide](../../docs/BLENDER.md) explains the existing SilverGrass pipeline, shared tools, Cycles options, supported shots and the external actor database's AGPL license and rendered-image exception.
 
 ## Character and story continuity
 
@@ -99,7 +79,7 @@ python -m codecinema run xishen refresh --opening-renderer blender --narration r
 
 <img src="assets/images/cast-en.jpg" width="100%" alt="The nine recurring on-screen characters, drawn with the same models used in the film">
 
-The sheet shows the Skia cast used for the remaining scenes. Chen Ling's Blender opening is a separate 3D interpretation. Clothing, props, locations and event order follow the sourced details in the opening chapters.
+The sheet shows the same cast used throughout all three episodes. Clothing, props, locations and event order follow the sourced details in the opening chapters.
 
 </details>
 
@@ -134,12 +114,10 @@ python -m codecinema run xishen qc --episode ep01 --narration required --speech-
 
 Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`.
 
-Add `--opening-renderer blender` consistently to the picture, audio, assembly and quality-check stages for the published mixed edition.
-
 </details>
 
 ## Verification and credits
 
-Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. The browser review also checks chapter seeking, episode continuation and mobile layout. Results are generated in `assets/film/qc.json` and `out/browser_qc.json`.
+Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. Results are generated locally in `out/qc.json`. Browser review covers chapter seeking, episode continuation and mobile layout.
 
 Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](data/canon.json) and [production plan](docs/FILM_PLAN.md). The novel's rights remain with its respective rights holders; the [MIT license](../../LICENSE) covers this repository's code.

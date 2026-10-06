@@ -208,7 +208,7 @@ def hand(c, x, y, skin, side=1, gesture=False):
 
 
 def character(c, who, x, y, scale=1.5, t=0, costume=None, emotion="neutral", pose="stand", facing=1,
-              rotation=0, injured=True, speaking=False, silhouette=False):
+              rotation=0, injured=True, silhouette=False):
     """A consistent graphic-novel cast; dialogue drives the face on its real clock."""
     from codecinema.audio.performance import current_mouth
     spec, model = CANON["characters"][who], CAST[who]

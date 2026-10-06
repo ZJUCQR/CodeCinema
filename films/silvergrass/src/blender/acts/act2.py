@@ -871,7 +871,6 @@ def _s16b():
     _thrust(1813, 5.65, 5.40, (-0.08, 3.15, 1.33), hold_to=1816)
     # the kunai turns the shaft: the head swings past his right side (+X), >= 8 deg
     CH.set_spear_grip(1816, 0.35, 0.62)
-    gR = CH.spear_grip(1813)[0]
     for f, ang in ((1816, 6.0), (1820, 10.0), (1824, 11.0)):
         a = math.radians(ang)
         d = Vector((math.sin(a), -math.cos(a), -0.02))
@@ -1519,7 +1518,6 @@ def _s19():
     _pose(SA, 2332, "empty_watch", feet=False)
     M.step(SA, 2331, 2336, (0.0, 2.80), facing=360.0)
     M.step(SA, 2339, 2345, (0.0, 3.00), facing=360.0)
-    fk = dict(POSE["empty_watch"])
     fk_body = dict(POSE["empty_watch"])
     fk_body.update(PZ.arm("R", flex=35, abd=-15, rot=35, elbow=95))
     _kp(SA, 2352, fk_body, feet=False)

@@ -2491,7 +2491,6 @@ def release_elbow(rig, frame, side="R", blend=0):
 
 def _active_arm_target(rig, side):
     """World-space IK target object of the side's active arm IK (None when that arm is FK)."""
-    c = _prefix(rig)
     if side == "R":
         con = _con(rig, "forearm.R", "IK_sword")
         return con.target if con.influence > 0.5 else None

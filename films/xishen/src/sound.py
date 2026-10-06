@@ -1,9 +1,7 @@
 """Offline Mandarin speech, a shared musical clock, timed foley and ducked mixing."""
-import hashlib
 import json
 import math
 from pathlib import Path
-import shutil
 import subprocess
 import wave
 
@@ -20,13 +18,6 @@ SR = int(settings.get("audio", "sample_rate", 48000))
 
 def stereo(y, pan=0):
     return np.asarray(dsp.pan_mono(y, pan).T, dtype=np.float32)
-
-
-def read_voice(path):
-    with wave.open(str(path),"rb") as fh:
-        if fh.getsampwidth()!=2 or fh.getnchannels()!=1 or fh.getframerate()!=SR:
-            raise ValueError(f"Voice cache must be mono PCM16 at {SR} Hz: {path}")
-        return np.frombuffer(fh.readframes(fh.getnframes()),np.int16).astype(np.float32)/32768
 
 
 def direction_for(shot, profile):
@@ -97,7 +88,7 @@ def prepare_voices(episode, out, mode="auto", engine="auto"):
                 if seconds > slot * 1.25 and speech.engine == "local" and not provided.exists():
                     # A slow or repeated take is auditioned again before changing a shot's clock.
                     retry_direction = take_direction + "语速稍快，停顿简洁，每句只读一遍。"
-                    source, retry_key = speech.take(shot.text, voice=voice, direction=retry_direction, seed=103+shot.index)
+                    source, _ = speech.take(shot.text, voice=voice, direction=retry_direction, seed=103+shot.index)
                     y, rate = read_wave(source)
                     y = resample_poly(y, SR, rate).astype(np.float32) if rate != SR else y
                     indices = np.flatnonzero(np.abs(y) > .0025)
@@ -156,12 +147,6 @@ def prepare_voices(episode, out, mode="auto", engine="auto"):
     return result, report
 
 
-def pluck(freq, seconds, gain=.1):
-    n=round(seconds*SR)
-    signal=dsp.additive(freq,n,[(1,1,2.8),(2,.32,1.2),(3,.14,.7),(4,.065,.3)])
-    return np.asarray(signal*dsp.env_decay(n,2.3)*gain,dtype=np.float32)
-
-
 def event(kind, duration, seed):
     n=round(duration*SR); t=np.arange(n,dtype=np.float32)/SR
     rng=np.random.default_rng(seed); white=rng.standard_normal(n).astype(np.float32)
@@ -205,19 +190,7 @@ def music(episode, shot):
     return scene_score(episode, shot)
 
 
-def foot_splashes(duration, gait_period, rng):
-    """Wet foot contacts on the same alternating clock as the Blender leg IK."""
-    n=round(duration*SR); y=np.zeros((n,2),np.float32)
-    count=round(.16*SR); t=np.arange(count)/SR
-    for index,at in enumerate(np.arange(gait_period/2,duration,gait_period/2)):
-        splash=sosfilt(butter(2,[180,2300],"bandpass",fs=SR,output="sos"),rng.standard_normal(count))
-        splash*=np.minimum(1,t/.004)*np.exp(-t/.033)*.04
-        begin=round(at*SR);length=min(count,n-begin)
-        y[begin:begin+length]+=stereo(splash[:length],.1 if index%2 else -.1)
-    return y
-
-
-def synthesize(episode, out, mode="auto", engine="auto", opening_renderer="skia"):
+def synthesize(episode, out, mode="auto", engine="auto"):
     out=Path(out); out.mkdir(parents=True,exist_ok=True)
     voices,report=prepare_voices(episode,out,mode,engine)
     raw=out/f"{episode['id']}_mix.wav"; final=out/f"{episode['id']}.wav"
@@ -232,8 +205,6 @@ def synthesize(episode, out, mode="auto", engine="auto", opening_renderer="skia"
             ambiance=sosfilt(butter(2,3200 if wet else 530,fs=SR,output="sos"),noise)
             ambiance*=.017 if wet else .010
             y+=stereo(ambiance,.08)
-            if opening_renderer=="blender" and shot.id=="ep01_lost":
-                y+=foot_splashes(shot.duration,1.35,rng)
             spoken=np.zeros(n,np.float32)
             if shot.id in voices:
                 at=round(.65*SR); voice=voices[shot.id]

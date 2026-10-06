@@ -4,7 +4,6 @@ stage.py - renders one frame of the living scroll: silk + mounting, actors sorte
 A Stage holds actors (anim.Actor), a Camera and text images (captions / title slips) and draws frame f into a
 skia.Surface. Scene content is built by film.py.
 """
-import math
 import os
 import sys
 
@@ -14,8 +13,7 @@ import skia
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(os.path.dirname(HERE), "paint"), os.path.join(os.path.dirname(HERE), "common")]
 import config as C  # noqa: E402
-import props as P  # noqa: E402
-from ink import INK, Xf, ellipse, fill, hexc, outline, poly, radial_glow, shape, stroke_line  # noqa: E402
+from ink import ellipse, fill, stroke_line  # noqa: E402
 from silk import make_grain, make_silk  # noqa: E402
 
 
@@ -141,7 +139,7 @@ class Stage:
         c.translate(C.W / 2, C.H / 2)
         c.scale(z, z)
         c.translate(-cx, -cy)
-        half_w, half_h = C.W / 2 / z, C.H / 2 / z
+        half_w = C.W / 2 / z
         view = (cx - half_w - 400, cx + half_w + 400)
         # silk ground (only the visible slice is sampled)
         silk = self.silk()

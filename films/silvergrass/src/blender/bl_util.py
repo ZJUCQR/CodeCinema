@@ -38,8 +38,7 @@ import time
 
 import bpy
 import numpy as np
-from mathutils import Euler, Matrix, Quaternion, Vector
-from bpy_extras import anim_utils as _au
+from mathutils import Matrix, Quaternion, Vector
 
 ROOT = (__import__("os").environ.get("SILVERGRASS_ROOT") or str(next(p for p in __import__("pathlib").Path(__file__).resolve().parents if (p / "src" / "common" / "config.py").is_file())))   # repo root (portable)
 def ensure_paths(root=ROOT):

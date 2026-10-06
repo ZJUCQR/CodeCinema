@@ -19,7 +19,7 @@ os.environ["CODECINEMA_FILM_DIR"] = str(FILM)
 sys.path.insert(0,str(REPO))
 
 import numpy as np  # noqa: E402
-from PIL import Image, ImageDraw, ImageFont  # noqa: E402
+from PIL import Image, ImageDraw  # noqa: E402
 import skia  # noqa: E402
 
 from codecinema import media, settings  # noqa: E402
@@ -46,7 +46,7 @@ def signature(options):
     if engine=="auto":
         engine="local" if local_available() else "system"
     return digest(json.dumps({"settings":settings.SETTINGS,"w":W,"h":H,"fps":FPS,"narration":options.narration,
-                             "speech_engine": engine, "opening_renderer": options.opening_renderer},
+                             "speech_engine": engine},
                              sort_keys=True,ensure_ascii=False))
 
 
@@ -93,8 +93,6 @@ def stills(episodes,options):
             if shot.data["scene"]=="title":
                 poster=Image.fromarray(frame(episode,shot,shot.duration*.52)).convert("RGB")
                 poster.save(image_dir/f"{episode['id']}.jpg",quality=94)
-            if shot.data["scene"] in ("rain_face","audience","aurora","han","tea","director"):
-                rgb.save(image_dir/f"{shot.id}.jpg",quality=91)
             tile=rgb.resize((384,216),Image.Resampling.LANCZOS)
             tile_canvas=Image.new("RGB",(384,246),"#0b131c")
             tile_canvas.paste(tile,(0,0))
@@ -173,35 +171,6 @@ def render(episodes,options):
         media.concat([str(p) for p in paths],str(folder/"picture.mp4"))
         dump(folder/"picture.json",{"signature":key,"frames":episode["duration_s"]*FPS})
     print("Picture complete",flush=True)
-    if options.opening_renderer=="blender" and any(e["id"]=="ep01" for e in episodes):
-        from blender_preview import main as blender_study
-        from edition import OPENING
-        for shot in OPENING:
-            blender_study(["--shot",shot,"--narration",options.narration,"--speech-engine",options.speech_engine])
-        apply_opening(episodes,options)
-
-
-def apply_opening(episodes,options):
-    from edition import prepare
-    key=signature(options)
-    for episode_id,picture in prepare(episodes,OUT,W,H,FPS,key).items():
-        dump(OUT/episode_id/"picture.json",{"signature":key,**picture})
-
-
-def refresh(episodes,options):
-    """Update an already rendered edition without rerendering its base picture."""
-    audio(episodes,options)
-    if options.opening_renderer=="blender":
-        apply_opening(episodes,options)
-    else:
-        from edition import check_picture
-        key=signature(options)
-        for episode in episodes:
-            path=OUT/episode["id"]/"picture.mp4"
-            check_picture(path,round(episode["duration_s"]*FPS),FPS,(W,H))
-            dump(path.with_suffix(".json"),{"signature":key,"path":str(path),"renderer":"Skia"})
-    assemble(episodes,options)
-    qc(episodes,options)
 
 
 def audio(episodes,options):
@@ -214,7 +183,7 @@ def audio(episodes,options):
                 and all(p.is_file() for p in performance_files)):
             print(f"{episode['id']} audio cached",flush=True)
             continue
-        synthesize(episode,OUT/"audio",options.narration,options.speech_engine,options.opening_renderer)
+        synthesize(episode,OUT/"audio",options.narration,options.speech_engine)
         dump(marker,{"signature":key})
 
 
@@ -253,8 +222,6 @@ def assemble(episodes,options):
         for marker in (folder/"picture.json",OUT/"audio"/f"{episode['id']}.json"):
             if not marker.exists() or json.loads(marker.read_text())["signature"]!=key:
                 raise RuntimeError(f"{episode['id']}: stale or missing inputs; run render and audio with the same settings")
-        picture_data=json.loads((folder/"picture.json").read_text())
-        picture=Path(picture_data.get("path",picture))
         chapters=[]
         for shot in timeline(episode):
             label=shot.data.get("label") or shot.text[:17] or episode["title"]
@@ -324,7 +291,7 @@ def inspect_master(path,seconds,options):
 
 def qc(episodes,options):
     from codecinema.audio.performance import Performance
-    report={"story":validate_all(),"signature":signature(options),"opening_renderer":options.opening_renderer,
+    report={"story":validate_all(),"signature":signature(options),
             "shots":[],"masters":[]}
     for episode in episodes:
         for shot in timeline(episode):
@@ -366,34 +333,28 @@ def qc(episodes,options):
     if len(episodes)==len(STORY["episodes"]):
         report["masters"].append(inspect_master(MASTER,sum(e["duration_s"] for e in episodes),options))
     dump(OUT/"qc.json",report)
-    dump(MASTER.parent/"qc.json",report)
     print(f"QC passed: {len(report['shots'])} deterministic shots, {len(report['masters'])} playable masters",flush=True)
 
 
 def main():
-    if len(sys.argv)>1 and sys.argv[1]=="blender":
-        from blender_preview import main as blender_study
-        return blender_study(sys.argv[2:])
     if len(sys.argv)>1 and sys.argv[1]=="serve":
         from serve import main as screening_server
         screening_server(sys.argv[2:])
         return 0
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("step",choices=("plan","stills","render","audio","assemble","refresh","qc","all"),nargs="?",default="all")
+    parser.add_argument("step",choices=("plan","stills","render","audio","assemble","qc","all"),nargs="?",default="all")
     parser.add_argument("--episode",choices=("all","ep01","ep02","ep03"),default="all")
     parser.add_argument("--jobs",type=int,default=0)
     parser.add_argument("--narration",choices=("auto","off","required"),default=str(settings.get("audio","narration","auto")))
     parser.add_argument("--speech-engine",choices=("auto","local","system","recording"),default="auto",
                         help="local: emotional voices and forced alignment on Apple Silicon; recording: supplied WAVs")
-    parser.add_argument("--opening-renderer",choices=("skia","blender"),default="skia",
-                        help="blender: replace the two opening rain shots; all renders them, refresh uses existing clips")
     parser.add_argument("--skip-decode",action="store_true",help="Skip full master decoding when repeating an inspection")
     options=parser.parse_args()
     episodes=[e for e in STORY["episodes"] if options.episode in ("all",e["id"])]
     validate_all(); OUT.mkdir(parents=True,exist_ok=True)
     if options.step!="plan":
         write_plan(OUT)
-    functions={"plan":plan,"stills":stills,"render":render,"audio":audio,"assemble":assemble,"refresh":refresh,"qc":qc}
+    functions={"plan":plan,"stills":stills,"render":render,"audio":audio,"assemble":assemble,"qc":qc}
     sequence=("plan","audio","stills","render","assemble","qc") if options.step=="all" else (options.step,)
     for step in sequence:
         functions[step](episodes,options)

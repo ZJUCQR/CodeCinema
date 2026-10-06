@@ -954,7 +954,7 @@ def edge_suite():
 
     # K. the 'End' card stays crisp over the post fade (title applied after the picture fade)
     def chkK(out, rep):
-        tid, spec = "end", T.spec_by_id("end")
+        tid = "end"
         rows = title_exactness(out, 3741, 3840, std, [(tid, 20), (tid, 72)])
         L, _ = _pic_luma(out, [3805 - 3741])
         ok = rep["ok"] and all(r["exact"] and r["psnr"][str(r["local"])] > 38 for r in rows)

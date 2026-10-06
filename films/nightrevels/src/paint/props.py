@@ -9,7 +9,7 @@ import math
 import numpy as np
 import skia
 
-from ink import (INK, Xf, ellipse, fill, fur, gradient_fill, hexc, mix, outline, poly, radial_glow, shade, shape,
+from ink import (INK, Xf, ellipse, fill, outline, poly, radial_glow, shade, shape,
                  smooth, stroke_line, tapered, wash)
 
 LACQUER = (0.16, 0.11, 0.09)
