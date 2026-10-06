@@ -49,6 +49,7 @@
     <p class="tagline">可扩展的通用影片制作框架。选模板，在 Studio 中个性化定制，一键生成 MP4；也可以接入自己的渲染器，组织完整的影片制作流程。</p>
     <div class="cta">
       <a class="btn primary" href="#quick-start"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>开始制作</a>
+      <a class="btn" href="#films">观看影片 ↓</a>
       <a class="btn" href="https://github.com/ZJUCQR/CodeCinema"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>在 GitHub 上查看</a>
     </div>
   </div>
@@ -67,6 +68,7 @@
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>选场景、改内容、点击出片</h3><p>本地 Studio 提供八种动态场景，支持标题、字幕、颜色、时长、横竖屏和逐镜头定制。选好模板，点击生成，即可得到带原创配乐的 MP4。</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>约定很小，渲染器随意</h3><p>影片在 <code>film.toml</code> 里声明步骤，<code>codecinema run &lt;影片&gt; &lt;步骤&gt;</code> 用这部影片的设置来运行它。Blender、矢量绘图、着色器，能输出画面帧的都行。</p></div></div>
       <div class="hl reveal"><div class="ic">🎼</div><div><h3>共享的声音工具包</h3><p>影片共用框架的 DSP 库：振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。</p></div></div>
+      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>情绪配音与语音驱动口型</h3><p>导入对白录音，或在 Apple Silicon 上本地生成带表演指令的配音。共享表演工具根据实际语音时序驱动口型，并在可用时使用音节对齐。</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>可复现，可配置</h3><p>渲染结果确定，并行任务可断点续跑，分层设置无需改动受版本管理的文件，辅助工具支持 macOS、Linux 和 Windows。</p></div></div>
     </div>
   </div>
@@ -134,87 +136,74 @@ fps = 24</code></pre>
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">示例影片</p>
-      <h2 id="films-heading">从示例开始探索</h2>
-      <p class="lead">了解完整流程如何连接画面、声音与后期。选择影片观看、下载 MP4，或阅读它的制作代码。</p>
+      <h2 id="films-heading">在这里，直接观看</h2>
+      <p class="lead">在这一页观看完整影片。《我不是戏神》可切换三集与合集；也可以下载成片，探索它们的制作代码。</p>
     </div>
     <div class="film-grid reveal">
-      <a class="film-card" href="#silvergrass">
-        <img src="../img/silvergrass/still_190.jpg" alt="落日下的芒草原" loading="lazy" width="1280" height="544">
-        <div class="film-card-body"><span class="film-kind">Blender 3D</span><h3>《芒原决战》</h3><p>剑、焰、雷三幕，落日下的一场武士决斗。</p><span class="film-duration">2:40 · 30 个镜头 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
-      </a>
-      <a class="film-card" href="#nightrevels">
-        <img src="../img/nightrevels/still_1300.jpg" alt="绢画长卷上跳舞的宫廷猫" loading="lazy" width="1280" height="720">
-        <div class="film-card-body"><span class="film-kind">Skia 2D 绘画</span><h3>《韩熙载夜宴图 · 猫》</h3><p>猫咪宫廷夜宴，在小猫画师的窥视下徐徐展开。</p><span class="film-duration">2:08 · 13 个猫品种 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
-      </a>
-      <a class="film-card" href="#xishen">
-        <img src="../xishen/assets/images/still-rain.jpg" alt="身穿红戏袍的陈伶雨夜归家" loading="lazy" width="960" height="408">
-        <div class="film-card-body"><span class="film-kind">Skia 动态漫画</span><h3>《我不是戏神 · 开篇三集》</h3><p>雨夜归家，红眼观众，以及第一次编导演练。</p><span class="film-duration">11:00 · 三集 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
-      </a>
+      <article id="silvergrass" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-silvergrass" controls preload="metadata" playsinline poster="../media/poster.jpg" aria-label="《芒原决战》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+            <source src="../films/SilverGrass.mp4" type="video/mp4">
+            <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">下载 MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Blender 3D</span>
+          <h3>《芒原决战》</h3>
+          <p>落日下的芒草原，剑、焰、雷三幕中的武士决斗。</p>
+          <span class="film-duration">2:40 · 1080p</span>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/silvergrass">制作代码</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">下载 MP4 ↓</a>
+          </div>
+        </div>
+      </article>
+      <article id="nightrevels" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-nightrevels" controls preload="metadata" playsinline poster="../media/poster_nr.jpg" aria-label="《韩熙载夜宴图 · 猫》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+            <source src="../films/NightRevels.mp4" type="video/mp4">
+            <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载 MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Skia 2D</span>
+          <h3>《韩熙载夜宴图 · 猫》</h3>
+          <p>一幅活起来的宫廷夜宴长卷，每一位宾客都是猫。</p>
+          <span class="film-duration">2:08 · 1080p</span>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/nightrevels">制作代码</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载 MP4 ↓</a>
+          </div>
+        </div>
+      </article>
+      <article id="xishen" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-xishen" controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg" aria-label="《我不是戏神 · 开篇三集》 · 合集" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+            <source src="../xishen/assets/film/xishen_complete.mp4" type="video/mp4">
+            <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">下载 MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Skia 动态漫画</span>
+          <h3>《我不是戏神 · 开篇三集》</h3>
+          <p>陈伶雨夜归家，遇见红眼观众，开始第一次编导演练。</p>
+          <div class="film-versions" role="group" aria-label="选择剧集或合集">
+            <button type="button" data-film-version data-src="../xishen/assets/film/xishen_complete.mp4" data-poster="../xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-label="《我不是戏神 · 开篇三集》 · 合集" aria-controls="film-xishen" aria-pressed="true"><span>合集</span><small>11:00</small></button>
+            <button type="button" data-film-version data-src="../xishen/assets/film/ep01.mp4" data-poster="../xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4" data-label="《我不是戏神 · 开篇三集》 · 第一集" aria-controls="film-xishen" aria-pressed="false"><span>第一集</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="../xishen/assets/film/ep02.mp4" data-poster="../xishen/assets/images/ep02.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep02.mp4" data-label="《我不是戏神 · 开篇三集》 · 第二集" aria-controls="film-xishen" aria-pressed="false"><span>第二集</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="../xishen/assets/film/ep03.mp4" data-poster="../xishen/assets/images/ep03.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4" data-label="《我不是戏神 · 开篇三集》 · 第三集" aria-controls="film-xishen" aria-pressed="false"><span>第三集</span><small>4:00</small></button>
+          </div>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">制作代码</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">下载 MP4 ↓</a>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
-
-<article id="silvergrass" class="film-feature">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow">示例一 · Blender 3D</p>
-      <h2>《芒原决战》</h2>
-      <p class="lead">落日，芒草原。无主之忍对上年迈的剑豪，决斗分为剑、焰、雷三幕。角色、动作、镜头和特效都是在 Blender 里运行的 Python，每一个音符和音效都是合成的。</p>
-    </div>
-    <div class="player reveal">
-      <video controls preload="metadata" playsinline poster="../media/poster.jpg">
-        <source src="../films/SilverGrass.mp4" type="video/mp4">
-        <source src="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="film-meta">
-      <div class="specs"><span>160 秒</span><span>30 个镜头</span><span>2.35:1</span><span>1080p</span><span>原创配乐</span></div>
-      <div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/silvergrass">关于这部影片</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">下载</a></div>
-    </div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="../img/silvergrass/still_190.jpg" alt="片名镜头" loading="lazy"><figcaption><b>片名</b></figcaption></figure>
-      <figure><img src="../img/silvergrass/still_2100.jpg" alt="火环中的刀枪相击" loading="lazy"><figcaption><b>焰</b>：火环中的枪与刀</figcaption></figure>
-      <figure><img src="../img/silvergrass/still_2500.jpg" alt="雷切" loading="lazy"><figcaption><b>雷</b>：雷切</figcaption></figure>
-    </div>
-  </div>
-</article>
-
-<article id="nightrevels" class="film-feature">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow">示例二 · 2D 绘画</p>
-      <h2>《韩熙载夜宴图 · 猫》</h2>
-      <p class="lead">一场画在绢上的夜宴，每一位宾客都是猫。小猫画师躲在屏风后偷看，一身唐代华服的宫廷猫们却不断露出马脚：被推下桌的酒杯、打断舞蹈的飞蛾、拒绝洗手的主人、吹破音的笛子。全片用 skia 绘制成工笔木偶。</p>
-    </div>
-    <div class="player reveal">
-      <video controls preload="metadata" playsinline poster="../media/poster_nr.jpg">
-        <source src="../films/NightRevels.mp4" type="video/mp4">
-        <source src="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="film-meta">
-      <div class="specs"><span>128 秒</span><span>五段</span><span>13 个猫品种</span><span>1080p</span><span>原创配乐</span></div>
-      <div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/nightrevels">关于这部影片</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载</a></div>
-    </div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="../img/nightrevels/still_600.jpg" alt="酒杯被推到桌边" loading="lazy"><figcaption><b>听乐</b>：酒杯被推到桌边</figcaption></figure>
-      <figure><img src="../img/nightrevels/still_1300.jpg" alt="舞者扑向飞蛾" loading="lazy"><figcaption><b>观舞</b>：飞蛾，和那一扑</figcaption></figure>
-      <figure><img src="../img/nightrevels/still_2230.jpg" alt="乐手们笑成一团" loading="lazy"><figcaption><b>清吹</b>：破音之后</figcaption></figure>
-    </div>
-  </div>
-</article>
-
-<article id="xishen" class="film-feature">
-  <div class="wrap">
-    <div class="reveal"><p class="eyebrow">示例三 · Skia 动态漫画</p><h2>《我不是戏神 · 开篇三集》</h2><p class="lead">按三九音域原著第 1–6 章的顺序，从雨夜归家、剧院噩梦到第一次编导演练。67 个镜头共享人物形象与剧情时间线，配有中文声音、字幕、原创配乐和音效。</p></div>
-    <div class="player reveal"><video controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg"><source src="../xishen/assets/film/xishen_complete.mp4" type="video/mp4"><source src="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" type="video/mp4"></video></div>
-    <div class="film-meta"><div class="specs"><span>三集</span><span>11 分钟</span><span>67 个镜头</span><span>1080p</span><span>中文配音</span></div><div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">关于这部影片</a> · <a href="../xishen/watch.html">选集与章节播放</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a></div></div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="../xishen/assets/images/still-rain.jpg" alt="陈伶雨夜归家" loading="lazy"><figcaption><b>第一集</b>：戏鬼回家</figcaption></figure>
-      <figure><img src="../xishen/assets/images/still-audience.jpg" alt="剧院里注视舞台的红眼观众" loading="lazy"><figcaption><b>第二集</b>：我们在看着你</figcaption></figure>
-      <figure><img src="../xishen/assets/images/still-director.jpg" alt="穿黑棉大衣的陈伶开始编导演练" loading="lazy"><figcaption><b>第三集</b>：陈氏编导法则</figcaption></figure>
-    </div>
-  </div>
-</article>
 </section>
 
 <section id="layout">

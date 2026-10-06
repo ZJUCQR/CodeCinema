@@ -49,6 +49,7 @@
     <p class="tagline">An extensible filmmaking framework. Choose a template, personalize it in Studio and render a complete MP4, or build your own production pipeline with any renderer.</p>
     <div class="cta">
       <a class="btn primary" href="#quick-start"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Get started</a>
+      <a class="btn" href="#films">Watch the films ↓</a>
       <a class="btn" href="https://github.com/ZJUCQR/CodeCinema"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
     </div>
   </div>
@@ -67,6 +68,7 @@
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>Choose, personalize, render</h3><p>The local Studio offers eight animated looks, editable scene cards, titles, captions, colors and three frame shapes. Choose a world and press Render to get an MP4 with original music.</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>A small contract, any renderer</h3><p>A film declares its steps in <code>film.toml</code>, and <code>codecinema run &lt;film&gt; &lt;step&gt;</code> runs them with that film's settings. Blender, vector drawing, shaders: anything that writes frames fits.</p></div></div>
       <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The films share a DSP library: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
+      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices with acting direction</h3><p>Add recorded dialogue or generate expressive voices locally on Apple Silicon. The shared performance tools turn speech timing into mouth animation, with aligned syllables when available.</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Deterministic renders, resumable parallel jobs, layered settings without editing tracked files, and helpers that work on macOS, Linux and Windows.</p></div></div>
     </div>
   </div>
@@ -134,87 +136,74 @@ fps = 24</code></pre>
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">Example films</p>
-      <h2 id="films-heading">Explore the examples</h2>
-      <p class="lead">See how complete pipelines connect picture, sound and post-production. Watch a film, download its MP4 or explore its source.</p>
+      <h2 id="films-heading">Watch the examples</h2>
+      <p class="lead">Watch the complete films right here. Choose an episode or the full trilogy, download a film or explore how it was made.</p>
     </div>
     <div class="film-grid reveal">
-      <a class="film-card" href="#silvergrass">
-        <img src="img/silvergrass/still_190.jpg" alt="Sunset over the silver grass" loading="lazy" width="1280" height="544">
-        <div class="film-card-body"><span class="film-kind">Blender 3D</span><h3>Duel in the Silver Grass</h3><p>A samurai duel through Blade, Fire and Thunder.</p><span class="film-duration">2:40 · 30 shots · 1080p</span><span class="film-card-action">Watch the film →</span></div>
-      </a>
-      <a class="film-card" href="#nightrevels">
-        <img src="img/nightrevels/still_1300.jpg" alt="A court cat dances on the painted handscroll" loading="lazy" width="1280" height="720">
-        <div class="film-card-body"><span class="film-kind">Skia 2D painting</span><h3>The Night Revels of Han Xizai, Cat Edition</h3><p>A living handscroll of court cats and their secret observer.</p><span class="film-duration">2:08 · 13 cat breeds · 1080p</span><span class="film-card-action">Watch the film →</span></div>
-      </a>
-      <a class="film-card" href="#xishen">
-        <img src="xishen/assets/images/still-rain.jpg" alt="Chen Ling returns through the rain in his red stage robe" loading="lazy" width="960" height="408">
-        <div class="film-card-body"><span class="film-kind">Skia motion comic</span><h3>I Am Not the God of Drama: The Opening Trilogy</h3><p>A rain-soaked return and an audience that never looks away.</p><span class="film-duration">11:00 · 3 episodes · 1080p</span><span class="film-card-action">Watch the film →</span></div>
-      </a>
+      <article id="silvergrass" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-silvergrass" controls preload="metadata" playsinline poster="media/poster.jpg" aria-label="Duel in the Silver Grass" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="The video could not load. Use the download link below.">
+            <source src="films/SilverGrass.mp4" type="video/mp4">
+            <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Blender 3D</span>
+          <h3>Duel in the Silver Grass</h3>
+          <p>A samurai duel in silver grass, through Blade, Fire and Thunder.</p>
+          <span class="film-duration">2:40 · 1080p</span>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/silvergrass">Explore the source</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">Download MP4 ↓</a>
+          </div>
+        </div>
+      </article>
+      <article id="nightrevels" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-nightrevels" controls preload="metadata" playsinline poster="media/poster_nr.jpg" aria-label="The Night Revels of Han Xizai, Cat Edition" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="The video could not load. Use the download link below.">
+            <source src="films/NightRevels.mp4" type="video/mp4">
+            <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Skia 2D</span>
+          <h3>The Night Revels of Han Xizai, Cat Edition</h3>
+          <p>A painted court banquet where every guest is a cat.</p>
+          <span class="film-duration">2:08 · 1080p</span>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/nightrevels">Explore the source</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">Download MP4 ↓</a>
+          </div>
+        </div>
+      </article>
+      <article id="xishen" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-xishen" controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg" aria-label="I Am Not the God of Drama: The Opening Trilogy · Complete trilogy" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="The video could not load. Use the download link below.">
+            <source src="xishen/assets/film/xishen_complete.mp4" type="video/mp4">
+            <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Skia motion comic</span>
+          <h3>I Am Not the God of Drama: The Opening Trilogy</h3>
+          <p>Chen Ling returns home, meets a watching audience and begins his first directing experiment.</p>
+          <div class="film-versions" role="group" aria-label="Choose an episode or the complete trilogy">
+            <button type="button" data-film-version data-src="xishen/assets/film/xishen_complete.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Full trilogy" aria-controls="film-xishen" aria-pressed="true"><span>Full trilogy</span><small>11:00</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep01.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 1" aria-controls="film-xishen" aria-pressed="false"><span>Episode 1</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep02.mp4" data-poster="xishen/assets/images/ep02.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep02.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 2" aria-controls="film-xishen" aria-pressed="false"><span>Episode 2</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep03.mp4" data-poster="xishen/assets/images/ep03.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 3" aria-controls="film-xishen" aria-pressed="false"><span>Episode 3</span><small>4:00</small></button>
+          </div>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">Explore the source</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">Download MP4 ↓</a>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
-
-<article id="silvergrass" class="film-feature">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow">Example 1 · Blender 3D</p>
-      <h2>Duel in the Silver Grass</h2>
-      <p class="lead">Sunset over a sea of silver grass. A masterless shinobi faces an old sword master, through three acts: <i>Blade</i>, <i>Fire</i> and <i>Thunder</i>. Characters, choreography, cameras and VFX are Python running inside Blender, and every note and sound is synthesized.</p>
-    </div>
-    <div class="player reveal">
-      <video controls preload="metadata" playsinline poster="media/poster.jpg">
-        <source src="films/SilverGrass.mp4" type="video/mp4">
-        <source src="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="film-meta">
-      <div class="specs"><span>160 s</span><span>30 shots</span><span>2.35:1</span><span>1080p</span><span>original score</span></div>
-      <div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/silvergrass">About the film</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">Download</a></div>
-    </div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="img/silvergrass/still_190.jpg" alt="The title shot" loading="lazy"><figcaption><b>Title card</b></figcaption></figure>
-      <figure><img src="img/silvergrass/still_2100.jpg" alt="Spear against sword inside a ring of fire" loading="lazy"><figcaption><b>Fire:</b> spear against sword in the ring</figcaption></figure>
-      <figure><img src="img/silvergrass/still_2500.jpg" alt="The lightning cut" loading="lazy"><figcaption><b>Thunder:</b> the lightning cut</figcaption></figure>
-    </div>
-  </div>
-</article>
-
-<article id="nightrevels" class="film-feature">
-  <div class="wrap">
-    <div class="reveal">
-      <p class="eyebrow">Example 2 · 2D painting</p>
-      <h2>The Night Revels of Han Xizai, Cat Edition</h2>
-      <p class="lead">A night banquet painted on silk, and every guest is a cat. A kitten painter spies from behind the screens while the court cats, elegant in Tang silk, give themselves away: a pushed cup, a moth that stops the dance, a refused wash, a squeaking flute. Drawn as gongbi puppets with skia.</p>
-    </div>
-    <div class="player reveal">
-      <video controls preload="metadata" playsinline poster="media/poster_nr.jpg">
-        <source src="films/NightRevels.mp4" type="video/mp4">
-        <source src="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="film-meta">
-      <div class="specs"><span>128 s</span><span>5 scenes</span><span>13 cat breeds</span><span>1080p</span><span>original score</span></div>
-      <div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/nightrevels">About the film</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">Download</a></div>
-    </div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="img/nightrevels/still_600.jpg" alt="A cup nudged to the table edge" loading="lazy"><figcaption><b>Listening:</b> a cup, nudged to the edge</figcaption></figure>
-      <figure><img src="img/nightrevels/still_1300.jpg" alt="The dancer pounces at the moth" loading="lazy"><figcaption><b>The dance:</b> the moth, and the pounce</figcaption></figure>
-      <figure><img src="img/nightrevels/still_2230.jpg" alt="The flute players giggle" loading="lazy"><figcaption><b>The winds:</b> after the squeak</figcaption></figure>
-    </div>
-  </div>
-</article>
-
-<article id="xishen" class="film-feature">
-  <div class="wrap">
-    <div class="reveal"><p class="eyebrow">Example 3 · Skia motion comic</p><h2>I Am Not the God of Drama: The Opening Trilogy</h2><p class="lead">Three episodes adapting the opening six chapters of Sanjiu Yinyu's novel: a rain-soaked return, a watching audience and a director's first experiment. Shared characters and one story clock connect 67 shots, with Mandarin speech, captions, original music and foley.</p></div>
-    <div class="player reveal"><video controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg"><source src="xishen/assets/film/xishen_complete.mp4" type="video/mp4"><source src="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" type="video/mp4"></video></div>
-    <div class="film-meta"><div class="specs"><span>3 episodes</span><span>11 minutes</span><span>67 shots</span><span>1080p</span><span>Mandarin speech</span></div><div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">About the film</a> · <a href="xishen/watch.html">Episodes and chapters</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a></div></div>
-    <div class="gallery reveal" style="margin-top:22px">
-      <figure><img src="xishen/assets/images/still-rain.jpg" alt="Chen Ling's rain-soaked return" loading="lazy"><figcaption><b>Episode 1:</b> the return home</figcaption></figure>
-      <figure><img src="xishen/assets/images/still-audience.jpg" alt="Rows of crimson-eyed spectators" loading="lazy"><figcaption><b>Episode 2:</b> the watching audience</figcaption></figure>
-      <figure><img src="xishen/assets/images/still-director.jpg" alt="Chen Ling begins his directing experiment in his black coat" loading="lazy"><figcaption><b>Episode 3:</b> the first experiment</figcaption></figure>
-    </div>
-  </div>
-</article>
 </section>
 
 <section id="layout">
