@@ -27,7 +27,7 @@ python3.12 -m venv .venv
 **Linux:** install Python 3.12+ and FFmpeg with your distribution's package manager. On Ubuntu 24.04:
 
 ```bash
-sudo apt-get install python3-venv ffmpeg fonts-dejavu-core libgl1 libfontconfig1
+sudo apt-get install python3-venv ffmpeg fonts-dejavu-core libgl1 libegl1 libfontconfig1
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .
 .venv/bin/python -m codecinema studio
@@ -108,7 +108,7 @@ Supported cameras: `wide`, `drift`, `close`. Each scene lasts at least 0.5 secon
 | `codecinema` is not found | Use `.venv/bin/python -m codecinema` on macOS/Linux, or `.\.venv\Scripts\python.exe -m codecinema` on Windows |
 | A Python package is missing | Run the install command above with the same environment you use to launch Studio |
 | FFmpeg or `ffprobe` is missing | Install FFmpeg, reopen the terminal on Windows, then run `python -m codecinema check` |
-| Skia cannot load a Linux graphics library | Install `libgl1` and `libfontconfig1` with your package manager; Studio reports the original loader error |
+| Skia cannot load a Linux graphics library | Install `libgl1`, `libegl1` and `libfontconfig1` with your package manager; Studio reports the original loader error |
 | Chinese characters are unsupported | Install Noto Sans CJK (`fonts-noto-cjk` on Ubuntu), or set `[fonts] ui = "/path/to/font.ttf"` in the film's `film.local.toml` |
 | The ID already exists | Choose a new ID, or select the saved film in Studio; use `customize` from the CLI |
 | The port is in use | Run `python -m codecinema studio --port 8788` |

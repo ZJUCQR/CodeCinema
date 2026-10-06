@@ -23,7 +23,7 @@ def ffmpeg_help():
 
 def graphics_help():
     if sys.platform.startswith("linux"):
-        return "Skia's Linux runtime needs: sudo apt-get install libgl1 libfontconfig1"
+        return "Skia's Linux runtime needs: sudo apt-get install libgl1 libegl1 libfontconfig1"
     return "Install the Python dependencies in this environment: python -m pip install ."
 
 
