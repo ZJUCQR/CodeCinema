@@ -1,4 +1,4 @@
-/* SilverGrass project page */
+/* CodeCinema project page */
 :root {
   --bg: #0a0b0e;
   --bg-2: #101217;
@@ -130,6 +130,19 @@ p { margin: 0 0 16px; }
 .stat span { display: block; margin-top: 8px; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 
 /* film */
+.film-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.film-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; color: var(--text);
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.3s, transform 0.3s; }
+.film-card:hover { color: var(--text); border-color: var(--gold); transform: translateY(-4px); }
+.film-card:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 5px; }
+.film-card > img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+.film-card-body { display: flex; flex-direction: column; flex: 1; padding: 22px; }
+.film-kind { color: var(--gold-2); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.film-card h3 { margin: 10px 0; font: 600 1.6rem/1.2 var(--serif); }
+.film-card p { margin: 0 0 20px; color: var(--muted); font-size: 0.93rem; }
+.film-duration { margin-top: auto; color: var(--muted); font-size: 0.8rem; }
+.film-card-action { margin-top: 16px; color: var(--gold); font-size: 0.88rem; font-weight: 600; }
+.film-feature { padding-top: 100px; }
 .player { position: relative; border-radius: var(--radius); overflow: hidden; background: #000;
   box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px var(--line), 0 0 80px rgba(224,169,72,0.08); }
 .player video { width: 100%; aspect-ratio: 16 / 9; background: #000; }
@@ -238,6 +251,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
   .hero .bar { height: 6vh; }
   .scroll-cue { bottom: calc(6vh + 14px); }
   .acts, .pillars, .hls, .gallery { grid-template-columns: 1fr; }
+  .film-grid { grid-template-columns: 1fr; }
+  .film-feature { padding-top: 76px; }
   .act { min-height: 220px; }
   .hl.feature { padding: 26px 22px; }
   .stats { grid-template-columns: repeat(2, 1fr); }

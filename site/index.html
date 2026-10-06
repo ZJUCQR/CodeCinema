@@ -68,7 +68,30 @@
 
 <main>
 
-<section id="films">
+<section id="films" aria-labelledby="films-heading">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Example films</p>
+      <h2 id="films-heading">Three stories, one framework</h2>
+      <p class="lead">Choose a film to watch, download its MP4 or explore the code behind it.</p>
+    </div>
+    <div class="film-grid reveal">
+      <a class="film-card" href="#silvergrass">
+        <img src="img/silvergrass/still_190.jpg" alt="Sunset over the silver grass" loading="lazy" width="1280" height="544">
+        <div class="film-card-body"><span class="film-kind">Blender 3D</span><h3>Duel in the Silver Grass</h3><p>A samurai duel through Blade, Fire and Thunder.</p><span class="film-duration">2:40 · 30 shots · 1080p</span><span class="film-card-action">Watch the film →</span></div>
+      </a>
+      <a class="film-card" href="#nightrevels">
+        <img src="img/nightrevels/still_1300.jpg" alt="A court cat dances on the painted handscroll" loading="lazy" width="1280" height="720">
+        <div class="film-card-body"><span class="film-kind">Skia 2D painting</span><h3>The Night Revels of Han Xizai, Cat Edition</h3><p>A living handscroll of court cats and their secret observer.</p><span class="film-duration">2:08 · 13 cat breeds · 1080p</span><span class="film-card-action">Watch the film →</span></div>
+      </a>
+      <a class="film-card" href="#xishen">
+        <img src="xishen/assets/images/still-rain.jpg" alt="Chen Ling returns through the rain in his red stage robe" loading="lazy" width="960" height="408">
+        <div class="film-card-body"><span class="film-kind">Skia motion comic</span><h3>I Am Not the God of Drama: The Opening Trilogy</h3><p>A rain-soaked return and an audience that never looks away.</p><span class="film-duration">11:00 · 3 episodes · 1080p</span><span class="film-card-action">Watch the film →</span></div>
+      </a>
+    </div>
+  </div>
+
+<article id="silvergrass" class="film-feature">
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">Example 1 · Blender 3D</p>
@@ -91,9 +114,9 @@
       <figure><img src="img/silvergrass/still_2500.jpg" alt="The lightning cut" loading="lazy"><figcaption><b>Thunder:</b> the lightning cut</figcaption></figure>
     </div>
   </div>
-</section>
+</article>
 
-<section id="nightrevels">
+<article id="nightrevels" class="film-feature">
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">Example 2 · 2D painting</p>
@@ -116,14 +139,20 @@
       <figure><img src="img/nightrevels/still_2230.jpg" alt="The flute players giggle" loading="lazy"><figcaption><b>The winds:</b> after the squeak</figcaption></figure>
     </div>
   </div>
-</section>
+</article>
 
-<section id="xishen">
+<article id="xishen" class="film-feature">
   <div class="wrap">
-    <div class="reveal"><p class="eyebrow">Example 3 · 11-minute motion comic</p><h2>I Am Not the God of Drama</h2><p class="lead">Three episodes adapting the opening six chapters of Sanjiu Yinyu's novel: a rain-soaked return, a watching audience and a director's first experiment. Shared characters and one story clock connect 67 shots, with Mandarin speech, captions, original music and foley.</p></div>
-    <div class="player reveal"><video controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg"><source src="xishen/assets/film/xishen_complete.mp4" type="video/mp4"></video></div>
-    <div class="film-meta"><div class="specs"><span>3 episodes</span><span>11 minutes</span><span>67 shots</span><span>1080p</span><span>Mandarin speech</span></div><div><a href="xishen/watch.html">Episodes and chapters</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download the films</a></div></div>
+    <div class="reveal"><p class="eyebrow">Example 3 · Skia motion comic</p><h2>I Am Not the God of Drama: The Opening Trilogy</h2><p class="lead">Three episodes adapting the opening six chapters of Sanjiu Yinyu's novel: a rain-soaked return, a watching audience and a director's first experiment. Shared characters and one story clock connect 67 shots, with Mandarin speech, captions, original music and foley.</p></div>
+    <div class="player reveal"><video controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg"><source src="xishen/assets/film/xishen_complete.mp4" type="video/mp4"><source src="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" type="video/mp4"></video></div>
+    <div class="film-meta"><div class="specs"><span>3 episodes</span><span>11 minutes</span><span>67 shots</span><span>1080p</span><span>Mandarin speech</span></div><div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">About the film</a> · <a href="xishen/watch.html">Episodes and chapters</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a></div></div>
+    <div class="gallery reveal" style="margin-top:22px">
+      <figure><img src="xishen/assets/images/still-rain.jpg" alt="Chen Ling's rain-soaked return" loading="lazy"><figcaption><b>Episode 1:</b> the return home</figcaption></figure>
+      <figure><img src="xishen/assets/images/still-audience.jpg" alt="Rows of crimson-eyed spectators" loading="lazy"><figcaption><b>Episode 2:</b> the watching audience</figcaption></figure>
+      <figure><img src="xishen/assets/images/still-director.jpg" alt="Chen Ling begins his directing experiment in his black coat" loading="lazy"><figcaption><b>Episode 3:</b> the first experiment</figcaption></figure>
+    </div>
   </div>
+</article>
 </section>
 
 <section id="highlights">
@@ -136,7 +165,7 @@
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>Choose, personalize, render</h3><p>The local Studio offers eight animated looks, editable scene cards, titles, captions, colors and three frame shapes. Choose a world and press Render to get an MP4 with original music.</p></div></div>
       <div class="hl reveal"><div class="ic">🎬</div><div><h3>Three complete film projects</h3><p>A 160-second Blender samurai duel, a 128-second living cat handscroll and an 11-minute motion-comic trilogy with shared characters. Different stories, one framework.</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>A small contract, any renderer</h3><p>A film declares its steps in <code>film.toml</code>, and <code>codecinema run &lt;film&gt; &lt;step&gt;</code> runs them with that film's settings. Blender, vector drawing, shaders: anything that writes frames fits.</p></div></div>
-      <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The DSP behind both scores ships with the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
+      <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The films share a DSP library: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Deterministic renders, resumable parallel jobs, layered settings without editing tracked files, and helpers that work on macOS, Linux and Windows.</p></div></div>
     </div>
   </div>
@@ -210,7 +239,8 @@ fps = 24</code></pre>
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
 <pre><code>CodeCinema/
 ├── codecinema/             <span class="c"># the framework</span>
-│   ├── cli.py              <span class="c"># codecinema list | run | new | check</span>
+│   ├── cli.py              <span class="c"># studio | presets | new | customize | list | run | check</span>
+│   ├── studio.py           <span class="c"># local visual editor and render jobs</span>
 │   ├── settings.py         <span class="c"># layered per-film settings, tool and font discovery</span>
 │   ├── films.py            <span class="c"># film discovery and step running</span>
 │   ├── media.py            <span class="c"># ffmpeg: probe, encode, concat, mux</span>
@@ -219,7 +249,8 @@ fps = 24</code></pre>
 │   └── template/           <span class="c"># the starter film used by `codecinema new`</span>
 ├── films/
 │   ├── silvergrass/        <span class="c"># example: Duel in the Silver Grass (Blender 3D)</span>
-│   └── nightrevels/        <span class="c"># example: The Night Revels of Han Xizai, Cat Edition (2D)</span>
+│   ├── nightrevels/        <span class="c"># example: The Night Revels of Han Xizai, Cat Edition (2D)</span>
+│   └── xishen/             <span class="c"># example: I Am Not the God of Drama (motion comic)</span>
 ├── docs/                   <span class="c"># the framework guide</span>
 ├── site/                   <span class="c"># this homepage</span>
 └── pyproject.toml          <span class="c"># the package and its dependencies</span></code></pre>

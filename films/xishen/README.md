@@ -2,6 +2,8 @@
 
 # I Am Not the God of Drama
 
+<p><sub>An example film made with <a href="../../README.md"><b>CodeCinema</b></a></sub></p>
+
 **The Opening Trilogy · A procedural motion comic**
 
 A rain-soaked return. An audience with crimson eyes. A director learning to survive his own stage.

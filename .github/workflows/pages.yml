@@ -6,6 +6,11 @@ on:
   release:
     types: [published, edited]
   workflow_dispatch:
+    inputs:
+      refresh_release:
+        description: Refresh release media through the default branch
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -13,11 +18,27 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  # The release dispatcher must not cancel the deployment it starts on main.
+  group: pages-${{ (github.event_name == 'release' || inputs.refresh_release) && 'dispatch' || 'deploy' }}
   cancel-in-progress: true
 
 jobs:
+  release-dispatch:
+    if: github.event_name == 'release' || inputs.refresh_release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Deploy the release from the default branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: gh workflow run pages.yml --ref "$DEFAULT_BRANCH" --repo "$GITHUB_REPOSITORY"
+
   build:
+    # Release tags are not allowed by the github-pages environment policy.
+    if: github.event_name != 'release' && !inputs.refresh_release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

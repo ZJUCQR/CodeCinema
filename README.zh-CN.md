@@ -31,7 +31,7 @@ CodeCinema 是一个小型框架，用来制作完全由代码构成的影片。
 - 🪄 **选模板、改内容、点一下出片**：本地 Studio 提供八种动态场景、可编辑分镜、标题、字幕、颜色、横竖屏与方形画幅，一次点击生成 MP4，无需 API Key。
 - 🎬 **三部完整影片项目**：160 秒的 Blender 武士决斗、128 秒的活体猫咪长卷，以及人物贯穿三集、含中文配音的 11 分钟开篇改编。
 - 🧩 **约定很小，渲染器随意**：影片在 `film.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
-- 🎼 **共享的声音工具包**：两部影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
+- 🎼 **共享的声音工具包**：影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
 - ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑；分层设置无需改动受版本管理的文件；辅助工具支持 macOS、Linux 和 Windows。
 
 ## 🚀 快速开始
@@ -58,28 +58,17 @@ codecinema new myfilm --preset aurora --title "我的影片" --render --open
 
 <div align="center">
 
-| <a href="films/silvergrass/README.zh-CN.md"><img src="films/silvergrass/assets/images/still_190.jpg" alt="芒原决战"></a> | <a href="films/nightrevels/README.zh-CN.md"><img src="films/nightrevels/assets/images/still_1300.jpg" alt="韩熙载夜宴图 · 猫"></a> |
-|:---:|:---:|
-| **[《芒原决战》](films/silvergrass/README.zh-CN.md)** | **[《韩熙载夜宴图 · 猫》](films/nightrevels/README.zh-CN.md)** |
-| 落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。 | 一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。 |
-| Blender 3D · 160 秒 · 30 个镜头 | skia 2D 绘画 · 128 秒 · 13 个猫品种 |
-| `codecinema run silvergrass all` | `codecinema run nightrevels all` |
+| <a href="films/silvergrass/README.zh-CN.md"><img src="films/silvergrass/assets/images/still_190.jpg" width="360" alt="芒原决战"></a> | <a href="films/nightrevels/README.zh-CN.md"><img src="films/nightrevels/assets/images/still_1300.jpg" width="360" alt="韩熙载夜宴图 · 猫"></a> | <a href="films/xishen/README.zh-CN.md"><img src="films/xishen/assets/images/still-rain.jpg" width="360" alt="我不是戏神 · 开篇三集"></a> |
+|:---:|:---:|:---:|
+| **[《芒原决战》](films/silvergrass/README.zh-CN.md)** | **[《韩熙载夜宴图 · 猫》](films/nightrevels/README.zh-CN.md)** | **[《我不是戏神 · 开篇三集》](films/xishen/README.zh-CN.md)** |
+| 落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。 | 一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。 | 按原著开篇六章的顺序，从陈伶雨夜归家、剧院噩梦到第一次编导演练，人物与时间线贯穿三集。 |
+| Blender 3D · 160 秒 · 30 个镜头 | Skia 2D 绘画 · 128 秒 · 13 个猫品种 | Skia 动态漫画 · 11 分钟 · 三集 · 中文配音 |
+| [观看](https://zjucqr.github.io/CodeCinema/zh/#silvergrass) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/film) | [观看](https://zjucqr.github.io/CodeCinema/zh/#nightrevels) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels) | [观看](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) |
+| `codecinema run silvergrass all` | `codecinema run nightrevels all` | `codecinema run xishen all --narration required` |
 
 </div>
 
-影片可在[主页](https://zjucqr.github.io/CodeCinema/zh/)观看，`codecinema list` 会列出各自的制作步骤。猫咪长卷用 `codecinema run nightrevels all` 生成；3D 示例用 `codecinema run silvergrass all`，需要 Blender 5.2+ 和较长渲染时间。
-
-## 新场景：《我不是戏神》开篇三集
-
-新增 **[《我不是戏神 · 开篇三集》](films/xishen/README.zh-CN.md)**，按原著第 1–6 章推进，总长 **11 分钟**。共用人物形象与连续性记录，包含 1080p 动态漫画、中文配音、字幕、原创配乐和音效。
-
-```bash
-python -m codecinema run xishen all --narration required
-```
-
-**[在线观看三集](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[下载完整成片](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)**
-
-Mac 使用本机离线中文语音；其他系统可提供录音，或用 `--narration off` 生成字幕和配乐版本。成片位于 `films/xishen/assets/film/`，生成后运行 `python -m codecinema run xishen serve`，可选集、跳转段落或连续观看。人物依据和逐章来源见影片说明。
+三部影片都可在[主页](https://zjucqr.github.io/CodeCinema/zh/#films)观看，点击对应 Release 下载 MP4；`codecinema list` 会列出各自的制作步骤。《芒原决战》需要 Blender 5.2+ 和较长渲染时间。《我不是戏神》使用 Mac 离线中文语音或自备录音，也可用 `--narration off` 生成字幕和配乐版本。各影片说明提供详细环境要求和定制方法。
 
 ## 🎨 制作你自己的影片
 

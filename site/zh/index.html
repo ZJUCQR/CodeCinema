@@ -68,7 +68,30 @@
 
 <main>
 
-<section id="films">
+<section id="films" aria-labelledby="films-heading">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">示例影片</p>
+      <h2 id="films-heading">三部影片，同一个框架</h2>
+      <p class="lead">选择一部影片观看、下载 MP4，或了解它的制作代码。</p>
+    </div>
+    <div class="film-grid reveal">
+      <a class="film-card" href="#silvergrass">
+        <img src="../img/silvergrass/still_190.jpg" alt="落日下的芒草原" loading="lazy" width="1280" height="544">
+        <div class="film-card-body"><span class="film-kind">Blender 3D</span><h3>《芒原决战》</h3><p>剑、焰、雷三幕，落日下的一场武士决斗。</p><span class="film-duration">2:40 · 30 个镜头 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
+      </a>
+      <a class="film-card" href="#nightrevels">
+        <img src="../img/nightrevels/still_1300.jpg" alt="绢画长卷上跳舞的宫廷猫" loading="lazy" width="1280" height="720">
+        <div class="film-card-body"><span class="film-kind">Skia 2D 绘画</span><h3>《韩熙载夜宴图 · 猫》</h3><p>猫咪宫廷夜宴，在小猫画师的窥视下徐徐展开。</p><span class="film-duration">2:08 · 13 个猫品种 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
+      </a>
+      <a class="film-card" href="#xishen">
+        <img src="../xishen/assets/images/still-rain.jpg" alt="身穿红戏袍的陈伶雨夜归家" loading="lazy" width="960" height="408">
+        <div class="film-card-body"><span class="film-kind">Skia 动态漫画</span><h3>《我不是戏神 · 开篇三集》</h3><p>雨夜归家，红眼观众，以及第一次编导演练。</p><span class="film-duration">11:00 · 三集 · 1080p</span><span class="film-card-action">观看影片 →</span></div>
+      </a>
+    </div>
+  </div>
+
+<article id="silvergrass" class="film-feature">
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">示例一 · Blender 3D</p>
@@ -91,9 +114,9 @@
       <figure><img src="../img/silvergrass/still_2500.jpg" alt="雷切" loading="lazy"><figcaption><b>雷</b>：雷切</figcaption></figure>
     </div>
   </div>
-</section>
+</article>
 
-<section id="nightrevels">
+<article id="nightrevels" class="film-feature">
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">示例二 · 2D 绘画</p>
@@ -116,14 +139,20 @@
       <figure><img src="../img/nightrevels/still_2230.jpg" alt="乐手们笑成一团" loading="lazy"><figcaption><b>清吹</b>：破音之后</figcaption></figure>
     </div>
   </div>
-</section>
+</article>
 
-<section id="xishen">
+<article id="xishen" class="film-feature">
   <div class="wrap">
-    <div class="reveal"><p class="eyebrow">示例三 · 11 分钟动态漫画</p><h2>《我不是戏神》开篇三集</h2><p class="lead">按三九音域原著第 1–6 章的顺序，从雨夜归家、剧院噩梦到第一次编导演练。67 个镜头共享人物形象与剧情时间线，配有中文声音、字幕、原创配乐和音效。</p></div>
-    <div class="player reveal"><video controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg"><source src="../xishen/assets/film/xishen_complete.mp4" type="video/mp4"></video></div>
-    <div class="film-meta"><div class="specs"><span>三集</span><span>11 分钟</span><span>67 个镜头</span><span>1080p</span><span>中文配音</span></div><div><a href="../xishen/watch.html">选集与章节播放</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载成片</a></div></div>
+    <div class="reveal"><p class="eyebrow">示例三 · Skia 动态漫画</p><h2>《我不是戏神 · 开篇三集》</h2><p class="lead">按三九音域原著第 1–6 章的顺序，从雨夜归家、剧院噩梦到第一次编导演练。67 个镜头共享人物形象与剧情时间线，配有中文声音、字幕、原创配乐和音效。</p></div>
+    <div class="player reveal"><video controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg"><source src="../xishen/assets/film/xishen_complete.mp4" type="video/mp4"><source src="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" type="video/mp4"></video></div>
+    <div class="film-meta"><div class="specs"><span>三集</span><span>11 分钟</span><span>67 个镜头</span><span>1080p</span><span>中文配音</span></div><div><a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">关于这部影片</a> · <a href="../xishen/watch.html">选集与章节播放</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a></div></div>
+    <div class="gallery reveal" style="margin-top:22px">
+      <figure><img src="../xishen/assets/images/still-rain.jpg" alt="陈伶雨夜归家" loading="lazy"><figcaption><b>第一集</b>：戏鬼回家</figcaption></figure>
+      <figure><img src="../xishen/assets/images/still-audience.jpg" alt="剧院里注视舞台的红眼观众" loading="lazy"><figcaption><b>第二集</b>：我们在看着你</figcaption></figure>
+      <figure><img src="../xishen/assets/images/still-director.jpg" alt="穿黑棉大衣的陈伶开始编导演练" loading="lazy"><figcaption><b>第三集</b>：陈氏编导法则</figcaption></figure>
+    </div>
   </div>
+</article>
 </section>
 
 <section id="highlights">
@@ -136,7 +165,7 @@
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>选场景、改内容、点击出片</h3><p>本地 Studio 提供八种动态场景，支持标题、字幕、颜色、时长、横竖屏和逐镜头定制。选好模板，点击生成，即可得到带原创配乐的 MP4。</p></div></div>
       <div class="hl reveal"><div class="ic">🎬</div><div><h3>三部完整影片项目</h3><p>160 秒的 3D 武士决斗、128 秒的猫咪长卷，以及按原著开篇顺序改编的 11 分钟动态漫画，共享同一个框架。</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>约定很小，渲染器随意</h3><p>影片在 <code>film.toml</code> 里声明步骤，<code>codecinema run &lt;影片&gt; &lt;步骤&gt;</code> 用这部影片的设置来运行它。Blender、矢量绘图、着色器，能输出画面帧的都行。</p></div></div>
-      <div class="hl reveal"><div class="ic">🎼</div><div><h3>共享的声音工具包</h3><p>两部影片配乐背后的 DSP 随框架提供：振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。</p></div></div>
+      <div class="hl reveal"><div class="ic">🎼</div><div><h3>共享的声音工具包</h3><p>影片共用框架的 DSP 库：振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>可复现，可配置</h3><p>渲染结果确定，并行任务可断点续跑，分层设置无需改动受版本管理的文件，辅助工具支持 macOS、Linux 和 Windows。</p></div></div>
     </div>
   </div>
@@ -210,7 +239,8 @@ fps = 24</code></pre>
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
 <pre><code>CodeCinema/
 ├── codecinema/             <span class="c"># 框架</span>
-│   ├── cli.py              <span class="c"># codecinema list | run | new | check</span>
+│   ├── cli.py              <span class="c"># studio | presets | new | customize | list | run | check</span>
+│   ├── studio.py           <span class="c"># 本地可视化编辑器与制作任务</span>
 │   ├── settings.py         <span class="c"># 每部影片的分层设置，工具和字体查找</span>
 │   ├── films.py            <span class="c"># 影片发现和步骤运行</span>
 │   ├── media.py            <span class="c"># ffmpeg：探测、编码、拼接、混流</span>
@@ -219,7 +249,8 @@ fps = 24</code></pre>
 │   └── template/           <span class="c"># `codecinema new` 使用的起步影片</span>
 ├── films/
 │   ├── silvergrass/        <span class="c"># 示例：《芒原决战》（Blender 3D）</span>
-│   └── nightrevels/        <span class="c"># 示例：《韩熙载夜宴图 · 猫》（2D）</span>
+│   ├── nightrevels/        <span class="c"># 示例：《韩熙载夜宴图 · 猫》（2D）</span>
+│   └── xishen/             <span class="c"># 示例：《我不是戏神 · 开篇三集》（动态漫画）</span>
 ├── docs/                   <span class="c"># 框架说明</span>
 ├── site/                   <span class="c"># 本主页</span>
 └── pyproject.toml          <span class="c"># 包和依赖</span></code></pre>

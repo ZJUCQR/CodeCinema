@@ -31,7 +31,7 @@ Three complete film projects come with it, alongside eight configurable starter 
 - 🪄 **Choose, personalize, render.** The local Studio offers eight animated looks, editable scene cards, titles, captions, colors, three frame shapes and one-click MP4 production. No API key is needed.
 - 🎬 **Three complete film projects.** A 160-second Blender samurai duel, a 128-second living cat handscroll and an 11-minute opening trilogy with shared characters and Mandarin speech.
 - 🧩 **A small contract, any renderer.** A film declares its steps in `film.toml`, and `codecinema run <film> <step>` runs them with that film's settings. Blender, 2D vector drawing, shaders or anything else that writes frames will fit.
-- 🎼 **A shared sound toolkit.** The DSP library behind both scores is part of the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.
+- 🎼 **A shared sound toolkit.** The DSP library behind the films is part of the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.
 - ♻️ **Reproducible and configurable.** Deterministic renders, resumable parallel jobs, layered settings that never require editing tracked files, and helpers that work on macOS, Linux and Windows.
 
 ## 🚀 Quick start
@@ -58,28 +58,17 @@ codecinema new myfilm --preset aurora --title "My Film" --render --open
 
 <div align="center">
 
-| <a href="films/silvergrass/README.md"><img src="films/silvergrass/assets/images/still_190.jpg" alt="Duel in the Silver Grass"></a> | <a href="films/nightrevels/README.md"><img src="films/nightrevels/assets/images/still_1300.jpg" alt="The Night Revels of Han Xizai, Cat Edition"></a> |
-|:---:|:---:|
-| **[Duel in the Silver Grass](films/silvergrass/README.md)** | **[The Night Revels of Han Xizai, Cat Edition](films/nightrevels/README.md)** |
-| A masterless shinobi faces an old sword master in a sea of silver grass, through three acts: Blade, Fire and Thunder. | A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them. |
-| Blender 3D · 160 s · 30 shots | skia 2D painting · 128 s · 13 cat breeds |
-| `codecinema run silvergrass all` | `codecinema run nightrevels all` |
+| <a href="films/silvergrass/README.md"><img src="films/silvergrass/assets/images/still_190.jpg" width="360" alt="Duel in the Silver Grass"></a> | <a href="films/nightrevels/README.md"><img src="films/nightrevels/assets/images/still_1300.jpg" width="360" alt="The Night Revels of Han Xizai, Cat Edition"></a> | <a href="films/xishen/README.md"><img src="films/xishen/assets/images/still-rain.jpg" width="360" alt="I Am Not the God of Drama: The Opening Trilogy"></a> |
+|:---:|:---:|:---:|
+| **[Duel in the Silver Grass](films/silvergrass/README.md)** | **[The Night Revels of Han Xizai, Cat Edition](films/nightrevels/README.md)** | **[I Am Not the God of Drama: The Opening Trilogy](films/xishen/README.md)** |
+| A masterless shinobi faces an old sword master in a sea of silver grass, through three acts: Blade, Fire and Thunder. | A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them. | Chen Ling's rain-soaked return, a watching audience and his first directing experiment, adapting the novel's opening six chapters in order. |
+| Blender 3D · 160 s · 30 shots | Skia 2D painting · 128 s · 13 cat breeds | Skia motion comic · 11 min · 3 episodes · Mandarin speech |
+| [Watch](https://zjucqr.github.io/CodeCinema/#silvergrass) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/film) | [Watch](https://zjucqr.github.io/CodeCinema/#nightrevels) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels) | [Watch](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) |
+| `codecinema run silvergrass all` | `codecinema run nightrevels all` | `codecinema run xishen all --narration required` |
 
 </div>
 
-Watch the films on the [homepage](https://zjucqr.github.io/CodeCinema/), or use `codecinema list` to explore their production steps. `codecinema run nightrevels all` produces the 2D handscroll; `codecinema run silvergrass all` needs Blender 5.2+ and a longer render.
-
-## New scenario: I Am Not the God of Drama
-
-**[The Opening Trilogy](films/xishen/README.md)** adapts chapters 1–6 of Sanjiu Yinyu's *I Am Not the God of Drama* into **11 minutes** of 1080p motion-comic footage. A shared cast and continuity ledger preserve costumes, props and the audience-expectation sequence across three episodes, with Mandarin speech, captions, an original score and foley.
-
-```bash
-python -m codecinema run xishen all --narration required
-```
-
-**[Watch the trilogy](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[Download the masters](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)**
-
-Speech uses macOS voices offline or supplied recordings; `--narration off` explicitly produces a captions-and-music version. After local generation, `python -m codecinema run xishen serve` opens a screening server with episode selection and chapter seeking. Chapter sources and adaptation choices are documented in the film folder.
+Watch all three on the [homepage](https://zjucqr.github.io/CodeCinema/#films), download their MP4s from the linked releases, or use `codecinema list` to explore their production steps. SilverGrass needs Blender 5.2+ and a longer render. The opening trilogy uses offline macOS voices or supplied recordings; `--narration off` produces a captions-and-music version. Each film's guide covers its requirements and customization.
 
 ## 🎨 Make your own film
 
