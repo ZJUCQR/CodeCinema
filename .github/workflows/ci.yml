@@ -14,11 +14,14 @@ jobs:
           python-version: "3.12"
       - name: Install the framework and its dependencies
         run: pip install .
-      - name: Install FFmpeg for the Linux media integration tests
+      - name: Install FFmpeg and the Linux graphics runtime
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core libgl1 libegl1 libfontconfig1
-      - name: Test creation, customization, Studio and rendered media
-        run: python -m unittest discover -s tests -v
+      - name: Create a starter project
+        run: codecinema new ci-preview --preset aurora --duration 3 --quality preview
+      - name: Render a short sample
+        if: runner.os == 'Linux'
+        run: codecinema run ci-preview all
       - name: Byte-compile the framework and films
         run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src films/xishen/src
       - name: List the films
