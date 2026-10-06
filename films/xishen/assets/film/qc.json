@@ -11,7 +11,8 @@
       32
     ]
   },
-  "signature": "fc2bb4263d08205a7d78",
+  "signature": "324d14f7aea3abc5b1da",
+  "opening_renderer": "blender",
   "shots": [
     {
       "id": "ep01_title",
@@ -360,8 +361,8 @@
       "audio_rate": 48000,
       "channels": 2,
       "chapters": 21,
-      "lufs": -15.9,
-      "true_peak_db": -0.9,
+      "lufs": -16.6,
+      "true_peak_db": -1.0,
       "decode_checked": true
     },
     {
@@ -374,7 +375,7 @@
       "audio_rate": 48000,
       "channels": 2,
       "chapters": 22,
-      "lufs": -15.6,
+      "lufs": -15.9,
       "true_peak_db": -1.0,
       "decode_checked": true
     },
@@ -388,7 +389,7 @@
       "audio_rate": 48000,
       "channels": 2,
       "chapters": 24,
-      "lufs": -15.7,
+      "lufs": -16.0,
       "true_peak_db": -1.0,
       "decode_checked": true
     },
@@ -402,8 +403,8 @@
       "audio_rate": 48000,
       "channels": 2,
       "chapters": 3,
-      "lufs": -15.8,
-      "true_peak_db": -0.9,
+      "lufs": -16.2,
+      "true_peak_db": -1.0,
       "decode_checked": true
     }
   ],

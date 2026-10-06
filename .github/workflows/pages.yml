@@ -45,19 +45,7 @@ jobs:
       - name: Assemble the site (the films come from their releases)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p _site/img/silvergrass _site/img/nightrevels _site/films _site/xishen/assets/film _site/xishen/assets/images
-          cp -r site/. _site/
-          cp assets/images/* _site/img/
-          cp films/silvergrass/assets/images/* _site/img/silvergrass/
-          cp films/nightrevels/assets/images/* _site/img/nightrevels/
-          cp films/xishen/watch.html films/xishen/watch.css films/xishen/watch.js _site/xishen/
-          cp films/xishen/assets/images/* _site/xishen/assets/images/
-          gh release download film --repo "${{ github.repository }}" --pattern SilverGrass.mp4 --dir _site/films
-          gh release download nightrevels --repo "${{ github.repository }}" --pattern NightRevels.mp4 --dir _site/films
-          if [ "$(gh release view xishen --repo "${{ github.repository }}" --json isDraft --jq .isDraft 2>/dev/null)" = "false" ]; then
-            gh release download xishen --repo "${{ github.repository }}" --pattern '*.mp4' --dir _site/xishen/assets/film
-          fi
+        run: python3 site/build.py --repo "$GITHUB_REPOSITORY" --output _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

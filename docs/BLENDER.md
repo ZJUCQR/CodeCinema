@@ -1,6 +1,6 @@
 # Blender in CodeCinema
 
-CodeCinema already includes a complete Blender production: [Duel in the Silver Grass](../films/silvergrass/README.md). Blender is one of the framework's supported renderers. The starter and the published opening trilogy use Skia; choosing a different film does not automatically choose Blender.
+CodeCinema already includes a complete Blender production: [Duel in the Silver Grass](../films/silvergrass/README.md). Blender is one of the framework's supported renderers. The starter uses Skia; the published opening trilogy combines Skia scenes with two Blender opening shots. Choosing a different film does not automatically choose Blender.
 
 Install [Blender 5.2 or later](https://www.blender.org/download/) and follow the [framework installation guide](GETTING_STARTED.md). Standard installation locations and `PATH` are detected. Set `BLENDER_BIN` if Blender is elsewhere.
 
@@ -71,7 +71,17 @@ The first command produces a still. The other commands produce a 10-second dialo
 
 Outputs live in `films/xishen/out/blender/<shot_id>.jpg` or `.mp4`. Interrupted renders reuse completed PNGs when settings, code, story, Blender version and performance data match. Unsupported scenes and costumes fail explicitly. The first run downloads a pinned actor database; subsequent runs verify and reuse the local cache.
 
-These are development studies, not a regenerated trilogy or a claim of live-action quality. The published masters remain the Skia edition. Other cast members, costumes and sets, acting polish and full-film visual review are still required for a complete Blender production. A scene-led chamber score now varies harmony, phrasing and instrumentation across rain, theatre, investigation, wonder and comedy cues.
+The current published trilogy inserts these two shots into episode 1 at 00:10–00:32, with matching caption bars and the episode's soundtrack. The rest of the picture uses Skia; this is a mixed-renderer edition, not a complete Blender remake or a claim of live-action quality. Other cast members, costumes and sets, acting polish and full-film visual review are still required for a complete Blender production. A scene-led chamber score varies harmony, phrasing and instrumentation across rain, theatre, investigation, wonder and comedy cues.
+
+```bash
+# Reproduce the mixed edition, including the two Blender renders.
+codecinema run xishen all --opening-renderer blender --narration required --speech-engine local
+
+# Reuse existing base picture and Blender clips, refresh sound and assemble.
+codecinema run xishen refresh --opening-renderer blender --narration required --speech-engine local
+```
+
+The second command intentionally reuses `out/ep*/picture.mp4`; run `all` when the story or artwork changes. The 1280 × 720 opening clips are scaled to the 1080p episode canvas. Shot durations, subtitles and chapter boundaries stay on the original story clock, and source movies remain available for later refreshes. `--opening-renderer skia` selects the entirely 2D edition without requiring Blender.
 
 ## Actor database provenance
 

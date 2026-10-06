@@ -109,7 +109,7 @@ def recorded_take(episode, shot, out, options):
 
 def soundtrack(episode, shot, voice, target, gait_period):
     from codecinema.audio import dsp
-    from sound import event
+    from sound import event, foot_splashes
     rate=int(dsp.SR)
     n=round(shot.duration*rate)
     y=music(episode, shot)
@@ -123,13 +123,7 @@ def soundtrack(episode, shot, voice, target, gait_period):
         y[begin:begin+count]+=effect[:count]
     if shot.data['scene']=='rain_wide':
         # Barefoot splashes land on the same alternating contact clock as IK.
-        count=round(.16*rate);t=np.arange(count)/rate
-        for index,at in enumerate(np.arange(gait_period/2,shot.duration,gait_period/2)):
-            splash=sosfilt(butter(2,[180,2300],'bandpass',fs=rate,output='sos'),rng.standard_normal(count))
-            splash*=np.minimum(1,t/.004)*np.exp(-t/.033)*.04
-            position=.1 if index%2 else -.1
-            begin=round(at*rate);length=min(count,n-begin)
-            y[begin:begin+length]+=dsp.pan_mono(splash[:length],position).T
+        y+=foot_splashes(shot.duration,gait_period,rng)
     if voice:
         with wave.open(str(voice),'rb') as source:
             if source.getsampwidth()!=2 or source.getframerate()!=rate or source.getnchannels()!=1:

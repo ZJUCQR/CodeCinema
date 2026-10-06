@@ -9,6 +9,8 @@
   const player=document.getElementById("player"), status=document.getElementById("playback-status");
   const cards=[...document.querySelectorAll("[data-episode]")];
   const next=document.getElementById("autonext"), complete=document.getElementById("complete");
+  const mediaVersion=document.documentElement.dataset.mediaVersion;
+  function filmUrl(id){return `assets/film/${id}.mp4`+(mediaVersion?`?v=${mediaVersion}`:"");}
   let selected=0, pendingSeek=null;
   function time(seconds){return `${String(Math.floor(seconds/60)).padStart(2,"0")}:${String(seconds%60).padStart(2,"0")}`;}
   function chapters(episode){
@@ -30,13 +32,13 @@
     cards.forEach((card,i)=>{card.classList.toggle("active",i===index);card.setAttribute("aria-pressed",String(i===index));});
     complete.setAttribute("aria-pressed",String(index===3));
     next.disabled=index===3;
-    player.pause(); player.src=`assets/film/${episode.id}.mp4`;
+    player.pause(); player.src=filmUrl(episode.id);
     player.poster=`assets/images/${episode.poster||episode.id}.jpg`;
     player.setAttribute("aria-label",episode.title); player.load();
     document.getElementById("episode-title").textContent=episode.title;
     document.getElementById("duration").textContent=episode.duration;
     const download=document.getElementById("download");
-    download.href=`assets/film/${episode.id}.mp4`; download.textContent=index===3?"下载连续版 ↓":"下载本集 ↓";
+    download.href=filmUrl(episode.id); download.textContent=index===3?"下载连续版 ↓":"下载本集 ↓";
     chapters(episode);
     if(play)player.play().catch(()=>{status.textContent="点击播放器继续观看。";});
   }
