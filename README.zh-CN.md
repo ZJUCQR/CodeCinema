@@ -5,6 +5,7 @@
 <p><b>用代码制作一部完整的短片：画面、音乐、音效、字幕和最终母带，一条命令全部重新生成。</b></p>
 
 [![Homepage](https://img.shields.io/badge/%E4%B8%BB%E9%A1%B5-%E8%A7%82%E7%9C%8B%E5%BD%B1%E7%89%87-e0a948?logo=githubpages&logoColor=white)](https://zjucqr.github.io/CodeCinema/zh/)
+[![CI](https://github.com/ZJUCQR/CodeCinema/actions/workflows/ci.yml/badge.svg)](https://github.com/ZJUCQR/CodeCinema/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![ffmpeg](https://img.shields.io/badge/ffmpeg-required-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
@@ -12,24 +13,23 @@
 
 [English](README.md) · **简体中文**
 
-<img src="assets/images/banner.jpg" width="92%" alt="两部示例影片的画面">
+<img src="assets/images/banner.jpg" width="92%" alt="CodeCinema：模板、Studio 与可扩展渲染器组成的影片制作框架">
 
 </div>
 
 ---
 
-CodeCinema 是一个小型框架，用来制作完全由代码构成的影片。一部影片就是一个文件夹，里面有一个 `film.toml` 和它自己的制作流程。框架提供每部影片都需要的部分：
+CodeCinema 是可扩展的通用影片制作框架。可以在本地可视化编辑器中选模板并定制，也可以接入自己的渲染器与制作流程。每部影片是一个包含 `film.toml` 的文件夹；框架提供：
 - **设置**：每部影片一套分层设置，支持本地覆盖和环境变量，并能自动查找工具和字体。
 - **声音**：共享的音频工具包，包括合成、物理建模、混响、真峰值限制和响度处理。
 - **合成**：ffmpeg 辅助工具，负责探测、编码、拼接和混流。
 - **命令行**：一个 CLI，可以列出影片、运行影片的步骤，以及创建新影片。
 
-框架自带三部完整的影片项目、八种可定制的起步场景，以及本地可视化编辑器。
+通过 Studio，可以从模板直接制作 MP4；示例影片展示了如何接入自定义渲染器、声音与后期流程。
 
 ## ✨ 亮点
 
 - 🪄 **选模板、改内容、点一下出片**：本地 Studio 提供八种动态场景、可编辑分镜、标题、字幕、颜色、横竖屏与方形画幅，一次点击生成 MP4，无需 API Key。
-- 🎬 **三部完整影片项目**：160 秒的 Blender 武士决斗、128 秒的活体猫咪长卷，以及人物贯穿三集、含中文配音的 11 分钟开篇改编。
 - 🧩 **约定很小，渲染器随意**：影片在 `film.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
 - 🎼 **共享的声音工具包**：影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
 - ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑；分层设置无需改动受版本管理的文件；辅助工具支持 macOS、Linux 和 Windows。
@@ -128,6 +128,10 @@ CodeCinema/
 </div>
 
 <p align="center"><sub><b>图 1.</b> 一部 CodeCinema 影片是怎样制作出来的。<b>(a)</b> 影片先写成数据：<code>film.toml</code> 声明步骤和设置，一份 config 存放整个故事（时间轴、节拍、角色、写成音符的乐谱）。<b>(b)</b> 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。<b>(c)</b> 渲染器以并行、可续渲的分块绘制画面：一部示例用 Blender 3D，另一部用 skia 2D 绘画。<b>(d)</b> 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。<b>(e)</b> 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。</sub></p>
+
+## 参与贡献
+
+[贡献指南](CONTRIBUTING.md)介绍开发环境、验证命令及新增模板或渲染器的方法；[框架说明](docs/FRAMEWORK.md)介绍影片接口与共享工具。
 
 ## 📜 许可
 

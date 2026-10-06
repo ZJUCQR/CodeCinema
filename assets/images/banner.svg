@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="640" viewBox="0 0 1800 640" role="img" aria-labelledby="title desc">
+  <title id="title">CodeCinema — Make your story move.</title>
+  <desc id="desc">An open-source filmmaking framework with templates, a visual editor and an extensible rendering pipeline.</desc>
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#faf9f4"/><stop offset="1" stop-color="#eff2e9"/></linearGradient>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#0b1424"/><stop offset="1" stop-color="#233e49"/></linearGradient>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6db8a7" stop-opacity="0"/><stop offset=".45" stop-color="#80bcae" stop-opacity=".65"/><stop offset="1" stop-color="#8b88ba" stop-opacity=".08"/></linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6bb49d" stop-opacity=".15"/><stop offset=".6" stop-color="#abd2bb" stop-opacity=".6"/><stop offset="1" stop-color="#7f97bf" stop-opacity=".12"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dy="18" stdDeviation="25" flood-color="#1c4233" flood-opacity=".12"/></filter>
+    <clipPath id="picture"><rect x="1022" y="156" width="654" height="267" rx="12"/></clipPath>
+    <style>
+      text { font-family: 'Avenir Next', Inter, Arial, sans-serif; }
+      .mono { font-family: 'SF Mono', 'SFMono-Regular', Consolas, monospace; }
+    </style>
+  </defs>
+  <rect width="1800" height="640" fill="url(#paper)"/>
+  <circle cx="1630" cy="55" r="318" fill="none" stroke="#e3e8db" stroke-width="1.5"/>
+  <circle cx="1640" cy="55" r="360" fill="none" stroke="#e9ecdf" stroke-width="1.5"/>
+  <rect x="86" y="78" width="57" height="57" rx="15" fill="#236e59"/>
+  <path d="M101 98 94 106.5 101 115 M128 98 135 106.5 128 115" fill="none" stroke="#f4f6ee" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M110 97 110 117 124 107Z" fill="#f4f6ee"/>
+  <text x="164" y="113" font-size="17" font-weight="600" letter-spacing="2.5" fill="#557261">OPEN SOURCE · FILMMAKING FRAMEWORK</text>
+  <text x="80" y="274" font-size="112" font-weight="700" letter-spacing="-5.5" fill="#193d32">CodeCinema</text>
+  <text x="87" y="343" font-size="44" font-weight="500" letter-spacing="-1.1" fill="#264f41">Make your story move.</text>
+  <text x="89" y="400" font-size="25" fill="#64796c">Templates. A visual editor. Your own renderer.</text>
+  <rect x="89" y="457" width="548" height="69" rx="13" fill="#e6ece1"/>
+  <text x="111" y="502" class="mono" font-size="27" fill="#236e59"><tspan fill="#8d9b89">$ </tspan>codecinema studio</text>
+  <text x="91" y="581" font-size="19" fill="#829082">Create, customize and render.</text>
+  <g filter="url(#shadow)">
+    <rect x="993" y="88" width="712" height="470" rx="24" fill="#fcfcf8" stroke="#d6dfd2" stroke-width="1.2"/>
+  </g>
+  <circle cx="1029" cy="120" r="5" fill="#becfbc"/>
+  <circle cx="1047" cy="120" r="5" fill="#d7ddd1"/>
+  <circle cx="1065" cy="120" r="5" fill="#d7ddd1"/>
+  <text x="1111" y="126" font-size="13" font-weight="600" letter-spacing="2" fill="#718070">YOUR STORY, IN MOTION</text>
+  <rect x="1022" y="156" width="654" height="267" rx="12" fill="url(#sky)"/>
+  <g clip-path="url(#picture)">
+    <path d="M998 209 Q1196 238 1450 168 T1715 183 L1715 227 Q1571 196 1423 221 T998 250Z" fill="url(#aurora)"/>
+    <path d="M991 236 Q1168 195 1375 236 T1710 224 L1710 248 Q1490 256 1350 255 T991 255Z" fill="url(#wave)"/>
+    <path d="M1022 359 Q1123 289 1261 343 T1493 329 T1677 342 V423 H1022Z" fill="#2b4752"/>
+    <path d="M1022 384 Q1160 326 1306 373 T1517 357 T1677 383 V423 H1022Z" fill="#1b3642"/>
+    <path d="M1022 409 Q1184 362 1336 399 T1570 379 T1677 405 V423 H1022Z" fill="#102833"/>
+    <g fill="#d6e4dc" opacity=".72"><circle cx="1081" cy="186" r="1.2"/><circle cx="1171" cy="265" r="1"/><circle cx="1265" cy="192" r="1.5"/><circle cx="1381" cy="287" r="1"/><circle cx="1457" cy="207" r="1.3"/><circle cx="1601" cy="268" r="1.1"/><circle cx="1650" cy="180" r="1.2"/></g>
+    <circle cx="1560" cy="218" r="16" fill="#dddcca" opacity=".92"/>
+    <g fill="#0c222c"><path d="M1080 417 1095 362 1110 417Z M1100 417 1115 345 1130 417Z M1120 417 1138 372 1153 417Z M1464 425 1484 351 1504 425Z M1496 425 1517 365 1538 425Z M1541 425 1561 340 1581 425Z M1580 425 1598 371 1616 425Z"/></g>
+    <path d="M1225 402H1401 M1264 410H1438 M1312 418H1390" stroke="#718c89" stroke-width="1" opacity=".25"/>
+  </g>
+  <circle cx="1044" cy="450" r="11" fill="#236e59"/>
+  <path d="M1042 445 1042 455 1049 450Z" fill="#f5f7ee"/>
+  <path d="M1073 450H1659" stroke="#e3e9dd" stroke-width="3" stroke-linecap="round"/>
+  <path d="M1073 450H1350" stroke="#739b7e" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="1350" cy="450" r="4" fill="#236e59"/>
+  <rect x="1022" y="479" width="192" height="49" rx="10" fill="#e8eee4"/>
+  <text x="1046" y="510" font-size="15" font-weight="600" letter-spacing="1.2" fill="#55735c">PICTURE</text>
+  <path d="M1170 494H1188V514H1170Z M1176 494V514 M1182 494V514" fill="none" stroke="#88a084" stroke-width="1.5"/>
+  <rect x="1235" y="479" width="192" height="49" rx="10" fill="#f1ece0"/>
+  <text x="1259" y="510" font-size="15" font-weight="600" letter-spacing="1.2" fill="#9b895f">SOUND</text>
+  <path d="M1371 501V507 M1377 496V512 M1383 492V516 M1389 497V511 M1395 501V507" stroke="#b7a477" stroke-width="2" stroke-linecap="round"/>
+  <rect x="1448" y="479" width="228" height="49" rx="10" fill="#e5eaf0"/>
+  <text x="1472" y="510" font-size="15" font-weight="600" letter-spacing="1.2" fill="#647e9b">MASTER · MP4</text>
+  <path d="M1631 494 1631 511 M1625 505 1631 511 1637 505" fill="none" stroke="#829bb0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
