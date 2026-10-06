@@ -18,7 +18,7 @@
 
 从项目根目录运行：
 
-先按[安装教程](../../docs/GETTING_STARTED.md)配置框架和 FFmpeg：
+先按[安装教程](../../docs/GETTING_STARTED.zh-CN.md)配置框架和 FFmpeg：
 
 ```bash
 python -m pip install -e ".[speech]"
@@ -71,13 +71,15 @@ data/episodes.json    三集脚本、分镜、时长、服装和事件
 src/story.py         唯一的故事时钟及状态校验
 src/art.py           同一套人物、场景与绘制工具
 src/scenes.py        分镜表演、镜头运动与字幕
-src/sound.py         离线配音、配乐、音效、压低配乐的混音
+src/score.py         随场景变化的室内乐配乐
+src/sound.py         情绪配音、定时音效、压低配乐的混音
 src/run.py           分块渲染、合成、章节、字幕轨和质检
 out/screenplay.md     生成的完整改编剧本
 out/continuity.json   逐镜头解析后的服装、道具和原著来源
 out/*.srt             每集及合集的字幕
+out/qc.json           本地生成的成片与连续性质检报告
 assets/images/        海报、人物形象表、67 格分镜图
-assets/film/          三集 MP4、合集与 qc.json
+assets/film/          三集 MP4 与合集
 ```
 
 质检核对剧情时序、跨集状态、期待值、字体、字幕宽度、67 个镜头的确定性和运动、帧数、画面尺寸、音画时长、字幕轨、章节、响度与真峰值，并完整解码成片检查错误。结果写入 `out/qc.json`。影片和中间音视频不提交 Git，可由上述命令重新生成。

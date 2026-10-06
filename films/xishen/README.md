@@ -97,6 +97,7 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 | [data/canon.json](data/canon.json) | Source references, character designs, persistent voices and acting directions |
 | [film.toml](film.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
 | [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
+| [src/score.py](src/score.py) / [src/sound.py](src/sound.py) | Scene-led music, speech directions, timed foley and mixing |
 
 For a quick, independent first film, use the [configurable starter](../../docs/GETTING_STARTED.md#make-it-yours) instead. This trilogy's source ledger and timeline are tailored to the novel.
 

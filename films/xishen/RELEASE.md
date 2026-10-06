@@ -27,9 +27,10 @@ All three episodes share one visual style and cast. Rain, theatre, investigation
 Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/docs/GETTING_STARTED.md), then run from the repository root:
 
 ```bash
-codecinema run xishen all --narration required
+python -m pip install -e ".[speech]"
+codecinema run xishen all --narration required --speech-engine local
 ```
 
-Published voices use local Qwen3-TTS CustomVoice on Apple Silicon, with waveform-gated, syllable-aligned mouth animation. Install the optional speech pack with `python -m pip install -e ".[speech]"` and add `--speech-engine local` to reproduce this edition. Other platforms can supply WAV recordings. Use `--narration off` for a captions-and-music edition.
+Published voices use local Qwen3-TTS CustomVoice and Qwen3 ForcedAligner on Apple Silicon, with waveform-gated, syllable-aligned mouth animation. The commands above install the optional speech pack and require the expressive local engine. Other platforms can supply WAV recordings and use `--speech-engine recording`. For a captions-and-music edition, run `codecinema run xishen all --narration off` with the standard framework installation.
 
 Repository author: **ZJUCQR**. Repository code: [MIT](https://github.com/ZJUCQR/CodeCinema/blob/main/LICENSE). Original novel: **Sanjiu Yinyu**, [official edition](https://fanqienovel.com/page/7276384138653862966); the novel's rights remain with its respective rights holders.
