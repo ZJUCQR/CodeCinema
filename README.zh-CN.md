@@ -161,8 +161,6 @@ codecinema run myfilm all --quality preview
 
 影片配置统一放在根目录 `pyproject.toml` 的 `[tool.codecinema.films.<id>]` 表中，具体参数位于其 `settings` 子表。Studio 和 `codecinema new` 会根据 `[tool.codecinema.starter]` 默认值自动登记新影片。CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入口脚本。`codecinema list` 查看影片与步骤，`presets` 查看预设，`check` 检查环境，`run <id> <step>` 运行步骤。
 
-设置优先级由低到高：框架默认值 → 根目录 `pyproject.toml` 的 `[tool.codecinema.films.<id>.settings.*]` → 影片目录中的 `film.local.toml`（直接使用 `[video]`、`[audio]` 等表）→ 影片前缀或 `CODECINEMA_*` 环境变量。工具还支持 `BLENDER_BIN`、`FFMPEG`、`FFPROBE`。
-
 | 模块 | 用途 |
 | --- | --- |
 | `codecinema.settings` | `get()` 取值、`path()` 解析影片相对路径、`tool()` 查找工具、`font()` 查找字体。`ROOT` 为影片根目录 |
@@ -172,13 +170,6 @@ codecinema run myfilm all --quality preview
 | `codecinema.blender` | 后台启动 Blender、动作曲线与修改器工具 |
 | `codecinema.audio.speech` / `performance` | 配音、录音、对齐与口型时间 |
 | `codecinema.films` | `discover()` 发现影片，`Film.run()` 执行步骤 |
-
-在生成的 `src/run.py` 中修改 `draw_frame(canvas, frame)` 和 `score()`，即可扩展画面与音乐。`plan`、`stills`、`render`、`audio`、`assemble`、`qc` 分别负责时间线、联系表、画面、声音、合成和质检。`all` 串起整个流程。
-
-Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `template = "starter-v1"` 的项目。独立示例遵循各自的制作指南。预览单独写入 `out/preview/` 和 `<id>_preview.mp4`。分步运行时，画质、画幅、FPS、时长必须一致。签名检查阻止拼接过期素材。
-
-开发时将故事、动作和音效放在同一时间线上，固定随机种子，用可续渲分块减少重复计算。完整接口示例见[英文参考](README.md#framework)。
-
 
 <a id="blender"></a>
 
