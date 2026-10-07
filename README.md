@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="https://zjucqr.github.io/CodeCinema/#films"><strong>Watch the films</strong></a> ·
+  <a href="https://zjucqr.github.io/CodeCinema/"><strong>Project page</strong></a> ·
   <a href="docs/GETTING_STARTED.md"><strong>Quick start</strong></a> ·
   <a href="docs/FRAMEWORK.md">Framework guide</a>
 </p>

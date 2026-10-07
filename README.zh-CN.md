@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="https://zjucqr.github.io/CodeCinema/zh/#films"><strong>观看影片</strong></a> ·
+  <a href="https://zjucqr.github.io/CodeCinema/zh/"><strong>项目主页</strong></a> ·
   <a href="docs/GETTING_STARTED.zh-CN.md"><strong>快速开始</strong></a> ·
   <a href="docs/FRAMEWORK.md">框架指南</a>
 </p>
