@@ -1,15 +1,33 @@
-# CodeCinema
+<h1 align="center">CodeCinema</h1>
 
-**用代码制作一部完整的短片：画面、音乐、音效、字幕和最终母带，一条命令全部重新生成。**
+<p align="center">
+  <strong>让你的故事动起来。</strong><br>
+  用代码创作完整影片的开源框架：画面、配乐、音效与最终成片。
+</p>
 
-![Homepage](https://img.shields.io/badge/%E4%B8%BB%E9%A1%B5-%E8%A7%82%E7%9C%8B%E5%BD%B1%E7%89%87-e0a948?logo=githubpages&logoColor=white)
-![CI](https://github.com/ZJUCQR/CodeCinema/actions/workflows/ci.yml/badge.svg)
-![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f.svg)
-![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776ab?logo=python&logoColor=white)
-![ffmpeg](https://img.shields.io/badge/ffmpeg-required-007808?logo=ffmpeg&logoColor=white)
-![Blender (optional)](https://img.shields.io/badge/Blender-optional-ea7600?logo=blender&logoColor=white)
+<p align="center">
+  <a href="README.md">English</a> · <strong>简体中文</strong>
+</p>
 
-[English](README.md) · **简体中文**
+<p align="center">
+  <a href="https://zjucqr.github.io/CodeCinema/zh/#films">
+    <img src="assets/images/banner.jpg" width="100%" alt="CodeCinema 影片制作框架：让故事动起来，从画面与声音到最终成片">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ZJUCQR/CodeCinema/actions/workflows/ci.yml"><img src="https://github.com/ZJUCQR/CodeCinema/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f.svg" alt="License: MIT"></a>
+  <a href="docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/python-3.12%2B-3776ab?logo=python&amp;logoColor=white" alt="Python 3.12+"></a>
+  <a href="docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/ffmpeg-required-007808?logo=ffmpeg&amp;logoColor=white" alt="FFmpeg required"></a>
+  <a href="docs/BLENDER.md"><img src="https://img.shields.io/badge/Blender-optional-ea7600?logo=blender&amp;logoColor=white" alt="Blender optional"></a>
+</p>
+
+<p align="center">
+  <a href="https://zjucqr.github.io/CodeCinema/zh/#films"><strong>观看影片</strong></a> ·
+  <a href="docs/GETTING_STARTED.zh-CN.md"><strong>快速开始</strong></a> ·
+  <a href="docs/FRAMEWORK.md">框架指南</a>
+</p>
 
 ---
 
@@ -52,21 +70,40 @@ codecinema new myfilm --preset aurora --title "我的影片" --render --open
 
 ## 🎞 示例影片
 
-| ![芒原决战](films/silvergrass/assets/images/still_190.jpg) | ![韩熙载夜宴图 · 猫](films/nightrevels/assets/images/still_1300.jpg) |
-| --- | --- |
-| **[《芒原决战》](films/silvergrass/README.zh-CN.md)** | **[《韩熙载夜宴图 · 猫》](films/nightrevels/README.zh-CN.md)** |
-| 落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。 | 一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。 |
-| Blender 3D · 160 秒 · 30 个镜头 | Skia 2D 绘画 · 128 秒 · 13 个猫品种 |
-| [观看](https://zjucqr.github.io/CodeCinema/zh/#silvergrass) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/film) | [观看](https://zjucqr.github.io/CodeCinema/zh/#nightrevels) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels) |
-| `codecinema run silvergrass all` | `codecinema run nightrevels all` |
-
-| ![我不是戏神 · 开篇三集](films/xishen/assets/images/still-rain.jpg) | ![守灯人](films/beacon/assets/images/poster.jpg) |
-| --- | --- |
-| **[《我不是戏神 · 开篇三集》](films/xishen/README.zh-CN.md)** | **[《守灯人》](films/beacon/README.zh-CN.md)** |
-| 按原著开篇六章的顺序，从陈伶雨夜归家、剧院噩梦到第一次编导演练，人物与时间线贯穿三集。 | 云海上的瓷白机械守灯人唤醒古老星环，远方的一点光给出了回应。 |
-| Skia 2D 动态漫画 · 11 分钟 · 三集 · 中文配音 | Blender 3D · 48 秒 · 6 个镜头 · 原创配乐 |
-| [观看](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) | [观看](https://zjucqr.github.io/CodeCinema/zh/#beacon) · [下载](https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon) |
-| `codecinema run xishen all --narration required` | `codecinema run beacon all` |
+<table width="100%">
+  <tr>
+    <td width="50%" valign="top">
+      <a href="films/silvergrass/README.zh-CN.md"><img src="assets/images/examples/silvergrass.jpg" width="100%" alt="芒原决战"></a>
+      <h3><a href="films/silvergrass/README.zh-CN.md">芒原决战</a></h3>
+      <p>落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。</p>
+      <p><strong>Blender 3D · 160 秒 · 30 个镜头</strong></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#silvergrass">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/film">下载</a> · <a href="films/silvergrass/README.zh-CN.md">制作指南</a></p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="films/nightrevels/README.zh-CN.md"><img src="assets/images/examples/nightrevels.jpg" width="100%" alt="韩熙载夜宴图 · 猫"></a>
+      <h3><a href="films/nightrevels/README.zh-CN.md">韩熙载夜宴图 · 猫</a></h3>
+      <p>一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。</p>
+      <p><strong>Skia 2D · 128 秒 · 13 个猫品种</strong></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#nightrevels">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">下载</a> · <a href="films/nightrevels/README.zh-CN.md">制作指南</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="films/xishen/README.zh-CN.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="我不是戏神 · 开篇三集"></a>
+      <h3><a href="films/xishen/README.zh-CN.md">我不是戏神 · 开篇三集</a></h3>
+      <p>按原著开篇顺序，从陈伶雨夜归家、剧院噩梦到第一次编导演练，人物与时间线贯穿三集。</p>
+      <p><strong>Skia 2D · 11 分钟 · 三集 · 中文配音</strong></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/xishen/watch.html">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="films/beacon/README.zh-CN.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
+      <h3><a href="films/beacon/README.zh-CN.md">守灯人</a></h3>
+      <p>云海上的瓷白机械守灯人唤醒古老星环，远方的一点光给出了回应。</p>
+      <p><strong>Blender 3D · 48 秒 · 6 个镜头 · 原创配乐</strong></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#beacon">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">下载</a> · <a href="films/beacon/README.zh-CN.md">制作指南</a></p>
+    </td>
+  </tr>
+</table>
 
 示例影片均可在[主页](https://zjucqr.github.io/CodeCinema/zh/#films)观看，点击对应 Release 下载 MP4；`codecinema list` 会列出各自的制作步骤。《芒原决战》与《守灯人》需要 Blender 5.2+，3D 渲染比 2D 示例耗时更长。《我不是戏神》三集全程共用同一套 Skia 2D 人物造型，配有随场景变化的配乐和情绪中文对白。发布版配音使用 Apple Silicon 上的可选本地语音包；其他平台可以提供录音。`--narration off` 可生成字幕与配乐版本。各影片指南提供安装要求和定制方法。
 
