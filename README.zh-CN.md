@@ -383,9 +383,6 @@ CodeCinema/
 ├── assets/images/          # 共用图标与 README 配图
 ├── site/                   # 双语项目主页与网站构建脚本
 ├── .github/workflows/      # CI 与 GitHub Pages 部署
-├── README.md               # 英文上手教程与框架说明
-├── README.zh-CN.md         # 中文上手教程与框架说明
-├── CONTRIBUTING.md         # 贡献指南
 └── pyproject.toml          # 包信息与依赖
 ```
 
@@ -402,11 +399,7 @@ films/beacon/
 ├── assets/
 │   ├── images/             # 海报与分镜图
 │   └── film/               # 最终 TheLastBeacon.mp4（运行后生成）
-├── out/                    # 渲染帧、音频中间文件与报告（运行后生成）
-├── docs/FILM_PLAN.md        # 创作规划与检查标准
-├── README.md               # 复现与定制指南
-├── README.zh-CN.md         # 中文影片指南
-└── RELEASE.md              # 已发布版本的说明
+└── out/                    # 渲染帧、音频中间文件与报告（运行后生成）
 ```
 
 `film.toml` 告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 `src/` 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 `scenes.json`，供 Studio 编辑分镜。`assets/film/` 和 `out/` 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 `film.local.toml`。

@@ -559,9 +559,6 @@ CodeCinema/
 ├── assets/images/          # shared branding and README illustrations
 ├── site/                   # bilingual project page and site builder
 ├── .github/workflows/      # CI and GitHub Pages deployment
-├── README.md               # English setup and framework reference
-├── README.zh-CN.md         # Chinese setup and framework reference
-├── CONTRIBUTING.md         # contribution guide
 └── pyproject.toml          # package metadata and dependencies
 ```
 
@@ -578,11 +575,7 @@ films/beacon/
 ├── assets/
 │   ├── images/             # poster and storyboard
 │   └── film/               # finished TheLastBeacon.mp4 (generated)
-├── out/                    # frames, audio intermediates and reports (generated)
-├── docs/FILM_PLAN.md        # creative plan and review criteria
-├── README.md               # reproduction and customization guide
-├── README.zh-CN.md         # Chinese film guide
-└── RELEASE.md              # published edition's release notes
+└── out/                    # frames, audio intermediates and reports (generated)
 ```
 
 `film.toml` tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The `src/` layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have `scenes.json` for Studio edits. Generated `assets/film/` and `out/` directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in `film.local.toml`.

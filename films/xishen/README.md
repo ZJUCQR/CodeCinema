@@ -113,7 +113,7 @@ python -m codecinema run xishen assemble --episode ep01 --narration required --s
 python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
-Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`.
+Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes its review contact sheet to `out/stills/storyboard.jpg`; published posters and cast images stay in `assets/images/`.
 
 </details>
 

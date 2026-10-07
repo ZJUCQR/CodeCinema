@@ -216,9 +216,6 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 ├── assets/images/          <span class="c"># shared branding and README illustrations</span>
 ├── site/                   <span class="c"># bilingual project page and site builder</span>
 ├── .github/workflows/      <span class="c"># CI and GitHub Pages deployment</span>
-├── README.md               <span class="c"># English setup and framework reference</span>
-├── README.zh-CN.md         <span class="c"># Chinese setup and framework reference</span>
-├── CONTRIBUTING.md         <span class="c"># contribution guide</span>
 └── pyproject.toml          <span class="c"># package metadata and dependencies</span></code></pre>
     </div>
     <p class="lead reveal">Inside a film, using <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.md">The Last Beacon</a> as an example:</p>
@@ -234,11 +231,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 ├── assets/
 │   ├── images/             <span class="c"># poster and storyboard</span>
 │   └── film/               <span class="c"># finished TheLastBeacon.mp4 (generated)</span>
-├── out/                    <span class="c"># frames, audio intermediates and reports (generated)</span>
-├── docs/FILM_PLAN.md        <span class="c"># creative plan and review criteria</span>
-├── README.md               <span class="c"># reproduction and customization guide</span>
-├── README.zh-CN.md         <span class="c"># Chinese film guide</span>
-└── RELEASE.md              <span class="c"># published edition&#x27;s release notes</span></code></pre>
+└── out/                    <span class="c"># frames, audio intermediates and reports (generated)</span></code></pre>
     </div>
     <p class="caption reveal"><code>film.toml</code> tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The <code>src/</code> layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have <code>scenes.json</code> for Studio edits. Generated <code>assets/film/</code> and <code>out/</code> directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in <code>film.local.toml</code>.</p>
   </div>

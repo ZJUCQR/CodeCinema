@@ -78,7 +78,8 @@ out/screenplay.md     生成的完整改编剧本
 out/continuity.json   逐镜头解析后的服装、道具和原著来源
 out/*.srt             每集及合集的字幕
 out/qc.json           本地生成的成片与连续性质检报告
-assets/images/        海报、人物形象表、67 格分镜图
+assets/images/        海报、人物形象表与展示配图
+out/stills/           生成的分镜联系表
 assets/film/          三集 MP4 与合集
 ```
 

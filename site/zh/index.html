@@ -216,9 +216,6 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
 ├── assets/images/          <span class="c"># 共用图标与 README 配图</span>
 ├── site/                   <span class="c"># 双语项目主页与网站构建脚本</span>
 ├── .github/workflows/      <span class="c"># CI 与 GitHub Pages 部署</span>
-├── README.md               <span class="c"># 英文上手教程与框架说明</span>
-├── README.zh-CN.md         <span class="c"># 中文上手教程与框架说明</span>
-├── CONTRIBUTING.md         <span class="c"># 贡献指南</span>
 └── pyproject.toml          <span class="c"># 包信息与依赖</span></code></pre>
     </div>
     <p class="lead reveal">一部影片内部，以<a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.zh-CN.md">《守灯人》</a>为例：</p>
@@ -234,11 +231,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
 ├── assets/
 │   ├── images/             <span class="c"># 海报与分镜图</span>
 │   └── film/               <span class="c"># 最终 TheLastBeacon.mp4（运行后生成）</span>
-├── out/                    <span class="c"># 渲染帧、音频中间文件与报告（运行后生成）</span>
-├── docs/FILM_PLAN.md        <span class="c"># 创作规划与检查标准</span>
-├── README.md               <span class="c"># 复现与定制指南</span>
-├── README.zh-CN.md         <span class="c"># 中文影片指南</span>
-└── RELEASE.md              <span class="c"># 已发布版本的说明</span></code></pre>
+└── out/                    <span class="c"># 渲染帧、音频中间文件与报告（运行后生成）</span></code></pre>
     </div>
     <p class="caption reveal"><code>film.toml</code> 告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 <code>src/</code> 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 <code>scenes.json</code>，供 Studio 编辑分镜。<code>assets/film/</code> 和 <code>out/</code> 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 <code>film.local.toml</code>。</p>
   </div>

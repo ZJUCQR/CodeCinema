@@ -102,7 +102,8 @@ def stills(episodes,options):
     contact=Image.new("RGB",(1920,math.ceil(len(tiles)/5)*246),"#0b131c")
     for index,tile in enumerate(tiles):
         contact.paste(tile,((index%5)*384,(index//5)*246))
-    contact.save(image_dir/"storyboard.jpg",quality=90)
+    review_dir=OUT/"stills"; review_dir.mkdir(parents=True,exist_ok=True)
+    contact.save(review_dir/"storyboard.jpg",quality=90)
     # Cast sheet uses exactly the same model functions as the actual footage.
     cast_surface=skia.Surface(1500,1620); c=cast_surface.getCanvas(); c.clear(col("#101e2b"))
     for index,(key,spec) in enumerate(CANON["characters"].items()):
@@ -113,7 +114,7 @@ def stills(episodes,options):
         text(c,spec["name"],x+250,y+518,30,"#d9c4a1",align="center")
         c.restore()
     cast_surface.makeImageSnapshot().save(str(image_dir/"cast.png"),skia.kPNG)
-    print(f"Posters, cast sheet and {len(tiles)} storyboard panels: {image_dir}",flush=True)
+    print(f"Posters and cast sheet: {image_dir}; {len(tiles)} storyboard panels: {review_dir}",flush=True)
 
 
 def render_shot(episode,shot,key):
