@@ -70,7 +70,7 @@ python3.12 -m venv .venv
 </details>
 
 <details>
-<summary>Linux · Ubuntu 24.04</summary>
+<summary>Linux</summary>
 
 install Python 3.12+ and FFmpeg with your distribution's package manager. On Ubuntu 24.04:
 
@@ -84,7 +84,7 @@ python3 -m venv .venv
 </details>
 
 <details>
-<summary>Windows · PowerShell</summary>
+<summary>Windows</summary>
 
 install [Python 3.12+](https://www.python.org/downloads/) and FFmpeg, then run:
 

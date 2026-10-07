@@ -70,7 +70,7 @@ python3.12 -m venv .venv
 </details>
 
 <details>
-<summary>Linux · Ubuntu 24.04</summary>
+<summary>Linux</summary>
 
 ```bash
 sudo apt-get install python3-venv ffmpeg fonts-dejavu-core libgl1 libegl1 libfontconfig1
@@ -82,7 +82,7 @@ python3 -m venv .venv
 </details>
 
 <details>
-<summary>Windows · PowerShell</summary>
+<summary>Windows</summary>
 
 先安装 [Python 3.12+](https://www.python.org/downloads/)，然后运行：
 
