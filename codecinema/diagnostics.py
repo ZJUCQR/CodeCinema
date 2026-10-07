@@ -27,7 +27,9 @@ def graphics_help():
     return "Install the Python dependencies in this environment: python -m pip install ."
 
 
-def starter_problems():
+def starter_problems(renderer="skia"):
+    from codecinema.renderers import require
+    require(renderer)
     problems = []
     for name in STARTER_MODULES:
         try:
@@ -38,4 +40,6 @@ def starter_problems():
     tools = [name for name in ("ffmpeg", "ffprobe") if not tool_available(settings.tool(name))]
     if tools:
         problems.append(f"Missing tools: {', '.join(tools)}. {ffmpeg_help()}")
+    if renderer == "blender" and not tool_available(settings.tool("blender")):
+        problems.append("Install Blender 5.2 or later, or set BLENDER_BIN to its executable.")
     return problems

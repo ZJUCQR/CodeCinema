@@ -1,31 +1,17 @@
 # __FILM_TITLE__
 
-A complete starter film with three editable scenes, moving artwork and synthesized stereo music. No API keys or downloaded media are needed.
+Open `codecinema studio` and select this project under **My films** to edit scenes,
+choose Skia or Blender, add captions or voices and render an MP4.
 
 ```bash
-codecinema studio                      # visual editor: open this film under My films
-codecinema run __FILM_ID__ all          # render, assemble and verify
-codecinema run __FILM_ID__ all --quality preview   # separate fast preview
+codecinema run __FILM_ID__ all
+codecinema customize __FILM_ID__ --renderer blender --render
 ```
 
-Run commands from your project root. The finished MP4 is `assets/film/__FILM_ID__.mp4` in this folder. Previews use `__FILM_ID___preview.mp4` and do not replace the master.
+`scenes.json` holds the story, shot durations, looks, camera moves and narration.
+The root `pyproject.toml` registers the renderer and output settings. Optional
+recordings, models and Blender scenes belong in `assets/`. Finished videos go to
+`assets/film/`. The generated working files go to `out/`.
 
-## Make it yours
-
-In Studio, choose the film, edit the title, captions, runtime, frame and colors, then click **Render my film**. Expand Personalize every scene to add or reorder scenes, mix looks, and change individual captions and camera moves. **Add a voice** accepts optional spoken text, a voice and acting direction. Leave it blank for music only. See the [speech guide](../../README.md#speech) for the optional local speech pack and supplied recordings.
-
-The command line works too:
-
-```bash
-codecinema customize __FILM_ID__ --preset sunset --title "My Next Film" --duration 20 --render
-codecinema customize __FILM_ID__ --format portrait --quality high --render --open
-```
-
-- `scenes.json` is your story: each scene has `preset`, `duration_s`, `title`, `subtitle` and `camera` (`wide`, `drift`, `close`). Optional `accent` accepts a color such as `#c5e8db`. Scene durations determine the runtime.
-- Eight looks are available: `moonrise`, `sunset`, `aurora`, `neon`, `ocean`, `ink`, `cosmos`, `ember`. Run `codecinema presets` to see them.
-- The root `pyproject.toml` stores picture and audio settings under `[tool.codecinema.films.__FILM_ID__.settings]`. Local overrides belong in `film.local.toml`, using `[video]`, `[audio]` and `[fonts]` sections.
-- `src/run.py` draws each frame (`draw_frame`) and composes the sound (`score`). Edit these only when you want to develop new animation or music.
-
-Every visual or CLI customization saves the previous `scenes.json` and root `pyproject.toml` in `out/edits/`. When undoing, restore only this film’s configuration tables so other projects keep their edits. Render all after changes, or keep identical options for `render`, `audio`, `assemble` and `qc`. Assembly rejects stale or mismatched stages. A storyboard and verification report are saved in `out/master/` (or `out/preview/`).
-
-The [simple tutorial](../../README.md#quick-start) covers installation and your first film. The [framework overview](../../README.md#framework) links to complete example productions.
+This folder needs no Python scripts. CodeCinema owns the production pipeline.
+See the repository README for installation and CONTRIBUTING.md for renderer plugins.

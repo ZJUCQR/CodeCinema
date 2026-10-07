@@ -1,6 +1,9 @@
 """
 CodeCinema - a framework for making complete short films with code.
 
+    codecinema.pipeline   shared production steps for declarative story projects
+    codecinema.renderers  built-in Skia/Blender backends and renderer plugin discovery
+    codecinema.productions authored example production packs (film content lives separately)
     codecinema.settings   per-film settings (pyproject.toml + local overrides + environment), tool and font discovery
     codecinema.procutil   cross-platform process / lock / memory helpers
     codecinema.audio.dsp  audio DSP toolkit (oscillators, filters, physical models, reverb, loudness, limiter)
@@ -10,7 +13,7 @@ CodeCinema - a framework for making complete short films with code.
 """
 import os
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 

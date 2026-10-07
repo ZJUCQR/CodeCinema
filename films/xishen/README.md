@@ -16,7 +16,7 @@ A rain-soaked return. An audience with crimson eyes. A director learning to surv
 
 <img src="assets/images/banner.jpg" width="100%" alt="Chen Ling in his red stage robe, the silent audience and his next-morning black coat">
 
-[**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](src/story.json) · [Chinese guide](README.zh-CN.md)
+[**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](story.json) · [Chinese guide](README.zh-CN.md)
 
 </div>
 
@@ -92,10 +92,10 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 
 | File | What to change |
 | --- | --- |
-| [src/story.json](src/story.json) | `story`: episodes, shots, dialogue and timing. `canon`: source references, characters, voices and continuity rules |
+| [story.json](story.json) | `story`: episodes, shots, dialogue and timing. `canon`: source references, characters, voices and continuity rules |
 | [pyproject.toml](../../pyproject.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
-| [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
-| [src/score.py](src/score.py) / [src/sound.py](src/sound.py) | Scene-led music, speech directions, timed foley and mixing |
+| [art.py](../../codecinema/productions/xishen/art.py) / [scenes.py](../../codecinema/productions/xishen/scenes.py) | Shared character designs, environments, performance and camera motion |
+| [score.py](../../codecinema/productions/xishen/score.py) / [sound.py](../../codecinema/productions/xishen/sound.py) | Scene-led music, speech directions, timed foley and mixing |
 
 For a quick, independent first film, use the [configurable starter](../../README.md#customization) instead. This trilogy's source ledger and timeline are tailored to the novel.
 
@@ -119,4 +119,4 @@ Keep picture settings, narration mode and speech engine consistent across stages
 
 Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. Results are generated locally in `out/qc.json`. Browser review covers video seeking, episode continuation and mobile layout.
 
-Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](src/story.json). The novel's rights remain with its respective rights holders. The [MIT license](../../LICENSE) covers this repository's code.
+Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](story.json). The novel's rights remain with its respective rights holders. The [MIT license](../../LICENSE) covers this repository's code.

@@ -51,10 +51,10 @@ scarf = [0.06, 0.20, 0.30]  # 线性 RGB：蓝色围巾
 
 | 想修改什么 | 文件 |
 | --- | --- |
-| 分镜说明、动作与声音共用的时间节点 | [src/story.py](src/story.py) |
-| 人物、相机、材质、灯光和表演 | [src/scene.py](src/scene.py) |
-| 和声、旋律、乐器和音效 | [src/sound.py](src/sound.py) |
-| 编码和成片检查 | [src/run.py](src/run.py) |
+| 分镜说明、动作与声音共用的时间节点 | [story.json](story.json) |
+| 人物、相机、材质、灯光和表演 | [scene.py](../../codecinema/productions/beacon/scene.py) |
+| 和声、旋律、乐器和音效 | [sound.py](../../codecinema/productions/beacon/sound.py) |
+| 编码和成片检查 | [run.py](../../codecinema/productions/beacon/run.py) |
 
 六镜头与 48 秒配乐是一起设计的。若要改变总时长，需要一起调整镜头、动作和音乐，不能只修改时长常量。
 

@@ -1,7 +1,6 @@
 """Safe, reversible customization of the editable starter projects."""
 import copy
 from datetime import datetime, timezone
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,21 +9,19 @@ import shutil
 import tempfile
 import tomlkit
 
-from codecinema import registry, settings, starters
+from codecinema import registry, settings, starters, renderers
 
-# Released starter renderer before spoken scenes. Match its full source so a
-# user-modified renderer is never replaced by an automatic template update.
-LEGACY_SILENT_RENDERERS = {"7c7c775432227b06a7e10a727cabc097af9c10fb32b72a63977cefdef6068915"}
-
-
-def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None):
+def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None, renderer="skia", story=None):
     """Create a film folder and register its settings in the workspace configuration."""
     path = Path(path).absolute()
     if path.parent.name != "films" or not re.fullmatch(r"[a-z][a-z0-9_-]*", path.name):
         raise ValueError("Create films under films/<id>, using lower-case letters, digits, '-' or '_'")
     if os.path.lexists(path):
         raise ValueError(f"{path} already exists")
-    data = starters.make_story(title, preset, seconds, subtitle)
+    renderers.require(renderer)
+    data = copy.deepcopy(story) if story is not None else starters.make_story(title, preset, seconds, subtitle)
+    starters.validate_story(data)
+    title = data["title"]
     if accent is not None:
         for scene in data["scenes"]:
             scene["accent"] = accent
@@ -39,6 +36,9 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             if path.name in config.get("films", {}) or os.path.lexists(path):
                 raise ValueError(f"{path.name} already exists; choose a new ID")
             meta = copy.deepcopy(config["starter"].unwrap())
+            meta.pop("entry", None)
+            meta.pop("template", None)
+            meta.update(production="story", renderer=renderer, requires=["ffmpeg", "ffprobe"] + (["blender>=5.2"] if renderer == "blender" else []))
             meta["title"] = title
             meta["env_prefix"] = re.sub(r"[^A-Z0-9]", "_", path.name.upper())
             meta.setdefault("settings", {}).setdefault("paths", {})["final_video"] = f"assets/film/{path.name}.mp4"
@@ -70,7 +70,8 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
 
 def read_starter(path):
     path = Path(path)
-    if settings.film_meta(str(path)).get("template") != "starter-v1":
+    meta = settings.film_meta(str(path))
+    if meta.get("production") != "story" and meta.get("template") != "starter-v1":
         raise ValueError("This film has its own production pipeline. Use its README; customize supports starter films.")
     data = json.loads((path / "scenes.json").read_text(encoding="utf-8"))
     starters.validate_story(data)
@@ -88,7 +89,7 @@ def customize(path, **changes):
 
 
 def _customize(path, document, undo, *, title=None, subtitle=None, preset=None, seconds=None, format_name=None,
-              quality=None, accent=None, story=None):
+              quality=None, accent=None, story=None, renderer=None):
     """Validate all changes first, save a previous version, then update JSON and TOML."""
     path = Path(path)
     original = read_starter(path)
@@ -115,21 +116,21 @@ def _customize(path, document, undo, *, title=None, subtitle=None, preset=None, 
         for scene in data["scenes"]:
             scene["duration_s"] *= ratio
     starters.validate_story(data)
-    renderer = path / "src/run.py"
-    replacement = None
-    old_renderer = None
-    if any(scene.get("narration", {}).get("text") for scene in data["scenes"]):
-        old_renderer = renderer.read_text(encoding="utf-8")
-        source_hash = hashlib.sha256(old_renderer.encode()).hexdigest()
-        if source_hash in LEGACY_SILENT_RENDERERS:
-            replacement = Path(__file__).with_name("template").joinpath("src/run.py").read_text(encoding="utf-8")
-        elif '"narration"' not in old_renderer and "'narration'" not in old_renderer:
-            raise ValueError("This customized renderer does not support spoken scenes. Your code has been preserved. "
-                             "Create a new starter and copy its scene data, or merge the narration support from "
-                             "codecinema/template/src/run.py. See README.md#speech.")
+    legacy_entry = settings.film_meta(str(path)).get("entry")
+    if legacy_entry and any(scene.get("narration", {}).get("text") for scene in data["scenes"]):
+        source = (path / legacy_entry).read_text(encoding="utf-8")
+        if '"narration"' not in source and "'narration'" not in source:
+            raise ValueError("This older renderer does not support speech. Import its scenes.json into a new project with --story to use the shared voice pipeline.")
+    if renderer is not None:
+        renderers.require(renderer)
+        if settings.film_meta(str(path)).get("entry"):
+            raise ValueError("This older project owns its renderer code. Create a new project with --story to choose a backend while preserving your code.")
     previous = tomlkit.dumps(document)
     meta = document["tool"]["codecinema"]["films"][path.name]
     meta["title"] = data["title"]
+    if renderer is not None:
+        meta["renderer"] = renderer
+        meta["requires"] = ["ffmpeg", "ffprobe"] + (["blender>=5.2"] if renderer == "blender" else [])
     video = meta.setdefault("settings", {}).setdefault("video", {})
     current = settings.load(str(path))["video"]
     shape = format_name or ("square" if current["width"] == current["height"] else
@@ -151,9 +152,6 @@ def _customize(path, document, undo, *, title=None, subtitle=None, preset=None, 
     (backup / "pyproject.toml").write_text(previous, encoding="utf-8")
     (backup / "scenes.json").write_text(json.dumps(original, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     updates = [(path / "scenes.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n")]
-    if replacement is not None:
-        (backup / "run.py").write_text(old_renderer, encoding="utf-8")
-        updates.insert(0, (renderer, replacement))
     for target, content in updates:
         undo.append((target, target.read_text(encoding="utf-8")))
         registry.atomic_write(target, content)

@@ -54,7 +54,7 @@ codecinema run silvergrass all       # build → render → audio → titles →
 
 The finished film is written to `assets/film/`. The full render is the slow step, and you can stop it at any time: running the command again picks up where it left off. To look at one act in a few minutes, run `codecinema run silvergrass preview act2`.
 
-Each command below is a step of the film: `codecinema run silvergrass <step>` from anywhere in the repo, or `python src/run.py <step>` inside `films/silvergrass/`.
+Each command below is a step of the film: `codecinema run silvergrass <step>` from anywhere in the repo.
 
 | Command | What it does |
 |---|---|
@@ -84,14 +84,16 @@ Each command below is a step of the film: `codecinema run silvergrass <step>` fr
 
 ## 🎨 Customize
 
-The film is data plus code, so every part of it can be changed. The timeline, story and style live in `src/common/config.py`. Machine and quality settings live in the root `pyproject.toml` under `[tool.codecinema.films.silvergrass.settings]`.
+This folder contains no production scripts. [story.json](story.json) stores the authored shot data. Character, animation and sound code lives in the [framework production pack](../../codecinema/productions/silvergrass). Changes to authored shot timing require a matching review of choreography and sound.
+
+The film is data plus code, so every part of it can be changed. Authored shots and act boundaries live in `story.json`. The production pack's `common/config.py` reads that data and supplies the style and choreography parameters. Machine and quality settings live in the root `pyproject.toml` under `[tool.codecinema.films.silvergrass.settings]`.
 
 | To change… | Edit |
 |---|---|
 | Titles, epigraph, name and act cards | `TITLES` in config |
-| Shot lengths, acts, tempo, slow motion, music cues | `SHOTS`, `ACTS`, `TEMPO_MAP`, `TIME_WARP`, `MUSIC_CUES` in config |
+| Shot lengths, acts, tempo, slow motion, music cues | `shots` and `acts` in `story.json`, with `TEMPO_MAP`, `TIME_WARP` and `MUSIC_CUES` in the production config |
 | Character colours and proportions | `PALETTE`, `SHINOBI_HEIGHT`, `SAINT_HEIGHT` in config. Character modules for the designs |
-| Choreography and cameras of one act | That act's module in `src/blender/acts/` |
+| Choreography and cameras of one act | That act's module in `codecinema/productions/silvergrass/blender/acts/` |
 | Sky, light, wind, grass, VFX | `environment.*` and `vfx.*` calls from a lane |
 | Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config. Score and instrument modules |
 | Resolution, samples, motion blur, encoding, loudness | `[tool.codecinema.films.silvergrass.settings]` in the root `pyproject.toml` |
@@ -114,18 +116,11 @@ SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender codecinema run silvergrass
 
 ## 🗂 Project layout
 
-```
+```text
 films/silvergrass/
-├── src/
-│   ├── run.py              # command-line entry point
-│   ├── common/             # film data (config); settings and helpers come from the framework
-│   ├── blender/            # runs inside Blender: characters, moves, environment, VFX, cameras, build, render
-│   │   └── acts/           # the six choreography lanes
-│   ├── audio/              # instruments, SFX, ambience, score, mixing and mastering
-│   ├── post/               # calligraphic titles, assembly, film QC
-│   ├── tools/              # contact sheets, single-act previews, flash QC
-│   └── render_supervisor.py
-└── assets/                 # README images
+├── story.json              # story, shots and shared timing cues
+├── assets/                 # input assets, illustrations and generated masters
+└── out/                    # generated working files and quality reports
 ```
 
 ## 🧭 How it works

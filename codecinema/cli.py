@@ -10,12 +10,14 @@ CodeCinema command line.
 `python -m codecinema ...` works the same without installing the console script.
 """
 import argparse
+import json
+from pathlib import Path
 import os
 import re
 import shutil
 import sys
 
-from codecinema import __version__, diagnostics, films, films_dir, projects, settings, starters
+from codecinema import __version__, diagnostics, films, films_dir, projects, settings, starters, renderers
 
 
 def cmd_list(a):
@@ -59,13 +61,17 @@ def cmd_new(a):
         print("--open requires --render; use: codecinema new <id> --render --open", file=sys.stderr)
         return 1
     if a.render:
-        problems = diagnostics.starter_problems()
+        problems = diagnostics.starter_problems(a.renderer or "skia")
         if problems:
             print("\n".join(problems), file=sys.stderr)
             return 1
+    story = json.loads(Path(a.story).read_text(encoding="utf-8")) if a.story else None
+    if story is not None:
+        seconds = starters.validate_story(story)
     title = a.title or a.id.replace("-", " ").replace("_", " ").title()
     w, h = projects.create(dest, title=title, preset=a.preset, seconds=seconds, subtitle=a.subtitle,
-                            format_name=a.format, quality=a.quality, accent=a.accent)
+                            format_name=a.format, quality=a.quality, accent=a.accent, renderer=a.renderer,
+                            story=story)
     print(f"Created {os.path.relpath(dest)} · {a.preset} · {seconds:g}s · {w}×{h}", flush=True)
     if a.render:
         args = ["--open"] if a.open else []
@@ -74,6 +80,12 @@ def cmd_new(a):
             print(f"The project is saved. After fixing the error, retry: codecinema run {a.id} all", file=sys.stderr)
         return result
     print(f"Render: codecinema run {a.id} all\nCustomize: {os.path.relpath(dest)}/scenes.json")
+    return 0
+
+
+def cmd_renderers(a):
+    for name, spec in renderers.available().items():
+        print(f"{name:12s} {spec['description']}")
     return 0
 
 
@@ -94,16 +106,17 @@ def cmd_customize(a):
         print("--open requires --render", file=sys.stderr)
         return 1
     if a.render:
-        problems = diagnostics.starter_problems()
+        problems = diagnostics.starter_problems(a.renderer or found[a.film].renderer)
         if problems:
             print("\n".join(problems), file=sys.stderr)
             return 1
     film = found[a.film]
     projects.customize(film.dir, title=a.title, subtitle=a.subtitle, preset=a.preset, seconds=a.duration,
-                       format_name=a.format, quality=a.quality, accent=a.accent)
+                       format_name=a.format, quality=a.quality, accent=a.accent, renderer=a.renderer,
+                       story=json.loads(Path(a.story).read_text(encoding="utf-8")) if a.story else None)
     print(f"Updated {a.film}; the previous settings are saved in out/edits/.", flush=True)
     if a.render:
-        return film.run("all", ["--open"] if a.open else [])
+        return films.Film(film.dir).run("all", ["--open"] if a.open else [])
     print(f"Render: codecinema run {a.film} all")
     return 0
 
@@ -149,12 +162,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="codecinema", description=f"CodeCinema {__version__}: films made with code.")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("list")
+    sub.add_parser("renderers", help="List built-in and installed rendering backends")
     r = sub.add_parser("run")
     r.add_argument("film")
     r.add_argument("step", nargs="?", default="all")
     r.add_argument("args", nargs=argparse.REMAINDER)
-    n = sub.add_parser("new", help="Create a configurable starter; add --render to produce it immediately")
+    n = sub.add_parser("new", help="Create a film from scene data; add --render to produce it immediately")
     n.add_argument("id")
+    n.add_argument("--renderer", default="skia", help="Rendering backend (see codecinema renderers)")
+    n.add_argument("--story", help="Import your scene JSON instead of the default story")
     n.add_argument("--title", default="")
     n.add_argument("--subtitle", help="Opening caption (edit all captions later in scenes.json)")
     n.add_argument("--accent", help="Accent color, e.g. '#c5e8db'")
@@ -165,8 +181,10 @@ def main(argv=None):
     n.add_argument("--render", action="store_true", help="Create, render, synthesize sound, assemble and verify")
     n.add_argument("--open", action="store_true", help="Open the finished MP4 with your default player (requires --render)")
     sub.add_parser("presets", help="List the starter looks and output options")
-    c = sub.add_parser("customize", help="Change a starter's look and content without editing Python")
+    c = sub.add_parser("customize", help="Change a film's renderer, story and look without editing Python")
     c.add_argument("film")
+    c.add_argument("--renderer", help="Switch the rendering backend")
+    c.add_argument("--story", help="Replace the story with a scene JSON file")
     c.add_argument("--title")
     c.add_argument("--subtitle")
     c.add_argument("--preset", choices=starters.PRESETS)
@@ -183,7 +201,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     try:
         return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check,
-                "presets": cmd_presets, "customize": cmd_customize, "studio": cmd_studio}[a.cmd](a)
+                "presets": cmd_presets, "renderers": cmd_renderers, "customize": cmd_customize, "studio": cmd_studio}[a.cmd](a)
     except (OSError, ValueError) as exc:
         print(f"codecinema: {exc}", file=sys.stderr)
         return 1

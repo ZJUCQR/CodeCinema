@@ -13,7 +13,7 @@ import time
 from urllib.parse import unquote, urlsplit
 import webbrowser
 
-from codecinema import diagnostics, films, project_root, projects, settings, starters
+from codecinema import diagnostics, films, project_root, projects, settings, starters, renderers
 
 ASSETS = Path(__file__).with_name("studio_assets")
 FILM_ID = re.compile(r"[a-z][a-z0-9_-]*")
@@ -38,13 +38,13 @@ class Studio:
     def existing(self):
         result = []
         for film in films.discover(str(self.root / "films")).values():
-            if settings.film_meta(film.dir).get("template") == "starter-v1":
+            if settings.film_meta(film.dir).get("production") == "story":
                 path = self.project(film.id)
                 story = projects.read_starter(path)
                 video = settings.load(str(path))["video"]
                 short = min(video["width"], video["height"])
                 name = Path(settings.load(str(path))["paths"]["final_video"]).name
-                result.append({"id": film.id, "story": story,
+                result.append({"id": film.id, "story": story, "renderer": film.renderer,
                                "video": f"/media/{film.id}/{name}?v={time.time_ns()}" if (path / "assets" / "film" / name).is_file() else None,
                                "format": "square" if video["width"] == video["height"] else
                                          "landscape" if video["width"] > video["height"] else "portrait",
@@ -55,7 +55,7 @@ class Studio:
         with self.lock:
             job = json.loads(json.dumps(self.job))
         return {"token": self.token, "presets": starters.PRESETS, "projects": self.existing(),
-                "problems": diagnostics.starter_problems(), "job": job}
+                "problems": diagnostics.starter_problems(), "renderers": renderers.available(), "job": job}
 
     def submit(self, payload):
         if not isinstance(payload, dict):
@@ -66,6 +66,7 @@ class Studio:
         for name, choices in (("format", starters.FORMATS), ("quality", starters.QUALITIES)):
             if not isinstance(payload.get(name), str) or payload[name] not in choices:
                 raise ValueError(f"Choose a valid {name}.")
+        renderer = renderers.require(payload.get("renderer", "skia"))
         preview = payload.get("preview", False)
         if type(preview) is not bool:
             raise ValueError("preview must be true or false.")
@@ -75,7 +76,7 @@ class Studio:
                 raise ValueError("This ID already exists. Select it from My films to edit it, or choose a new ID.")
         elif payload.get("existing"):
             raise ValueError("This project no longer exists. Create a new film instead.")
-        problems = diagnostics.starter_problems()
+        problems = diagnostics.starter_problems(renderer)
         if problems:
             raise ValueError("\n".join(problems))
         with self.lock:
@@ -111,10 +112,10 @@ class Studio:
                 story = payload["story"]
                 self.command(["-m", "codecinema", "new", path.name, "--title", story["title"],
                               "--preset", story["scenes"][0]["preset"], "--duration", str(starters.validate_story(story)),
-                              "--format", payload["format"], "--quality", payload["quality"]], self.root)
-            projects.customize(path, story=payload["story"], format_name=payload["format"], quality=payload["quality"])
+                              "--format", payload["format"], "--quality", payload["quality"], "--renderer", payload.get("renderer", "skia")], self.root)
+            projects.customize(path, story=payload["story"], format_name=payload["format"], quality=payload["quality"], renderer=payload.get("renderer", "skia"))
             film = films.Film(str(path))
-            args = [film.entry, "all"]
+            args = film.command("all")[1:]
             if payload.get("preview"):
                 args += ["--quality", "preview"]
             self.command(args, path)

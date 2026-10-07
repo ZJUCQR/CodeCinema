@@ -54,7 +54,7 @@ codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 �
 
 成片输出到 `assets/film/`。完整渲染是最慢的一步，可以随时中断，再次运行会从中断处继续。想花几分钟先看某一幕，可以运行 `codecinema run silvergrass preview act2`。
 
-下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run silvergrass <步骤>`，或在 `films/silvergrass/` 目录里运行 `python src/run.py <步骤>`。
+下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run silvergrass <步骤>`。
 
 | 命令 | 作用 |
 |---|---|
@@ -84,14 +84,16 @@ codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 �
 
 ## 🎨 个性化定制
 
-影片由数据和代码组成，每一部分都可以修改。时间轴、故事和风格都在 `src/common/config.py` 里。机器和画质相关的设置在根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` 里。
+本目录不包含制作脚本。分镜与提示点保存在 [story.json](story.json)，制作代码统一位于 [框架制作包](../../codecinema/productions/silvergrass)。修改已编排镜头的时间时，需要同步检查动作与配乐。
+
+影片由数据和代码组成，每一部分都可以修改。分镜与幕的边界保存在 `story.json`。制作包的 `common/config.py` 读取这些数据，并提供风格与动作所需的其他参数。机器和画质相关的设置在根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` 里。
 
 | 想改什么 | 改哪里 |
 |---|---|
 | 片名、题记、名牌、幕名 | config 里的 `TITLES` |
-| 镜头长度、分幕、节奏、慢镜头、配乐提示点 | config 里的 `SHOTS`、`ACTS`、`TEMPO_MAP`、`TIME_WARP`、`MUSIC_CUES` |
+| 镜头长度、分幕、节奏、慢镜头、配乐提示点 | config 里的 `story.json` 中的 `shots`、`acts`，以及制作配置中的 `TEMPO_MAP`、`TIME_WARP`、`MUSIC_CUES` |
 | 角色配色和比例 | config 里的 `PALETTE`、`SHINOBI_HEIGHT`、`SAINT_HEIGHT`。造型在角色模块里 |
-| 某一幕的动作和镜头 | `src/blender/acts/` 中对应幕的模块 |
+| 某一幕的动作和镜头 | `codecinema/productions/silvergrass/blender/acts/` 中对应幕的模块 |
 | 天空、光照、风、芒草、特效 | 在编舞线里调用 `environment.*` 和 `vfx.*` |
 | 旋律、调式、乐器 | config 里的 `LEITMOTIFS`、`SCALE_IN`、`SCALE_YO`。编曲和乐器模块 |
 | 分辨率、采样数、运动模糊、编码、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` |
@@ -114,18 +116,11 @@ SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender codecinema run silvergrass
 
 ## 🗂 项目结构
 
-```
+```text
 films/silvergrass/
-├── src/
-│   ├── run.py              # 命令行入口
-│   ├── common/             # 影片数据（config）；设置与工具来自框架
-│   ├── blender/            # 在 Blender 内运行：角色、动作、场景、特效、镜头、构建、渲染
-│   │   └── acts/           # 六条编舞线
-│   ├── audio/              # 乐器、音效、环境声、配乐、混音与母带
-│   ├── post/               # 书法字幕、合成、成片质检
-│   ├── tools/              # 联系表、单幕预览、闪光质检
-│   └── render_supervisor.py
-└── assets/                 # README 图片
+├── story.json              # 剧情、分镜与共用时间节点
+├── assets/                 # 素材、配图与生成的成片
+└── out/                    # 生成的中间文件与检查报告
 ```
 
 ## 🧭 工作原理

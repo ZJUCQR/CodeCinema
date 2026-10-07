@@ -27,17 +27,23 @@ jobs:
           after=registry.definitions(root);
           assert all(after[k]==v for k,v in before.items() if k!='ci-preview');
           assert after['ci-preview']['title']=='CI portrait';
+          assert after['ci-preview']['production']=='story';
+          assert after['ci-preview']['renderer']=='skia';
+          assert not list((root/'films').rglob('*.py'));
+          assert not (root/'films/ci-preview/src').exists();
           assert settings.load(root/'films/ci-preview')['video']['width']==360"
       - name: Render a short sample
         if: runner.os == 'Linux'
         run: codecinema run ci-preview all
       - name: Byte-compile the framework and films
-        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src films/xishen/src films/beacon/src
+        run: python -m compileall -q codecinema
+      - name: List rendering backends
+        run: codecinema renderers
       - name: List the films
         run: codecinema list
       - name: Import the framework and the pure-Python film modules
         run: >
-          python -c "import sys; sys.path[:0]=['films/silvergrass/src/common','films/silvergrass/src/audio','films/silvergrass/src/post'];
+          python -c "import sys; sys.path[:0]=['codecinema/productions/silvergrass/common','codecinema/productions/silvergrass/audio','codecinema/productions/silvergrass/post'];
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
           from codecinema import media, films, cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
@@ -45,5 +51,5 @@ jobs:
         run: codecinema run beacon audio
       - name: Validate Xishen chronology and continuity
         run: >
-          python -c "import sys; sys.path.insert(0,'films/xishen/src');
+          python -c "import sys; sys.path.insert(0,'codecinema/productions/xishen');
           import story; print(story.validate())"

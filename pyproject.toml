@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codecinema"
-version = "1.1.0"
+version = "2.0.0"
 description = "CodeCinema: a framework for making complete short films with code (picture, music, sound, titles, master)"
 readme = "README.md"
 license = { text = "MIT" }
@@ -18,8 +18,8 @@ classifiers = [
   "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis",
   "Topic :: Multimedia :: Video",
 ]
-# Python packages for the framework and its example films. External tools: ffmpeg (all films) and Blender >= 5.2
-# (the SilverGrass and The Last Beacon examples).
+# Python packages for shared production tools and example packs.
+# External tools: FFmpeg for all films, Blender >= 5.2 for the Blender backend and production packs.
 dependencies = ["numpy>=2.0", "scipy>=1.13", "pillow>=10.0", "matplotlib>=3.8", "pyloudnorm>=0.1.1",
                 "skia-python>=87.0", "tomlkit>=0.13"]
 
@@ -33,8 +33,9 @@ codecinema = "codecinema.cli:main"
 Homepage = "https://zjucqr.github.io/CodeCinema/"
 Repository = "https://github.com/ZJUCQR/CodeCinema"
 
-[tool.setuptools]
-packages = ["codecinema", "codecinema.audio"]
+[tool.setuptools.packages.find]
+include = ["codecinema*"]
+namespaces = false
 
 [tool.setuptools.package-data]
 codecinema = ["template/**/*", "studio_assets/**/*", "studio_assets/*"]
@@ -52,7 +53,8 @@ extend-exclude = ["out", ".venv"]
 title = "Duel in the Silver Grass"
 title_zh = "芒原决战"
 description = "A 160-second animated samurai duel: Blender 3D characters, choreography and VFX, a synthesized score."
-entry = "src/run.py"
+production = "silvergrass"
+renderer = "blender"
 env_prefix = "SILVERGRASS"
 steps = ["check", "build", "preview", "render", "audio", "titles", "assemble", "all"]
 requires = ["blender>=5.2", "ffmpeg"]
@@ -142,7 +144,8 @@ demo_raise = false                  # make the demo lane raise on QA warnings
 title = "The Night Revels of Han Xizai, Cat Edition"
 title_zh = "韩熙载夜宴图 · 猫"
 description = "A 128-second living handscroll: gongbi cats in Tang court costume, drawn as 2D vector puppets on silk."
-entry = "src/run.py"
+production = "nightrevels"
+renderer = "skia"
 env_prefix = "NIGHTREVELS"
 steps = ["build", "still", "render", "audio", "assemble", "all"]
 requires = ["ffmpeg"]
@@ -173,7 +176,8 @@ true_peak_db = -1.0
 title = "I Am Not the God of Drama"
 title_zh = "我不是戏神"
 description = "Three reproducible motion-comic episodes adapting chapters 1–6, with a shared cast, continuity ledger, Mandarin narration, score and subtitles."
-entry = "src/run.py"
+production = "xishen"
+renderer = "skia"
 env_prefix = "XISHEN"
 steps = ["plan", "stills", "render", "audio", "assemble", "qc", "all"]
 requires = ["ffmpeg"]
@@ -205,7 +209,8 @@ speech_rate = 185
 title = "The Last Beacon"
 title_zh = "守灯人"
 description = "A wordless Blender short: a porcelain keeper rekindles an observatory above the clouds."
-entry = "src/run.py"
+production = "beacon"
+renderer = "blender"
 steps = ["check", "still", "render", "audio", "assemble", "all"]
 requires = ["blender>=5.2", "ffmpeg"]
 
@@ -226,8 +231,8 @@ scarf = [0.38, 0.035, 0.027]
 
 [tool.codecinema.starter]
 description = "A configurable three-scene starter with synthesized music."
-entry = "src/run.py"
-template = "starter-v1"
+production = "story"
+renderer = "skia"
 steps = ["plan", "stills", "render", "audio", "assemble", "qc", "all"]
 requires = ["ffmpeg", "ffprobe"]
 

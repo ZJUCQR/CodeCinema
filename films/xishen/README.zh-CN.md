@@ -51,7 +51,7 @@ XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
 
 ## 人物与原著依据
 
-[原著官方页面](https://fanqienovel.com/page/7276384138653862966)及逐章链接记录在 [src/story.json](src/story.json) 的 `canon` 部分。影片是压缩改编，旁白和对白重新创作。人物面部、建筑细节和镜头属于视觉设计。原文明确的服装、地点、道具和事件顺序作为连续性的依据。
+[原著官方页面](https://fanqienovel.com/page/7276384138653862966)及逐章链接记录在 [story.json](story.json) 的 `canon` 部分。影片是压缩改编，旁白和对白重新创作。人物面部、建筑细节和镜头属于视觉设计。原文明确的服装、地点、道具和事件顺序作为连续性的依据。
 
 - 陈伶开篇为红戏袍、赤脚、湿黑发、额角受伤。第二集清晨出门时才换黑棉大衣，第三集继续穿同一件衣服。
 - 前世 28 岁、京城剧院实习编导。今生是少年，不擅自给这六章内未明确的年龄赋值。
@@ -66,13 +66,13 @@ XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
 ## 文件与验证
 
 ```text
-src/story.json       canon：来源与角色设定。story：脚本、分镜与时序
-src/story.py         唯一的故事时钟及状态校验
-src/art.py           同一套人物、场景与绘制工具
-src/scenes.py        分镜表演、镜头运动与字幕
-src/score.py         随场景变化的室内乐配乐
-src/sound.py         情绪配音、定时音效、压低配乐的混音
-src/run.py           分块渲染、合成、章节、字幕轨和质检
+story.json       canon：来源与角色设定。story：脚本、分镜与时序
+codecinema/productions/xishen/story.py         唯一的故事时钟及状态校验
+codecinema/productions/xishen/art.py           同一套人物、场景与绘制工具
+codecinema/productions/xishen/scenes.py        分镜表演、镜头运动与字幕
+codecinema/productions/xishen/score.py         随场景变化的室内乐配乐
+codecinema/productions/xishen/sound.py         情绪配音、定时音效、压低配乐的混音
+codecinema/productions/xishen/run.py           分块渲染、合成、章节、字幕轨和质检
 out/screenplay.md     生成的完整改编剧本
 out/continuity.json   逐镜头解析后的服装、道具和原著来源
 out/*.srt             每集及合集的字幕

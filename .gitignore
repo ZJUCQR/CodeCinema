@@ -9,7 +9,7 @@ build/
 # Finished masters and production reports belong in local output or Releases.
 films/*/assets/film/
 
-# Generated output (renders, builds, audio stems, previews) — regenerate with `python src/run.py all`
+# Generated output (renders, builds, audio stems, previews) — regenerate with `codecinema run <film> all`
 # Rendered frames are never uploaded
 out/frames/
 out/

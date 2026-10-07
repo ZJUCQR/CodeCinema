@@ -51,10 +51,10 @@ Run `codecinema run beacon all` again. The renderer resumes an interrupted editi
 
 | Change | File |
 | --- | --- |
-| Shot descriptions and shared action/audio cue times | [src/story.py](src/story.py) |
-| Character geometry, camera positions, materials, lighting and performance | [src/scene.py](src/scene.py) |
-| Harmony, melody, instruments and effects | [src/sound.py](src/sound.py) |
-| Encoding and delivery checks | [src/run.py](src/run.py) |
+| Shot descriptions and shared action/audio cue times | [story.json](story.json) |
+| Character geometry, camera positions, materials, lighting and performance | [scene.py](../../codecinema/productions/beacon/scene.py) |
+| Harmony, melody, instruments and effects | [sound.py](../../codecinema/productions/beacon/sound.py) |
+| Encoding and delivery checks | [run.py](../../codecinema/productions/beacon/run.py) |
 
 The six-shot structure and 48-second composition are authored together. Changing total runtime requires retiming the cameras, gestures and score, not just changing the duration constant.
 

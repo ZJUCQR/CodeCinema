@@ -8,13 +8,13 @@ labels: bug
 <!-- error text, or which shot / frame looks or sounds wrong -->
 
 **How to reproduce**
-<!-- the `python src/run.py …` command(s), lane / shot / frame numbers -->
+<!-- the `codecinema run <film> …` command(s), lane / shot / frame numbers -->
 
 **Expected**
 
 **Environment**
 - OS:
-- Blender version (`python src/run.py check`):
+- Blender version (`codecinema check`):
 - Python version:
 
 **Evidence**

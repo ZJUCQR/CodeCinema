@@ -44,7 +44,7 @@ pip install .                                          # 安装框架和全部�
 codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 ```
 
-成片输出到 `assets/film/`。下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run nightrevels <步骤>`，或在 `films/nightrevels/` 目录里运行 `python src/run.py <步骤>`。
+成片输出到 `assets/film/`。下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run nightrevels <步骤>`。
 
 | 命令 | 作用 |
 |---|---|
@@ -72,7 +72,9 @@ codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 
 ## 🎨 个性化定制
 
-故事由数据和代码组成。时间轴和提示点在 `src/common/config.py`，乐谱在 `src/common/music.py`，角色在 `src/story/cast.py`，动作和镜头在 `src/story/film.py`。机器相关的设置（输出、并行数、编码、响度）在根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` 里。
+本目录不包含制作脚本。分镜与提示点保存在 [story.json](story.json)，制作代码统一位于 [框架制作包](../../codecinema/productions/nightrevels)。修改已编排镜头的时间时，需要同步检查动作与配乐。
+
+故事由数据和代码组成。段落、提示点和速度在 `story.json`，由制作包的 `common/config.py` 读取，乐谱在 `codecinema/productions/nightrevels/common/music.py`，角色在 `codecinema/productions/nightrevels/story/cast.py`，动作和镜头在 `codecinema/productions/nightrevels/story/film.py`。机器相关的设置（输出、并行数、编码、响度）在根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` 里。
 
 | 想改什么 | 改哪里 |
 |---|---|
@@ -80,7 +82,7 @@ codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 | 音乐（旋律、速度、由哪件乐器演奏） | `music.py`。演奏的爪子会自动跟随音符 |
 | 猫的品种、毛色、眼睛、服装 | `cast.py` 里的 `BREEDS` 和服装 |
 | 谁站在哪里、动作、笑点、镜头 | `film.py`（角色的关键帧轨道和 `Camera` 关键帧） |
-| 画风（墨线、绢、面部、家具） | `src/paint/` |
+| 画风（墨线、绢、面部、家具） | `codecinema/productions/nightrevels/paint/` |
 | 并行数、画质、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` |
 
 你可以自己创建相应的配置，或者覆盖已有设置：
@@ -98,15 +100,11 @@ NIGHTREVELS_RENDER_JOBS=2 codecinema run nightrevels render
 
 ## 🗂 项目结构
 
-```
+```text
 films/nightrevels/
-├── src/
-│   ├── run.py              # 影片的各个步骤
-│   ├── common/             # 时间轴和布局（config）、乐谱音符数据（music）
-│   ├── paint/              # 工笔绘制：墨线、绢、猫头、袍袖、道具
-│   ├── story/              # 角色、动画轨道、舞台渲染器、整部影片（film.py）
-│   └── audio/              # 乐器、猫的声音、音效、环境声、配乐、混音
-└── assets/                 # README 图片
+├── story.json              # 剧情、分镜与共用时间节点
+├── assets/                 # 素材、配图与生成的成片
+└── out/                    # 生成的中间文件与检查报告
 ```
 
 ## 🧭 工作原理

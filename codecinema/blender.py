@@ -15,7 +15,7 @@ def command(script, *args, blend=None, root=None, executable=None):
     """A headless command; script arguments follow Blender's ``--`` separator."""
     root = Path(root or settings.ROOT)
     script = root / script
-    cmd = [executable or settings.tool("blender"), "-b", "--factory-startup"]
+    cmd = [executable or settings.tool("blender"), "-b", "--factory-startup", "--python-use-system-env"]
     if blend:
         cmd += [str((root / blend).resolve())]
     cmd += ["--python-exit-code", "1", "--python", str(script.resolve()), "--", *map(str, args)]

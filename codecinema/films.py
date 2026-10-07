@@ -1,13 +1,9 @@
-"""
-codecinema.films - discover films registered in pyproject.toml and run their steps.
+"""Discover data-only film projects and run isolated production workers."""
 
-A [tool.codecinema.films.<id>] table names an `entry` script (relative to films/<id>/) and the
-`steps` it accepts; `run(film, step, args)` executes `python <entry> <step> <args...>` inside the film directory with
-CODECINEMA_FILM_DIR set, so every module of the film (and the framework) reads that film's settings.
-"""
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 from codecinema import films_dir, registry
 from codecinema.settings import film_meta
@@ -23,16 +19,24 @@ class Film:
         self.title = meta.get("title", self.id)
         self.title_zh = meta.get("title_zh", "")
         self.description = meta.get("description", "")
-        self.entry = os.path.join(self.dir, meta.get("entry", "src/run.py"))
+        self.production = meta.get("production", "story")
+        self.renderer = meta.get("renderer", "skia")
+        self.legacy_entry = meta.get("entry")
         self.steps = list(meta.get("steps", ["all"]))
         self.requires = list(meta.get("requires", []))
 
-    def run(self, step, args=()):
+    def command(self, step, args=()):
         if self.steps and step not in self.steps:
             raise SystemExit(f"{self.id}: unknown step '{step}' (steps: {', '.join(self.steps)})")
+        return [sys.executable, "-m", "codecinema.worker", self.dir, step, *args]
+
+    def run(self, step, args=()):
         env = dict(os.environ, CODECINEMA_FILM_DIR=self.dir)
         env.setdefault("PYTHONIOENCODING", "utf-8")
-        return subprocess.call([sys.executable, self.entry, step, *args], cwd=self.dir, env=env)
+        env["PYTHONPATH"] = os.pathsep.join(
+            filter(None, (str(Path(__file__).resolve().parent.parent), env.get("PYTHONPATH")))
+        )
+        return subprocess.call(self.command(step, args), cwd=self.dir, env=env)
 
 
 def discover(root=None):

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "production": "beacon",
+  "shots": [
+    [
+      0,
+      8,
+      "An island in the clouds"
+    ],
+    [
+      8,
+      16,
+      "The keeper listens"
+    ],
+    [
+      16,
+      24,
+      "A small act of care"
+    ],
+    [
+      24,
+      32,
+      "The instrument remembers"
+    ],
+    [
+      32,
+      40,
+      "A signal crosses the sky"
+    ],
+    [
+      40,
+      48,
+      "An answer"
+    ]
+  ],
+  "cues": {
+    "touch": 20.0,
+    "ignition": 24.0,
+    "signal": 32.0,
+    "answer": 40.0
+  }
+}

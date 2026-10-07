@@ -189,7 +189,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
     <div class="reveal">
       <p class="eyebrow">Project layout</p>
       <h2>Where things live</h2>
-      <p class="lead">Shared tools live in <code>codecinema/</code>; each folder in <code>films/</code> owns its story, renderer and production assets.</p>
+      <p class="lead">The framework owns rendering and production code in <code>codecinema/</code>. Each folder in <code>films/</code> holds story data, assets and generated output.</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
@@ -200,7 +200,12 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 │   ├── studio_assets/      <span class="c"># editor interface and preset thumbnails</span>
 │   ├── projects.py         <span class="c"># project creation, edits and backups</span>
 │   ├── starters.py         <span class="c"># preset choices and scene validation</span>
-│   ├── template/           <span class="c"># source copied into new starter films</span>
+│   ├── template/           <span class="c"># data-only scaffold for new films</span>
+│   ├── context.py          <span class="c"># validated timeline and render context</span>
+│   ├── pipeline.py         <span class="c"># shared picture, sound, assembly and QC</span>
+│   ├── renderers/          <span class="c"># Skia, Blender and renderer plugins</span>
+│   ├── productions/        <span class="c"># authored example production packs</span>
+│   ├── worker.py           <span class="c"># isolated execution for each film</span>
 │   ├── films.py            <span class="c"># film discovery and step execution</span>
 │   ├── registry.py         <span class="c"># workspace film configuration</span>
 │   ├── settings.py         <span class="c"># configuration, tools and fonts</span>
@@ -229,7 +234,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       <h2>How a film is made</h2>
     </div>
     <div class="figure reveal"><img src="img/pipeline.svg" alt="How a CodeCinema film is produced" loading="lazy"></div>
-    <p class="caption reveal">How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>pyproject.toml</code> declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: Blender 3D in one example, skia 2D painting in the other. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</p>
+    <p class="caption reveal">How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>pyproject.toml</code> declares its steps and settings, and film folders hold scenes, dialogue and assets. <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: with Blender 3D, Skia 2D or an installed plugin. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</p>
   </div>
 </section>
 

@@ -189,7 +189,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
     <div class="reveal">
       <p class="eyebrow">项目结构</p>
       <h2>文件都在哪里</h2>
-      <p class="lead"><code>codecinema/</code> 提供共享工具；<code>films/</code> 下每个文件夹是一部独立影片，包含自己的故事、渲染代码和制作素材。</p>
+      <p class="lead"><code>codecinema/</code> 统一提供渲染器与制作代码。<code>films/</code> 下每部影片只保存故事数据、素材与生成结果。</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
@@ -200,7 +200,12 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
 │   ├── studio_assets/      <span class="c"># 编辑器界面与预设缩略图</span>
 │   ├── projects.py         <span class="c"># 项目创建、修改与备份</span>
 │   ├── starters.py         <span class="c"># 预设选项与分镜数据校验</span>
-│   ├── template/           <span class="c"># 创建新影片时复制的模板源文件</span>
+│   ├── template/           <span class="c"># 新影片的数据骨架，不含制作脚本</span>
+│   ├── context.py          <span class="c"># 分镜时间轴与渲染上下文</span>
+│   ├── pipeline.py         <span class="c"># 统一的画面、声音、合成与质检</span>
+│   ├── renderers/          <span class="c"># Skia、Blender 与渲染插件</span>
+│   ├── productions/        <span class="c"># 四部示例的角色、动画和声音实现</span>
+│   ├── worker.py           <span class="c"># 各部影片的隔离执行入口</span>
 │   ├── films.py            <span class="c"># 发现影片并执行制作步骤</span>
 │   ├── registry.py         <span class="c"># 工作区影片配置管理</span>
 │   ├── settings.py         <span class="c"># 配置、工具与字体查找</span>
@@ -229,7 +234,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
       <h2>一部影片是怎样制作的</h2>
     </div>
     <div class="figure reveal"><img src="../img/pipeline.svg" alt="CodeCinema 影片的制作流程" loading="lazy"></div>
-    <p class="caption reveal">一部 CodeCinema 影片是怎样制作出来的。<b>(a)</b> 影片先写成数据：<code>pyproject.toml</code> 声明步骤和设置，一份 config 存放整个故事（时间轴、节拍、角色、写成音符的乐谱）。<b>(b)</b> 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。<b>(c)</b> 渲染器以并行、可续渲的分块绘制画面：一部示例用 Blender 3D，另一部用 skia 2D 绘画。<b>(d)</b> 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。<b>(e)</b> 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。</p>
+    <p class="caption reveal">一部 CodeCinema 影片是怎样制作出来的。<b>(a)</b> 影片先写成数据：<code>pyproject.toml</code> 声明步骤和设置，影片目录保存分镜、台词与素材。<b>(b)</b> 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。<b>(c)</b> 渲染器以并行、可续渲的分块绘制画面：可以选择 Blender 3D、Skia 2D 或已安装的插件。<b>(d)</b> 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。<b>(e)</b> 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。</p>
   </div>
 </section>
 
