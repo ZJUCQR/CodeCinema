@@ -26,7 +26,7 @@
 
 ---
 
-CodeCinema is an extensible, open-source filmmaking framework that brings stories to life with code, combining picture, music and sound into a finished film. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film has a folder in `films/` and an entry in the root `pyproject.toml`; the framework provides:
+CodeCinema is an extensible, open-source filmmaking framework that brings stories to life with code, combining picture, music and sound into a finished film. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film has a folder in `films/` and an entry in the root `pyproject.toml`. The framework provides:
 
 - **Settings:** one layered configuration per film, with local overrides and environment variables, plus discovery of tools and fonts.
 - **Sound:** a shared audio toolkit for synthesis, physical models, reverb, true-peak limiting and loudness.
@@ -98,13 +98,13 @@ py -3.12 -m venv .venv
 
 </details>
 
-These commands use the virtual environment directly. On Windows, replace `-3.12` if you installed a newer Python. Studio opens **http://127.0.0.1:8787/**; keep the terminal running and press `Ctrl+C` to stop.
+These commands use the virtual environment directly. On Windows, replace `-3.12` if you installed a newer Python. Studio opens **http://127.0.0.1:8787/**. Keep the terminal running and press `Ctrl+C` to stop.
 
 1. **Choose a look:** click a thumbnail.
-2. **Personalize:** enter a film ID, title and caption; choose duration and frame. Defaults are three scenes, 12 seconds and 720p.
+2. **Personalize:** enter a film ID, title and caption. Choose duration and frame. Defaults are three scenes, 12 seconds and 720p.
 3. **Render my film:** watch or download the finished MP4.
 
-Output: **`films/<id>/assets/film/<id>.mp4`**. Quick preview saves a separate 360p video, preserving the master. Reopen it under **My films** to edit; previous settings are backed up in the film’s `out/edits/`.
+Output: **`films/<id>/assets/film/<id>.mp4`**.
 
 ![Eight starter looks](assets/images/starters.jpg)
 
@@ -118,36 +118,30 @@ For the CLI examples below, activate the environment with `source .venv/bin/acti
       <a href="films/silvergrass/README.md"><img src="assets/images/examples/silvergrass.jpg" width="100%" alt="Duel in the Silver Grass"></a>
       <h3><a href="films/silvergrass/README.md">Duel in the Silver Grass</a></h3>
       <p>A masterless shinobi faces an old sword master in a sea of silver grass, through Blade, Fire and Thunder.</p>
-      <p><strong>Blender 3D · 160 s · 30 shots</strong></p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#silvergrass">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/film">Download</a> · <a href="films/silvergrass/README.md">Film guide</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/nightrevels/README.md"><img src="assets/images/examples/nightrevels.jpg" width="100%" alt="The Night Revels of Han Xizai, Cat Edition"></a>
       <h3><a href="films/nightrevels/README.md">The Night Revels of Han Xizai, Cat Edition</a></h3>
       <p>A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them.</p>
-      <p><strong>Skia 2D · 128 s · 13 cat breeds</strong></p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#nightrevels">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">Download</a> · <a href="films/nightrevels/README.md">Film guide</a></p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="films/xishen/README.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="I Am Not the God of Drama: The Opening Trilogy"></a>
-      <h3><a href="films/xishen/README.md">I Am Not the God of Drama: The Opening Trilogy</a></h3>
-      <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment, following the novel&#x27;s opening chapters.</p>
-      <p><strong>Skia 2D · 11 min · 3 episodes · Mandarin speech</strong></p>
+      <a href="films/xishen/README.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="I Am Not the God of Drama"></a>
+      <h3><a href="films/xishen/README.md">I Am Not the God of Drama</a></h3>
+      <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#xishen">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/beacon/README.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="The Last Beacon"></a>
       <h3><a href="films/beacon/README.md">The Last Beacon</a></h3>
-      <p>A porcelain keeper rekindles a celestial observatory above the clouds; a distant light answers.</p>
-      <p><strong>Blender 3D · 48 s · 6 shots · Original score</strong></p>
+      <p>A porcelain keeper rekindles a celestial observatory above the clouds. A distant light answers.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#beacon">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">Download</a> · <a href="films/beacon/README.md">Film guide</a></p>
     </td>
   </tr>
 </table>
-
-Watch the examples on the [homepage](https://zjucqr.github.io/CodeCinema/#films), download their MP4s from the linked releases, or use `codecinema list` to explore their production steps. SilverGrass and The Last Beacon need Blender 5.2+; 3D rendering takes longer than the 2D examples. The opening trilogy uses the same Skia 2D cast throughout, with a scene-led score and expressive Mandarin voices. Its published speech uses the optional local pack on Apple Silicon; other platforms can supply recordings. Use `--narration off` for a captions-and-music edition. Each film's guide covers setup and customization.
 
 
 <a id="customization"></a>
@@ -160,7 +154,7 @@ codecinema customize myfilm --preset neon --format portrait --render
 codecinema run myfilm all --quality preview
 ```
 
-Use **Personalize every scene** in Studio to add, remove or reorder scenes and change text, duration, colors and camera moves. Or edit `films/myfilm/scenes.json` directly. Eight looks—`moonrise`, `sunset`, `aurora`, `neon`, `ocean`, `ink`, `cosmos`, `ember`—support landscape, portrait and square frames.
+Use Personalize every scene in Studio to add, remove or reorder scenes and change text, duration, colors and camera moves. Or edit `films/myfilm/scenes.json` directly. Eight looks—`moonrise`, `sunset`, `aurora`, `neon`, `ocean`, `ink`, `cosmos`, `ember`—support landscape, portrait and square frames.
 
 These presets make animated scenic title films. New characters, choreography and story performances need a [custom renderer](#framework).
 
@@ -179,7 +173,7 @@ These presets make animated scenic title films. New characters, choreography and
 }
 ```
 
-Cameras: `wide`, `drift`, `close`. Each scene must last at least 0.5 seconds; total runtime is 1.5–600 seconds. Save, then run `codecinema run myfilm all`. Text wraps to the frame; picture and sound share frame boundaries. Full renders decode and validate the MP4 before reporting success.
+Cameras: `wide`, `drift`, `close`. Each scene must last at least 0.5 seconds. Total runtime is 1.5–600 seconds. Save, then run `codecinema run myfilm all`. Text wraps to the frame. Picture and sound share frame boundaries. Full renders decode and validate the MP4 before reporting success.
 
 </details>
 
@@ -196,7 +190,7 @@ films/<id>/
 ├── film.local.toml    # optional, git-ignored: personal [video], [audio], etc. overrides
 ├── src/
 │   └── run.py         # the entry script: `python src/run.py <step> [args]`
-├── assets/            # README images; assets/film/ receives the finished video (git-ignored)
+├── assets/            # README images + generated assets/film/ videos (git-ignored)
 └── out/               # generated files (git-ignored)
 ```
 
@@ -207,10 +201,10 @@ The root `pyproject.toml` table `[tool.codecinema.films.<id>]` declares the film
 | Command | What it does |
 |---|---|
 | `codecinema list` | Lists the films in `films/`, with their titles, steps and requirements |
-| `codecinema studio` | Opens the local visual editor for starter projects; `--port` and `--no-open` are optional |
+| `codecinema studio` | Opens the local visual editor for starter projects. `--port` and `--no-open` are optional |
 | `codecinema presets` | Lists eight starter looks, formats and quality levels |
 | `codecinema run <film> <step> [args…]` | Runs `python <entry> <step> [args…]` inside the film folder, with `CODECINEMA_FILM_DIR` set |
-| `codecinema new <id> --render` | Creates and produces a complete starter; accepts title, subtitle, preset, duration, format, quality and accent |
+| `codecinema new <id> --render` | Creates and produces a complete starter. Accepts title, subtitle, preset, duration, format, quality and accent |
 | `codecinema customize <id> --render` | Updates an existing starter, saves previous settings, and renders it again |
 | `codecinema check` | Checks the Python packages, ffmpeg and (optionally) Blender |
 
@@ -220,9 +214,9 @@ The root `pyproject.toml` table `[tool.codecinema.films.<id>]` declares the film
 
 `codecinema.settings` loads the active film's settings in layers, where later layers win:
 
-1. framework defaults (`paths`, `tools`, `fonts`, `video`, `audio`);
-2. `[tool.codecinema.films.<id>.settings.<section>]` tables in the root `pyproject.toml`;
-3. `film.local.toml` (use `[video]`, `[audio]`, etc. directly);
+1. framework defaults (`paths`, `tools`, `fonts`, `video`, `audio`).
+2. `[tool.codecinema.films.<id>.settings.<section>]` tables in the root `pyproject.toml`.
+3. `film.local.toml` (use `[video]`, `[audio]`, etc. directly).
 4. environment variables `<ENV_PREFIX>_<SECTION>_<KEY>` or `CODECINEMA_<SECTION>_<KEY>`, plus the aliases `BLENDER_BIN`, `FFMPEG` and `FFPROBE`.
 
 The active film is `$CODECINEMA_FILM_DIR` (the CLI sets it) or the registered film folder containing the working directory.
@@ -243,22 +237,22 @@ The module is pure standard library, so it also works inside Blender's Python.
 
 | Module | Provides |
 |---|---|
-| `codecinema.audio.speech` / `performance` | Optional local emotional voices, recordings, syllable alignment and waveform-gated mouth shapes; see the [speech guide](#speech) |
+| `codecinema.audio.speech` / `performance` | Optional local emotional voices, recordings, syllable alignment and waveform-gated mouth shapes. See the [speech guide](#speech) |
 | `codecinema.audio.dsp` | Oscillators, noise, envelopes, filters, Karplus-Strong and modal synthesis, resampling, convolution reverb, panning, a compressor, a true-peak lookahead limiter, and loudness helpers. `dsp.SR` is the film's `audio.sample_rate` |
 | `codecinema.media` | `probe()`, `encoder()` (raw RGBA frames on stdin, H.264 out), `concat()` and `mux()` |
 | `codecinema.procutil` | Cross-platform file locks, process liveness, command lines, free memory, process-group termination and link-or-copy |
-| `codecinema.blender` | Headless launching with film settings, assigned action-slot access and temporary modifier suspension; see the [Blender guide](#blender) |
+| `codecinema.blender` | Headless launching with film settings, assigned action-slot access and temporary modifier suspension. See the [Blender guide](#blender) |
 | `codecinema.films` | `discover()` and `Film.run(step, args)`, the logic behind the CLI |
 
 ### Renderer extension
 
 - `draw_frame(canvas, frame)` draws one frame with skia.
 - `score()` returns the stereo sound track, built with `codecinema.audio.dsp`.
-- `plan` and `stills` write a timeline and contact sheet; `render`, `audio` and `assemble` produce the MP4; `qc` verifies metadata and fully decodes it. `all` runs those stages in order.
+- `plan` and `stills` write a timeline and contact sheet. `render`, `audio` and `assemble` produce the MP4. `qc` verifies metadata and fully decodes it. `all` runs those stages in order.
 
-`--quality preview` uses its own `out/preview/` stages and `<id>_preview.mp4`, preserving the master. Other quality overrides write the master. Use identical quality, format, FPS and duration options across individual stages; signatures prevent assembling stale inputs. Scene boundaries are quantized once to frames, and sound uses the resulting clock. Unsupported font glyphs fail before rendering with a font-selection hint. CLI and Studio customizations save the previous JSON and TOML in `out/edits/`.
+`--quality preview` uses its own `out/preview/` stages and `<id>_preview.mp4`, preserving the master. Other quality overrides write the master. Use identical quality, format, FPS and duration options across individual stages. Signatures prevent assembling stale inputs. Scene boundaries are quantized once to frames, and sound uses the resulting clock. Unsupported font glyphs fail before rendering with a font-selection hint. CLI and Studio customizations save the previous JSON and TOML in `out/edits/`.
 
-`customize` and Studio accept films marked `template = "starter-v1"` in their `[tool.codecinema.films.<id>]` entry. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table; `codecinema/starters.py` holds the shared starter JSON validation and choices.
+`customize` and Studio accept films marked `template = "starter-v1"` in their `[tool.codecinema.films.<id>]` entry. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table. `codecinema/starters.py` holds the shared starter JSON validation and choices.
 
 To grow it into a real film:
 
@@ -278,7 +272,7 @@ To grow it into a real film:
 <details>
 <summary>Build a Blender production</summary>
 
-CodeCinema includes two Blender productions: [Duel in the Silver Grass](films/silvergrass/README.md) and [The Last Beacon](films/beacon/README.md). Blender is one of the framework's supported renderers. The starter and the opening trilogy use Skia. Each film declares its own renderer and production steps.
+CodeCinema includes two Blender productions: [Duel in the Silver Grass](films/silvergrass/README.md) and [The Last Beacon](films/beacon/README.md). Blender is one of the framework's supported renderers. The starter and I Am Not the God of Drama use Skia. Each film declares its own renderer and production steps.
 
 Install [Blender 5.2 or later](https://www.blender.org/download/) and follow the [framework installation guide](#quick-start). Standard installation locations and `PATH` are detected. Set `BLENDER_BIN` if Blender is elsewhere.
 
@@ -332,7 +326,7 @@ from codecinema import blender
 blender.run("src/build_scene.py", "--quality", "preview")
 ```
 
-`run()` uses the active film directory, tool overrides and Blender's background mode. Script arguments follow Blender's `--` separator. Blender script failures return a nonzero exit code. `command()` returns the same argument list for supervisors that manage their own processes; it also accepts `blend=`, `root=` and `executable=`.
+`run()` uses the active film directory, tool overrides and Blender's background mode. Script arguments follow Blender's `--` separator. Blender script failures return a nonzero exit code. `command()` returns the same argument list for supervisors that manage their own processes. It also accepts `blend=`, `root=` and `executable=`.
 
 Inside a Blender script:
 
@@ -347,7 +341,7 @@ for curve in fcurves_of(camera, "location"):
         key.interpolation = "LINEAR"
 ```
 
-`muted_modifiers()` restores viewport flags even when baking raises an exception; render visibility is unchanged. `channelbag_of()` and `fcurves_of()` use Blender 5.x's assigned action slots, rather than the removed legacy action API. SilverGrass calls these same shared helpers.
+`muted_modifiers()` restores viewport flags even when baking raises an exception. Render visibility is unchanged. `channelbag_of()` and `fcurves_of()` use Blender 5.x's assigned action slots, rather than the removed legacy action API. SilverGrass calls these same shared helpers.
 
 [`codecinema.audio.performance`](codecinema/audio/performance.py) is also usable inside Blender. Its `Performance.mouth(time, character)` returns speech activity and syllable shapes from the final recorded take. Use the shot's own time in seconds and the same audio start offset when muxing. Narration and thoughts must not drive a visible character's mouth. See the [speech guide](#speech).
 
@@ -365,7 +359,7 @@ The eight starter looks support optional spoken text per scene. Keep the voice t
 
 ### Use Studio
 
-1. Open `codecinema studio`, then **Personalize every scene**.
+1. Open `codecinema studio`, then Personalize every scene.
 2. Expand **Add a voice**, write a short line, choose a voice and language, and describe its mood: “warm and curious”, “quiet, a little afraid”, or “calm and thoughtful”.
 3. Allow enough scene time, then press **Render my film**. Preview uses a separate MP4.
 
@@ -376,9 +370,9 @@ python -m pip install -e ".[speech]"
 codecinema studio
 ```
 
-The first spoken render downloads Qwen3-TTS CustomVoice. Later renders reuse cached takes. No API key is needed. The basic framework and music-only starters do not load or download speech models. Plain macOS installations can use a basic system voice; it does not support the acting directions. Expressive local voices currently require Apple Silicon.
+The first spoken render downloads Qwen3-TTS CustomVoice. Later renders reuse cached takes. No API key is needed. The basic framework and music-only starters do not load or download speech models. Plain macOS installations can use a basic system voice. It does not support the acting directions. Expressive local voices currently require Apple Silicon.
 
-Choose a voice appropriate to the language. Serena, Vivian, Dylan, Uncle Fu and Eric are Chinese presets; Ryan and Aiden are English presets; Ono Anna and Sohee are Japanese and Korean presets. The model also supports multilingual speech. Listen to a preview before a long render.
+Choose a voice appropriate to the language. Serena, Vivian, Dylan, Uncle Fu and Eric are Chinese presets. Ryan and Aiden are English presets. Ono Anna and Sohee are Japanese and Korean presets. The model also supports multilingual speech. Listen to a preview before a long render.
 
 ### Edit scene data
 
@@ -401,17 +395,17 @@ Add `narration` to any scene in `scenes.json`:
 }
 ```
 
-This object is one scene; put it inside the existing `scenes` array. Then run:
+This object is one scene. Put it inside the existing `scenes` array. Then run:
 
 ```bash
 codecinema run myfilm all --speech-engine local
 ```
 
-A line that exceeds its scene produces a clear error. Increase the scene length or shorten the line; the starter never silently truncates dialogue. Music automatically becomes quieter while the voice speaks. Text, language, voice and acting directions all affect the take's cache key.
+A line that exceeds its scene produces a clear error. Increase the scene length or shorten the line. The starter never silently truncates dialogue. Music automatically becomes quieter while the voice speaks. Text, language, voice and acting directions all affect the take's cache key.
 
 For your own recordings on any platform, put a mono WAV in `films/myfilm/assets/voices/arrival.wav`, set `narration.recording` to `arrival.wav`, and run with `--speech-engine recording`. Supply a recording for every scene with spoken text. Use `--speech-engine system` for macOS's basic voice, or `auto` to choose an installed local engine first.
 
-When you add spoken text, an unchanged previous starter renderer is upgraded automatically; its source is saved alongside the previous scene data in `out/edits/`. A custom renderer is preserved. If it lacks narration support, Studio shows an actionable error instead of silently ignoring the voice text. You can create a new starter and copy the scene data, or merge the narration support into your renderer.
+When you add spoken text, an unchanged previous starter renderer is upgraded automatically. Its source is saved alongside the previous scene data in `out/edits/`. A custom renderer is preserved. If it lacks narration support, Studio shows an actionable error instead of silently ignoring the voice text. You can create a new starter and copy the scene data, or merge the narration support into your renderer.
 
 ### Reuse voices and mouth timing in a custom renderer
 
@@ -422,7 +416,7 @@ from codecinema.audio.performance import describe, Performance
 speech = SpeechEngine("out/voices", engine="local")
 try:
     path, _ = speech.take("Where am I?", voice="Ryan", language="English",
-                          direction="Quiet and uncertain; a natural question.")
+                          direction="Quiet and uncertain, a natural question.")
     samples, rate = read_wave(path)
 finally:
     speech.close()  # Release the voice model before starting render workers.
@@ -430,11 +424,11 @@ finally:
 
 `ForcedAligner.align(samples, rate, text)` provides Chinese syllable timestamps. Align the final waveform after trimming or time fitting. Release the aligner with `close()` before rendering. The trilogy demonstrates this ordering in `films/xishen/src/sound.py`.
 
-`describe(samples, rate, text=..., speaker="hero", alignment=rows)` creates a small serializable performance record. Save it as JSON and load it with `Performance.load(path)`. At any frame, `performance.mouth(time_in_shot, "hero")` returns a shape (`a`, `o`, `i`, `e`, `f`, `closed`) and opening amount. The default dialogue onset is 0.65 seconds; supply `start` to change it. Give narration or thoughts `speaker=None`, so visible characters stay silent.
+`describe(samples, rate, text=..., speaker="hero", alignment=rows)` creates a small serializable performance record. Save it as JSON and load it with `Performance.load(path)`. At any frame, `performance.mouth(time_in_shot, "hero")` returns a shape (`a`, `o`, `i`, `e`, `f`, `closed`) and opening amount. The default dialogue onset is 0.65 seconds. Supply `start` to change it. Give narration or thoughts `speaker=None`, so visible characters stay silent.
 
-The envelope closes the mouth during actual pauses; aligned consonants and vowels distinguish lip shapes. Recordings without syllable timestamps can use the envelope alone, with less phonetic accuracy. Other languages can supply externally aligned timestamp rows using the same `{text, start, end}` schema.
+The envelope closes the mouth during actual pauses. Aligned consonants and vowels distinguish lip shapes. Recordings without syllable timestamps can use the envelope alone, with less phonetic accuracy. Other languages can supply externally aligned timestamp rows using the same `{text, start, end}` schema.
 
-See [the opening trilogy](films/xishen/README.md) for a complete production with character voices, alignment, subtitles and media QC.
+See [I Am Not the God of Drama](films/xishen/README.md) for a complete production with character voices, alignment, subtitles and media QC.
 
 </details>
 
@@ -451,12 +445,12 @@ See [the opening trilogy](films/xishen/README.md) for a complete production with
 | `codecinema` is not found | Use `.venv/bin/python -m codecinema` on macOS/Linux, or `.\.venv\Scripts\python.exe -m codecinema` on Windows |
 | A Python package is missing | Run the install command above with the same environment you use to launch Studio |
 | FFmpeg or `ffprobe` is missing | Install FFmpeg, reopen the terminal on Windows, then run `python -m codecinema check` |
-| Skia cannot load a Linux graphics library | Install `libgl1`, `libegl1` and `libfontconfig1` with your package manager; Studio reports the original loader error |
+| Skia cannot load a Linux graphics library | Install `libgl1`, `libegl1` and `libfontconfig1` with your package manager. Studio reports the original loader error |
 | Chinese characters are unsupported | Install Noto Sans CJK (`fonts-noto-cjk` on Ubuntu), or set `[fonts] ui = "/path/to/font.ttf"` in the film's `film.local.toml` |
-| The ID already exists | Choose a new ID, or select the saved film in Studio; use `customize` from the CLI |
+| The ID already exists | Choose a new ID, or select the saved film in Studio. Use `customize` from the CLI |
 | The port is in use | Run `python -m codecinema studio --port 8788` |
 | Assembly says settings differ | Run `all`, or repeat every stage with identical quality, format, duration and FPS options |
-| An edit needs undoing | Restore `scenes.json` from `out/edits/<timestamp>/`; copy only this film’s tables from the saved `pyproject.toml` into the root configuration, then render again |
+| An edit needs undoing | Restore `scenes.json` from `out/edits/<timestamp>/`. Copy only this film’s tables from the saved `pyproject.toml` into the root configuration, then render again |
 
 </details>
 
@@ -475,17 +469,17 @@ The homepage plays the finished MP4s attached to parallel film releases:
 | Duel in the Silver Grass | `film` | `SilverGrass.mp4` |
 | The Night Revels of Han Xizai, Cat Edition | `nightrevels` | `NightRevels.mp4` |
 | The Last Beacon | `beacon` | `TheLastBeacon.mp4` |
-| I Am Not the God of Drama: The Opening Trilogy | `xishen` | `ep01.mp4`, `ep02.mp4`, `ep03.mp4`, `xishen_complete.mp4` |
+| I Am Not the God of Drama | `xishen` | `ep01.mp4`, `ep02.mp4`, `ep03.mp4`, `xishen_complete.mp4` |
 
 Finish rendering and run the film's quality checks before replacing its release
 assets. Keep the filenames stable so existing download links continue to work.
-Attach finished films only; intermediate clips, frames,
+Attach finished films only. Intermediate clips, frames,
 diagnostics and checksum files belong in the local ignored output directory.
 Unchanged films already match their release and do not need uploading again.
-The film-name tags identify the current published source edition; keep them
+The film-name tags identify the current published source edition. Keep them
 aligned with the source commit used for the finished masters.
 
-For the opening trilogy, run from the repository root:
+For I Am Not the God of Drama, run from the repository root:
 
 ```bash
 codecinema run xishen all --narration required --speech-engine local
@@ -525,7 +519,7 @@ build marker. Repository source folders are rejected as output paths.
 
 ## 🗂 Project layout
 
-Shared tools live in `codecinema/`; each folder in `films/` owns its story, renderer and production assets.
+Shared tools live in `codecinema/`. Each folder in `films/` owns its story, renderer and production assets.
 
 ```text
 CodeCinema/
@@ -547,30 +541,13 @@ CodeCinema/
 ├── films/                  # independent film projects
 │   ├── silvergrass/        # Duel in the Silver Grass
 │   ├── nightrevels/        # The Night Revels of Han Xizai, Cat Edition
-│   ├── xishen/             # I Am Not the God of Drama: The Opening Trilogy
-│   └── beacon/             # The Last Beacon — expanded below
+│   ├── xishen/             # I Am Not the God of Drama
+│   └── beacon/             # The Last Beacon
 ├── assets/images/          # shared branding and README illustrations
 ├── site/                   # bilingual project page and site builder
 ├── .github/workflows/      # CI and GitHub Pages deployment
 └── pyproject.toml          # package dependencies and all film configurations
 ```
-
-Inside a film, using [The Last Beacon](films/beacon/README.md) as an example:
-
-```text
-films/beacon/
-├── src/                    # this film's production code
-│   ├── story.py            # shot timeline and shared picture/sound cues
-│   ├── scene.py            # Blender character, scene, animation and cameras
-│   ├── sound.py            # music, ambience, Foley and mixing
-│   └── run.py              # render, audio, assembly and quality checks
-├── assets/
-│   ├── images/             # poster and storyboard
-│   └── film/               # finished TheLastBeacon.mp4 (generated)
-└── out/                    # frames, audio intermediates and reports (generated)
-```
-
-The film’s entry in the root `pyproject.toml` tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The `src/` layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have `scenes.json` for Studio edits. Generated `assets/film/` and `out/` directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in `film.local.toml`.
 
 ## 🧭 How it works
 

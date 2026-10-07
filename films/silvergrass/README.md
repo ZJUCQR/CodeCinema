@@ -90,10 +90,10 @@ The film is data plus code, so every part of it can be changed. The timeline, st
 |---|---|
 | Titles, epigraph, name and act cards | `TITLES` in config |
 | Shot lengths, acts, tempo, slow motion, music cues | `SHOTS`, `ACTS`, `TEMPO_MAP`, `TIME_WARP`, `MUSIC_CUES` in config |
-| Character colours and proportions | `PALETTE`, `SHINOBI_HEIGHT`, `SAINT_HEIGHT` in config; character modules for the designs |
+| Character colours and proportions | `PALETTE`, `SHINOBI_HEIGHT`, `SAINT_HEIGHT` in config. Character modules for the designs |
 | Choreography and cameras of one act | That act's module in `src/blender/acts/` |
 | Sky, light, wind, grass, VFX | `environment.*` and `vfx.*` calls from a lane |
-| Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config; score and instrument modules |
+| Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config. Score and instrument modules |
 | Resolution, samples, motion blur, encoding, loudness | `[tool.codecinema.films.silvergrass.settings]` in the root `pyproject.toml` |
 
 You can create your own configuration or override any setting:

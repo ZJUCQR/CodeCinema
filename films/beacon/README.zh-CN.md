@@ -8,7 +8,7 @@
 
 **48 秒 · 1920 × 1080 · 24 fps · 立体声 · Blender 5.2+**
 
-角色采用原创瓷白与黄铜造型，包含分层护甲、独立手指、嵌入式发光双眼和随风摆动的围巾。六个镜头共用同一套模型与连续表演时间线，从独处、倾听、伸手触碰，到点亮、发送与回应。原创合成配乐结合钢琴音色、弓弦泛音与玻璃钟声；风声、伺服电机和接触音效按动作时间同步。
+角色采用原创瓷白与黄铜造型，包含分层护甲、独立手指、嵌入式发光双眼和随风摆动的围巾。六个镜头共用同一套模型与连续表演时间线，从独处、倾听、伸手触碰，到点亮、发送与回应。原创合成配乐结合钢琴音色、弓弦泛音与玻璃钟声。风声、伺服电机和接触音效按动作时间同步。
 
 ## 一条命令出片
 
@@ -18,9 +18,9 @@
 codecinema run beacon all
 ```
 
-成片位于 `films/beacon/assets/film/TheLastBeacon.mp4`。不需要 API Key、外部模型、贴图包或 Blender 插件。程序会自动寻找 Blender 和 FFmpeg；自定义安装位置可通过 `BLENDER_BIN`、`FFMPEG`、`FFPROBE` 指定。整片需要渲染 1,152 张全分辨率 3D 画面，耗时取决于显卡。
+成片位于 `films/beacon/assets/film/TheLastBeacon.mp4`。不需要 API Key、外部模型、贴图包或 Blender 插件。程序会自动寻找 Blender 和 FFmpeg。自定义安装位置可通过 `BLENDER_BIN`、`FFMPEG`、`FFPROBE` 指定。整片需要渲染 1,152 张全分辨率 3D 画面，耗时取决于显卡。
 
-显存充足时，可以使用 `codecinema run beacon all --jobs 2`，同时渲染两个互不重叠的帧段；小显卡建议保留默认单进程。制作命令带有互斥锁，避免重复运行时相互覆盖。
+显存充足时，可以使用 `codecinema run beacon all --jobs 2`，同时渲染两个互不重叠的帧段。小显卡建议保留默认单进程。制作命令带有互斥锁，避免重复运行时相互覆盖。
 
 先快速检查造型：
 
@@ -47,7 +47,7 @@ brass = [0.52, 0.28, 0.085]
 scarf = [0.06, 0.20, 0.30]  # 线性 RGB：蓝色围巾
 ```
 
-再次运行 `codecinema run beacon all`。中断后可以继续渲染；修改场景代码、故事数据或受支持的视觉设置后，程序会自动清理旧帧缓存。需要强制重做时使用 `codecinema run beacon all --force`。
+再次运行 `codecinema run beacon all`。中断后可以继续渲染。修改场景代码、故事数据或受支持的视觉设置后，程序会自动清理旧帧缓存。需要强制重做时使用 `codecinema run beacon all --force`。
 
 | 想修改什么 | 文件 |
 | --- | --- |
@@ -66,7 +66,7 @@ codecinema run beacon audio
 codecinema run beacon assemble
 ```
 
-`out/audio/` 保存音乐、环境声、音效分轨、总混音和响度报告。`out/qc.json` 记录成片参数、完整解码结果、AAC 响度与真峰值。合成阶段检查所有画面，要求正好 1,152 帧、48 秒，并拒绝真峰值超过 −1 dBTP 的成片；混音目标为 −16 LUFS，给 AAC 编码留出余量。
+`out/audio/` 保存音乐、环境声、音效分轨、总混音和响度报告。`out/qc.json` 记录成片参数、完整解码结果、AAC 响度与真峰值。合成阶段检查所有画面，要求正好 1,152 帧、48 秒，并拒绝真峰值超过 −1 dBTP 的成片。混音目标为 −16 LUFS，给 AAC 编码留出余量。
 
 ![成片六镜头](assets/images/storyboard.jpg)
 

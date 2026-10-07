@@ -7,8 +7,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CANON = json.loads((ROOT / "data/canon.json").read_text(encoding="utf-8"))
-STORY = json.loads((ROOT / "data/episodes.json").read_text(encoding="utf-8"))
+_DATA = json.loads((ROOT / "src/story.json").read_text(encoding="utf-8"))
+CANON = _DATA["canon"]
+STORY = _DATA["story"]
 
 
 @dataclass(frozen=True)
@@ -95,7 +96,7 @@ def digest(extra=""):
     h = hashlib.sha256(extra.encode())
     from codecinema.registry import film_config
     h.update(json.dumps(film_config(ROOT), ensure_ascii=False, sort_keys=True).encode())
-    paths = [*sorted((ROOT / "data").glob("*.json")),
+    paths = [ROOT / "src/story.json",
              *sorted((ROOT / "src").glob("*.py")),
              *sorted((ROOT.parents[1] / "codecinema/audio").glob("*.py")),
              *sorted((ROOT / "assets/voices").glob("*.wav"))]

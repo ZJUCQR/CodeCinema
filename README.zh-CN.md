@@ -26,14 +26,14 @@
 
 ---
 
-CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来，将画面、配乐和音效组合成完整影片。可以在本地可视化编辑器中选模板并定制，也可以接入自己的渲染器与制作流程。每部影片在 `films/` 下有独立目录，配置统一放在根目录 `pyproject.toml`；框架提供：
+CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来，将画面、配乐和音效组合成完整影片。可以在本地可视化编辑器中选模板并定制，也可以接入自己的渲染器与制作流程。每部影片在 `films/` 下有独立目录，配置统一放在根目录 `pyproject.toml`。框架提供：
 
 - **设置**：每部影片一套分层设置，支持本地覆盖和环境变量，并能自动查找工具和字体。
 - **声音**：共享的音频工具包，包括合成、物理建模、混响、真峰值限制和响度处理。
 - **合成**：ffmpeg 辅助工具，负责探测、编码、拼接和混流。
 - **命令行**：一个 CLI，可以列出影片、运行影片的步骤，以及创建新影片。
 
-通过 Studio，可以从模板直接制作 MP4；示例影片展示了如何接入自定义渲染器、声音与后期流程。
+通过 Studio，可以从模板直接制作 MP4。示例影片展示了如何接入自定义渲染器、声音与后期流程。
 
 ## ✨ 亮点
 
@@ -41,7 +41,7 @@ CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来
 - 🧩 **约定很小，渲染器随意**：影片在 `pyproject.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
 - 🎼 **共享的声音工具包**：影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
 - 🎙️ **可选情绪配音**：在 Studio 逐镜头填写台词和表演提示，也可使用自己的录音。[语音教程](#speech)介绍本地语音包与可复用的口型时间接口。
-- ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑；分层设置无需改动受版本管理的文件；辅助工具支持 macOS、Linux 和 Windows。
+- ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑。分层设置无需改动受版本管理的文件。辅助工具支持 macOS、Linux 和 Windows。
 
 
 <a id="quick-start"></a>
@@ -96,17 +96,17 @@ py -3.12 -m venv .venv
 
 </details>
 
-这些命令直接使用虚拟环境，无需激活。Windows 使用更新的 Python 时，将 `-3.12` 替换为对应版本。Studio 自动打开 **http://127.0.0.1:8787/**；使用期间保持终端运行，按 `Ctrl+C` 退出。
+这些命令直接使用虚拟环境，无需激活。Windows 使用更新的 Python 时，将 `-3.12` 替换为对应版本。Studio 自动打开 **http://127.0.0.1:8787/**。使用期间保持终端运行，按 `Ctrl+C` 退出。
 
 1. **选场景**：点击喜欢的缩略图。
-2. **改内容**：填写影片 ID、标题和字幕，选择时长与画幅；默认三个镜头、12 秒、720p。
+2. **改内容**：填写影片 ID、标题和字幕，选择时长与画幅。默认三个镜头、12 秒、720p。
 3. **生成影片**：点击“生成我的影片”，完成后直接观看或下载 MP4。
 
-成片：**`films/<id>/assets/film/<id>.mp4`**。快速预览另存 360p 视频，保留正式成片。在“我的影片”里继续修改；旧设置自动备份到影片的 `out/edits/`。
+成片：**`films/<id>/assets/film/<id>.mp4`**。
 
 ![Eight starter looks](assets/images/starters.jpg)
 
-后续命令示例请先激活环境：macOS/Linux 使用 `source .venv/bin/activate`，Windows PowerShell 使用 `.\.venv\Scripts\Activate.ps1`；也可以继续使用上面的虚拟环境 Python 路径加 `-m codecinema`。
+后续命令示例请先激活环境：macOS/Linux 使用 `source .venv/bin/activate`，Windows PowerShell 使用 `.\.venv\Scripts\Activate.ps1`。也可以继续使用上面的虚拟环境 Python 路径加 `-m codecinema`。
 
 ## 🎞 示例影片
 
@@ -116,36 +116,30 @@ py -3.12 -m venv .venv
       <a href="films/silvergrass/README.zh-CN.md"><img src="assets/images/examples/silvergrass.jpg" width="100%" alt="芒原决战"></a>
       <h3><a href="films/silvergrass/README.zh-CN.md">芒原决战</a></h3>
       <p>落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。</p>
-      <p><strong>Blender 3D · 160 秒 · 30 个镜头</strong></p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#silvergrass">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/film">下载</a> · <a href="films/silvergrass/README.zh-CN.md">制作指南</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/nightrevels/README.zh-CN.md"><img src="assets/images/examples/nightrevels.jpg" width="100%" alt="韩熙载夜宴图 · 猫"></a>
       <h3><a href="films/nightrevels/README.zh-CN.md">韩熙载夜宴图 · 猫</a></h3>
       <p>一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。</p>
-      <p><strong>Skia 2D · 128 秒 · 13 个猫品种</strong></p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#nightrevels">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">下载</a> · <a href="films/nightrevels/README.zh-CN.md">制作指南</a></p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="films/xishen/README.zh-CN.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="我不是戏神 · 开篇三集"></a>
-      <h3><a href="films/xishen/README.zh-CN.md">我不是戏神 · 开篇三集</a></h3>
-      <p>按原著开篇顺序，从陈伶雨夜归家、剧院噩梦到第一次编导演练，人物与时间线贯穿三集。</p>
-      <p><strong>Skia 2D · 11 分钟 · 三集 · 中文配音</strong></p>
+      <a href="films/xishen/README.zh-CN.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="我不是戏神"></a>
+      <h3><a href="films/xishen/README.zh-CN.md">我不是戏神</a></h3>
+      <p>从陈伶雨夜归家、剧院噩梦到第一次编导演练。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#xishen">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/beacon/README.zh-CN.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
       <h3><a href="films/beacon/README.zh-CN.md">守灯人</a></h3>
       <p>云海上的瓷白机械守灯人唤醒古老星环，远方的一点光给出了回应。</p>
-      <p><strong>Blender 3D · 48 秒 · 6 个镜头 · 原创配乐</strong></p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#beacon">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">下载</a> · <a href="films/beacon/README.zh-CN.md">制作指南</a></p>
     </td>
   </tr>
 </table>
-
-示例影片均可在[主页](https://zjucqr.github.io/CodeCinema/zh/#films)观看，点击对应 Release 下载 MP4；`codecinema list` 会列出各自的制作步骤。《芒原决战》与《守灯人》需要 Blender 5.2+，3D 渲染比 2D 示例耗时更长。《我不是戏神》三集全程共用同一套 Skia 2D 人物造型，配有随场景变化的配乐和情绪中文对白。发布版配音使用 Apple Silicon 上的可选本地语音包；其他平台可以提供录音。`--narration off` 可生成字幕与配乐版本。各影片指南提供安装要求和定制方法。
 
 
 <a id="customization"></a>
@@ -158,9 +152,9 @@ codecinema customize myfilm --preset neon --format portrait --render
 codecinema run myfilm all --quality preview
 ```
 
-在 Studio 的“逐镜头定制”中增删、排序镜头，修改文字、时长、配色和镜头运动；也可以直接编辑 `films/myfilm/scenes.json`。八种风格：`moonrise`、`sunset`、`aurora`、`neon`、`ocean`、`ink`、`cosmos`、`ember`，支持横屏、竖屏和方形画幅。
+在 Studio 的“逐镜头定制”中增删、排序镜头，修改文字、时长、配色和镜头运动。也可以直接编辑 `films/myfilm/scenes.json`。八种风格：`moonrise`、`sunset`、`aurora`、`neon`、`ocean`、`ink`、`cosmos`、`ember`，支持横屏、竖屏和方形画幅。
 
-这些预设生成动态风景标题短片；新人物、动作和故事表演需要[自定义渲染器](#framework)。
+这些预设生成动态风景标题短片。新人物、动作和故事表演需要[自定义渲染器](#framework)。
 
 <details>
 <summary>手动编辑分镜 JSON</summary>
@@ -177,7 +171,7 @@ codecinema run myfilm all --quality preview
 }
 ```
 
-支持 `wide`、`drift`、`close` 镜头。每镜头至少 0.5 秒，总时长 1.5–600 秒。保存后运行 `codecinema run myfilm all`。文字自动换行，画面与声音使用相同的帧边界；成片通过完整解码检查后才报告成功。
+支持 `wide`、`drift`、`close` 镜头。每镜头至少 0.5 秒，总时长 1.5–600 秒。保存后运行 `codecinema run myfilm all`。文字自动换行，画面与声音使用相同的帧边界。成片通过完整解码检查后才报告成功。
 
 </details>
 
@@ -197,17 +191,17 @@ codecinema run myfilm all --quality preview
 
 | 模块 | 用途 |
 | --- | --- |
-| `codecinema.settings` | `get()` 取值、`path()` 解析影片相对路径、`tool()` 查找工具、`font()` 查找字体；`ROOT` 为影片根目录 |
-| `codecinema.audio.dsp` | 合成、滤波、物理建模、混响、混音、真峰值限制与响度；`SR` 来自影片采样率设置 |
+| `codecinema.settings` | `get()` 取值、`path()` 解析影片相对路径、`tool()` 查找工具、`font()` 查找字体。`ROOT` 为影片根目录 |
+| `codecinema.audio.dsp` | 合成、滤波、物理建模、混响、混音、真峰值限制与响度。`SR` 来自影片采样率设置 |
 | `codecinema.media` | `probe()`、`encoder()`、`concat()`、`mux()` |
 | `codecinema.procutil` | 文件锁、进程管理、内存与文件复制 |
 | `codecinema.blender` | 后台启动 Blender、动作曲线与修改器工具 |
 | `codecinema.audio.speech` / `performance` | 配音、录音、对齐与口型时间 |
 | `codecinema.films` | `discover()` 发现影片，`Film.run()` 执行步骤 |
 
-在生成的 `src/run.py` 中修改 `draw_frame(canvas, frame)` 和 `score()`，即可扩展画面与音乐。`plan`、`stills`、`render`、`audio`、`assemble`、`qc` 分别负责时间线、联系表、画面、声音、合成和质检；`all` 串起整个流程。
+在生成的 `src/run.py` 中修改 `draw_frame(canvas, frame)` 和 `score()`，即可扩展画面与音乐。`plan`、`stills`、`render`、`audio`、`assemble`、`qc` 分别负责时间线、联系表、画面、声音、合成和质检。`all` 串起整个流程。
 
-Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `template = "starter-v1"` 的项目；独立示例遵循各自的制作指南。预览单独写入 `out/preview/` 和 `<id>_preview.mp4`。分步运行时，画质、画幅、FPS、时长必须一致；签名检查阻止拼接过期素材。
+Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `template = "starter-v1"` 的项目。独立示例遵循各自的制作指南。预览单独写入 `out/preview/` 和 `<id>_preview.mp4`。分步运行时，画质、画幅、FPS、时长必须一致。签名检查阻止拼接过期素材。
 
 开发时将故事、动作和音效放在同一时间线上，固定随机种子，用可续渲分块减少重复计算。完整接口示例见[英文参考](README.md#framework)。
 
@@ -221,7 +215,7 @@ Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `te
 <details>
 <summary>接入 Blender 渲染器</summary>
 
-安装 [Blender 5.2+](https://www.blender.org/download/)。框架自动查找标准安装目录和 `PATH`；其他位置可设置 `BLENDER_BIN`。
+安装 [Blender 5.2+](https://www.blender.org/download/)。框架自动查找标准安装目录和 `PATH`。其他位置可设置 `BLENDER_BIN`。
 
 ```bash
 codecinema run beacon still
@@ -230,14 +224,14 @@ codecinema run silvergrass check
 codecinema run silvergrass build
 ```
 
-[守灯人](films/beacon/README.zh-CN.md)以四个文件演示故事时间线、场景与动作、配乐、渲染和质检；[芒原决战](films/silvergrass/README.zh-CN.md)提供双人骨骼、打斗、布料与毛发参考，其动作模块依赖原影片骨骼和配置，不能直接套用到任意角色。
+[守灯人](films/beacon/README.zh-CN.md)以四个文件演示故事时间线、场景与动作、配乐、渲染和质检。[芒原决战](films/silvergrass/README.zh-CN.md)提供双人骨骼、打斗、布料与毛发参考，其动作模块依赖原影片骨骼和配置，不能直接套用到任意角色。
 
 ```python
 from codecinema import blender
 blender.run("src/build_scene.py", "--quality", "preview")
 ```
 
-`run()` 在当前影片目录后台执行 Blender；`command()` 返回命令参数供自定义进程管理使用。`fcurves_of()`、`channelbag_of()` 支持 Blender 5 的动作槽；`muted_modifiers()` 临时关闭视口修改器，并在异常后恢复。`Performance.mouth()` 可驱动 Blender 角色口型；使用与最终声音一致的镜头时间和起始偏移。更多示例见[英文参考](README.md#blender)。
+`run()` 在当前影片目录后台执行 Blender。`command()` 返回命令参数供自定义进程管理使用。`fcurves_of()`、`channelbag_of()` 支持 Blender 5 的动作槽。`muted_modifiers()` 临时关闭视口修改器，并在异常后恢复。`Performance.mouth()` 可驱动 Blender 角色口型。使用与最终声音一致的镜头时间和起始偏移。更多示例见[英文参考](README.md#blender)。
 
 </details>
 
@@ -266,7 +260,7 @@ codecinema studio
 
 第一次配音会下载 Qwen3-TTS CustomVoice，之后复用缓存。无需 API key。普通框架和无配音模板不会下载或载入模型。未安装语音包的 Mac 可使用系统声音，但系统声音不支持情绪提示。本地情绪模型目前要求 Apple Silicon。
 
-中文声线可选 Serena、Vivian、Dylan、Uncle Fu 和 Eric；英文可选 Ryan、Aiden；日语、韩语可选 Ono Anna、Sohee。模型也支持跨语言配音；较长项目请先试听。
+中文声线可选 Serena、Vivian、Dylan、Uncle Fu 和 Eric。英文可选 Ryan、Aiden。日语、韩语可选 Ono Anna、Sohee。模型也支持跨语言配音。较长项目请先试听。
 
 ### 修改镜头数据
 
@@ -291,13 +285,13 @@ codecinema run myfilm all --speech-engine local
 
 任何平台都可以使用自己的录音：把单声道 WAV 放进 `films/myfilm/assets/voices/arrival.wav`，在上述对象增加 `"recording": "arrival.wav"`，使用 `--speech-engine recording` 生成。每个有台词的镜头都要提供录音。`system` 指定 Mac 系统声音，`auto` 优先使用已安装的本地情绪模型。
 
-添加配音时，已识别的旧版原始模板会自动升级，并将原渲染器与镜头数据一同备份到 `out/edits/`。自定义代码会保留；若还不支持配音，会显示明确提示，避免台词被悄悄忽略。可以新建模板后复制镜头数据，或把新的配音功能合入自己的渲染器。
+添加配音时，已识别的旧版原始模板会自动升级，并将原渲染器与镜头数据一同备份到 `out/edits/`。自定义代码会保留。若还不支持配音，会显示明确提示，避免台词被悄悄忽略。可以新建模板后复制镜头数据，或把新的配音功能合入自己的渲染器。
 
 ### 自定义人物口型
 
-公共模块 `codecinema.audio.speech` 提供配音、录音转换与中文逐字对齐；`codecinema.audio.performance` 提供可保存为 JSON 的表演时间表。
+公共模块 `codecinema.audio.speech` 提供配音、录音转换与中文逐字对齐。`codecinema.audio.performance` 提供可保存为 JSON 的表演时间表。
 
-先完成声音的剪裁和时间调整，再对最终波形做对齐，随后释放语音模型、开始画面渲染。人物嘴形由真实音节和音量共同驱动，停顿时闭嘴；旁白与内心独白不指定画面中的说话人物。其他语言可以提供相同 `{text, start, end}` 格式的外部对齐时间戳。没有逐字时间戳的录音也可使用音量开合，但语音形状精度较低。
+先完成声音的剪裁和时间调整，再对最终波形做对齐，随后释放语音模型、开始画面渲染。人物嘴形由真实音节和音量共同驱动，停顿时闭嘴。旁白与内心独白不指定画面中的说话人物。其他语言可以提供相同 `{text, start, end}` 格式的外部对齐时间戳。没有逐字时间戳的录音也可使用音量开合，但语音形状精度较低。
 
 完整接口示例见[英文指南](README.md#speech)，完整制作示例见[开篇三集](films/xishen/README.zh-CN.md)。
 
@@ -315,12 +309,12 @@ codecinema run myfilm all --speech-engine local
 | --- | --- |
 | 找不到 `codecinema` 命令 | 直接使用上面的虚拟环境 Python 路径，加 `-m codecinema` |
 | 缺少 Python 包 | 用启动 Studio 的同一虚拟环境重新执行安装命令 |
-| 找不到 FFmpeg / `ffprobe` | 安装 FFmpeg；Windows 重开终端后再检查 |
+| 找不到 FFmpeg / `ffprobe` | 安装 FFmpeg。Windows 重开终端后再检查 |
 | Linux 无法加载 Skia 图形库 | 用包管理器安装 `libgl1`、`libegl1` 和 `libfontconfig1`，Studio 会显示具体加载错误 |
 | 中文无法显示 | 安装 Noto Sans CJK（Ubuntu 用 `fonts-noto-cjk`），或在影片 `film.local.toml` 写 `[fonts]` 和 `ui = "/字体文件路径/font.ttf"` |
-| 影片 ID 已存在 | 换一个 ID；或从“我的影片”打开原作品，命令行用 `customize` |
+| 影片 ID 已存在 | 换一个 ID。或从“我的影片”打开原作品，命令行用 `customize` |
 | 端口被占用 | 启动时加 `studio --port 8788` |
-| 合成提示设置不一致 | 直接运行 `all`；分步制作需使用相同的画质、画幅、时长和帧率 |
+| 合成提示设置不一致 | 直接运行 `all`。分步制作需使用相同的画质、画幅、时长和帧率 |
 | 想撤回修改 | 从 `out/edits/<时间戳>/` 恢复 `scenes.json`，将备份 `pyproject.toml` 中仅属于这部影片的配置表恢复到根配置，再生成一次 |
 
 </details>
@@ -333,7 +327,7 @@ codecinema run myfilm all --speech-engine local
 <details>
 <summary>GitHub Release 与项目主页</summary>
 
-每部示例对应一个平行 Release，只上传最终 MP4，不上传校验文件、预览、帧或诊断报告。保持文件名稳定；未变化的影片无需重新上传。发布标签应指向成片实际使用的源码版本。
+每部示例对应一个平行 Release，只上传最终 MP4，不上传校验文件、预览、帧或诊断报告。保持文件名稳定。未变化的影片无需重新上传。发布标签应指向成片实际使用的源码版本。
 
 | 标签 | 成片 |
 | --- | --- |
@@ -342,22 +336,22 @@ codecinema run myfilm all --speech-engine local
 | `beacon` | `TheLastBeacon.mp4` |
 | `xishen` | `ep01.mp4`、`ep02.mp4`、`ep03.mp4`、`xishen_complete.mp4` |
 
-先完成渲染和影片质检，再推送源码、海报和页面；用 `gh release upload <tag> <MP4路径> --clobber` 更新有变化的成片。所有影片的发布说明统一在 GitHub Release 页面编辑。
+先完成渲染和影片质检，再推送源码、海报和页面。用 `gh release upload <tag> <MP4路径> --clobber` 更新有变化的成片。所有影片的发布说明统一在 GitHub Release 页面编辑。
 
-素材上传完成后执行 `gh workflow run pages.yml --ref main`；替换附件不会触发新版本发布事件。网站构建器只下载声明的成片，验证大小和摘要，用附件 ID 更新缓存；素材不完整时保留线上旧站。
+素材上传完成后执行 `gh workflow run pages.yml --ref main`。替换附件不会触发新版本发布事件。网站构建器只下载声明的成片，验证大小和摘要，用附件 ID 更新缓存。素材不完整时保留线上旧站。
 
 ```bash
 python3 site/build.py
 python3 -m http.server 8080 --directory out/site
 ```
 
-自定义输出目录必须为空或包含之前的网站构建标记；不允许覆盖仓库源文件夹。完整发布示例见[英文参考](README.md#publishing)。
+自定义输出目录必须为空或包含之前的网站构建标记。不允许覆盖仓库源文件夹。完整发布示例见[英文参考](README.md#publishing)。
 
 </details>
 
 ## 🗂 项目结构
 
-`codecinema/` 提供共享工具；`films/` 下每个文件夹是一部独立影片，包含自己的故事、渲染代码和制作素材。
+`codecinema/` 提供共享工具。`films/` 下每个文件夹是一部独立影片，包含自己的故事、渲染代码和制作素材。
 
 ```text
 CodeCinema/
@@ -379,30 +373,13 @@ CodeCinema/
 ├── films/                  # 各自独立的影片项目
 │   ├── silvergrass/        # 《芒原决战》
 │   ├── nightrevels/        # 《韩熙载夜宴图 · 猫》
-│   ├── xishen/             # 《我不是戏神 · 开篇三集》
-│   └── beacon/             # 《守灯人》，下方展开说明
+│   ├── xishen/             # 《我不是戏神》
+│   └── beacon/             # 《守灯人》
 ├── assets/images/          # 共用图标与 README 配图
 ├── site/                   # 双语项目主页与网站构建脚本
 ├── .github/workflows/      # CI 与 GitHub Pages 部署
 └── pyproject.toml          # 包依赖与全部影片配置
 ```
-
-一部影片内部，以[《守灯人》](films/beacon/README.zh-CN.md)为例：
-
-```text
-films/beacon/
-├── src/                    # 本片的制作代码
-│   ├── story.py            # 镜头时间线与画面、声音共用的提示点
-│   ├── scene.py            # Blender 人物、场景、动画与摄影机
-│   ├── sound.py            # 配乐、环境声、动作音效与混音
-│   └── run.py              # 渲染、声音生成、合成与质检
-├── assets/
-│   ├── images/             # 海报与分镜图
-│   └── film/               # 最终 TheLastBeacon.mp4（运行后生成）
-└── out/                    # 渲染帧、音频中间文件与报告（运行后生成）
-```
-
-根目录 `pyproject.toml` 中的影片配置告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 `src/` 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 `scenes.json`，供 Studio 编辑分镜。`assets/film/` 和 `out/` 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 `film.local.toml`。
 
 ## 🧭 工作原理
 
@@ -412,7 +389,7 @@ films/beacon/
 
 ## 参与贡献
 
-[贡献指南](CONTRIBUTING.md)介绍开发环境、验证命令及新增模板或渲染器的方法；[框架说明](#framework)介绍影片接口与共享工具。
+[贡献指南](CONTRIBUTING.md)介绍开发环境、验证命令及新增模板或渲染器的方法。[框架说明](#framework)介绍影片接口与共享工具。
 
 ## 📜 许可
 

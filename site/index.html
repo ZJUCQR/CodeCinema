@@ -152,18 +152,18 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       </article>
       <article id="xishen" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-xishen" controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg" aria-label="I Am Not the God of Drama: The Opening Trilogy · Complete trilogy" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="The video could not load. Please reload the page and try again.">
+          <video id="film-xishen" controls preload="metadata" playsinline poster="xishen/assets/images/ep01.jpg" aria-label="I Am Not the God of Drama · Complete trilogy" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="The video could not load. Please reload the page and try again.">
             <source src="xishen/assets/film/xishen_complete.mp4" type="video/mp4">
             <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">Download MP4</a></p>
           </video>
         </div>
         <div class="film-card-body">
-          <h3>I Am Not the God of Drama: The Opening Trilogy</h3>
+          <h3>I Am Not the God of Drama</h3>
           <div class="film-versions" role="group" aria-label="Choose an episode or the complete trilogy">
-            <button type="button" data-film-version data-src="xishen/assets/film/xishen_complete.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Full trilogy" aria-controls="film-xishen" aria-pressed="true"><span>Full trilogy</span><small>11:00</small></button>
-            <button type="button" data-film-version data-src="xishen/assets/film/ep01.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 1" aria-controls="film-xishen" aria-pressed="false"><span>Episode 1</span><small>3:30</small></button>
-            <button type="button" data-film-version data-src="xishen/assets/film/ep02.mp4" data-poster="xishen/assets/images/ep02.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep02.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 2" aria-controls="film-xishen" aria-pressed="false"><span>Episode 2</span><small>3:30</small></button>
-            <button type="button" data-film-version data-src="xishen/assets/film/ep03.mp4" data-poster="xishen/assets/images/ep03.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4" data-label="I Am Not the God of Drama: The Opening Trilogy · Episode 3" aria-controls="film-xishen" aria-pressed="false"><span>Episode 3</span><small>4:00</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/xishen_complete.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-label="I Am Not the God of Drama · Full trilogy" aria-controls="film-xishen" aria-pressed="true"><span>Full trilogy</span><small>11:00</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep01.mp4" data-poster="xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4" data-label="I Am Not the God of Drama · Episode 1" aria-controls="film-xishen" aria-pressed="false"><span>Episode 1</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep02.mp4" data-poster="xishen/assets/images/ep02.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep02.mp4" data-label="I Am Not the God of Drama · Episode 2" aria-controls="film-xishen" aria-pressed="false"><span>Episode 2</span><small>3:30</small></button>
+            <button type="button" data-film-version data-src="xishen/assets/film/ep03.mp4" data-poster="xishen/assets/images/ep03.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4" data-label="I Am Not the God of Drama · Episode 3" aria-controls="film-xishen" aria-pressed="false"><span>Episode 3</span><small>4:00</small></button>
           </div>
           <p class="player-status" role="status" aria-live="polite" hidden></p>
         </div>
@@ -212,28 +212,13 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 ├── films/                  <span class="c"># independent film projects</span>
 │   ├── silvergrass/        <span class="c"># Duel in the Silver Grass</span>
 │   ├── nightrevels/        <span class="c"># The Night Revels of Han Xizai, Cat Edition</span>
-│   ├── xishen/             <span class="c"># I Am Not the God of Drama: The Opening Trilogy</span>
-│   └── beacon/             <span class="c"># The Last Beacon — expanded below</span>
+│   ├── xishen/             <span class="c"># I Am Not the God of Drama</span>
+│   └── beacon/             <span class="c"># The Last Beacon</span>
 ├── assets/images/          <span class="c"># shared branding and README illustrations</span>
 ├── site/                   <span class="c"># bilingual project page and site builder</span>
 ├── .github/workflows/      <span class="c"># CI and GitHub Pages deployment</span>
 └── pyproject.toml          <span class="c"># package dependencies and all film configurations</span></code></pre>
     </div>
-    <p class="lead reveal">Inside a film, using <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.md">The Last Beacon</a> as an example:</p>
-    <div class="term reveal">
-      <div class="term-bar"><i></i><i></i><i></i><span class="t">films/beacon/</span></div>
-<pre><code>films/beacon/
-├── src/                    <span class="c"># this film&#x27;s production code</span>
-│   ├── story.py            <span class="c"># shot timeline and shared picture/sound cues</span>
-│   ├── scene.py            <span class="c"># Blender character, scene, animation and cameras</span>
-│   ├── sound.py            <span class="c"># music, ambience, Foley and mixing</span>
-│   └── run.py              <span class="c"># render, audio, assembly and quality checks</span>
-├── assets/
-│   ├── images/             <span class="c"># poster and storyboard</span>
-│   └── film/               <span class="c"># finished TheLastBeacon.mp4 (generated)</span>
-└── out/                    <span class="c"># frames, audio intermediates and reports (generated)</span></code></pre>
-    </div>
-    <p class="caption reveal">The film’s entry in the root <code>pyproject.toml</code> tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The <code>src/</code> layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have <code>scenes.json</code> for Studio edits. Generated <code>assets/film/</code> and <code>out/</code> directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in <code>film.local.toml</code>.</p>
   </div>
 </section>
 

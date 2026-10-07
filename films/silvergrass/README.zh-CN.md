@@ -31,15 +31,15 @@
 - **字幕**：书法字幕卡用 Pillow 绘制。
 - **成片**：由 ffmpeg 合成并做母带处理。
 
-一条命令就能重新生成整部影片；改一个数字，就是另一部电影。
+一条命令就能重新生成整部影片。改一个数字，就是另一部电影。
 
 ## ✨ 亮点
 
 - 🤖 **由 coding agent 创作**：用自然语言导演，由 coding agent 完成：规划分镜、编写全部代码、编排打斗、创作配乐，并检查成片。
 - 🎬 **完整影片，零手工素材**：160 秒、30 个镜头、约 150 次剪辑，遵守 180° 轴线规则，设有慢镜头窗口，闪光控制在光敏安全预算以内。角色、骨架、约 25 万丛芒草、四种天空状态和全部特效都由代码生成。
-- 🥋 **代码即编舞**：109 个姿势，加上 `slash`、`deflect`、`jump`、`spear_thrust` 等动作宏；`clash()` 让两把刀在世界空间的指定位置相交。火花、火焰、闪电和雨都是免烘焙的粒子池，由同一个影片时钟驱动。
+- 🥋 **代码即编舞**：109 个姿势，加上 `slash`、`deflect`、`jump`、`spear_thrust` 等动作宏。`clash()` 让两把刀在世界空间的指定位置相交。火花、火焰、闪电和雨都是免烘焙的粒子池，由同一个影片时钟驱动。
 - 🎼 **动作即声音**：原创配乐基于日本都节音阶，从零合成太鼓、尺八、筝、三味线、合唱和寺钟。每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。
-- ♻️ **可复现，可改造**：一条命令重新生成整部影片；镜头级内容指纹只重渲改动的部分；从故事节拍到渲染画质，每个数字都可以改。
+- ♻️ **可复现，可改造**：一条命令重新生成整部影片。镜头级内容指纹只重渲改动的部分。从故事节拍到渲染画质，每个数字都可以改。
 
 ## 🚀 快速开始
 
@@ -84,16 +84,16 @@ codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 �
 
 ## 🎨 个性化定制
 
-影片由数据和代码组成，每一部分都可以修改。时间轴、故事和风格都在 `src/common/config.py` 里；机器和画质相关的设置在根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` 里。
+影片由数据和代码组成，每一部分都可以修改。时间轴、故事和风格都在 `src/common/config.py` 里。机器和画质相关的设置在根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` 里。
 
 | 想改什么 | 改哪里 |
 |---|---|
 | 片名、题记、名牌、幕名 | config 里的 `TITLES` |
 | 镜头长度、分幕、节奏、慢镜头、配乐提示点 | config 里的 `SHOTS`、`ACTS`、`TEMPO_MAP`、`TIME_WARP`、`MUSIC_CUES` |
-| 角色配色和比例 | config 里的 `PALETTE`、`SHINOBI_HEIGHT`、`SAINT_HEIGHT`；造型在角色模块里 |
+| 角色配色和比例 | config 里的 `PALETTE`、`SHINOBI_HEIGHT`、`SAINT_HEIGHT`。造型在角色模块里 |
 | 某一幕的动作和镜头 | `src/blender/acts/` 中对应幕的模块 |
 | 天空、光照、风、芒草、特效 | 在编舞线里调用 `environment.*` 和 `vfx.*` |
-| 旋律、调式、乐器 | config 里的 `LEITMOTIFS`、`SCALE_IN`、`SCALE_YO`；编曲和乐器模块 |
+| 旋律、调式、乐器 | config 里的 `LEITMOTIFS`、`SCALE_IN`、`SCALE_YO`。编曲和乐器模块 |
 | 分辨率、采样数、运动模糊、编码、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` |
 
 你可以自己创建相应的配置，或者覆盖已有设置：
@@ -134,7 +134,7 @@ films/silvergrass/
 <img src="assets/images/pipeline.svg" width="100%" alt="SilverGrass 流程：数据规格、Blender 场景合成、渲染、声音合成与后期">
 </div>
 
-<p align="center"><sub><b>图 1.</b> SilverGrass 流程。<b>(a)</b> 影片以数据形式描述：<code>config.py</code> 里的镜头、交接状态、节拍网格、提示点和主导动机，外加六条编舞线。<b>(b)</b> 在 Blender 里，每条编舞线只在自己的帧区间内为角色、镜头和特效打关键帧；构建时用 NLA 条带隔离各条线，并检查每个交接点的状态。统一的影片时钟 <code>fx_time</code> 让程序化特效和慢镜头同步。<b>(c)</b> 调度器按镜头分块渲染，只有内容指纹变化的镜头才会重渲。<b>(d)</b> 每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。<b>(e)</b> 字幕、画面和母带混音按采样精度合成，再检查光敏安全、音画同步和响度。</sub></p>
+<p align="center"><sub><b>图 1.</b> SilverGrass 流程。<b>(a)</b> 影片以数据形式描述：<code>config.py</code> 里的镜头、交接状态、节拍网格、提示点和主导动机，外加六条编舞线。<b>(b)</b> 在 Blender 里，每条编舞线只在自己的帧区间内为角色、镜头和特效打关键帧。构建时用 NLA 条带隔离各条线，并检查每个交接点的状态。统一的影片时钟 <code>fx_time</code> 让程序化特效和慢镜头同步。<b>(c)</b> 调度器按镜头分块渲染，只有内容指纹变化的镜头才会重渲。<b>(d)</b> 每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。<b>(e)</b> 字幕、画面和母带混音按采样精度合成，再检查光敏安全、音画同步和响度。</sub></p>
 
 
 ## 📜 许可

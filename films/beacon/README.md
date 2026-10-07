@@ -18,7 +18,7 @@ Install the framework using the [setup guide](../../README.md#quick-start), plus
 codecinema run beacon all
 ```
 
-The finished film appears at `films/beacon/assets/film/TheLastBeacon.mp4`. No API key, downloaded model, texture pack or Blender add-on is needed. Blender and FFmpeg are detected automatically; set `BLENDER_BIN`, `FFMPEG` or `FFPROBE` if they are installed elsewhere. Allow time for 1,152 full-resolution 3D frames; speed depends on the GPU.
+The finished film appears at `films/beacon/assets/film/TheLastBeacon.mp4`. No API key, downloaded model, texture pack or Blender add-on is needed. Blender and FFmpeg are detected automatically. Set `BLENDER_BIN`, `FFMPEG` or `FFPROBE` if they are installed elsewhere. Allow time for 1,152 full-resolution 3D frames. Speed depends on the GPU.
 
 On a machine with sufficient GPU memory, `codecinema run beacon all --jobs 2` runs two non-overlapping frame ranges concurrently. Start with the default single process on smaller GPUs. Production commands are locked to prevent two invocations from overwriting the same film.
 
@@ -70,6 +70,6 @@ codecinema run beacon assemble
 
 ![Six shots from the finished film](assets/images/storyboard.jpg)
 
-Read the shared [Blender guide](../../README.md#blender) to build your own renderer. The images and film are rendered from the included scene code; this is a stylized animated production.
+Read the shared [Blender guide](../../README.md#blender) to build your own renderer. The images and film are rendered from the included scene code. This is a stylized animated production.
 
 Author: **ZJUCQR**. Code and original procedural assets: [MIT](../../LICENSE).

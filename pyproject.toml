@@ -170,8 +170,8 @@ target_lufs = -14.0
 true_peak_db = -1.0
 
 [tool.codecinema.films.xishen]
-title = "I Am Not the God of Drama · Opening Trilogy"
-title_zh = "我不是戏神 · 开篇三集"
+title = "I Am Not the God of Drama"
+title_zh = "我不是戏神"
 description = "Three reproducible motion-comic episodes adapting chapters 1–6, with a shared cast, continuity ledger, Mandarin narration, score and subtitles."
 entry = "src/run.py"
 env_prefix = "XISHEN"

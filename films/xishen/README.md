@@ -4,7 +4,7 @@
 
 <p><sub>An example film made with <a href="../../README.md"><b>CodeCinema</b></a></sub></p>
 
-**The Opening Trilogy · Skia motion comic**
+**Skia motion comic**
 
 A rain-soaked return. An audience with crimson eyes. A director learning to survive his own stage.
 
@@ -16,13 +16,13 @@ A rain-soaked return. An audience with crimson eyes. A director learning to surv
 
 <img src="assets/images/banner.jpg" width="100%" alt="Chen Ling in his red stage robe, the silent audience and his next-morning black coat">
 
-[**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](data/canon.json) · [Chinese guide](README.zh-CN.md)
+[**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](src/story.json) · [Chinese guide](README.zh-CN.md)
 
 </div>
 
 Chen Ling comes home with two broken sets of memories. Behind a curtain, strangers are waiting for his performance. By morning, the nightmare has begun to leave traces in the real world.
 
-This trilogy condenses **chapters 1–6** of Sanjiu Yinyu's novel in their original order, with newly written dialogue and narration. Shared character models, a continuity ledger and one story clock connect all three episodes. The film combines a shared, individually designed cast and camera motion with emotion-directed Mandarin voices, an original synthesized score and foley. Dialogue mouths follow the final waveform and aligned syllable timestamps; narration and thoughts leave them closed. Footage keeps only the bottom captions and story props, without persistent titles or explanatory overlays.
+This trilogy condenses **chapters 1–6** of Sanjiu Yinyu's novel in their original order, with newly written dialogue and narration. Shared character models, a continuity ledger and one story clock connect all three episodes. The film combines a shared, individually designed cast and camera motion with emotion-directed Mandarin voices, an original synthesized score and foley. Dialogue mouths follow the final waveform and aligned syllable timestamps. Narration and thoughts leave them closed. Footage keeps only the bottom captions and story props, without persistent titles or explanatory overlays.
 
 All three episodes use the same Skia character designs and visual style, with a scene-led chamber score that distinguishes rain, theatre, investigation, wonder and comedy cues. Character appearance, shot timing and story state remain continuous throughout the trilogy.
 
@@ -30,7 +30,7 @@ All three episodes use the same Skia character designs and visual style, with a 
 
 <p align="center"><img src="assets/images/preview.gif" width="100%" alt="Animated excerpts: Chen Ling in the rain, the watching audience and Doctor Lin's clinic"></p>
 
-<p align="center"><sub>Excerpts from the actual rendered episodes. Documentation previews omit the caption bars; the films include Mandarin captions.</sub></p>
+<p align="center"><sub>Excerpts from the actual rendered episodes. Documentation previews omit the caption bars. The films include Mandarin captions.</sub></p>
 
 | The rain-soaked return | The audience | Aurora over the district |
 | :---: | :---: | :---: |
@@ -48,7 +48,7 @@ All three episodes use the same Skia character designs and visual style, with a 
 | 01 | **The Ghost Comes Home** | 1 | 3:30 | [MP4](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4) |
 | 02 | **We Are Watching You** | 2–3 | 3:30 | [MP4](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep02.mp4) |
 | 03 | **Chen's Directing Rules** | 4–6 | 4:00 | [MP4](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4) |
-| Complete | **The Opening Trilogy** | 1–6 | **11:00** | [MP4](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4) |
+| Complete | **I Am Not the God of Drama** | 1–6 | **11:00** | [MP4](https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4) |
 
 **67 shots · 61 spoken cues · 1920 × 1080 · 24 fps · 2.35:1 picture area · Stereo audio**
 
@@ -65,9 +65,9 @@ python -m codecinema run xishen all --narration required --speech-engine local
 
 Open the generated MP4 with your video player, or watch the published edition on the [project page](https://zjucqr.github.io/CodeCinema/#xishen).
 
-The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git; the [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
+The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git. The [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
-**Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use; after that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
+**Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use. After that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
 
 **Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../README.md#speech) for reusable framework APIs and starter controls.
 
@@ -82,7 +82,7 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 
 </details>
 
-- Chen Ling begins barefoot in a red stage robe. His forehead injury appears after the fall; the black padded coat is introduced the next morning and continues through episode 3.
+- Chen Ling begins barefoot in a red stage robe. His forehead injury appears after the fall. The black padded coat is introduced the next morning and continues through episode 3.
 - Han Meng keeps his dark overcoat and rolled cigarette. His cheek injury appears only after the detector explodes.
 - Doctor Lin retains his white coat and black-framed glasses. Chen Yan is mentioned without an early on-screen appearance.
 - Audience expectations follow **29 → 30 → 27 → 29 → 32**. Later increments do not invent a final total.
@@ -92,8 +92,7 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 
 | File | What to change |
 | --- | --- |
-| [data/episodes.json](data/episodes.json) | Shot order, durations, dialogue, narration, costumes and events |
-| [data/canon.json](data/canon.json) | Source references, character designs, persistent voices and acting directions |
+| [src/story.json](src/story.json) | `story`: episodes, shots, dialogue and timing. `canon`: source references, characters, voices and continuity rules |
 | [pyproject.toml](../../pyproject.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
 | [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
 | [src/score.py](src/score.py) / [src/sound.py](src/sound.py) | Scene-led music, speech directions, timed foley and mixing |
@@ -112,7 +111,7 @@ python -m codecinema run xishen assemble --episode ep01 --narration required --s
 python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
-Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`; published posters and README illustrations stay in `assets/images/`.
+Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused. Changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`. Published posters and README illustrations stay in `assets/images/`.
 
 </details>
 
@@ -120,4 +119,4 @@ Keep picture settings, narration mode and speech engine consistent across stages
 
 Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. Results are generated locally in `out/qc.json`. Browser review covers video seeking, episode continuation and mobile layout.
 
-Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](data/canon.json). The novel's rights remain with its respective rights holders; the [MIT license](../../LICENSE) covers this repository's code.
+Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](src/story.json). The novel's rights remain with its respective rights holders. The [MIT license](../../LICENSE) covers this repository's code.

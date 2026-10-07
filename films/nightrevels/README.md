@@ -32,7 +32,7 @@ The camera travels right to left along one long scroll, as a viewer unrolls a ha
 - 🐈 **Thirteen breeds, one painting.** A Maine Coon host, a ginger troublemaker, a Persian pipa player, a Siamese dancer, a Sphynx monk and more, each a puppet with blinking, ear flicks, breathing and tail sway.
 - 🎭 **A plot of cat instincts.** A cup pushed off the table, a moth that stops the dance, a refused wash, a flute that squeaks, a basket far too small, and a host who knew about the spy all along.
 - 🎼 **The music moves the paws.** The score is note data first: the pipa player plucks, the drummer strikes and the clappers snap on the exact notes, and every gag lands on its sound within a frame.
-- ⚡ **Fast to iterate.** A frame renders in well under a second; the whole film renders in about 90 s and its sound in about 10 s.
+- ⚡ **Fast to iterate.** A frame renders in well under a second. The whole film renders in about 90 s and its sound in about 10 s.
 
 ## 🚀 Quick start
 
@@ -77,7 +77,7 @@ The story is data plus code. The timeline and cue frames live in `src/common/con
 | To change… | Edit |
 |---|---|
 | Story beats and their timing | `CUE` and `SECTIONS` in config |
-| The music (melodies, tempo, which instrument plays) | `music.py`; playing paws follow the notes automatically |
+| The music (melodies, tempo, which instrument plays) | `music.py`. Playing paws follow the notes automatically |
 | A cat's breed, coat, eyes, costume | `BREEDS` and the costumes in `cast.py` |
 | Who stands where, gestures, gags, camera moves | `film.py` (keyed actor tracks and `Camera` keys) |
 | The painting style (ink, silk, faces, furniture) | `src/paint/` |
