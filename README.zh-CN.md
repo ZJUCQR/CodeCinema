@@ -102,11 +102,7 @@ py -3.12 -m venv .venv
 2. **改内容**：填写影片 ID、标题和字幕，选择时长与画幅。默认三个镜头、12 秒、720p。
 3. **生成影片**：点击“生成我的影片”，完成后直接观看或下载 MP4。
 
-成片：**`films/<id>/assets/film/<id>.mp4`**。
-
 ![Eight starter looks](assets/images/starters.jpg)
-
-后续命令示例请先激活环境：macOS/Linux 使用 `source .venv/bin/activate`，Windows PowerShell 使用 `.\.venv\Scripts\Activate.ps1`。也可以继续使用上面的虚拟环境 Python 路径加 `-m codecinema`。
 
 ## 🎞 示例影片
 
@@ -155,25 +151,6 @@ codecinema run myfilm all --quality preview
 在 Studio 的“逐镜头定制”中增删、排序镜头，修改文字、时长、配色和镜头运动。也可以直接编辑 `films/myfilm/scenes.json`。八种风格：`moonrise`、`sunset`、`aurora`、`neon`、`ocean`、`ink`、`cosmos`、`ember`，支持横屏、竖屏和方形画幅。
 
 这些预设生成动态风景标题短片。新人物、动作和故事表演需要[自定义渲染器](#framework)。
-
-<details>
-<summary>手动编辑分镜 JSON</summary>
-
-```json
-{
-  "version": 1,
-  "title": "From Night to Morning",
-  "seed": 7,
-  "scenes": [
-    {"preset": "moonrise", "duration_s": 6, "camera": "wide", "title": "A Quiet Night", "subtitle": "One last look at the stars."},
-    {"preset": "sunset", "duration_s": 6, "camera": "drift", "title": "Another Horizon", "subtitle": "There is more to come.", "accent": "#ffdfb5"}
-  ]
-}
-```
-
-支持 `wide`、`drift`、`close` 镜头。每镜头至少 0.5 秒，总时长 1.5–600 秒。保存后运行 `codecinema run myfilm all`。文字自动换行，画面与声音使用相同的帧边界。成片通过完整解码检查后才报告成功。
-
-</details>
 
 
 <a id="framework"></a>

@@ -104,11 +104,7 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
 2. **Personalize:** enter a film ID, title and caption. Choose duration and frame. Defaults are three scenes, 12 seconds and 720p.
 3. **Render my film:** watch or download the finished MP4.
 
-Output: **`films/<id>/assets/film/<id>.mp4`**.
-
 ![Eight starter looks](assets/images/starters.jpg)
-
-For the CLI examples below, activate the environment with `source .venv/bin/activate` (macOS/Linux) or `.\.venv\Scripts\Activate.ps1` (Windows PowerShell). Alternatively, use the environment’s Python path above with `-m codecinema`.
 
 ## 🎞 Example films
 
@@ -157,25 +153,6 @@ codecinema run myfilm all --quality preview
 Use Personalize every scene in Studio to add, remove or reorder scenes and change text, duration, colors and camera moves. Or edit `films/myfilm/scenes.json` directly. Eight looks—`moonrise`, `sunset`, `aurora`, `neon`, `ocean`, `ink`, `cosmos`, `ember`—support landscape, portrait and square frames.
 
 These presets make animated scenic title films. New characters, choreography and story performances need a [custom renderer](#framework).
-
-<details>
-<summary>Edit scene JSON</summary>
-
-```json
-{
-  "version": 1,
-  "title": "From Night to Morning",
-  "seed": 7,
-  "scenes": [
-    {"preset": "moonrise", "duration_s": 6, "camera": "wide", "title": "A Quiet Night", "subtitle": "One last look at the stars."},
-    {"preset": "sunset", "duration_s": 6, "camera": "drift", "title": "Another Horizon", "subtitle": "There is more to come.", "accent": "#ffdfb5"}
-  ]
-}
-```
-
-Cameras: `wide`, `drift`, `close`. Each scene must last at least 0.5 seconds. Total runtime is 1.5–600 seconds. Save, then run `codecinema run myfilm all`. Text wraps to the frame. Picture and sound share frame boundaries. Full renders decode and validate the MP4 before reporting success.
-
-</details>
 
 
 <a id="framework"></a>
