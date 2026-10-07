@@ -189,27 +189,58 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
     <div class="reveal">
       <p class="eyebrow">项目结构</p>
       <h2>文件都在哪里</h2>
+      <p class="lead"><code>codecinema/</code> 提供共享工具；<code>films/</code> 下每个文件夹是一部独立影片，包含自己的故事、渲染代码和制作素材。</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
 <pre><code>CodeCinema/
-├── codecinema/             <span class="c"># 框架</span>
-│   ├── cli.py              <span class="c"># studio | presets | new | customize | list | run | check</span>
-│   ├── studio.py           <span class="c"># 本地可视化编辑器与制作任务</span>
-│   ├── settings.py         <span class="c"># 每部影片的分层设置，工具和字体查找</span>
-│   ├── films.py            <span class="c"># 影片发现和步骤运行</span>
-│   ├── media.py            <span class="c"># ffmpeg：探测、编码、拼接、混流</span>
-│   ├── procutil.py         <span class="c"># 跨平台的锁、进程、内存工具</span>
-│   ├── audio/dsp.py        <span class="c"># 共享的声音工具包</span>
-│   └── template/           <span class="c"># `codecinema new` 使用的起步影片</span>
-├── films/
-│   ├── silvergrass/        <span class="c"># 示例：《芒原决战》（Blender 3D）</span>
-│   ├── nightrevels/        <span class="c"># 示例：《韩熙载夜宴图 · 猫》（2D）</span>
-│   ├── xishen/             <span class="c"># 示例：《我不是戏神 · 开篇三集》（动态漫画）</span>
-│   └── beacon/             <span class="c"># 示例：《守灯人》（Blender 3D）</span>
-├── site/                   <span class="c"># 本主页</span>
-└── pyproject.toml          <span class="c"># 包和依赖</span></code></pre>
+├── codecinema/             <span class="c"># 共享影片制作框架</span>
+│   ├── cli.py              <span class="c"># 命令入口与工具链检查</span>
+│   ├── studio.py           <span class="c"># 本地编辑器与制作任务</span>
+│   ├── studio_assets/      <span class="c"># 编辑器界面与预设缩略图</span>
+│   ├── projects.py         <span class="c"># 项目创建、修改与备份</span>
+│   ├── starters.py         <span class="c"># 预设选项与分镜数据校验</span>
+│   ├── template/           <span class="c"># 创建新影片时复制的模板源文件</span>
+│   ├── films.py            <span class="c"># 发现影片并执行制作步骤</span>
+│   ├── settings.py         <span class="c"># 配置、工具与字体查找</span>
+│   ├── blender.py          <span class="c"># Blender 启动与共享工具</span>
+│   ├── media.py            <span class="c"># FFmpeg 编码与成片合成</span>
+│   ├── audio/              <span class="c"># 音频合成、配音与口型时间</span>
+│   ├── procutil.py         <span class="c"># 进程、锁与内存工具</span>
+│   └── diagnostics.py      <span class="c"># 依赖检查与安装提示</span>
+├── films/                  <span class="c"># 各自独立的影片项目</span>
+│   ├── silvergrass/        <span class="c"># 《芒原决战》</span>
+│   ├── nightrevels/        <span class="c"># 《韩熙载夜宴图 · 猫》</span>
+│   ├── xishen/             <span class="c"># 《我不是戏神 · 开篇三集》</span>
+│   └── beacon/             <span class="c"># 《守灯人》，下方展开说明</span>
+├── assets/images/          <span class="c"># 共用图标与 README 配图</span>
+├── site/                   <span class="c"># 双语项目主页与网站构建脚本</span>
+├── .github/workflows/      <span class="c"># CI 与 GitHub Pages 部署</span>
+├── README.md               <span class="c"># 英文上手教程与框架说明</span>
+├── README.zh-CN.md         <span class="c"># 中文上手教程与框架说明</span>
+├── CONTRIBUTING.md         <span class="c"># 贡献指南</span>
+└── pyproject.toml          <span class="c"># 包信息与依赖</span></code></pre>
     </div>
+    <p class="lead reveal">一部影片内部，以<a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.zh-CN.md">《守灯人》</a>为例：</p>
+    <div class="term reveal">
+      <div class="term-bar"><i></i><i></i><i></i><span class="t">films/beacon/</span></div>
+<pre><code>films/beacon/
+├── film.toml               <span class="c"># 影片信息、制作步骤、工具与美术设置</span>
+├── src/                    <span class="c"># 本片的制作代码</span>
+│   ├── story.py            <span class="c"># 镜头时间线与画面、声音共用的提示点</span>
+│   ├── scene.py            <span class="c"># Blender 人物、场景、动画与摄影机</span>
+│   ├── sound.py            <span class="c"># 配乐、环境声、动作音效与混音</span>
+│   └── run.py              <span class="c"># 渲染、声音生成、合成与质检</span>
+├── assets/
+│   ├── images/             <span class="c"># 海报与分镜图</span>
+│   └── film/               <span class="c"># 最终 TheLastBeacon.mp4（运行后生成）</span>
+├── out/                    <span class="c"># 渲染帧、音频中间文件与报告（运行后生成）</span>
+├── docs/FILM_PLAN.md        <span class="c"># 创作规划与检查标准</span>
+├── README.md               <span class="c"># 复现与定制指南</span>
+├── README.zh-CN.md         <span class="c"># 中文影片指南</span>
+└── RELEASE.md              <span class="c"># 已发布版本的说明</span></code></pre>
+    </div>
+    <p class="caption reveal"><code>film.toml</code> 告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 <code>src/</code> 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 <code>scenes.json</code>，供 Studio 编辑分镜。<code>assets/film/</code> 和 <code>out/</code> 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 <code>film.local.toml</code>。</p>
   </div>
 </section>
 

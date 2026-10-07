@@ -533,30 +533,59 @@ build marker. Repository source folders are rejected as output paths.
 
 ## 🗂 Project layout
 
-```
+Shared tools live in `codecinema/`; each folder in `films/` owns its story, renderer and production assets.
+
+```text
 CodeCinema/
-├── codecinema/             # the framework
-│   ├── cli.py              # studio | presets | new | customize | list | run | check
-│   ├── studio.py           # local visual editor and render jobs
-│   ├── studio_assets/      # editor UI and actual preset thumbnails
-│   ├── settings.py         # layered per-film settings, tool and font discovery
-│   ├── films.py            # film discovery and step running
-│   ├── media.py            # ffmpeg: probe, encode, concat, mux
-│   ├── blender.py          # headless launching and shared Blender utilities
-│   ├── procutil.py         # cross-platform locks, processes, memory
-│   ├── audio/
-│   │   ├── dsp.py          # synthesis, effects, mixing and mastering
-│   │   ├── speech.py       # optional voices, recordings and alignment
-│   │   └── performance.py  # reusable dialogue and mouth timing
-│   └── template/           # the starter film used by `codecinema new`
-├── films/
-│   ├── silvergrass/        # example: Duel in the Silver Grass (Blender 3D)
-│   ├── nightrevels/        # example: The Night Revels of Han Xizai, Cat Edition (2D)
-│   ├── xishen/             # opening trilogy (motion comic, 11 minutes)
-│   └── beacon/             # example: The Last Beacon (Blender 3D)
-├── site/                   # the homepage
-└── pyproject.toml          # the package and its dependencies
+├── codecinema/             # shared filmmaking framework
+│   ├── cli.py              # commands and toolchain checks
+│   ├── studio.py           # local editor and render jobs
+│   ├── studio_assets/      # editor interface and preset thumbnails
+│   ├── projects.py         # project creation, edits and backups
+│   ├── starters.py         # preset choices and scene validation
+│   ├── template/           # source copied into new starter films
+│   ├── films.py            # film discovery and step execution
+│   ├── settings.py         # configuration, tools and fonts
+│   ├── blender.py          # Blender launcher and shared helpers
+│   ├── media.py            # FFmpeg encoding and assembly
+│   ├── audio/              # synthesis, speech and mouth timing
+│   ├── procutil.py         # processes, locks and memory helpers
+│   └── diagnostics.py      # dependency checks and setup hints
+├── films/                  # independent film projects
+│   ├── silvergrass/        # Duel in the Silver Grass
+│   ├── nightrevels/        # The Night Revels of Han Xizai, Cat Edition
+│   ├── xishen/             # I Am Not the God of Drama: The Opening Trilogy
+│   └── beacon/             # The Last Beacon — expanded below
+├── assets/images/          # shared branding and README illustrations
+├── site/                   # bilingual project page and site builder
+├── .github/workflows/      # CI and GitHub Pages deployment
+├── README.md               # English setup and framework reference
+├── README.zh-CN.md         # Chinese setup and framework reference
+├── CONTRIBUTING.md         # contribution guide
+└── pyproject.toml          # package metadata and dependencies
 ```
+
+Inside a film, using [The Last Beacon](films/beacon/README.md) as an example:
+
+```text
+films/beacon/
+├── film.toml               # film identity, steps, tools and art settings
+├── src/                    # this film's production code
+│   ├── story.py            # shot timeline and shared picture/sound cues
+│   ├── scene.py            # Blender character, scene, animation and cameras
+│   ├── sound.py            # music, ambience, Foley and mixing
+│   └── run.py              # render, audio, assembly and quality checks
+├── assets/
+│   ├── images/             # poster and storyboard
+│   └── film/               # finished TheLastBeacon.mp4 (generated)
+├── out/                    # frames, audio intermediates and reports (generated)
+├── docs/FILM_PLAN.md        # creative plan and review criteria
+├── README.md               # reproduction and customization guide
+├── README.zh-CN.md         # Chinese film guide
+└── RELEASE.md              # published edition's release notes
+```
+
+`film.toml` tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The `src/` layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have `scenes.json` for Studio edits. Generated `assets/film/` and `out/` directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in `film.local.toml`.
 
 ## 🧭 How it works
 

@@ -189,27 +189,58 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
     <div class="reveal">
       <p class="eyebrow">Project layout</p>
       <h2>Where things live</h2>
+      <p class="lead">Shared tools live in <code>codecinema/</code>; each folder in <code>films/</code> owns its story, renderer and production assets.</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
 <pre><code>CodeCinema/
-├── codecinema/             <span class="c"># the framework</span>
-│   ├── cli.py              <span class="c"># studio | presets | new | customize | list | run | check</span>
-│   ├── studio.py           <span class="c"># local visual editor and render jobs</span>
-│   ├── settings.py         <span class="c"># layered per-film settings, tool and font discovery</span>
-│   ├── films.py            <span class="c"># film discovery and step running</span>
-│   ├── media.py            <span class="c"># ffmpeg: probe, encode, concat, mux</span>
-│   ├── procutil.py         <span class="c"># cross-platform locks, processes, memory</span>
-│   ├── audio/dsp.py        <span class="c"># the shared audio toolkit</span>
-│   └── template/           <span class="c"># the starter film used by `codecinema new`</span>
-├── films/
-│   ├── silvergrass/        <span class="c"># example: Duel in the Silver Grass (Blender 3D)</span>
-│   ├── nightrevels/        <span class="c"># example: The Night Revels of Han Xizai, Cat Edition (2D)</span>
-│   ├── xishen/             <span class="c"># example: I Am Not the God of Drama (motion comic)</span>
-│   └── beacon/             <span class="c"># example: The Last Beacon (Blender 3D)</span>
-├── site/                   <span class="c"># this homepage</span>
-└── pyproject.toml          <span class="c"># the package and its dependencies</span></code></pre>
+├── codecinema/             <span class="c"># shared filmmaking framework</span>
+│   ├── cli.py              <span class="c"># commands and toolchain checks</span>
+│   ├── studio.py           <span class="c"># local editor and render jobs</span>
+│   ├── studio_assets/      <span class="c"># editor interface and preset thumbnails</span>
+│   ├── projects.py         <span class="c"># project creation, edits and backups</span>
+│   ├── starters.py         <span class="c"># preset choices and scene validation</span>
+│   ├── template/           <span class="c"># source copied into new starter films</span>
+│   ├── films.py            <span class="c"># film discovery and step execution</span>
+│   ├── settings.py         <span class="c"># configuration, tools and fonts</span>
+│   ├── blender.py          <span class="c"># Blender launcher and shared helpers</span>
+│   ├── media.py            <span class="c"># FFmpeg encoding and assembly</span>
+│   ├── audio/              <span class="c"># synthesis, speech and mouth timing</span>
+│   ├── procutil.py         <span class="c"># processes, locks and memory helpers</span>
+│   └── diagnostics.py      <span class="c"># dependency checks and setup hints</span>
+├── films/                  <span class="c"># independent film projects</span>
+│   ├── silvergrass/        <span class="c"># Duel in the Silver Grass</span>
+│   ├── nightrevels/        <span class="c"># The Night Revels of Han Xizai, Cat Edition</span>
+│   ├── xishen/             <span class="c"># I Am Not the God of Drama: The Opening Trilogy</span>
+│   └── beacon/             <span class="c"># The Last Beacon — expanded below</span>
+├── assets/images/          <span class="c"># shared branding and README illustrations</span>
+├── site/                   <span class="c"># bilingual project page and site builder</span>
+├── .github/workflows/      <span class="c"># CI and GitHub Pages deployment</span>
+├── README.md               <span class="c"># English setup and framework reference</span>
+├── README.zh-CN.md         <span class="c"># Chinese setup and framework reference</span>
+├── CONTRIBUTING.md         <span class="c"># contribution guide</span>
+└── pyproject.toml          <span class="c"># package metadata and dependencies</span></code></pre>
     </div>
+    <p class="lead reveal">Inside a film, using <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.md">The Last Beacon</a> as an example:</p>
+    <div class="term reveal">
+      <div class="term-bar"><i></i><i></i><i></i><span class="t">films/beacon/</span></div>
+<pre><code>films/beacon/
+├── film.toml               <span class="c"># film identity, steps, tools and art settings</span>
+├── src/                    <span class="c"># this film&#x27;s production code</span>
+│   ├── story.py            <span class="c"># shot timeline and shared picture/sound cues</span>
+│   ├── scene.py            <span class="c"># Blender character, scene, animation and cameras</span>
+│   ├── sound.py            <span class="c"># music, ambience, Foley and mixing</span>
+│   └── run.py              <span class="c"># render, audio, assembly and quality checks</span>
+├── assets/
+│   ├── images/             <span class="c"># poster and storyboard</span>
+│   └── film/               <span class="c"># finished TheLastBeacon.mp4 (generated)</span>
+├── out/                    <span class="c"># frames, audio intermediates and reports (generated)</span>
+├── docs/FILM_PLAN.md        <span class="c"># creative plan and review criteria</span>
+├── README.md               <span class="c"># reproduction and customization guide</span>
+├── README.zh-CN.md         <span class="c"># Chinese film guide</span>
+└── RELEASE.md              <span class="c"># published edition&#x27;s release notes</span></code></pre>
+    </div>
+    <p class="caption reveal"><code>film.toml</code> tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The <code>src/</code> layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have <code>scenes.json</code> for Studio edits. Generated <code>assets/film/</code> and <code>out/</code> directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in <code>film.local.toml</code>.</p>
   </div>
 </section>
 

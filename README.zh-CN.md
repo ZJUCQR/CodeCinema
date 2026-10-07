@@ -357,30 +357,59 @@ python3 -m http.server 8080 --directory out/site
 
 ## 🗂 项目结构
 
-```
+`codecinema/` 提供共享工具；`films/` 下每个文件夹是一部独立影片，包含自己的故事、渲染代码和制作素材。
+
+```text
 CodeCinema/
-├── codecinema/             # 框架
-│   ├── cli.py              # studio | presets | new | customize | list | run | check
-│   ├── studio.py           # 本地可视化编辑器与制作任务
-│   ├── studio_assets/      # 编辑器界面与真实场景缩略图
-│   ├── settings.py         # 每部影片的分层设置，工具和字体查找
-│   ├── films.py            # 影片发现和步骤运行
-│   ├── media.py            # ffmpeg：探测、编码、拼接、混流
-│   ├── blender.py          # 后台启动与共享 Blender 工具
-│   ├── procutil.py         # 跨平台的锁、进程、内存工具
-│   ├── audio/
-│   │   ├── dsp.py          # 合成、效果、混音与母带处理
-│   │   ├── speech.py       # 可选配音、录音和对齐
-│   │   └── performance.py  # 可复用的对白与口型时间表
-│   └── template/           # `codecinema new` 使用的起步影片
-├── films/
-│   ├── silvergrass/        # 示例：《芒原决战》（Blender 3D）
-│   ├── nightrevels/        # 示例：《韩熙载夜宴图 · 猫》（2D）
-│   ├── xishen/             # 《我不是戏神》开篇三集（2D 动态漫画，11 分钟）
-│   └── beacon/             # 示例：《守灯人》（Blender 3D）
-├── site/                   # 主页
-└── pyproject.toml          # 包和依赖
+├── codecinema/             # 共享影片制作框架
+│   ├── cli.py              # 命令入口与工具链检查
+│   ├── studio.py           # 本地编辑器与制作任务
+│   ├── studio_assets/      # 编辑器界面与预设缩略图
+│   ├── projects.py         # 项目创建、修改与备份
+│   ├── starters.py         # 预设选项与分镜数据校验
+│   ├── template/           # 创建新影片时复制的模板源文件
+│   ├── films.py            # 发现影片并执行制作步骤
+│   ├── settings.py         # 配置、工具与字体查找
+│   ├── blender.py          # Blender 启动与共享工具
+│   ├── media.py            # FFmpeg 编码与成片合成
+│   ├── audio/              # 音频合成、配音与口型时间
+│   ├── procutil.py         # 进程、锁与内存工具
+│   └── diagnostics.py      # 依赖检查与安装提示
+├── films/                  # 各自独立的影片项目
+│   ├── silvergrass/        # 《芒原决战》
+│   ├── nightrevels/        # 《韩熙载夜宴图 · 猫》
+│   ├── xishen/             # 《我不是戏神 · 开篇三集》
+│   └── beacon/             # 《守灯人》，下方展开说明
+├── assets/images/          # 共用图标与 README 配图
+├── site/                   # 双语项目主页与网站构建脚本
+├── .github/workflows/      # CI 与 GitHub Pages 部署
+├── README.md               # 英文上手教程与框架说明
+├── README.zh-CN.md         # 中文上手教程与框架说明
+├── CONTRIBUTING.md         # 贡献指南
+└── pyproject.toml          # 包信息与依赖
 ```
+
+一部影片内部，以[《守灯人》](films/beacon/README.zh-CN.md)为例：
+
+```text
+films/beacon/
+├── film.toml               # 影片信息、制作步骤、工具与美术设置
+├── src/                    # 本片的制作代码
+│   ├── story.py            # 镜头时间线与画面、声音共用的提示点
+│   ├── scene.py            # Blender 人物、场景、动画与摄影机
+│   ├── sound.py            # 配乐、环境声、动作音效与混音
+│   └── run.py              # 渲染、声音生成、合成与质检
+├── assets/
+│   ├── images/             # 海报与分镜图
+│   └── film/               # 最终 TheLastBeacon.mp4（运行后生成）
+├── out/                    # 渲染帧、音频中间文件与报告（运行后生成）
+├── docs/FILM_PLAN.md        # 创作规划与检查标准
+├── README.md               # 复现与定制指南
+├── README.zh-CN.md         # 中文影片指南
+└── RELEASE.md              # 已发布版本的说明
+```
+
+`film.toml` 告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 `src/` 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 `scenes.json`，供 Studio 编辑分镜。`assets/film/` 和 `out/` 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 `film.local.toml`。
 
 ## 🧭 工作原理
 
