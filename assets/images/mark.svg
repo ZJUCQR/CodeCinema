@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>CodeCinema — films made with code</title>
+  <rect width="64" height="64" rx="16" fill="#21715e"/>
+  <g stroke="#f8f7ef" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 29h40v19a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4Z"/>
+    <path d="m12 26-2-9 39-8 2 9Z" fill="#f8f7ef"/>
+    <path d="m26 36-5 5 5 5m12-10 5 5-5 5m-4-11-4 13"/>
+  </g>
+  <path d="m18 16 6 7m8-10 6 7m8-10 4 5" stroke="#21715e" stroke-width="3"/>
+</svg>

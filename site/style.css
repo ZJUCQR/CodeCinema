@@ -80,6 +80,7 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(255,255,255
 .hero .bar.top { top: 0; transform-origin: top; }
 .hero .bar.bot { bottom: 0; transform-origin: bottom; }
 @keyframes bars { from { transform: scaleY(5.6); } to { transform: scaleY(1); } }
+.hero-mark { width: 72px; height: 72px; margin: 0 auto 22px; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.3)); }
 .hero-inner { position: relative; z-index: 3; text-align: center; padding: 0 20px; }
 .kicker { font: 600 0.74rem/1 var(--sans); letter-spacing: 0.42em; text-transform: uppercase; color: var(--gold-2);
   opacity: 0; animation: rise 1.2s 0.9s ease-out forwards; }
@@ -130,15 +131,12 @@ p { margin: 0 0 16px; }
 .film-card:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 5px; }
 .film-card > img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
 .film-card-body { display: flex; flex-direction: column; flex: 1; padding: 22px; }
-.film-kind { color: var(--gold-2); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; }
-.film-card h3 { margin: 10px 0; font: 600 1.6rem/1.2 var(--serif); }
+.film-card h3 { margin: 0; font: 600 1.6rem/1.2 var(--serif); }
 .film-card p { margin: 0 0 20px; color: var(--muted); font-size: 0.93rem; }
-.film-duration { margin-top: auto; color: var(--muted); font-size: 0.8rem; }
 .film-grid .film-feature { padding-top: 0; scroll-margin-top: 100px; }
 .film-card .player { border-radius: 0; box-shadow: none; flex: none; }
 .film-card .player video { display: block; }
-.film-card-links { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; margin-top: 18px; font-size: 0.82rem; }
-.film-versions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: auto; }
+.film-versions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 18px; }
 .film-versions button { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 44px;
   padding: 10px; color: var(--muted); font: 600 0.78rem/1.3 var(--sans); text-align: left;
   background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }

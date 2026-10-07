@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0a0b0e">
 <link rel="alternate" hreflang="en" href="../">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23e0a948'/><path d='M24 20 L46 32 L24 44 Z' fill='%230a0b0e'/></svg>">
+<link rel="icon" type="image/svg+xml" href="../img/mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&family=Noto+Sans+SC:wght@400;600&family=Noto+Serif+SC:wght@600&display=swap" rel="stylesheet">
@@ -43,12 +43,12 @@
   <div class="shade"></div>
   <div class="bar top"></div><div class="bar bot"></div>
   <div class="hero-inner">
+    <img class="hero-mark" src="../img/mark.svg" width="72" height="72" alt="">
     <div class="kicker">用代码拍电影</div>
     <h1>CodeCinema</h1>
     <p class="epigraph"><span class="cn">写下影片，运行它，观看它。</span>Write the film. Run it. Watch it.</p>
     <p class="tagline">可扩展的通用影片制作框架。选模板，在 Studio 中个性化定制，一键生成 MP4；也可以接入自己的渲染器，组织完整的影片制作流程。</p>
     <div class="cta">
-      <a class="btn primary" href="#quick-start"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>开始制作</a>
       <a class="btn" href="#films">观看影片 ↓</a>
       <a class="btn" href="https://github.com/ZJUCQR/CodeCinema"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>在 GitHub 上查看</a>
     </div>
@@ -116,19 +116,6 @@ codecinema studio                    <span class="c"># 自动打开本地可视�
 codecinema customize myfilm --preset ocean --duration 20 --render
 codecinema run myfilm all --quality preview  <span class="c"># 预览另存，保留正式成片</span></code></pre>
     </div>
-    <div class="term reveal">
-      <div class="term-bar"><i></i><i></i><i></i><span class="t">films/myfilm/film.toml</span><button class="copy" type="button" data-done="已复制">复制</button></div>
-<pre><code>[film]
-id = "myfilm"
-title = "My Film"
-entry = "src/run.py"                    <span class="c"># 运行影片各步骤的脚本</span>
-steps = ["render", "audio", "assemble", "all"]
-
-[settings.video]
-width = 1920
-height = 1080
-fps = 24</code></pre>
-    </div>
   </div>
 </section>
 
@@ -137,58 +124,41 @@ fps = 24</code></pre>
     <div class="reveal">
       <p class="eyebrow">示例影片</p>
       <h2 id="films-heading">在这里，直接观看</h2>
-      <p class="lead">在这一页观看完整影片。《我不是戏神》可切换三集与合集；也可以下载成片，探索它们的制作代码。</p>
     </div>
     <div class="film-grid reveal">
       <article id="silvergrass" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-silvergrass" controls preload="metadata" playsinline poster="../media/poster.jpg" aria-label="《芒原决战》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+          <video id="film-silvergrass" controls preload="metadata" playsinline poster="../media/poster.jpg" aria-label="《芒原决战》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
             <source src="../films/SilverGrass.mp4" type="video/mp4">
             <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">下载 MP4</a></p>
           </video>
         </div>
         <div class="film-card-body">
-          <span class="film-kind">Blender 3D</span>
           <h3>《芒原决战》</h3>
-          <p>落日下的芒草原，剑、焰、雷三幕中的武士决斗。</p>
-          <span class="film-duration">2:40 · 1080p</span>
           <p class="player-status" role="status" aria-live="polite" hidden></p>
-          <div class="film-card-links">
-            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/silvergrass">制作代码</a>
-            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4">下载 MP4 ↓</a>
-          </div>
         </div>
       </article>
       <article id="nightrevels" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-nightrevels" controls preload="metadata" playsinline poster="../media/poster_nr.jpg" aria-label="《韩熙载夜宴图 · 猫》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+          <video id="film-nightrevels" controls preload="metadata" playsinline poster="../media/poster_nr.jpg" aria-label="《韩熙载夜宴图 · 猫》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
             <source src="../films/NightRevels.mp4" type="video/mp4">
             <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载 MP4</a></p>
           </video>
         </div>
         <div class="film-card-body">
-          <span class="film-kind">Skia 2D</span>
           <h3>《韩熙载夜宴图 · 猫》</h3>
-          <p>一幅活起来的宫廷夜宴长卷，每一位宾客都是猫。</p>
-          <span class="film-duration">2:08 · 1080p</span>
           <p class="player-status" role="status" aria-live="polite" hidden></p>
-          <div class="film-card-links">
-            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/nightrevels">制作代码</a>
-            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载 MP4 ↓</a>
-          </div>
         </div>
       </article>
       <article id="xishen" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-xishen" controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg" aria-label="《我不是戏神 · 开篇三集》 · 合集" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+          <video id="film-xishen" controls preload="metadata" playsinline poster="../xishen/assets/images/ep01.jpg" aria-label="《我不是戏神 · 开篇三集》 · 合集" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
             <source src="../xishen/assets/film/xishen_complete.mp4" type="video/mp4">
             <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">下载 MP4</a></p>
           </video>
         </div>
         <div class="film-card-body">
-          <span class="film-kind">Skia 动态漫画</span>
           <h3>《我不是戏神 · 开篇三集》</h3>
-          <p>陈伶雨夜归家，遇见红眼观众，开始第一次编导演练。三集共用一致的人物造型和画风，配有情绪中文对白，以及随场景变化的室内乐配乐。</p>
           <div class="film-versions" role="group" aria-label="选择剧集或合集">
             <button type="button" data-film-version data-src="../xishen/assets/film/xishen_complete.mp4" data-poster="../xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4" data-label="《我不是戏神 · 开篇三集》 · 合集" aria-controls="film-xishen" aria-pressed="true"><span>合集</span><small>11:00</small></button>
             <button type="button" data-film-version data-src="../xishen/assets/film/ep01.mp4" data-poster="../xishen/assets/images/ep01.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep01.mp4" data-label="《我不是戏神 · 开篇三集》 · 第一集" aria-controls="film-xishen" aria-pressed="false"><span>第一集</span><small>3:30</small></button>
@@ -196,29 +166,18 @@ fps = 24</code></pre>
             <button type="button" data-film-version data-src="../xishen/assets/film/ep03.mp4" data-poster="../xishen/assets/images/ep03.jpg" data-download="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/ep03.mp4" data-label="《我不是戏神 · 开篇三集》 · 第三集" aria-controls="film-xishen" aria-pressed="false"><span>第三集</span><small>4:00</small></button>
           </div>
           <p class="player-status" role="status" aria-live="polite" hidden></p>
-          <div class="film-card-links">
-            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/xishen">制作代码</a>
-            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/xishen/xishen_complete.mp4">下载 MP4 ↓</a>
-          </div>
         </div>
       </article>
       <article id="beacon" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-beacon" controls preload="metadata" playsinline poster="../img/beacon/poster.jpg" aria-label="守灯人" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4" data-error="视频暂时无法加载，请使用下方下载链接。">
+          <video id="film-beacon" controls preload="metadata" playsinline poster="../img/beacon/poster.jpg" aria-label="守灯人" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
             <source src="../films/TheLastBeacon.mp4" type="video/mp4">
             <p><a href="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4">下载 MP4</a></p>
           </video>
         </div>
         <div class="film-card-body">
-          <span class="film-kind">Blender 3D</span>
           <h3>守灯人</h3>
-          <p>云海上的机械守灯人唤醒古老星环，远方的光给出了回应。原创角色动画、氛围配乐与同步动作音效。</p>
-          <span class="film-duration">0:48 · 1080p</span>
           <p class="player-status" role="status" aria-live="polite" hidden></p>
-          <div class="film-card-links">
-            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/beacon">制作代码</a>
-            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4">下载 MP4 ↓</a>
-          </div>
         </div>
       </article>
     </div>

@@ -191,21 +191,6 @@ codecinema run myfilm all --quality preview
 
 每部影片一个目录，包含 `film.toml`、入口脚本 `src/run.py`、素材 `assets/` 和自动生成的 `out/`。个人覆盖设置放在 Git 忽略的 `film.local.toml`。
 
-```toml
-[film]
-id = "myfilm"
-title = "My Film"
-entry = "src/run.py"
-env_prefix = "MYFILM"
-steps = ["render", "audio", "assemble", "all"]
-requires = ["ffmpeg"]
-
-[settings.video]
-width = 1920
-height = 1080
-fps = 24
-```
-
 CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入口脚本。`codecinema list` 查看影片与步骤，`presets` 查看预设，`check` 检查环境，`run <id> <step>` 运行步骤。
 
 设置优先级由低到高：框架默认值 → `film.toml` 的 `[settings.*]` → `film.local.toml`（去掉 `settings.` 前缀）→ 影片前缀或 `CODECINEMA_*` 环境变量。工具还支持 `BLENDER_BIN`、`FFMPEG`、`FFPROBE`。

@@ -26,7 +26,6 @@
   filmVideos.forEach(function (video) {
     var card = video.closest("[data-film]");
     var versions = Array.from(card.querySelectorAll("[data-film-version]"));
-    var download = card.querySelector("[data-film-download]");
     var status = card.querySelector(".player-status");
     var selected = 0;
     var triedFallback = false;
@@ -42,7 +41,6 @@
       video.poster = version.dataset.poster;
       video.setAttribute("aria-label", version.dataset.label);
       video.dataset.fallback = version.dataset.download;
-      download.href = version.dataset.download;
       video.src = version.dataset.src;
       video.load();
       if (play) video.play().catch(function () { /* Native controls remain available. */ });

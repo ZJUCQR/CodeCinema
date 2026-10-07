@@ -201,21 +201,7 @@ films/<id>/
 └── out/               # generated files (git-ignored)
 ```
 
-The `[film]` table tells the framework how to run the film:
-
-```toml
-[film]
-id = "myfilm"                       # folder name and CLI name
-title = "My Film"
-title_zh = ""                       # optional second-language title
-description = "One line about the film."
-entry = "src/run.py"                # the script that runs the film's steps
-env_prefix = "MYFILM"               # MYFILM_<SECTION>_<KEY> environment overrides
-steps = ["render", "audio", "assemble", "all"]
-requires = ["ffmpeg"]               # informational, shown by `codecinema list`
-```
-
-That is the whole contract. Everything inside `src/` (the story data, the renderer, the score) belongs to the film, so a film can use Blender, 2D vector drawing, shaders, or any other way to produce frames.
+The `[film]` table declares the film’s identity, entry script, steps and requirements. Everything inside `src/` (the story data, the renderer, the score) belongs to the film, so a film can use Blender, 2D vector drawing, shaders, or any other way to produce frames.
 
 ### The command line
 
