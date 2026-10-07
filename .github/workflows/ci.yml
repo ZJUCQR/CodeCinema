@@ -23,7 +23,7 @@ jobs:
         if: runner.os == 'Linux'
         run: codecinema run ci-preview all
       - name: Byte-compile the framework and films
-        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src films/xishen/src
+        run: python -m compileall -q codecinema films/silvergrass/src films/nightrevels/src films/xishen/src films/beacon/src
       - name: List the films
         run: codecinema list
       - name: Import the framework and the pure-Python film modules
@@ -32,6 +32,8 @@ jobs:
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
           from codecinema import media, films, cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
+      - name: Synthesize the Blender example soundtrack without Blender
+        run: codecinema run beacon audio
       - name: Validate the opening trilogy's chronology and continuity
         run: >
           python -c "import sys; sys.path.insert(0,'films/xishen/src');

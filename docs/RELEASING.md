@@ -1,11 +1,12 @@
 # Publishing the example films
 
-The homepage plays the finished MP4s attached to three parallel releases:
+The homepage plays the finished MP4s attached to parallel film releases:
 
 | Film | Release tag | Finished assets |
 | --- | --- | --- |
 | Duel in the Silver Grass | `film` | `SilverGrass.mp4` |
 | The Night Revels of Han Xizai, Cat Edition | `nightrevels` | `NightRevels.mp4` |
+| The Last Beacon | `beacon` | `TheLastBeacon.mp4` |
 | I Am Not the God of Drama: The Opening Trilogy | `xishen` | `ep01.mp4`, `ep02.mp4`, `ep03.mp4`, `xishen_complete.mp4` |
 
 Finish rendering and run the film's quality checks before replacing its release
@@ -35,12 +36,12 @@ Commit and push any source, poster and webpage updates to `main` first. Upload
 all changed finished assets, then run the Pages workflow on `main`. Replacing
 an asset does not trigger a release publication event, so dispatch the workflow
 explicitly even if the release already exists. Release notes should use the
-same specification, downloads and reproduction sections for all three films,
+same specification, downloads and reproduction sections for every example film,
 and describe the actual published renderer and edition. Each film's tracked
 `RELEASE.md` is the canonical release description; publish it with `--notes-file`
 so the repository and GitHub show the same instructions.
 
-The site builder downloads only the six expected finished MP4s, verifies their
+The site builder downloads only the expected finished MP4s listed in `site/build.py`, verifies their
 sizes and GitHub-provided digests, and versions video URLs using the asset IDs.
 Each build starts in a fresh staging directory, so removed files do not survive
 from an earlier edition. A completed build replaces the old staging directory.

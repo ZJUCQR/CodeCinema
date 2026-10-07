@@ -52,15 +52,23 @@ codecinema new myfilm --preset aurora --title "My Film" --render --open
 
 ## 🎞 Example films
 
-| ![Duel in the Silver Grass](films/silvergrass/assets/images/still_190.jpg) | ![The Night Revels of Han Xizai, Cat Edition](films/nightrevels/assets/images/still_1300.jpg) | ![I Am Not the God of Drama: The Opening Trilogy](films/xishen/assets/images/still-rain.jpg) |
-| --- | --- | --- |
-| **[Duel in the Silver Grass](films/silvergrass/README.md)** | **[The Night Revels of Han Xizai, Cat Edition](films/nightrevels/README.md)** | **[I Am Not the God of Drama: The Opening Trilogy](films/xishen/README.md)** |
-| A masterless shinobi faces an old sword master in a sea of silver grass, through three acts: Blade, Fire and Thunder. | A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them. | Chen Ling's rain-soaked return, a watching audience and his first directing experiment, adapting the novel's opening six chapters in order. |
-| Blender 3D · 160 s · 30 shots | Skia 2D painting · 128 s · 13 cat breeds | Skia 2D motion comic · 11 min · 3 episodes · Mandarin speech |
-| [Watch](https://zjucqr.github.io/CodeCinema/#silvergrass) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/film) | [Watch](https://zjucqr.github.io/CodeCinema/#nightrevels) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels) | [Watch](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) |
-| `codecinema run silvergrass all` | `codecinema run nightrevels all` | `codecinema run xishen all --narration required` |
+| ![Duel in the Silver Grass](films/silvergrass/assets/images/still_190.jpg) | ![The Night Revels of Han Xizai, Cat Edition](films/nightrevels/assets/images/still_1300.jpg) |
+| --- | --- |
+| **[Duel in the Silver Grass](films/silvergrass/README.md)** | **[The Night Revels of Han Xizai, Cat Edition](films/nightrevels/README.md)** |
+| A masterless shinobi faces an old sword master in a sea of silver grass, through three acts: Blade, Fire and Thunder. | A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them. |
+| Blender 3D · 160 s · 30 shots | Skia 2D painting · 128 s · 13 cat breeds |
+| [Watch](https://zjucqr.github.io/CodeCinema/#silvergrass) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/film) | [Watch](https://zjucqr.github.io/CodeCinema/#nightrevels) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels) |
+| `codecinema run silvergrass all` | `codecinema run nightrevels all` |
 
-Watch all three on the [homepage](https://zjucqr.github.io/CodeCinema/#films), download their MP4s from the linked releases, or use `codecinema list` to explore their production steps. SilverGrass needs Blender 5.2+ and a longer render. The opening trilogy uses the same Skia 2D cast throughout, with a scene-led score and expressive Mandarin voices. Its published speech uses the optional local pack on Apple Silicon; other platforms can supply recordings. Use `--narration off` for a captions-and-music edition. Each film's guide covers setup and customization.
+| ![I Am Not the God of Drama: The Opening Trilogy](films/xishen/assets/images/still-rain.jpg) | ![The Last Beacon](films/beacon/assets/images/poster.jpg) |
+| --- | --- |
+| **[I Am Not the God of Drama: The Opening Trilogy](films/xishen/README.md)** | **[The Last Beacon](films/beacon/README.md)** |
+| Chen Ling's rain-soaked return, a watching audience and his first directing experiment, adapting the novel's opening six chapters in order. | A porcelain keeper rekindles a celestial observatory above the clouds; a distant light answers. |
+| Skia 2D motion comic · 11 min · 3 episodes · Mandarin speech | Blender 3D · 48 s · 6 shots · original score |
+| [Watch](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) | [Watch](https://zjucqr.github.io/CodeCinema/#beacon) · [Download](https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon) |
+| `codecinema run xishen all --narration required` | `codecinema run beacon all` |
+
+Watch the examples on the [homepage](https://zjucqr.github.io/CodeCinema/#films), download their MP4s from the linked releases, or use `codecinema list` to explore their production steps. SilverGrass and The Last Beacon need Blender 5.2+; 3D rendering takes longer than the 2D examples. The opening trilogy uses the same Skia 2D cast throughout, with a scene-led score and expressive Mandarin voices. Its published speech uses the optional local pack on Apple Silicon; other platforms can supply recordings. Use `--narration off` for a captions-and-music edition. Each film's guide covers setup and customization.
 
 ## 🎨 Make your own film
 
@@ -111,7 +119,8 @@ CodeCinema/
 ├── films/
 │   ├── silvergrass/        # example: Duel in the Silver Grass (Blender 3D)
 │   ├── nightrevels/        # example: The Night Revels of Han Xizai, Cat Edition (2D)
-│   └── xishen/             # opening trilogy (motion comic, 11 minutes)
+│   ├── xishen/             # opening trilogy (motion comic, 11 minutes)
+│   └── beacon/             # example: The Last Beacon (Blender 3D)
 ├── docs/                   # the framework guide
 ├── site/                   # the homepage
 └── pyproject.toml          # the package and its dependencies
@@ -121,7 +130,7 @@ CodeCinema/
 
 ![How a CodeCinema film is produced: specification, scene synthesis, rendering, sound and post-production](assets/images/pipeline.svg)
 
-**Figure 1.** How a CodeCinema film is produced. **(a)** The film is written as data: `film.toml` declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). **(b)** The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. **(c)** A renderer draws the frames in parallel, resumable chunks: Blender 3D in one example, skia 2D painting in the other. **(d)** The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. **(e)** Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.
+**Figure 1.** How a CodeCinema film is produced. **(a)** The film is written as data: `film.toml` declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). **(b)** The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. **(c)** A renderer draws the frames in parallel, resumable chunks: Blender 3D or Skia 2D painting, depending on the film. **(d)** The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. **(e)** Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.
 
 ## Contributing
 

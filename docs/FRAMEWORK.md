@@ -78,7 +78,7 @@ The module is pure standard library, so it also works inside Blender's Python.
 | `codecinema.blender` | Headless launching with film settings, assigned action-slot access and temporary modifier suspension; see the [Blender guide](BLENDER.md) |
 | `codecinema.films` | `discover()` and `Film.run(step, args)`, the logic behind the CLI |
 
-A film whose modules import each other by bare name (`import settings`, `import dsp`) can keep doing so with a tiny alias module that points the name at the framework, which is what both examples do:
+A film whose modules import each other by bare name (`import settings`, `import dsp`) can keep doing so with a tiny alias module that points the name at the framework, as demonstrated by SilverGrass and NightRevels:
 
 ```python
 # films/<id>/src/audio/dsp.py
@@ -108,7 +108,7 @@ The template defaults to a 12-second, three-scene film with synthesized stereo m
 `customize` and Studio accept films marked `[film] template = "starter-v1"`. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table; `codecinema/starters.py` holds the shared starter JSON validation and choices.
 
 To grow it into a real film:
-1. **Write the story as data first.** Timeline, shots, cue frames, tempo and the score as notes, all in one config module. Both examples derive every frame number from it.
+1. **Write the story as data first.** Timeline, shots, cue frames, tempo and the score as notes, all in one config module. Keep picture and sound on this shared clock.
 2. **Keep the renderer deterministic.** Seed every random choice, so a frame renders the same way every time and a partial re-render matches.
 3. **Make motion and sound share a clock.** Actions emit timed events and the audio engine places sounds from them, or the reverse: the score drives the animation of the musicians.
 4. **Render in resumable chunks.** Encode frames straight into segments (see `media.encoder`), skip finished ones, and join them at the end with `media.concat`.
@@ -127,4 +127,6 @@ To grow it into a real film:
 
 The [opening trilogy](../films/xishen/README.md) adds a longer 2D motion-comic pipeline: 67 shots across three episodes, a sourced character ledger, local emotional speech and aligned dialogue, subtitles, chapters and media/continuity QC. It shares the framework's settings, DSP and FFmpeg helpers while keeping its story-specific renderer separate from the generic starter.
 
-The [Blender guide](BLENDER.md) covers SilverGrass’s production architecture and the reusable renderer tools.
+[The Last Beacon](../films/beacon/README.md) adds a compact 48-second Blender pipeline: one continuous character performance across six camera shots, procedural geometry and materials, volume clouds, and an original stereo score synchronized through shared cue times. It provides quick stills, settings-aware frame caching, atomic render writes, and full-decode and audio checks before publishing the master.
+
+The [Blender guide](BLENDER.md) covers both Blender productions and the reusable renderer tools.

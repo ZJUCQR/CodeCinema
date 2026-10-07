@@ -19,7 +19,7 @@ classifiers = [
   "Topic :: Multimedia :: Video",
 ]
 # Python packages for the framework and its example films. External tools: ffmpeg (all films) and Blender >= 5.2
-# (the SilverGrass example only).
+# (the SilverGrass and The Last Beacon examples).
 dependencies = ["numpy>=2.0", "scipy>=1.13", "pillow>=10.0", "matplotlib>=3.8", "pyloudnorm>=0.1.1",
                 "skia-python>=87.0"]
 

@@ -1,6 +1,6 @@
 # Blender in CodeCinema
 
-CodeCinema includes a complete Blender production: [Duel in the Silver Grass](../films/silvergrass/README.md). Blender is one of the framework's supported renderers. The starter and the opening trilogy use Skia. Each film declares its own renderer and production steps.
+CodeCinema includes two Blender productions: [Duel in the Silver Grass](../films/silvergrass/README.md) and [The Last Beacon](../films/beacon/README.md). Blender is one of the framework's supported renderers. The starter and the opening trilogy use Skia. Each film declares its own renderer and production steps.
 
 Install [Blender 5.2 or later](https://www.blender.org/download/) and follow the [framework installation guide](GETTING_STARTED.md). Standard installation locations and `PATH` are detected. Set `BLENDER_BIN` if Blender is elsewhere.
 
@@ -26,6 +26,22 @@ The first command checks the toolchain. The second builds the rigged, animated s
 | [audio/score.py](../films/silvergrass/src/audio/score.py) | Music arranged against the film's action events |
 
 These modules share SilverGrass's two-character configuration, bone conventions, time warps and choreography lanes. Importing its walking or secondary-motion modules directly into an unrelated cast does not create a compatible rig. Its scene design remains inside that film.
+
+## A compact production to learn from
+
+[The Last Beacon](../films/beacon/README.md) is a 48-second original short with six shots, an articulated automaton, procedural materials, volumetric clouds, a synthesized score and synchronized Foley. It uses the shared Blender launcher with four readable Python files:
+
+- `story.py`: shot boundaries and shared action/sound cues.
+- `scene.py`: scene construction, continuous-time acting, cameras and atomic frame writes.
+- `sound.py`: deterministic music, ambience and effects stems.
+- `run.py`: source-aware render caching, assembly, full decoding and encoded-audio QC.
+
+```bash
+codecinema run beacon still       # inspect six quick frames
+codecinema run beacon all         # render, score, assemble and verify
+```
+
+This is also a working example of Blender 5.2's compositor node-group and menu-socket API. Its [film guide](../films/beacon/README.md#personalize) demonstrates `film.local.toml` overrides for render samples, exposure and character colors.
 
 ## Reuse the shared Blender tools
 

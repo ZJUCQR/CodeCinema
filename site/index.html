@@ -202,6 +202,25 @@ fps = 24</code></pre>
           </div>
         </div>
       </article>
+      <article id="beacon" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-beacon" controls preload="metadata" playsinline poster="img/beacon/poster.jpg" aria-label="The Last Beacon" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4" data-error="The video could not load. Use the download link below.">
+            <source src="films/TheLastBeacon.mp4" type="video/mp4">
+            <p><a href="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <span class="film-kind">Blender 3D</span>
+          <h3>The Last Beacon</h3>
+          <p>A porcelain keeper, an ancient observatory and a distant light that answers. Original character animation, atmospheric music and synchronized sound.</p>
+          <span class="film-duration">0:48 · 1080p</span>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+          <div class="film-card-links">
+            <a href="https://github.com/ZJUCQR/CodeCinema/tree/main/films/beacon">Explore the source</a>
+            <a data-film-download href="https://github.com/ZJUCQR/CodeCinema/releases/download/beacon/TheLastBeacon.mp4">Download MP4 ↓</a>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -227,7 +246,8 @@ fps = 24</code></pre>
 ├── films/
 │   ├── silvergrass/        <span class="c"># example: Duel in the Silver Grass (Blender 3D)</span>
 │   ├── nightrevels/        <span class="c"># example: The Night Revels of Han Xizai, Cat Edition (2D)</span>
-│   └── xishen/             <span class="c"># example: I Am Not the God of Drama (motion comic)</span>
+│   ├── xishen/             <span class="c"># example: I Am Not the God of Drama (motion comic)</span>
+│   └── beacon/             <span class="c"># example: The Last Beacon (Blender 3D)</span>
 ├── docs/                   <span class="c"># the framework guide</span>
 ├── site/                   <span class="c"># this homepage</span>
 └── pyproject.toml          <span class="c"># the package and its dependencies</span></code></pre>

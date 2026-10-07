@@ -1,0 +1,23 @@
+[film]
+id = "beacon"
+title = "The Last Beacon"
+title_zh = "守灯人"
+description = "A wordless Blender short: a porcelain keeper rekindles an observatory above the clouds."
+entry = "src/run.py"
+steps = ["check", "still", "render", "audio", "assemble", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[settings.tools]
+blender = ""
+ffmpeg = ""
+ffprobe = ""
+
+[settings.render]
+samples_final = 48
+samples_preview = 24
+exposure = -0.4
+
+[settings.art]
+porcelain = [0.72, 0.79, 0.75]
+brass = [0.52, 0.28, 0.085]
+scarf = [0.38, 0.035, 0.027]
