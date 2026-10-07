@@ -28,4 +28,4 @@ codecinema customize __FILM_ID__ --format portrait --quality high --render --ope
 
 Every visual or CLI customization saves the previous `scenes.json` and root `pyproject.toml` in `out/edits/`. When undoing, restore only this film’s configuration tables so other projects keep their edits. Render all after changes, or keep identical options for `render`, `audio`, `assemble` and `qc`. Assembly rejects stale or mismatched stages. A storyboard and verification report are saved in `out/master/` (or `out/preview/`).
 
-The [simple tutorial](../../README.md#quick-start) covers installation and your first film. The [framework guide](../../README.md#framework) explains writing a custom renderer.
+The [simple tutorial](../../README.md#quick-start) covers installation and your first film. The [framework overview](../../README.md#framework) links to complete example productions.

@@ -70,6 +70,6 @@ codecinema run beacon assemble
 
 ![成片六镜头](assets/images/storyboard.jpg)
 
-接入自己的渲染器可参考[Blender 指南](../../README.md#blender)。示例图片和影片均由仓库内的场景代码渲染，整体采用风格化动画美术。
+环境准备可参考 [Blender 安装说明](../../README.zh-CN.md#blender)。示例图片和影片均由仓库内的场景代码渲染，整体采用风格化动画美术。
 
 唯一作者：**ZJUCQR**。代码与原创程序化资产采用 [MIT](../../LICENSE) 许可。

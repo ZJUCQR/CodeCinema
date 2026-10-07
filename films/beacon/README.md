@@ -70,6 +70,6 @@ codecinema run beacon assemble
 
 ![Six shots from the finished film](assets/images/storyboard.jpg)
 
-Read the shared [Blender guide](../../README.md#blender) to build your own renderer. The images and film are rendered from the included scene code. This is a stylized animated production.
+See the [Blender setup](../../README.md#blender) to get started. The images and film are rendered from the included scene code. This is a stylized animated production.
 
 Author: **ZJUCQR**. Code and original procedural assets: [MIT](../../LICENSE).
