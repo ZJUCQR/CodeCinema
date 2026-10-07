@@ -433,28 +433,6 @@ See [I Am Not the God of Drama](films/xishen/README.md) for a complete productio
 </details>
 
 
-<a id="troubleshooting"></a>
-
-## 🔧 Troubleshooting
-
-<details>
-<summary>Find a fix</summary>
-
-| Symptom | Fix |
-| --- | --- |
-| `codecinema` is not found | Use `.venv/bin/python -m codecinema` on macOS/Linux, or `.\.venv\Scripts\python.exe -m codecinema` on Windows |
-| A Python package is missing | Run the install command above with the same environment you use to launch Studio |
-| FFmpeg or `ffprobe` is missing | Install FFmpeg, reopen the terminal on Windows, then run `python -m codecinema check` |
-| Skia cannot load a Linux graphics library | Install `libgl1`, `libegl1` and `libfontconfig1` with your package manager. Studio reports the original loader error |
-| Chinese characters are unsupported | Install Noto Sans CJK (`fonts-noto-cjk` on Ubuntu), or set `[fonts] ui = "/path/to/font.ttf"` in the film's `film.local.toml` |
-| The ID already exists | Choose a new ID, or select the saved film in Studio. Use `customize` from the CLI |
-| The port is in use | Run `python -m codecinema studio --port 8788` |
-| Assembly says settings differ | Run `all`, or repeat every stage with identical quality, format, duration and FPS options |
-| An edit needs undoing | Restore `scenes.json` from `out/edits/<timestamp>/`. Copy only this film’s tables from the saved `pyproject.toml` into the root configuration, then render again |
-
-</details>
-
-
 <a id="publishing"></a>
 
 ## 📦 Publishing

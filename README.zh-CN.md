@@ -298,28 +298,6 @@ codecinema run myfilm all --speech-engine local
 </details>
 
 
-<a id="troubleshooting"></a>
-
-## 🔧 常见问题
-
-<details>
-<summary>展开查看解决方法</summary>
-
-| 情况 | 解决方法 |
-| --- | --- |
-| 找不到 `codecinema` 命令 | 直接使用上面的虚拟环境 Python 路径，加 `-m codecinema` |
-| 缺少 Python 包 | 用启动 Studio 的同一虚拟环境重新执行安装命令 |
-| 找不到 FFmpeg / `ffprobe` | 安装 FFmpeg。Windows 重开终端后再检查 |
-| Linux 无法加载 Skia 图形库 | 用包管理器安装 `libgl1`、`libegl1` 和 `libfontconfig1`，Studio 会显示具体加载错误 |
-| 中文无法显示 | 安装 Noto Sans CJK（Ubuntu 用 `fonts-noto-cjk`），或在影片 `film.local.toml` 写 `[fonts]` 和 `ui = "/字体文件路径/font.ttf"` |
-| 影片 ID 已存在 | 换一个 ID。或从“我的影片”打开原作品，命令行用 `customize` |
-| 端口被占用 | 启动时加 `studio --port 8788` |
-| 合成提示设置不一致 | 直接运行 `all`。分步制作需使用相同的画质、画幅、时长和帧率 |
-| 想撤回修改 | 从 `out/edits/<时间戳>/` 恢复 `scenes.json`，将备份 `pyproject.toml` 中仅属于这部影片的配置表恢复到根配置，再生成一次 |
-
-</details>
-
-
 <a id="publishing"></a>
 
 ## 📦 发布
