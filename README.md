@@ -48,7 +48,7 @@ Studio provides a simple path from a template to a finished MP4. The example fil
 
 ## 🚀 Quick start
 
-You need **Python 3.12+**, Git and **FFmpeg** (which includes `ffprobe`). Clone the repository, then expand the commands for your operating system:
+You need **Python 3.12+**, Git and **FFmpeg**. Clone the repository, then expand the commands for your operating system:
 
 ```bash
 git clone https://github.com/ZJUCQR/CodeCinema.git

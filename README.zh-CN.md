@@ -48,7 +48,7 @@ CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来
 
 ## 🚀 快速开始
 
-需要 **Python 3.12+、Git 和 FFmpeg**（含 `ffprobe`）。先克隆仓库，然后展开对应系统的安装命令：
+需要 **Python 3.12+、Git 和 FFmpeg**。先克隆仓库，然后展开对应系统的安装命令：
 
 ```bash
 git clone https://github.com/ZJUCQR/CodeCinema.git
