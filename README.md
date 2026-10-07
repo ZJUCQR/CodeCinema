@@ -199,7 +199,7 @@ The root `pyproject.toml` table `[tool.codecinema.films.<id>]` declares the film
 
 ## 🎬 Blender
 
-CodeCinema includes two Blender productions: [Duel in the Silver Grass](films/silvergrass/README.md) and [The Last Beacon](films/beacon/README.md). Blender is one of the framework's supported renderers. The starter and I Am Not the God of Drama use Skia. Each film declares its own renderer and production steps.
+Blender is one of the framework's supported renderers. The starter and I Am Not the God of Drama use Skia. Each film declares its own renderer and production steps.
 
 Install [Blender 5.2 or later](https://www.blender.org/download/) and follow the [framework installation guide](#quick-start). Standard installation locations and `PATH` are detected. Set `BLENDER_BIN` if Blender is elsewhere.
 
