@@ -182,9 +182,6 @@ Cameras: `wide`, `drift`, `close`. Each scene must last at least 0.5 seconds. To
 
 ## 🧩 Framework development
 
-<details>
-<summary>Film contract, settings and shared modules</summary>
-
 ```
 films/<id>/
 ├── film.local.toml    # optional, git-ignored: personal [video], [audio], etc. overrides
@@ -262,15 +259,10 @@ To grow it into a real film:
 4. **Render in resumable chunks.** Encode frames straight into segments (see `media.encoder`), skip finished ones, and join them at the end with `media.concat`.
 5. **Add steps as you need them.** Previews, stills, QC: list them in `steps` and handle them in `run.py`.
 
-</details>
-
 
 <a id="blender"></a>
 
 ## 🎬 Blender
-
-<details>
-<summary>Build a Blender production</summary>
 
 CodeCinema includes two Blender productions: [Duel in the Silver Grass](films/silvergrass/README.md) and [The Last Beacon](films/beacon/README.md). Blender is one of the framework's supported renderers. The starter and I Am Not the God of Drama use Skia. Each film declares its own renderer and production steps.
 
@@ -345,15 +337,10 @@ for curve in fcurves_of(camera, "location"):
 
 [`codecinema.audio.performance`](codecinema/audio/performance.py) is also usable inside Blender. Its `Performance.mouth(time, character)` returns speech activity and syllable shapes from the final recorded take. Use the shot's own time in seconds and the same audio start offset when muxing. Narration and thoughts must not drive a visible character's mouth. See the [speech guide](#speech).
 
-</details>
-
 
 <a id="speech"></a>
 
 ## 🎙️ Voices and mouth timing
-
-<details>
-<summary>Expressive speech, recordings and character timing</summary>
 
 The eight starter looks support optional spoken text per scene. Keep the voice text empty for the usual music-only film.
 
@@ -430,70 +417,6 @@ The envelope closes the mouth during actual pauses. Aligned consonants and vowel
 
 See [I Am Not the God of Drama](films/xishen/README.md) for a complete production with character voices, alignment, subtitles and media QC.
 
-</details>
-
-
-<a id="publishing"></a>
-
-## 📦 Publishing
-
-<details>
-<summary>GitHub Releases and the project page</summary>
-
-The homepage plays the finished MP4s attached to parallel film releases:
-
-| Film | Release tag | Finished assets |
-| --- | --- | --- |
-| Duel in the Silver Grass | `film` | `SilverGrass.mp4` |
-| The Night Revels of Han Xizai, Cat Edition | `nightrevels` | `NightRevels.mp4` |
-| The Last Beacon | `beacon` | `TheLastBeacon.mp4` |
-| I Am Not the God of Drama | `xishen` | `ep01.mp4`, `ep02.mp4`, `ep03.mp4`, `xishen_complete.mp4` |
-
-Finish rendering and run the film's quality checks before replacing its release
-assets. Keep the filenames stable so existing download links continue to work.
-Attach finished films only. Intermediate clips, frames,
-diagnostics and checksum files belong in the local ignored output directory.
-Unchanged films already match their release and do not need uploading again.
-The film-name tags identify the current published source edition. Keep them
-aligned with the source commit used for the finished masters.
-
-For I Am Not the God of Drama, run from the repository root:
-
-```bash
-codecinema run xishen all --narration required --speech-engine local
-git push origin main
-gh release upload xishen films/xishen/assets/film/ep01.mp4 films/xishen/assets/film/ep02.mp4 films/xishen/assets/film/ep03.mp4 films/xishen/assets/film/xishen_complete.mp4 --clobber
-gh workflow run pages.yml --ref main
-```
-
-The trilogy uses Skia throughout. `all` regenerates changed inputs and reuses
-completed render chunks only when their source and settings signatures match.
-
-Commit and push any source, poster and webpage updates to `main` first. Upload
-all changed finished assets, then run the Pages workflow on `main`. Replacing
-an asset does not trigger a release publication event, so dispatch the workflow
-explicitly even if the release already exists. Release notes should use the
-same specification, downloads and reproduction sections for every example film,
-and describe the actual published renderer and edition. Manage release descriptions directly on GitHub for all films.
-
-The site builder downloads only the expected finished MP4s listed in `site/build.py`, verifies their
-sizes and GitHub-provided digests, and versions video URLs using the asset IDs.
-Each build starts in a fresh staging directory, so removed files do not survive
-from an earlier edition. A completed build replaces the old staging directory.
-Incomplete releases fail the build before deployment, keeping the previous
-site online. The homepage keeps the same media edition when switching episodes.
-
-To inspect the assembled site locally:
-
-```bash
-python3 site/build.py
-python3 -m http.server 8080 --directory out/site
-```
-
-Custom output directories must be empty or contain a previous CodeCinema site
-build marker. Repository source folders are rejected as output paths.
-
-</details>
 
 ## 🗂 Project layout
 

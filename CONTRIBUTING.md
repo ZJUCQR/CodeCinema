@@ -33,5 +33,3 @@ codecinema new checkfilm --preset aurora --duration 3 --quality preview --render
 For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI checks project creation and imports on macOS, Linux and Windows, and renders a short sample on Linux.
 
 Open a focused pull request explaining the problem, the resulting behavior and the checks you ran. Include a screenshot or short preview when the visual result changes. Report bugs in [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) with your OS, Python and FFmpeg versions, the command or Studio action, and the relevant error message. Remove private paths and credentials from logs.
-
-For release assets, canonical notes and Pages deployment, see [Publishing](README.md#publishing).

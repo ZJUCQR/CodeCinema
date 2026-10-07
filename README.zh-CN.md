@@ -180,9 +180,6 @@ codecinema run myfilm all --quality preview
 
 ## 🧩 框架开发
 
-<details>
-<summary>影片接口、设置和共享模块</summary>
-
 每部影片一个目录，包含入口脚本 `src/run.py`、素材 `assets/` 和自动生成的 `out/`。个人覆盖设置放在 Git 忽略的 `film.local.toml`。
 
 影片配置统一放在根目录 `pyproject.toml` 的 `[tool.codecinema.films.<id>]` 表中，具体参数位于其 `settings` 子表。Studio 和 `codecinema new` 会根据 `[tool.codecinema.starter]` 默认值自动登记新影片。CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入口脚本。`codecinema list` 查看影片与步骤，`presets` 查看预设，`check` 检查环境，`run <id> <step>` 运行步骤。
@@ -205,15 +202,10 @@ Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `te
 
 开发时将故事、动作和音效放在同一时间线上，固定随机种子，用可续渲分块减少重复计算。完整接口示例见[英文参考](README.md#framework)。
 
-</details>
-
 
 <a id="blender"></a>
 
 ## 🎬 Blender
-
-<details>
-<summary>接入 Blender 渲染器</summary>
 
 安装 [Blender 5.2+](https://www.blender.org/download/)。框架自动查找标准安装目录和 `PATH`。其他位置可设置 `BLENDER_BIN`。
 
@@ -233,15 +225,10 @@ blender.run("src/build_scene.py", "--quality", "preview")
 
 `run()` 在当前影片目录后台执行 Blender。`command()` 返回命令参数供自定义进程管理使用。`fcurves_of()`、`channelbag_of()` 支持 Blender 5 的动作槽。`muted_modifiers()` 临时关闭视口修改器，并在异常后恢复。`Performance.mouth()` 可驱动 Blender 角色口型。使用与最终声音一致的镜头时间和起始偏移。更多示例见[英文参考](README.md#blender)。
 
-</details>
-
 
 <a id="speech"></a>
 
 ## 🎙️ 配音与口型
-
-<details>
-<summary>情绪配音、录音与角色口型</summary>
 
 八种模板都支持逐镜头配音。台词留空时仍生成配乐版，不需要语音模型。
 
@@ -295,37 +282,6 @@ codecinema run myfilm all --speech-engine local
 
 完整接口示例见[英文指南](README.md#speech)，完整制作示例见[开篇三集](films/xishen/README.zh-CN.md)。
 
-</details>
-
-
-<a id="publishing"></a>
-
-## 📦 发布
-
-<details>
-<summary>GitHub Release 与项目主页</summary>
-
-每部示例对应一个平行 Release，只上传最终 MP4，不上传校验文件、预览、帧或诊断报告。保持文件名稳定。未变化的影片无需重新上传。发布标签应指向成片实际使用的源码版本。
-
-| 标签 | 成片 |
-| --- | --- |
-| `film` | `SilverGrass.mp4` |
-| `nightrevels` | `NightRevels.mp4` |
-| `beacon` | `TheLastBeacon.mp4` |
-| `xishen` | `ep01.mp4`、`ep02.mp4`、`ep03.mp4`、`xishen_complete.mp4` |
-
-先完成渲染和影片质检，再推送源码、海报和页面。用 `gh release upload <tag> <MP4路径> --clobber` 更新有变化的成片。所有影片的发布说明统一在 GitHub Release 页面编辑。
-
-素材上传完成后执行 `gh workflow run pages.yml --ref main`。替换附件不会触发新版本发布事件。网站构建器只下载声明的成片，验证大小和摘要，用附件 ID 更新缓存。素材不完整时保留线上旧站。
-
-```bash
-python3 site/build.py
-python3 -m http.server 8080 --directory out/site
-```
-
-自定义输出目录必须为空或包含之前的网站构建标记。不允许覆盖仓库源文件夹。完整发布示例见[英文参考](README.md#publishing)。
-
-</details>
 
 ## 🗂 项目结构
 
