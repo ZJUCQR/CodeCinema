@@ -1,5 +1,5 @@
 """
-flash_qc.py - photosensitivity check of a rendered frame directory (docs/STAGING.md §5, HARD rule).
+flash_qc.py - photosensitivity check of a rendered frame directory using the limits below.
 
     .venv/bin/python src/tools/flash_qc.py out/frames [--start N --end M] [--json report.json] [--plot lum.png]
         [--strict]

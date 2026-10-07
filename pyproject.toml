@@ -21,7 +21,7 @@ classifiers = [
 # Python packages for the framework and its example films. External tools: ffmpeg (all films) and Blender >= 5.2
 # (the SilverGrass and The Last Beacon examples).
 dependencies = ["numpy>=2.0", "scipy>=1.13", "pillow>=10.0", "matplotlib>=3.8", "pyloudnorm>=0.1.1",
-                "skia-python>=87.0"]
+                "skia-python>=87.0", "tomlkit>=0.13"]
 
 [project.optional-dependencies]
 speech = ["mlx-audio==0.5.8; sys_platform == 'darwin' and platform_machine == 'arm64'", "pypinyin>=0.55"]
@@ -45,3 +45,202 @@ codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
 [tool.ruff]
 line-length = 120
 extend-exclude = ["out", ".venv"]
+
+# Film metadata and settings. Paths are relative to films/<id>/.
+
+[tool.codecinema.films.silvergrass]
+title = "Duel in the Silver Grass"
+title_zh = "芒原决战"
+description = "A 160-second animated samurai duel: Blender 3D characters, choreography and VFX, a synthesized score."
+entry = "src/run.py"
+env_prefix = "SILVERGRASS"
+steps = ["check", "build", "preview", "render", "audio", "titles", "assemble", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[tool.codecinema.films.silvergrass.settings.paths]
+out_dir = "out"                                   # every generated file (scene, frames, audio, previews)
+final_video = "assets/film/芒原决战_Final.mp4"     # the mastered film
+lock_dir = ""                                     # render-slot lock files shared by every process; "" = <out_dir>/.locks
+
+[tool.codecinema.films.silvergrass.settings.tools]
+blender = ""        # Blender >= 5.2; auto: $BLENDER_BIN, `blender` on PATH, standard install folders
+ffmpeg = ""         # auto: $FFMPEG, `ffmpeg` on PATH
+ffprobe = ""        # auto: $FFPROBE, `ffprobe` on PATH
+python = ""         # interpreter for plots launched from Blender; auto: .venv, then python3 on PATH
+
+[tool.codecinema.films.silvergrass.settings.fonts]
+# Title-card fonts (TTF/OTF/TTC). Auto-detection searches the OS font folders and assets/fonts/ for known file
+# names (e.g. STXingkai, Weibei, Kaiti, Songti, Zhi Mang Xing, Ma Shan Zheng, LXGW WenKai, Noto Serif CJK).
+calligraphy = ""    # main title, name cards, act cards, "End"
+weibei = ""         # heavy display face
+kaiti = ""          # epigraph, credit line
+song = ""           # small print
+ui = ""             # labels on diagnostic sheets (pose atlas); auto: Arial / Helvetica / DejaVu Sans
+mono = ""           # contact-sheet captions; auto: Menlo / Consolas / DejaVu Sans Mono
+
+[tool.codecinema.films.silvergrass.settings.render]
+width = 1920                        # render size (2.35:1), letterboxed to the delivery size in post
+height = 816
+preview_scale = 0.3333              # preview / layout renders
+samples_final = 16                  # EEVEE samples (32+ = cleaner, roughly linearly slower)
+samples_preview = 8
+motion_blur = true
+mb_shutter = 0.5                    # motion-blur shutter (fraction of a frame)
+mb_steps = 1                        # motion-blur time steps (per-shot overrides in config.SHOT_RENDER)
+mb_steps_sparks = 2                 # steps on frames with fast spark / trail VFX
+mb_max_px = 40                      # motion-blur length cap in pixels
+filter_size = 1.5                   # pixel filter width
+shadow_pool_mb = 1024               # EEVEE shadow pool (lower on GPUs with little memory)
+volumetric_tile = 8                 # volumetric tile size in px (smaller = sharper, slower)
+volumetric_samples = 64
+png_depth = "8"                     # frame PNG bit depth: "8" or "16"
+png_compression = 15                # frame PNG compression (0-100)
+grass_density_final = 1.0           # fraction of grass instances
+grass_density_preview = 0.25
+grass_density_layout = 0.12
+slots = 2                           # concurrent Blender renders
+lock = true                         # share render slots between processes through lock files
+min_free_mem_gb = 4.5               # free memory needed before another render slot starts
+expected_seconds_per_frame = 12.0   # watchdog estimate before real timings exist
+retries = 2                         # render retries per chunk before the fallback
+watchdog_factor = 3.0               # a chunk is stuck after factor x expected time + grace
+watchdog_grace_s = 120.0
+progress_interval_s = 30.0          # supervisor progress line interval
+tmp_max_age_s = 600.0               # orphaned temporary frames older than this are swept
+
+[tool.codecinema.films.silvergrass.settings.video]
+delivery_width = 1920
+delivery_height = 1080
+codec = "libx264"
+crf = 16                            # final master quality (lower = larger, better)
+preset = "slow"
+pix_fmt = "yuv420p"
+audio_bitrate = "320k"
+preview_width = 960                 # `assemble --preview`
+preview_height = 540
+preview_crf = 23
+preview_preset = "veryfast"
+preview_audio_bitrate = "192k"
+review_crf = 20                     # single-act review clips (`preview <lane>`)
+review_audio_bitrate = "128k"
+
+[tool.codecinema.films.silvergrass.settings.audio]
+sample_rate = 48000
+target_lufs = -14.0                 # integrated loudness of the master
+true_peak_db = -1.0                 # true-peak ceiling (dBTP)
+loudness_tolerance_lu = 1.0         # QC tolerance around target_lufs
+aac_pre_limiter_db = -2.5           # limiter before AAC encoding when the encoded true peak overshoots
+
+[tool.codecinema.films.silvergrass.settings.post]
+title_jobs = 0                      # parallel title-card workers; 0 = auto
+titles_lock_timeout_s = 900.0
+
+[tool.codecinema.films.silvergrass.settings.dev]
+demo_raise = false                  # make the demo lane raise on QA warnings
+
+[tool.codecinema.films.nightrevels]
+title = "The Night Revels of Han Xizai, Cat Edition"
+title_zh = "韩熙载夜宴图 · 猫"
+description = "A 128-second living handscroll: gongbi cats in Tang court costume, drawn as 2D vector puppets on silk."
+entry = "src/run.py"
+env_prefix = "NIGHTREVELS"
+steps = ["build", "still", "render", "audio", "assemble", "all"]
+requires = ["ffmpeg"]
+
+[tool.codecinema.films.nightrevels.settings.paths]
+out_dir = "out"                                 # generated files (events, notes, silk cache, video chunks, audio)
+final_video = "assets/film/NightRevels.mp4"     # the mastered film
+
+[tool.codecinema.films.nightrevels.settings.tools]
+ffmpeg = ""          # auto: $FFMPEG, `ffmpeg` on PATH
+ffprobe = ""
+
+[tool.codecinema.films.nightrevels.settings.render]
+jobs = 0             # parallel render processes; 0 = all CPU cores but two
+chunk = 96           # frames per encoded chunk (the resumable unit)
+crf = 15             # x264 quality of the picture chunks (lower = larger, better)
+preset = "medium"
+
+[tool.codecinema.films.nightrevels.settings.video]
+audio_bitrate = "320k"
+
+[tool.codecinema.films.nightrevels.settings.audio]
+sample_rate = 48000
+target_lufs = -14.0
+true_peak_db = -1.0
+
+[tool.codecinema.films.xishen]
+title = "I Am Not the God of Drama · Opening Trilogy"
+title_zh = "我不是戏神 · 开篇三集"
+description = "Three reproducible motion-comic episodes adapting chapters 1–6, with a shared cast, continuity ledger, Mandarin narration, score and subtitles."
+entry = "src/run.py"
+env_prefix = "XISHEN"
+steps = ["plan", "stills", "render", "audio", "assemble", "qc", "all"]
+requires = ["ffmpeg"]
+
+[tool.codecinema.films.xishen.settings.paths]
+out_dir = "out"
+final_video = "assets/film/xishen_complete.mp4"
+
+[tool.codecinema.films.xishen.settings.video]
+width = 1920
+height = 1080
+fps = 24
+crf = 18
+preset = "fast"
+audio_bitrate = "256k"
+
+[tool.codecinema.films.xishen.settings.render]
+jobs = 3
+
+[tool.codecinema.films.xishen.settings.audio]
+sample_rate = 48000
+target_lufs = -16.0
+true_peak_db = -1.0
+narration = "auto"
+voice = "Tingting"
+speech_rate = 185
+
+[tool.codecinema.films.beacon]
+title = "The Last Beacon"
+title_zh = "守灯人"
+description = "A wordless Blender short: a porcelain keeper rekindles an observatory above the clouds."
+entry = "src/run.py"
+steps = ["check", "still", "render", "audio", "assemble", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[tool.codecinema.films.beacon.settings.tools]
+blender = ""
+ffmpeg = ""
+ffprobe = ""
+
+[tool.codecinema.films.beacon.settings.render]
+samples_final = 48
+samples_preview = 24
+exposure = -0.4
+
+[tool.codecinema.films.beacon.settings.art]
+porcelain = [0.72, 0.79, 0.75]
+brass = [0.52, 0.28, 0.085]
+scarf = [0.38, 0.035, 0.027]
+
+[tool.codecinema.starter]
+description = "A configurable three-scene starter with synthesized music."
+entry = "src/run.py"
+template = "starter-v1"
+steps = ["plan", "stills", "render", "audio", "assemble", "qc", "all"]
+requires = ["ffmpeg", "ffprobe"]
+
+[tool.codecinema.starter.settings.paths]
+out_dir = "out"
+
+[tool.codecinema.starter.settings.video]
+width = 1920
+height = 1080
+fps = 24
+crf = 16
+preset = "medium"
+
+[tool.codecinema.starter.settings.audio]
+sample_rate = 48000
+true_peak_db = -1.0

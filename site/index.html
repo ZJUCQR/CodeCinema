@@ -66,7 +66,7 @@
     </div>
     <div class="hls">
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>Choose, personalize, render</h3><p>The local Studio offers eight animated looks, editable scene cards, titles, captions, colors and three frame shapes. Choose a world and press Render to get an MP4 with original music.</p></div></div>
-      <div class="hl reveal"><div class="ic">🧩</div><div><h3>A small contract, any renderer</h3><p>A film declares its steps in <code>film.toml</code>, and <code>codecinema run &lt;film&gt; &lt;step&gt;</code> runs them with that film's settings. Blender, vector drawing, shaders: anything that writes frames fits.</p></div></div>
+      <div class="hl reveal"><div class="ic">🧩</div><div><h3>A small contract, any renderer</h3><p>A film declares its steps in <code>pyproject.toml</code>, and <code>codecinema run &lt;film&gt; &lt;step&gt;</code> runs them with that film's settings. Blender, vector drawing, shaders: anything that writes frames fits.</p></div></div>
       <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The films share a DSP library: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
       <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices with acting direction</h3><p>Add recorded dialogue or generate expressive voices locally on Apple Silicon. The shared performance tools turn speech timing into mouth animation, with aligned syllables when available.</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Deterministic renders, resumable parallel jobs, layered settings without editing tracked files, and helpers that work on macOS, Linux and Windows.</p></div></div>
@@ -202,6 +202,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 │   ├── starters.py         <span class="c"># preset choices and scene validation</span>
 │   ├── template/           <span class="c"># source copied into new starter films</span>
 │   ├── films.py            <span class="c"># film discovery and step execution</span>
+│   ├── registry.py         <span class="c"># workspace film configuration</span>
 │   ├── settings.py         <span class="c"># configuration, tools and fonts</span>
 │   ├── blender.py          <span class="c"># Blender launcher and shared helpers</span>
 │   ├── media.py            <span class="c"># FFmpeg encoding and assembly</span>
@@ -216,13 +217,12 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 ├── assets/images/          <span class="c"># shared branding and README illustrations</span>
 ├── site/                   <span class="c"># bilingual project page and site builder</span>
 ├── .github/workflows/      <span class="c"># CI and GitHub Pages deployment</span>
-└── pyproject.toml          <span class="c"># package metadata and dependencies</span></code></pre>
+└── pyproject.toml          <span class="c"># package dependencies and all film configurations</span></code></pre>
     </div>
     <p class="lead reveal">Inside a film, using <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/films/beacon/README.md">The Last Beacon</a> as an example:</p>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">films/beacon/</span></div>
 <pre><code>films/beacon/
-├── film.toml               <span class="c"># film identity, steps, tools and art settings</span>
 ├── src/                    <span class="c"># this film&#x27;s production code</span>
 │   ├── story.py            <span class="c"># shot timeline and shared picture/sound cues</span>
 │   ├── scene.py            <span class="c"># Blender character, scene, animation and cameras</span>
@@ -233,7 +233,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 │   └── film/               <span class="c"># finished TheLastBeacon.mp4 (generated)</span>
 └── out/                    <span class="c"># frames, audio intermediates and reports (generated)</span></code></pre>
     </div>
-    <p class="caption reveal"><code>film.toml</code> tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The <code>src/</code> layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have <code>scenes.json</code> for Studio edits. Generated <code>assets/film/</code> and <code>out/</code> directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in <code>film.local.toml</code>.</p>
+    <p class="caption reveal">The film’s entry in the root <code>pyproject.toml</code> tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The <code>src/</code> layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have <code>scenes.json</code> for Studio edits. Generated <code>assets/film/</code> and <code>out/</code> directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in <code>film.local.toml</code>.</p>
   </div>
 </section>
 
@@ -244,7 +244,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       <h2>How a film is made</h2>
     </div>
     <div class="figure reveal"><img src="img/pipeline.svg" alt="How a CodeCinema film is produced" loading="lazy"></div>
-    <p class="caption reveal"><b>Figure 1.</b> How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>film.toml</code> declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: Blender 3D in one example, skia 2D painting in the other. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</p>
+    <p class="caption reveal"><b>Figure 1.</b> How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>pyproject.toml</code> declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: Blender 3D in one example, skia 2D painting in the other. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</p>
   </div>
 </section>
 

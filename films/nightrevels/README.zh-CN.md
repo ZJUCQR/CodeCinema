@@ -72,7 +72,7 @@ codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 
 ## 🎨 个性化定制
 
-故事由数据和代码组成。时间轴和提示点在 `src/common/config.py`，乐谱在 `src/common/music.py`，角色在 `src/story/cast.py`，动作和镜头在 `src/story/film.py`。机器相关的设置（输出、并行数、编码、响度）在 `film.toml` 的 `[settings]` 里。
+故事由数据和代码组成。时间轴和提示点在 `src/common/config.py`，乐谱在 `src/common/music.py`，角色在 `src/story/cast.py`，动作和镜头在 `src/story/film.py`。机器相关的设置（输出、并行数、编码、响度）在根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` 里。
 
 | 想改什么 | 改哪里 |
 |---|---|
@@ -81,7 +81,7 @@ codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 | 猫的品种、毛色、眼睛、服装 | `cast.py` 里的 `BREEDS` 和服装 |
 | 谁站在哪里、动作、笑点、镜头 | `film.py`（角色的关键帧轨道和 `Camera` 关键帧） |
 | 画风（墨线、绢、面部、家具） | `src/paint/` |
-| 并行数、画质、响度 | `film.toml` 的 `[settings]` |
+| 并行数、画质、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` |
 
 你可以自己创建相应的配置，或者覆盖已有设置：
 
@@ -106,9 +106,7 @@ films/nightrevels/
 │   ├── paint/              # 工笔绘制：墨线、绢、猫头、袍袖、道具
 │   ├── story/              # 角色、动画轨道、舞台渲染器、整部影片（film.py）
 │   └── audio/              # 乐器、猫的声音、音效、环境声、配乐、混音
-├── docs/                   # 导演本
-├── assets/                 # README 图片
-└── film.toml               # 影片的步骤和设置
+└── assets/                 # README 图片
 ```
 
 ## 🧭 工作原理
@@ -119,7 +117,7 @@ films/nightrevels/
 4. **动作即声音**：动作会发出带时间的事件（碰杯声、猫的啁啾、呼噜、破音……），音频引擎把它们按采样精度放在渲染好的配乐旁边。
 5. **快速、可续渲**：画面并行渲染并直接编码成视频分块，声音几秒钟就能合成并做好母带（-14 LUFS）。
 
-导演本见 [docs/FILM_PLAN.md](docs/FILM_PLAN.md)（英文）。
+
 
 ## 📜 许可
 

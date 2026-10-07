@@ -9,7 +9,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import settings as _settings  # noqa: E402  (film.toml [settings] + film.local.toml + environment)
+import settings as _settings  # noqa: E402  (pyproject.toml film settings + film.local.toml + environment)
 
 ROOT = _settings.ROOT
 SRC = os.path.join(ROOT, "src")

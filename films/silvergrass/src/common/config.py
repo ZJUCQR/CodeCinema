@@ -20,7 +20,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))) if os.path.dirname(os.path.abspath(__file__)) not in sys.path else None
-import settings as _settings   # noqa: E402  (machine / taste settings: [settings] in film.toml, env overrides)
+import settings as _settings   # noqa: E402  (machine / taste settings: the film settings in pyproject.toml, env overrides)
 
 S = _settings.SETTINGS
 
@@ -157,7 +157,7 @@ ACTS = [
 
 # ---------------------------------------------------------------- shot list (every boundary is a hard cut)
 # lane = which choreography module owns the shot (src/blender/acts/<lane>.py).
-# Each lane splits its shots into SUB-CUTS (e.g. "S12a", "S12b" ...) — see docs/STAGING.md for per-shot staging.
+# Each lane splits its shots into SUB-CUTS (e.g. "S12a", "S12b" ...) — staging is defined in src/blender/acts/.
 SHOTS = [
     # --- PROLOGUE -----------------------------------------------------------------
     dict(id="S01", start=1,    end=96,   lane="prologue", desc="Black. Wind rises; a distant blade ring (~40) and a far thunder roll (~70), sound only. Epigraph card (post overlay). Render black."),
@@ -229,7 +229,7 @@ HANDOFF = {
                saint=dict(pos=(0.0, 2.5), facing=0, katana="drawn", hat=False, haori=False, tasuki=True, spear="gone")),
 }
 
-# ---------------------------------------------------------------- staging rules (see docs/STAGING.md)
+# ---------------------------------------------------------------- staging rules
 # 180-degree rule: from S05 until the S25 pass the camera stays on the +X side of the Y-axis line:
 # shinobi (at -Y) is SCREEN-LEFT facing right, elder (at +Y) SCREEN-RIGHT facing left. The S25 pass swaps them
 # through action; keep the same physical camera side afterwards (shinobi screen-right).
@@ -308,7 +308,7 @@ MUSIC_CUES = {
     "epilogue": 3505,        # with the moonlight
     "end_card": 3758,
 }
-# Story beats checked by the build QA (docs/STAGING.md §8): (name, frame, tolerance[, count]); name matches an event
+# Story beats checked by the build QA: (name, frame, tolerance[, count]); name matches an event
 # type, a tag or a music_cue's cue; at least `count` matching events must lie within frame +- tolerance.
 STORY_BEATS = [
     ("tsuba_click", 566, 3), ("first_clash", MUSIC_CUES["first_clash"], 3),

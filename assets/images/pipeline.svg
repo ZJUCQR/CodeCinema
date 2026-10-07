@@ -4,7 +4,7 @@
 <rect x="16" y="16" width="236" height="568" rx="12" fill="#f6f8fa" stroke="#6e7781" stroke-width="1.6"/>
 <text x="32" y="43" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15.5" font-weight="bold" font-style="normal" fill="#6e7781" text-anchor="start">(a) Specification</text>
 <rect x="30" y="52" width="208" height="108" rx="7" fill="#ffffff" stroke="#6e7781" stroke-width="1.1"/>
-<text x="42" y="73" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#1f2328" text-anchor="start">film.toml</text>
+<text x="42" y="73" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#1f2328" text-anchor="start">pyproject.toml</text>
 <text x="42" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">steps: build · render ·</text>
 <text x="42" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">audio · assemble · all</text>
 <text x="42" y="126" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">settings · tools · paths</text>

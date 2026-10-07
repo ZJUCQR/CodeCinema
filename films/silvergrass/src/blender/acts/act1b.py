@@ -1,6 +1,5 @@
 """
-acts/act1b.py - lane act1b: S10-S14, frames 937-1632 (docs/shots/act1b.md is the shot breakdown; deviations are
-listed in its '## Implementation notes').
+acts/act1b.py - lane act1b: S10-S14, frames 937-1632. Shot timing and staging are defined below.
 
 Story: the student circles and vanishes into the grass (S10); the master listens, re-sheathes and answers with one
 draw-cut that shears the grass tops; the student is flushed into the air and comes down on the master's one-handed
@@ -71,7 +70,7 @@ def _unwrap(prev, a):
 # local poses (registered into poses.POSES; authored in SHINOBI metres like the library, rig space facing -Y)
 # =============================================================================================================
 def _local_register_poses(PZ):
-    """Poses the library lacks (docs/shots/act1b.md §5).  Controllers of the library poses they derive from are
+    """Poses the library lacks.  Controllers of the library poses they derive from are
     re-used where the moves lane machine-tuned them for the wrists (poses.TUNED)."""
     P = PZ
 

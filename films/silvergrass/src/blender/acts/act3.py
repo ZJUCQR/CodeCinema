@@ -1,7 +1,7 @@
 """
 acts/act3.py - lane act3: S21, S22, S22b, S23 (frames 2497-3072), Act III "Thunder".
 
-Shot breakdown (binding): docs/shots/act3.md (21 sub-cuts, all hard cuts; deviations in its "Implementation notes").
+Shot breakdown: 21 sub-cuts, all hard cuts, defined below.
 Enters HANDOFF[2496] (shinobi (0, -3) chudan, elder (0, 3) jodan two-handed, spear gone, tasuki on) and leaves at
 HANDOFF[3072] (shinobi (0, -6) kneeling on the planted sword, head bowed; elder (0, 2.5) two-handed gedan).
 
@@ -162,8 +162,8 @@ def _local_flash(ENV, VFX, f, s, direction, bolt=None, tint=None):
 
 
 def _local_upstream_standins(ENV, VFX):
-    """Partial builds only: what act1b / act2 create and this lane relies on (breakdown §1: 'this lane creates no
-    second rain / ring / steam band') - re-created with the exact calls of docs/shots/act1b.md / act2.md when
+    """Partial builds only: recreate the rain, fire ring and steam this lane relies on, using the exact
+    environment and VFX calls from acts/act1b.py and acts/act2.py when
     those lanes are NOT part of the current build (lane_tools.lane_reports() lists the lanes ended before this
     one).  In a build that contains them nothing is added."""
     import lane_tools as LT

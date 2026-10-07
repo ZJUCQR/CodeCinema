@@ -1,7 +1,7 @@
 """
 film.py - the whole film as actors, keys, camera moves and sound events.
 
-build() -> (stage, events). Sections read right to left along the scroll; see docs/FILM_PLAN.md for the story.
+build() -> (stage, events). Sections read right to left along the scroll; this module defines the story.
 """
 import math
 import os

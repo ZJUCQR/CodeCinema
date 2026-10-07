@@ -8,9 +8,9 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
-import tomllib
+import tomlkit
 
-from codecinema import settings, starters
+from codecinema import registry, settings, starters
 
 # Released starter renderer before spoken scenes. Match its full source so a
 # user-modified renderer is never replaced by an automatic template update.
@@ -18,8 +18,10 @@ LEGACY_SILENT_RENDERERS = {"7c7c775432227b06a7e10a727cabc097af9c10fb32b72a63977c
 
 
 def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None):
-    """Prepare the complete starter privately, then make it visible in one rename."""
-    path = Path(path)
+    """Create a film folder and register its settings in the workspace configuration."""
+    path = Path(path).absolute()
+    if path.parent.name != "films" or not re.fullmatch(r"[a-z][a-z0-9_-]*", path.name):
+        raise ValueError("Create films under films/<id>, using lower-case letters, digits, '-' or '_'")
     if os.path.lexists(path):
         raise ValueError(f"{path} already exists")
     data = starters.make_story(title, preset, seconds, subtitle)
@@ -28,49 +30,42 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             scene["accent"] = accent
     starters.validate_story(data)
     width, height = starters.dimensions(format_name, quality)
-    values = {"__FILM_ID__": path.name, "__ENV_PREFIX__": re.sub(r"[^A-Z0-9]", "_", path.name.upper())}
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix=".codecinema-", dir=path.parent) as temporary:
-        staged = Path(temporary) / path.name
-        source = Path(__file__).with_name("template")
-        shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-        for file in staged.rglob("*"):
-            if not file.is_file() or file.name == "scenes.json":
-                continue
-            content = file.read_text(encoding="utf-8")
-            pattern = "|".join(values)
-            if file.suffix != ".py":
-                content = re.sub(pattern, lambda match: values[match.group()], content)
-            if file.name == "film.toml":
-                content = replace_value(content, "film", "title", title)
-                for key, value in (("width", width), ("height", height), ("crf", starters.QUALITIES[quality]["crf"]),
-                                   ("preset", starters.QUALITIES[quality]["preset"])):
-                    content = replace_value(content, "settings.video", key, value)
-                tomllib.loads(content)
-            else:
-                content = content.replace("__FILM_TITLE__", title)
-            file.write_text(content, encoding="utf-8", newline="\n")
-        (staged / "scenes.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        if os.path.lexists(path):
-            raise ValueError(f"{path} already exists")
-        staged.rename(path)
+    created = False
+    try:
+        with registry.edit(path) as document:
+            config = document.get("tool", {}).get("codecinema", {})
+            if "starter" not in config:
+                raise ValueError("pyproject.toml needs [tool.codecinema.starter] defaults to create a film")
+            if path.name in config.get("films", {}) or os.path.lexists(path):
+                raise ValueError(f"{path.name} already exists; choose a new ID")
+            meta = copy.deepcopy(config["starter"].unwrap())
+            meta["title"] = title
+            meta["env_prefix"] = re.sub(r"[^A-Z0-9]", "_", path.name.upper())
+            meta.setdefault("settings", {}).setdefault("paths", {})["final_video"] = f"assets/film/{path.name}.mp4"
+            meta["settings"].setdefault("video", {}).update(
+                width=width, height=height, crf=starters.QUALITIES[quality]["crf"],
+                preset=starters.QUALITIES[quality]["preset"],
+            )
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.TemporaryDirectory(prefix=".codecinema-", dir=path.parent) as temporary:
+                staged = Path(temporary) / path.name
+                source = Path(__file__).with_name("template")
+                shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+                for file in staged.rglob("*.md"):
+                    content = file.read_text(encoding="utf-8")
+                    content = content.replace("__FILM_ID__", path.name).replace("__FILM_TITLE__", title)
+                    file.write_text(content, encoding="utf-8", newline="\n")
+                (staged / "scenes.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                if os.path.lexists(path):
+                    raise ValueError(f"{path} already exists")
+                staged.rename(path)
+                created = True
+            config.setdefault("films", {})[path.name] = meta
+    except Exception:
+        if created:
+            shutil.rmtree(path)
+        raise
     return width, height
-
-
-def replace_value(text, section, key, value):
-    header = re.search(rf"(?m)^\[{re.escape(section)}\]\s*$", text)
-    if not header:
-        return text.rstrip() + f"\n\n[{section}]\n{key} = {json.dumps(value, ensure_ascii=False)}\n"
-    next_header = re.search(r"(?m)^\[", text[header.end():])
-    end = header.end() + next_header.start() if next_header else len(text)
-    block = text[header.end():end]
-    line = f"{key} = {json.dumps(value, ensure_ascii=False)}"
-    pattern = rf"(?m)^{re.escape(key)}\s*=.*$"
-    if re.search(pattern, block):
-        block = re.sub(pattern, lambda _: line, block)
-    else:
-        block = block.rstrip() + "\n" + line + "\n\n"
-    return text[:header.end()] + block + text[end:]
 
 
 def read_starter(path):
@@ -82,7 +77,17 @@ def read_starter(path):
     return data
 
 
-def customize(path, *, title=None, subtitle=None, preset=None, seconds=None, format_name=None,
+def customize(path, **changes):
+    """Update one film under the workspace lock, retaining a reversible snapshot."""
+    undo = []
+    def rollback():
+        for target, content in reversed(undo):
+            registry.atomic_write(target, content)
+    with registry.edit(path, rollback=rollback) as document:
+        return _customize(path, document, undo, **changes)
+
+
+def _customize(path, document, undo, *, title=None, subtitle=None, preset=None, seconds=None, format_name=None,
               quality=None, accent=None, story=None):
     """Validate all changes first, save a previous version, then update JSON and TOML."""
     path = Path(path)
@@ -122,35 +127,34 @@ def customize(path, *, title=None, subtitle=None, preset=None, seconds=None, for
             raise ValueError("This customized renderer does not support spoken scenes. Your code has been preserved. "
                              "Create a new starter and copy its scene data, or merge the narration support from "
                              "codecinema/template/src/run.py. See README.md#speech.")
-    manifest = path / "film.toml"
-    previous = manifest.read_text(encoding="utf-8")
-    text = replace_value(previous, "film", "title", data["title"])
+    previous = tomlkit.dumps(document)
+    meta = document["tool"]["codecinema"]["films"][path.name]
+    meta["title"] = data["title"]
+    video = meta.setdefault("settings", {}).setdefault("video", {})
     current = settings.load(str(path))["video"]
     shape = format_name or ("square" if current["width"] == current["height"] else
                             "landscape" if current["width"] > current["height"] else "portrait")
     if quality is not None:
         width, height = starters.dimensions(shape, quality)
-        text = replace_value(text, "settings.video", "crf", starters.QUALITIES[quality]["crf"])
-        text = replace_value(text, "settings.video", "preset", starters.QUALITIES[quality]["preset"])
+        video["crf"] = starters.QUALITIES[quality]["crf"]
+        video["preset"] = starters.QUALITIES[quality]["preset"]
     elif format_name is not None:
         x, y = starters.FORMATS[shape]
         short = min(current["width"], current["height"])
         width, height = (round(short * part / min(x, y) / 2) * 2 for part in (x, y))
     else:
         width, height = current["width"], current["height"]
-    text = replace_value(text, "settings.video", "width", width)
-    text = replace_value(text, "settings.video", "height", height)
-    tomllib.loads(text)
+    video["width"] = width
+    video["height"] = height
     backup = path / "out" / "edits" / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     backup.mkdir(parents=True, exist_ok=True)
-    (backup / "film.toml").write_text(previous, encoding="utf-8")
+    (backup / "pyproject.toml").write_text(previous, encoding="utf-8")
     (backup / "scenes.json").write_text(json.dumps(original, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    updates = [(path / "scenes.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n"), (manifest, text)]
+    updates = [(path / "scenes.json", json.dumps(data, ensure_ascii=False, indent=2) + "\n")]
     if replacement is not None:
         (backup / "run.py").write_text(old_renderer, encoding="utf-8")
         updates.insert(0, (renderer, replacement))
     for target, content in updates:
-        temporary = target.with_suffix(target.suffix + ".tmp")
-        temporary.write_text(content, encoding="utf-8", newline="\n")
-        temporary.replace(target)
+        undo.append((target, target.read_text(encoding="utf-8")))
+        registry.atomic_write(target, content)
     return data

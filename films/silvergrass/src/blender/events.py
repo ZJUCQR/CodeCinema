@@ -1,6 +1,6 @@
 """
-events.py - the animation event table that drives the procedural sound track ("events.py",
-docs/STAGING.md §8).
+events.py - the animation event table that drives the procedural sound track.
+Required story beats are defined in config.
 
     import events
     events.emit(595, "clash", pos=(0.1, -0.4, 1.3), strength=0.9, tags=["first_clash"])

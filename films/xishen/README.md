@@ -8,7 +8,7 @@
 
 A rain-soaked return. An audience with crimson eyes. A director learning to survive his own stage.
 
-[![Watch](https://img.shields.io/badge/watch-the%20trilogy-b62b3c?logo=githubpages&logoColor=white)](https://zjucqr.github.io/CodeCinema/xishen/watch.html)
+[![Watch](https://img.shields.io/badge/watch-the%20trilogy-b62b3c?logo=githubpages&logoColor=white)](https://zjucqr.github.io/CodeCinema/#xishen)
 [![Runtime](https://img.shields.io/badge/runtime-11%20minutes-c5a16f)](#three-episodes-one-timeline)
 [![Picture](https://img.shields.io/badge/picture-1080p%20%2F%2024%20fps-263a48)](#three-episodes-one-timeline)
 [![Python](https://img.shields.io/badge/python-3.12%2B-3776ab?logo=python&logoColor=white)](../../pyproject.toml)
@@ -16,7 +16,7 @@ A rain-soaked return. An audience with crimson eyes. A director learning to surv
 
 <img src="assets/images/banner.jpg" width="100%" alt="Chen Ling in his red stage robe, the silent audience and his next-morning black coat">
 
-[**Watch online**](https://zjucqr.github.io/CodeCinema/xishen/watch.html) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](data/canon.json) · [Chinese guide](README.zh-CN.md)
+[**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](data/canon.json) · [Chinese guide](README.zh-CN.md)
 
 </div>
 
@@ -52,7 +52,7 @@ All three episodes use the same Skia character designs and visual style, with a 
 
 **67 shots · 61 spoken cues · 1920 × 1080 · 24 fps · 2.35:1 picture area · Stereo audio**
 
-Each master includes burned-in captions, a selectable subtitle track and chapter markers. The screening page provides episode selection, chapter navigation, automatic continuation and downloads, on desktop and mobile.
+Each master includes burned-in captions, a selectable subtitle track and chapter markers. The project page provides episode selection and automatic continuation on desktop and mobile. Download links are available on GitHub Releases.
 
 ## Render and watch locally
 
@@ -61,10 +61,9 @@ Install CodeCinema and FFmpeg using the [getting-started guide](../../README.md#
 ```bash
 python -m pip install -e ".[speech]"
 python -m codecinema run xishen all --narration required --speech-engine local
-python -m codecinema run xishen serve
 ```
 
-Open **http://127.0.0.1:8000/watch.html**. The local server supports byte-range requests, so chapter jumps and scrubbing work correctly. You can also open [watch.html](watch.html) directly after generation.
+Open the generated MP4 with your video player, or watch the published edition on the [project page](https://zjucqr.github.io/CodeCinema/#xishen).
 
 The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git; the [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
@@ -95,7 +94,7 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 | --- | --- |
 | [data/episodes.json](data/episodes.json) | Shot order, durations, dialogue, narration, costumes and events |
 | [data/canon.json](data/canon.json) | Source references, character designs, persistent voices and acting directions |
-| [film.toml](film.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
+| [pyproject.toml](../../pyproject.toml) | Picture dimensions, frame rate, encoding, mix settings and worker count |
 | [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
 | [src/score.py](src/score.py) / [src/sound.py](src/sound.py) | Scene-led music, speech directions, timed foley and mixing |
 
@@ -113,12 +112,12 @@ python -m codecinema run xishen assemble --episode ep01 --narration required --s
 python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
-Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes its review contact sheet to `out/stills/storyboard.jpg`; published posters and cast images stay in `assets/images/`.
+Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused; changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`; published posters and README illustrations stay in `assets/images/`.
 
 </details>
 
 ## Verification and credits
 
-Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. Results are generated locally in `out/qc.json`. Browser review covers chapter seeking, episode continuation and mobile layout.
+Production QC checks source order, cross-episode state, glyph coverage, caption widths, deterministic frames, movement, duration, frame counts, subtitle tracks, chapter coverage, speaker ownership, dialogue timing, loudness, true peak and full decoding of all four masters. Results are generated locally in `out/qc.json`. Browser review covers video seeking, episode continuation and mobile layout.
 
-Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](data/canon.json) and [production plan](docs/FILM_PLAN.md). The novel's rights remain with its respective rights holders; the [MIT license](../../LICENSE) covers this repository's code.
+Original novel: **Sanjiu Yinyu**, [official Fanqie edition](https://fanqienovel.com/page/7276384138653862966). Per-chapter references and adaptation choices are recorded in [the source ledger](data/canon.json). The novel's rights remain with its respective rights holders; the [MIT license](../../LICENSE) covers this repository's code.

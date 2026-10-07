@@ -17,7 +17,7 @@ The shared framework and starter templates do not require Blender. Renderer-spec
 
 - For a starter look, update the preset data in `codecinema/starters.py` and the rendering palette in `codecinema/template/src/run.py`. Include an actual rendered thumbnail for Studio.
 - For an editor improvement, update `codecinema/studio.py` or `codecinema/studio_assets/`. Check both languages and a narrow mobile viewport.
-- For a renderer, create a film folder with `film.toml` and an entry script. Use the [film contract](README.md#framework) and document its steps, requirements and output paths.
+- For a renderer, create a film folder with an entry script and register it under `[tool.codecinema.films.<id>]` in the root `pyproject.toml`. Use the [film contract](README.md#framework) and document its steps, requirements and output paths.
 - For documentation, keep English and Chinese setup instructions consistent. Describe the current behavior and provide commands a newcomer can copy.
 
 Generated videos, render caches, recordings and local settings stay outside Git. A release contains finished MP4s; development reports stay local.

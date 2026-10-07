@@ -1,5 +1,5 @@
 """
-acts/prologue.py - PROLOGUE lane (S01-S04, frames 1-432) of Duel in the Silver Grass.  Shot breakdown: docs/shots/prologue.md
+acts/prologue.py - PROLOGUE lane (S01-S04, frames 1-432) of Duel in the Silver Grass..
 (binding; deviations are listed there under '## Implementation notes').
 
     Blender -b --factory-startup --python-exit-code 1 --python src/blender/build_scene.py -- --lanes prologue \
@@ -31,7 +31,7 @@ CUTS = sub_cuts(LANE)                                      # the config shots S0
 CUT = {c: (a, b) for c, a, b in CUTS}
 H432 = config.HANDOFF[SPAN[1]]
 
-# key moments (film frames) - docs/shots/prologue.md §2 beat grid / §3 sub-cuts
+# key moments (film frames) for the beat grid and sub-cuts
 F = dict(
     ring=40, thunder=70,                    # S01 sound-only omens
     walk2=(73, 240),                         # S02 walk (starts inside black S01 so he is in stride at 97)
@@ -68,7 +68,7 @@ def _mods():
 
 
 # =============================================================================================================
-# local poses (docs/shots/prologue.md §5) - built on the library's relaxed_saya (left fist on the saya via IK)
+# local poses - built on the library's relaxed_saya (left fist on the saya via IK)
 # =============================================================================================================
 def _spec_from(base, body_over=None, hips=None, legs=None, name=None, rig=None):
     """Resolved pose spec = library pose `base` for `rig` with body bones replaced by `body_over` (degrees)."""
@@ -286,7 +286,7 @@ def choreograph_elder(SA):
 
 
 # =============================================================================================================
-# environment (docs/shots/prologue.md: env calls per cut; sun cheats keep the sun on the -X half of the sky)
+# environment (calls per cut; sun cheats keep the sun on the -X half of the sky)
 # =============================================================================================================
 def environment_timeline():
     import environment as ENV
@@ -475,7 +475,7 @@ def s03_rim():
 
 
 def story_events():
-    """Tagged beats the moves calls do not emit (docs/shots/prologue.md §3 event tables)."""
+    """Tagged beats the moves calls do not emit."""
     import events as EV
     EV.emit(config.MUSIC_CUES["prologue_start"], "music_cue", cue="prologue_start")
     EV.emit(28, "wind_gust", strength=0.45)

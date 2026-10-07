@@ -1,7 +1,7 @@
 """
 CodeCinema - a framework for making complete short films with code.
 
-    codecinema.settings   per-film settings (film.toml + local overrides + environment), tool and font discovery
+    codecinema.settings   per-film settings (pyproject.toml + local overrides + environment), tool and font discovery
     codecinema.procutil   cross-platform process / lock / memory helpers
     codecinema.audio.dsp  audio DSP toolkit (oscillators, filters, physical models, reverb, loudness, limiter)
     codecinema.media      ffmpeg helpers (probe, concat, mux)
@@ -15,11 +15,10 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
 def project_root(start=None):
-    """The project folder: the nearest folder at or above `start` (default: the working directory) that has a
-    films/ folder, so an installed `codecinema` command works inside any clone; else the package's parent."""
+    """Nearest workspace with pyproject.toml, otherwise the package's parent."""
     cur = os.path.abspath(start or os.getcwd())
     while True:
-        if os.path.isdir(os.path.join(cur, "films")):
+        if os.path.isfile(os.path.join(cur, "pyproject.toml")):
             return cur
         parent = os.path.dirname(cur)
         if parent == cur:

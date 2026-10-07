@@ -1,14 +1,14 @@
 """
 codecinema.settings - per-film settings (pure standard library; Python 3.11+, including Blender's Python).
 
-Every film lives in films/<id>/ with a film.toml. Its [settings.<section>] tables hold the machine and taste
-settings; precedence (later wins):
-    framework DEFAULTS  <  film.toml [settings]  <  film.local.toml (optional, git-ignored)
-    <  environment: <ENV_PREFIX>_<SECTION>_<KEY> (prefix from film.toml [film] env_prefix), CODECINEMA_<SECTION>_<KEY>
+Every film lives in films/<id>/ and is registered under [tool.codecinema.films.<id>] in pyproject.toml.
+Settings precedence (later wins):
+    framework DEFAULTS  <  the film's .settings tables  <  film.local.toml (optional, git-ignored)
+    <  environment: <ENV_PREFIX>_<SECTION>_<KEY> (prefix from env_prefix), CODECINEMA_<SECTION>_<KEY>
        and the aliases BLENDER_BIN / FFMPEG / FFPROBE
 
 The active film is $CODECINEMA_FILM_DIR (set by the CLI and by each film's own entry point) or, failing that, the
-nearest directory above the working directory that contains a film.toml.
+registered film directory containing the working directory.
 
 Usage:
     from codecinema import settings
@@ -21,13 +21,12 @@ import glob
 import os
 import shutil
 import sys
+import tomllib
+from pathlib import Path
 
-try:
-    import tomllib
-except ModuleNotFoundError:          # Python < 3.11
-    tomllib = None
+from codecinema import project_root, registry
 
-REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+REPO = project_root(os.environ.get("CODECINEMA_FILM_DIR"))
 
 
 def _find_film_dir():
@@ -36,7 +35,7 @@ def _find_film_dir():
         return os.path.abspath(d)
     cur = os.path.abspath(os.getcwd())
     while True:
-        if os.path.isfile(os.path.join(cur, "film.toml")):
+        if registry.film_config(cur):
             return cur
         parent = os.path.dirname(cur)
         if parent == cur:
@@ -70,7 +69,7 @@ def _coerce(value, like):
 
 
 def _load_toml(path):
-    if tomllib is None or not os.path.isfile(path):
+    if not os.path.isfile(path):
         return {}
     with open(path, "rb") as fh:
         return tomllib.load(fh)
@@ -84,14 +83,18 @@ def _merge(base, extra):
 
 
 def film_meta(film_dir=None):
-    """The [film] table of a film.toml (id, title, entry, steps, env_prefix ...)."""
-    return _load_toml(os.path.join(film_dir or ROOT, "film.toml")).get("film", {})
+    """Metadata from [tool.codecinema.films.<id>] in the workspace pyproject.toml."""
+    film_dir = film_dir or ROOT
+    config = registry.film_config(film_dir)
+    if not config:
+        return {}
+    return {**{key: value for key, value in config.items() if key != "settings"}, "id": Path(film_dir).name}
 
 
 def load(film_dir=None):
     film_dir = film_dir or ROOT
     data = copy.deepcopy(DEFAULTS)
-    _merge(data, _load_toml(os.path.join(film_dir, "film.toml")).get("settings", {}))
+    _merge(data, registry.film_config(film_dir).get("settings", {}))
     _merge(data, _load_toml(os.path.join(film_dir, "film.local.toml")))
     prefix = str(film_meta(film_dir).get("env_prefix", "")).upper()
     for sec, vals in data.items():
@@ -116,7 +119,7 @@ def get(section, key, default=None):
 
 
 def path(section, key):
-    """A settings path resolved against the repository root."""
+    """A settings path resolved against the active film's directory."""
     p = os.path.expanduser(str(get(section, key, "")))
     return p if (not p or os.path.isabs(p)) else os.path.join(ROOT, p)
 

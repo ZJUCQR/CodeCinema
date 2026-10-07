@@ -2,7 +2,7 @@
 environment.py - the world of Duel in the Silver Grass: terrain, silver-grass sea, lone pine, far mountains + pagoda, sky, the four
 light states, wind, grass effects, lightning illumination (Blender 5.2.2, EEVEE). Owner: env lane.
 
-Contract: docs/STAGING.md (flash budget).
+Flash limits are defined in config and enforced by flash().
 Look-dev renders + harnesses: out/dev/env/ (lookdev.py, bench.py,
 windstrip.py; sheet_look.png = the current look-dev contact sheet).
 

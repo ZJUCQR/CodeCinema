@@ -2,7 +2,7 @@
 
 以 CodeCinema 制作三九音域《我不是戏神》开篇第 1–6 章的三集动态漫画。三集统一使用 Skia 人物造型和画风，并保留随情节变化的室内乐配乐，区分雨夜、剧院、调查、奇观与喜剧场景。总长 **11 分钟**，1920×1080、24 fps、2.35:1 画面，含中文配音、字幕、环境声及道具音效。人物形象、服装状态与剧情时间线在三集间保持连贯。
 
-**[在线观看](https://zjucqr.github.io/CodeCinema/xishen/watch.html)** · **[下载三集与合集](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)** · [English](README.md)
+**[在线观看](https://zjucqr.github.io/CodeCinema/zh/#xishen)** · **[下载三集与合集](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)** · [English](README.md)
 
 ![雨夜的陈伶、剧院观众和换上黑棉大衣后的同一人物](assets/images/banner.jpg)
 
@@ -12,7 +12,7 @@
 | 02 | 我们在看着你 | 第 2–3 章 | 3:30 |
 | 03 | 陈氏编导法则 | 第 4–6 章 | 4:00 |
 
-打开 [观看页](watch.html) 选择剧集、跳转段落或连续播放。成片在 `assets/film/ep01.mp4`、`ep02.mp4`、`ep03.mp4`，合集在 `assets/film/xishen_complete.mp4`。视频包含已经绘制的字幕，以及可选择的中文字幕轨和章节标记。
+在[项目主页](https://zjucqr.github.io/CodeCinema/zh/#xishen)选择剧集或连续播放。成片在 `assets/film/ep01.mp4`、`ep02.mp4`、`ep03.mp4`，合集在 `assets/film/xishen_complete.mp4`。视频包含已经绘制的字幕，以及可选择的中文字幕轨和章节标记。
 
 ## 重新生成
 
@@ -47,7 +47,7 @@ XISHEN_VIDEO_WIDTH=960 XISHEN_VIDEO_HEIGHT=540 \
 
 `--narration` 和 `--speech-engine` 属于制作设置。分步运行时保持一致；音频会在画面渲染前准备，例如音频使用 `required`，画面与合成也使用 `required`。镜头分块和输入签名支持断点续渲，半成品不会被当作完成的镜头。
 
-观看页可直接用浏览器打开。需要 HTTP 播放时，在项目根目录运行 `.venv/bin/python -m codecinema run xishen serve`，访问 `http://127.0.0.1:8000/watch.html`。内置服务器支持视频分段请求，段落跳转和拖动进度条都能正常工作。
+本地成片可直接用视频播放器打开；已发布版本统一在项目主页观看。
 
 ## 人物与原著依据
 
@@ -78,8 +78,8 @@ out/screenplay.md     生成的完整改编剧本
 out/continuity.json   逐镜头解析后的服装、道具和原著来源
 out/*.srt             每集及合集的字幕
 out/qc.json           本地生成的成片与连续性质检报告
-assets/images/        海报、人物形象表与展示配图
-out/stills/           生成的分镜联系表
+assets/images/        海报与展示配图
+out/stills/           生成的分镜联系表与人物检查图
 assets/film/          三集 MP4 与合集
 ```
 

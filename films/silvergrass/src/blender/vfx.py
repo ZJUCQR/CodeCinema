@@ -1,8 +1,7 @@
 """
 vfx.py - every visual effect of Duel in the Silver Grass, procedural, deterministic, bake-free (Blender 5.2.2, EEVEE).
 
-Owner: vfx lane. Contract: docs/STAGING.md (§5 flash
-budget, §6 colour coding).
+Flash budgets and effect colors follow the staging constants in config.
 
 Design rules (why things are built the way they are)
   * TIME: every effect reads the film clock scene["fx_time"] (src/blender/fxclock.py): GN inputs named "Time" are

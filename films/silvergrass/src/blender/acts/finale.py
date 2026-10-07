@@ -5,7 +5,7 @@ the white-out pass, the slow noto + the snap, the kneel under the moon, the walk
     Blender -b --factory-startup --python-exit-code 1 --python src/blender/build_scene.py -- --lanes finale \
         [--quality layout|preview|final]
 
-Binding shot breakdown: docs/shots/finale.md (deviations recorded there under '## Implementation notes').
+Shot timing and camera staging are defined below.
 Enters from config.HANDOFF[3072] (shinobi kneeling on his planted sword at (0, -6), elder in gedan at (0, 2.5));
 the film ends in this lane (everything holds to 3840).
 
@@ -114,7 +114,7 @@ def _perp(v, d):
 
 
 # =============================================================================================
-# lane-local poses (docs/shots/finale.md §5) - POSES-format dicts keyed through poses.key_pose(spec=resolve(...))
+# lane-local poses - POSES-format dicts keyed through poses.key_pose(spec=resolve(...))
 # =============================================================================================
 def _local_poses():
     """Local pose specs (authored with the poses helpers, SHINOBI metres unless 'scale': False)."""

@@ -11,9 +11,9 @@ run.py — one entry point for the whole Duel in the Silver Grass (SilverGrass) 
     python src/run.py assemble [--preview] [--range START END]
     python src/run.py all     [--slots 2]           # build -> render -> audio -> titles -> assemble
 
-Lanes: prologue, act1a, act1b, act2, act3, finale (see src/common/config.py and docs/CUSTOMIZING.md).
+Lanes: prologue, act1a, act1b, act2, act3, finale (see src/common/config.py).
 Run it with the project's Python environment (e.g. `.venv/bin/python src/run.py ...`). Tools, fonts, render and
-encoding settings come from [settings] in film.toml (+ film.local.toml, SILVERGRASS_*
+encoding settings come from the film settings in pyproject.toml (+ film.local.toml, SILVERGRASS_*
 environment variables).
 """
 import argparse

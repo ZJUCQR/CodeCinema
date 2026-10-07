@@ -26,7 +26,7 @@
 
 ---
 
-CodeCinema is an extensible, open-source filmmaking framework that brings stories to life with code, combining picture, music and sound into a finished film. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film is a folder with a `film.toml`; the framework provides:
+CodeCinema is an extensible, open-source filmmaking framework that brings stories to life with code, combining picture, music and sound into a finished film. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film has a folder in `films/` and an entry in the root `pyproject.toml`; the framework provides:
 
 - **Settings:** one layered configuration per film, with local overrides and environment variables, plus discovery of tools and fonts.
 - **Sound:** a shared audio toolkit for synthesis, physical models, reverb, true-peak limiting and loudness.
@@ -38,7 +38,7 @@ Studio provides a simple path from a template to a finished MP4. The example fil
 ## ✨ Highlights
 
 - 🪄 **Choose, personalize, render.** The local Studio offers eight animated looks, editable scene cards, titles, captions, colors, three frame shapes and one-click MP4 production. No API key is needed.
-- 🧩 **A small contract, any renderer.** A film declares its steps in `film.toml`, and `codecinema run <film> <step>` runs them with that film's settings. Blender, 2D vector drawing, shaders or anything else that writes frames will fit.
+- 🧩 **A small contract, any renderer.** A film declares its steps in `pyproject.toml`, and `codecinema run <film> <step>` runs them with that film's settings. Blender, 2D vector drawing, shaders or anything else that writes frames will fit.
 - 🎼 **A shared sound toolkit.** The DSP library behind the films is part of the framework: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.
 - 🎙️ **Optional expressive voices.** Add spoken lines and acting directions in Studio, or use your own recordings. The [speech guide](#speech) covers the local speech pack and reusable mouth-timing API.
 - ♻️ **Reproducible and configurable.** Deterministic renders, resumable parallel jobs, layered settings that never require editing tracked files, and helpers that work on macOS, Linux and Windows.
@@ -135,7 +135,7 @@ For the CLI examples below, activate the environment with `source .venv/bin/acti
       <h3><a href="films/xishen/README.md">I Am Not the God of Drama: The Opening Trilogy</a></h3>
       <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment, following the novel&#x27;s opening chapters.</p>
       <p><strong>Skia 2D · 11 min · 3 episodes · Mandarin speech</strong></p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/xishen/watch.html">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/#xishen">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/beacon/README.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="The Last Beacon"></a>
@@ -193,15 +193,14 @@ Cameras: `wide`, `drift`, `close`. Each scene must last at least 0.5 seconds; to
 
 ```
 films/<id>/
-├── film.toml          # the manifest: [film] metadata and steps, [settings.*] the film's settings
-├── film.local.toml    # optional, git-ignored: personal overrides of [settings]
+├── film.local.toml    # optional, git-ignored: personal [video], [audio], etc. overrides
 ├── src/
 │   └── run.py         # the entry script: `python src/run.py <step> [args]`
 ├── assets/            # README images; assets/film/ receives the finished video (git-ignored)
 └── out/               # generated files (git-ignored)
 ```
 
-The `[film]` table declares the film’s identity, entry script, steps and requirements. Everything inside `src/` (the story data, the renderer, the score) belongs to the film, so a film can use Blender, 2D vector drawing, shaders, or any other way to produce frames.
+The root `pyproject.toml` table `[tool.codecinema.films.<id>]` declares the film’s identity, entry script, steps and requirements. Studio and `codecinema new` register new entries automatically, using `[tool.codecinema.starter]` defaults. Everything inside `src/` (the story data, the renderer, the score) belongs to the film, so a film can use Blender, 2D vector drawing, shaders, or any other way to produce frames.
 
 ### The command line
 
@@ -222,11 +221,11 @@ The `[film]` table declares the film’s identity, entry script, steps and requi
 `codecinema.settings` loads the active film's settings in layers, where later layers win:
 
 1. framework defaults (`paths`, `tools`, `fonts`, `video`, `audio`);
-2. `[settings.<section>]` tables in `film.toml`;
-3. `film.local.toml` (same tables without the `settings.` prefix);
+2. `[tool.codecinema.films.<id>.settings.<section>]` tables in the root `pyproject.toml`;
+3. `film.local.toml` (use `[video]`, `[audio]`, etc. directly);
 4. environment variables `<ENV_PREFIX>_<SECTION>_<KEY>` or `CODECINEMA_<SECTION>_<KEY>`, plus the aliases `BLENDER_BIN`, `FFMPEG` and `FFPROBE`.
 
-The active film is `$CODECINEMA_FILM_DIR` (the CLI sets it) or the nearest folder above the working directory that contains a `film.toml`.
+The active film is `$CODECINEMA_FILM_DIR` (the CLI sets it) or the registered film folder containing the working directory.
 
 ```python
 from codecinema import settings
@@ -259,7 +258,7 @@ The module is pure standard library, so it also works inside Blender's Python.
 
 `--quality preview` uses its own `out/preview/` stages and `<id>_preview.mp4`, preserving the master. Other quality overrides write the master. Use identical quality, format, FPS and duration options across individual stages; signatures prevent assembling stale inputs. Scene boundaries are quantized once to frames, and sound uses the resulting clock. Unsupported font glyphs fail before rendering with a font-selection hint. CLI and Studio customizations save the previous JSON and TOML in `out/edits/`.
 
-`customize` and Studio accept films marked `[film] template = "starter-v1"`. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table; `codecinema/starters.py` holds the shared starter JSON validation and choices.
+`customize` and Studio accept films marked `template = "starter-v1"` in their `[tool.codecinema.films.<id>]` entry. The standalone example films keep their own contracts and guides. A starter can still run directly using `python src/run.py all` inside its folder. New scene types require editing its renderer and palette table; `codecinema/starters.py` holds the shared starter JSON validation and choices.
 
 To grow it into a real film:
 
@@ -457,7 +456,7 @@ See [the opening trilogy](films/xishen/README.md) for a complete production with
 | The ID already exists | Choose a new ID, or select the saved film in Studio; use `customize` from the CLI |
 | The port is in use | Run `python -m codecinema studio --port 8788` |
 | Assembly says settings differ | Run `all`, or repeat every stage with identical quality, format, duration and FPS options |
-| An edit needs undoing | Copy `scenes.json` and `film.toml` from a saved `out/edits/<timestamp>/` back into the film folder, then render again |
+| An edit needs undoing | Restore `scenes.json` from `out/edits/<timestamp>/`; copy only this film’s tables from the saved `pyproject.toml` into the root configuration, then render again |
 
 </details>
 
@@ -492,10 +491,6 @@ For the opening trilogy, run from the repository root:
 codecinema run xishen all --narration required --speech-engine local
 git push origin main
 gh release upload xishen films/xishen/assets/film/ep01.mp4 films/xishen/assets/film/ep02.mp4 films/xishen/assets/film/ep03.mp4 films/xishen/assets/film/xishen_complete.mp4 --clobber
-gh release edit film --notes-file films/silvergrass/RELEASE.md
-gh release edit nightrevels --notes-file films/nightrevels/RELEASE.md
-gh release edit beacon --notes-file films/beacon/RELEASE.md
-gh release edit xishen --notes-file films/xishen/RELEASE.md
 gh workflow run pages.yml --ref main
 ```
 
@@ -507,17 +502,14 @@ all changed finished assets, then run the Pages workflow on `main`. Replacing
 an asset does not trigger a release publication event, so dispatch the workflow
 explicitly even if the release already exists. Release notes should use the
 same specification, downloads and reproduction sections for every example film,
-and describe the actual published renderer and edition. Each film's tracked
-`RELEASE.md` is the canonical release description; publish it with `--notes-file`
-so the repository and GitHub show the same instructions.
+and describe the actual published renderer and edition. Manage release descriptions directly on GitHub for all films.
 
 The site builder downloads only the expected finished MP4s listed in `site/build.py`, verifies their
 sizes and GitHub-provided digests, and versions video URLs using the asset IDs.
 Each build starts in a fresh staging directory, so removed files do not survive
 from an earlier edition. A completed build replaces the old staging directory.
 Incomplete releases fail the build before deployment, keeping the previous
-site online. The homepage and screening room receive the same media edition,
-including after an episode switch.
+site online. The homepage keeps the same media edition when switching episodes.
 
 To inspect the assembled site locally:
 
@@ -545,6 +537,7 @@ CodeCinema/
 │   ├── starters.py         # preset choices and scene validation
 │   ├── template/           # source copied into new starter films
 │   ├── films.py            # film discovery and step execution
+│   ├── registry.py         # workspace film configuration
 │   ├── settings.py         # configuration, tools and fonts
 │   ├── blender.py          # Blender launcher and shared helpers
 │   ├── media.py            # FFmpeg encoding and assembly
@@ -559,14 +552,13 @@ CodeCinema/
 ├── assets/images/          # shared branding and README illustrations
 ├── site/                   # bilingual project page and site builder
 ├── .github/workflows/      # CI and GitHub Pages deployment
-└── pyproject.toml          # package metadata and dependencies
+└── pyproject.toml          # package dependencies and all film configurations
 ```
 
 Inside a film, using [The Last Beacon](films/beacon/README.md) as an example:
 
 ```text
 films/beacon/
-├── film.toml               # film identity, steps, tools and art settings
 ├── src/                    # this film's production code
 │   ├── story.py            # shot timeline and shared picture/sound cues
 │   ├── scene.py            # Blender character, scene, animation and cameras
@@ -578,13 +570,13 @@ films/beacon/
 └── out/                    # frames, audio intermediates and reports (generated)
 ```
 
-`film.toml` tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The `src/` layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have `scenes.json` for Studio edits. Generated `assets/film/` and `out/` directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in `film.local.toml`.
+The film’s entry in the root `pyproject.toml` tells the framework which script and steps to run; in Beacon it also sets render samples, exposure and character colors. The `src/` layout varies by film: the other examples use their own rendering and audio modules. Starter projects additionally have `scenes.json` for Studio edits. Generated `assets/film/` and `out/` directories are ignored by Git; finished MP4s are available in Releases. Optional personal overrides go in `film.local.toml`.
 
 ## 🧭 How it works
 
 ![How a CodeCinema film is produced: specification, scene synthesis, rendering, sound and post-production](assets/images/pipeline.svg)
 
-**Figure 1.** How a CodeCinema film is produced. **(a)** The film is written as data: `film.toml` declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). **(b)** The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. **(c)** A renderer draws the frames in parallel, resumable chunks: Blender 3D or Skia 2D painting, depending on the film. **(d)** The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. **(e)** Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.
+**Figure 1.** How a CodeCinema film is produced. **(a)** The film is written as data: `pyproject.toml` declares its steps and settings, and one config holds the story (timeline, beats, cast, the score as notes). **(b)** The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. **(c)** A renderer draws the frames in parallel, resumable chunks: Blender 3D or Skia 2D painting, depending on the film. **(d)** The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. **(e)** Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.
 
 ## Contributing
 

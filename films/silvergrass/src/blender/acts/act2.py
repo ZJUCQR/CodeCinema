@@ -1,5 +1,5 @@
 """
-acts/act2.py - lane act2: S15-S20 (frames 1633-2496), Act II "Fire" (docs/shots/act2.md = the binding breakdown).
+acts/act2.py - lane act2: S15-S20 (frames 1633-2496), Act II "Fire".
 
     Blender -b --factory-startup --python-exit-code 1 --python src/blender/build_scene.py -- --lanes act2 \
         [--quality layout|preview|final]
@@ -17,7 +17,7 @@ lifts his sword into jodan (S20).
 Layout of this file: constants (world anchors from the breakdown) -> _local_* helpers (poses, ballistic props, the
 through-the-fist spear twirl, the burning haori) -> entering state (HANDOFF[1632]) -> one function per shot (action,
 vfx, events of that shot, chronological so macros read the right roots) -> environment -> cameras (23 sub-cuts) ->
-build(ctx).  Deviations from the breakdown are listed in docs/shots/act2.md "Implementation notes".
+build(ctx).
 """
 import math
 import os
@@ -45,7 +45,7 @@ F_IGNITE = config.MUSIC_CUES["act2_start"]            # 1633: spear-butt slam = 
 F_THUNDER = config.MUSIC_CUES["thunder_first"]        # 2353
 F_RAIN = config.MUSIC_CUES["rain_start"]              # 2401: the downpour hits on the S20 cut
 
-# ---------------------------------------------------------------- world anchors (docs/shots/act2.md, cams.py)
+# ---------------------------------------------------------------- world anchors
 BUTT = (0.08, 6.02, 0.00)          # spear-butt impact 1633
 HAORI = (0.80, 4.97, 0.98)         # SAINT_haori_thrown centre on the grass tops (S15 cheat, D2)
 IMPACT = (0.10, 1.00, 0.05)        # S17 slam: the spear blade hits the ground 2017
@@ -89,7 +89,7 @@ def _fx(f):
 
 
 # =============================================================================================
-# local poses (docs/shots/act2.md §5) - POSES-format specs keyed through moves.pose / poses.key_pose
+# local poses - POSES-format specs keyed through moves.pose / poses.key_pose
 # =============================================================================================
 def _spec(desc="", body=None, hips=(0.0, 0.0, 0.0), legs=None, ctrl=None, left="free", **extra):
     """A POSES-format spec (poses.pose); ctrl dicts may carry "scale": False for exact SAINT metres."""
@@ -458,7 +458,7 @@ def _local_twirl(f0, f1, turns, ease="inout_quad", step=1, whoosh=True, strength
     """The spear spins THROUGH the still right fist (a baton / staff twirl) about the fist's flat normal (the
     controller's local X): SAINT_spear_hand's basis = T(0,-L,0) @ Rx(theta) @ T(0,-gR,0).  With the controller
     pointing the spear along world X (edge down), the wheel turns in the world XZ plane (a propeller in front of him,
-    perpendicular to the line).  No wrist roll on the IK hand (docs/shots/act2.md R7).  Ends at theta = 0 mod 360.
+    perpendicular to the line).  No wrist roll on the IK hand.  Ends at theta = 0 mod 360.
     Emits a whoosh every half turn."""
     ob = bpy.data.objects["SAINT_spear_hand"]
     n = int(round(f1 - f0))
@@ -1629,7 +1629,7 @@ def _environment():
 
 
 # =============================================================================================
-# cameras: 23 sub-cuts (docs/shots/act2.md §3; keys = out/dev/breakdown/act2/cams.py), all on the +X side
+# cameras: 23 sub-cuts, all on the +X side
 # =============================================================================================
 def _cameras():
     S = CAM.shot

@@ -19,6 +19,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core libgl1 libegl1 libfontconfig1
       - name: Create a starter project
         run: codecinema new ci-preview --preset aurora --duration 3 --quality preview
+      - name: Customize one film without changing other configurations
+        run: >
+          python -c "import copy; from pathlib import Path; from codecinema import registry, projects, settings;
+          root=Path.cwd(); before=copy.deepcopy(registry.definitions(root));
+          projects.customize(root/'films/ci-preview', title='CI portrait', format_name='portrait');
+          after=registry.definitions(root);
+          assert all(after[k]==v for k,v in before.items() if k!='ci-preview');
+          assert after['ci-preview']['title']=='CI portrait';
+          assert settings.load(root/'films/ci-preview')['video']['width']==360"
       - name: Render a short sample
         if: runner.os == 'Linux'
         run: codecinema run ci-preview all

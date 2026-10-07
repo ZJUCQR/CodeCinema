@@ -64,8 +64,6 @@ def build(output, repo):
         shutil.copytree(ROOT / f"films/{film}/assets/images", output / f"img/{film}")
     xishen = output / "xishen"
     xishen.mkdir(exist_ok=True)
-    for name in ("watch.html", "watch.css", "watch.js"):
-        shutil.copy2(ROOT / "films/xishen" / name, xishen / name)
     shutil.copytree(ROOT / "films/xishen/assets/images", xishen / "assets/images")
 
     ids = []
@@ -94,7 +92,7 @@ def build(output, repo):
         content = path.read_text(encoding="utf-8")
         content = re.sub(r"(<html\b[^>]*)(>)", rf'\1 data-media-version="{version}"\2', content, count=1)
         # Homepage episode buttons, initial sources and download fallbacks all
-        # receive the same version. Dynamic screening URLs use the data above.
+        # receive the same media version.
         content = re.sub(r'(\.(?:mp4|jpg|png|gif|svg))(["\'])', rf'\1?v={version}\2', content)
         content = re.sub(r'((?:src|href)="[^"?]+\.(?:js|css))(")', rf'\1?v={version}\2', content)
         path.write_text(content, encoding="utf-8")

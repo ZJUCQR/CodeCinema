@@ -1,6 +1,6 @@
 """
-acts/act1a.py - lane act1a: S05-S09, frames 433-936 (docs/shots/act1a.md is the shot breakdown; numbers there are
-binding, config.py wins on anything it also defines).  Act I "Blade", dusk_gold, 92-BPM grid from 631.
+acts/act1a.py - lane act1a: S05-S09, frames 433-936.
+Act I "Blade", dusk_gold, 92-BPM grid from 631; shared timing and staging are defined in config.py.
 
     Blender -b --factory-startup --python-exit-code 1 --python src/blender/build_scene.py -- --lanes act1a \
         --quality preview
@@ -13,7 +13,6 @@ Enters from HANDOFF[432], leaves at HANDOFF[936].
 13 sub-cuts (all hard cuts, every camera on the +X side of the Y action line):
     S05 433-540  S06 541-588  S07a 589-600  S07b 601-630  S07c 631-672  S08a 673-711  S08b 712-727
     S08c 728-758  S08d 759-800  S08e 801-840  S09a 841-852  S09b 853-868  S09c 869-936
-Deviations from the breakdown are listed in docs/shots/act1a.md ('Implementation notes').
 """
 import math
 import zlib
@@ -38,7 +37,7 @@ CUTS = sub_cuts(LANE, {"S07": (601, 631), "S08": (712, 728, 759, 801), "S09": (8
 CUT = {c: (a, b) for c, a, b in CUTS}
 S07_SLOWMO = config.slowmo_window(config.MUSIC_CUES["first_clash"])        # (595, 630): the grind
 
-# key moments (film frames) - docs/shots/act1a.md §1-§3
+# key moments (film frames)
 F = dict(
     sh_draw=466,          # kissaki clears the koiguchi (hand to hilt 455, swap 460, chudan 474)
     sa_crouch=(486, 516),
@@ -117,8 +116,8 @@ def _grip_matrix(CH, M, rig, f, grip, direction, edge=None):
 
 
 def _retarget_strike(CH, M, rig, f, grip, direction, t_in, t_out, edge=None, hold=None, bounce=None):
-    """Re-aim a macro strike so the blade is exactly on the breakdown's line at the impact frame f (docs/shots/
-    act1a.md 'Blade geometry summary'): the controller arcs from the macro's windup (story f - t_in) into the target
+    """Re-aim a macro strike so the blade follows the requested line at the impact frame f:
+    the controller arcs from the macro's windup (story f - t_in) into the target
     at f, then out to the macro's follow pose (f + t_out) - or holds the target to `hold` (film frame) when given.
     Returns the target matrix (rig space)."""
     import poses as PZ
@@ -451,7 +450,7 @@ def choreograph(SH, SA):
 # =============================================================================================================
 # environment: dusk_gold for the whole lane, per-cut sun cheats, wind, grass clearance
 # =============================================================================================================
-SUN = {   # cut -> (azimuth, elevation, disk_deg)   (docs/shots/act1a.md §3; disk 1.95 deg = D4 in S05)
+SUN = {   # cut -> (azimuth, elevation, disk_deg)   (disk 1.95 deg = D4 in S05)
     "S05": (270.0, 0.37, 1.95), "S06": (262.0, 2.0, 2.2), "S07a": (270.0, 1.0, 2.2), "S07b": (262.0, 1.5, 2.2),
     "S07c": (270.0, 1.5, 2.2), "S08a": (250.0, 3.0, 2.2), "S08b": (285.0, 2.0, 2.2), "S08c": (290.0, 3.0, 2.2),
     "S08d": (270.0, 1.5, 2.2), "S08e": (270.0, 1.5, 2.2), "S09a": (290.0, 3.0, 2.2), "S09b": (290.0, 3.0, 2.2),
@@ -510,7 +509,7 @@ def _star_mesh(name, size, streak=2.6):
 
 def _local_glint(name, f0, f1, peak, size, camera, parent=None, local=(0.0, 0.0, 0.0), world_keys=None,
                  peak_frame=None):
-    """Camera-facing emissive star glint (docs/shots/act1a.md §5): parented to `parent` at `local`, or keyed in
+    """Camera-facing emissive star glint: parented to `parent` at `local`, or keyed in
     world space (`world_keys` = [(frame, xyz)]); strength 0 -> peak -> 0 over [f0, f1]; visible only in [f0, f1]."""
     import lane_tools  # noqa: F401  (collection handling is the lane's: objects land in LANE_act1a)
     col = bpy.context.collection
@@ -600,7 +599,7 @@ def glints(SH, SA):
 
 
 # =============================================================================================================
-# flashes (compositor) - one soft exposure lift in the whole lane (docs/shots/act1a.md §4)
+# flashes (compositor) - one soft exposure lift in the whole lane
 # =============================================================================================================
 def flashes():
     import render_setup as RS

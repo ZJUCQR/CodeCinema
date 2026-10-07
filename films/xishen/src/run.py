@@ -113,8 +113,8 @@ def stills(episodes,options):
         character(c,key,x+250,y+475,1.03,1.2,injured=key!="han_meng")
         text(c,spec["name"],x+250,y+518,30,"#d9c4a1",align="center")
         c.restore()
-    cast_surface.makeImageSnapshot().save(str(image_dir/"cast.png"),skia.kPNG)
-    print(f"Posters and cast sheet: {image_dir}; {len(tiles)} storyboard panels: {review_dir}",flush=True)
+    cast_surface.makeImageSnapshot().save(str(review_dir/"cast.png"),skia.kPNG)
+    print(f"Posters: {image_dir}; cast sheet and {len(tiles)} storyboard panels: {review_dir}",flush=True)
 
 
 def render_shot(episode,shot,key):
@@ -338,10 +338,6 @@ def qc(episodes,options):
 
 
 def main():
-    if len(sys.argv)>1 and sys.argv[1]=="serve":
-        from serve import main as screening_server
-        screening_server(sys.argv[2:])
-        return 0
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("step",choices=("plan","stills","render","audio","assemble","qc","all"),nargs="?",default="all")
     parser.add_argument("--episode",choices=("all","ep01","ep02","ep03"),default="all")

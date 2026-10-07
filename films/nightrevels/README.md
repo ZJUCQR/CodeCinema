@@ -72,7 +72,7 @@ The finished film is written to `assets/film/`. Every command below is a step: `
 
 ## 🎨 Customize
 
-The story is data plus code. The timeline and cue frames live in `src/common/config.py`, the score in `src/common/music.py`, the cast in `src/story/cast.py`, and the choreography and camera in `src/story/film.py`. Machine settings (output, parallel jobs, encoding, loudness) live in `film.toml` under `[settings]`.
+The story is data plus code. The timeline and cue frames live in `src/common/config.py`, the score in `src/common/music.py`, the cast in `src/story/cast.py`, and the choreography and camera in `src/story/film.py`. Machine settings (output, parallel jobs, encoding, loudness) live in the root `pyproject.toml` under `[tool.codecinema.films.nightrevels.settings]`.
 
 | To change… | Edit |
 |---|---|
@@ -81,7 +81,7 @@ The story is data plus code. The timeline and cue frames live in `src/common/con
 | A cat's breed, coat, eyes, costume | `BREEDS` and the costumes in `cast.py` |
 | Who stands where, gestures, gags, camera moves | `film.py` (keyed actor tracks and `Camera` keys) |
 | The painting style (ink, silk, faces, furniture) | `src/paint/` |
-| Parallel jobs, quality, loudness | `[settings]` in `film.toml` |
+| Parallel jobs, quality, loudness | `[tool.codecinema.films.nightrevels.settings]` in the root `pyproject.toml` |
 
 You can create your own configuration or override any setting:
 
@@ -106,9 +106,7 @@ films/nightrevels/
 │   ├── paint/              # gongbi drawing: ink, silk, cat heads, robes and sleeves, props
 │   ├── story/              # cast, animation tracks, the stage renderer, the whole film (film.py)
 │   └── audio/              # instruments, cat voices, foley, ambience, score, mix
-├── docs/                   # the director's plan
-├── assets/                 # README images
-└── film.toml               # the film's steps and settings
+└── assets/                 # README images
 ```
 
 ## 🧭 How it works
@@ -119,7 +117,7 @@ films/nightrevels/
 4. **Motion is sound.** Actions emit timed events (clink, chirp, purr, squeak…) that the audio engine places sample-accurately, beside the rendered score.
 5. **Fast and resumable.** Frames render in parallel straight into encoded chunks, and the sound is synthesized and mastered to -14 LUFS in seconds.
 
-The director's plan is in [docs/FILM_PLAN.md](docs/FILM_PLAN.md).
+
 
 ## 📜 License
 

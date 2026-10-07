@@ -4,7 +4,7 @@ draft_events.py -- plausible stand-in for out/events.json (produced later by the
 Writes out/audio/draft_events.json in the exact events.json format of :
     {fps, frame_start, frame_end, acts, shots, events:[{frame,type,...,pos,pan,dist,tags?}], music_cues}
 
-Follows config.SHOTS desc key frames + docs/STAGING.md §8 ("events every lane must emit"); fight hits sit on
+Follows config.SHOTS description keyframes and the required events in config; fight hits sit on
 the config.TEMPO_MAP beat grids via config.beat_frame().  Character positions follow a rough blocking and every
 shot has a simple virtual camera on the +X side (180-degree rule), so `pan` / `dist` are computed the way
 events.finalize() will compute them (camera-relative azimuth / distance).
@@ -84,7 +84,7 @@ CAMERAS = {
 }
 
 
-# focal lengths (mm) per shot (docs/STAGING.md §3 vocabulary) and the S24 sub-cuts, each with its own camera:
+# focal lengths (mm) per shot and the S24 sub-cuts, each with its own camera:
 # (start, end, camera xyz, look-at, lens) -- the real export carries cuts[{id, start, end, camera, lens}] + event 'cut'
 LENS = {"S02": 18, "S05": 135, "S06": 100, "S15": 24, "S20": 24, "S21": 18, "S24": 135, "S25": 135, "S26": 50,
         "S28": 24, "S29": 50}
@@ -207,7 +207,7 @@ def build():
     for name, fr in C.items():
         ev(fr, "music_cue", cue=name)
 
-    # ---------------- PROLOGUE (mirrors docs/shots/prologue.md event tables)
+    # ---------------- PROLOGUE (mirrors src/blender/acts/prologue.py events)
     ev(28, "wind_gust", strength=0.45)
     ev(40, "clash", pos=[0.0, 70.0, 1.5], strength=0.6, tags=["distant", "omen"])  # distant blade ring (sound only)
     ev(70, "thunder", distance="far", pos=[-900.0, 2600.0, 500.0], tags=["distant", "omen"])

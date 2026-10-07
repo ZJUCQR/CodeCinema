@@ -84,17 +84,17 @@ Each command below is a step of the film: `codecinema run silvergrass <step>` fr
 
 ## 🎨 Customize
 
-The film is data plus code, so every part of it can be changed. The timeline, story and style live in `src/common/config.py`. Machine and quality settings live in `film.toml` under `[settings]`. The full guide is **[docs/CUSTOMIZING.md](docs/CUSTOMIZING.md)**.
+The film is data plus code, so every part of it can be changed. The timeline, story and style live in `src/common/config.py`. Machine and quality settings live in the root `pyproject.toml` under `[tool.codecinema.films.silvergrass.settings]`.
 
 | To change… | Edit |
 |---|---|
 | Titles, epigraph, name and act cards | `TITLES` in config |
 | Shot lengths, acts, tempo, slow motion, music cues | `SHOTS`, `ACTS`, `TEMPO_MAP`, `TIME_WARP`, `MUSIC_CUES` in config |
 | Character colours and proportions | `PALETTE`, `SHINOBI_HEIGHT`, `SAINT_HEIGHT` in config; character modules for the designs |
-| Choreography and cameras of one act | That act's lane module; the frame-by-frame breakdowns are in [docs/shots/](docs/shots/) |
+| Choreography and cameras of one act | That act's module in `src/blender/acts/` |
 | Sky, light, wind, grass, VFX | `environment.*` and `vfx.*` calls from a lane |
 | Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config; score and instrument modules |
-| Resolution, samples, motion blur, encoding, loudness | `[settings]` in `film.toml` |
+| Resolution, samples, motion blur, encoding, loudness | `[tool.codecinema.films.silvergrass.settings]` in the root `pyproject.toml` |
 
 You can create your own configuration or override any setting:
 
@@ -125,9 +125,7 @@ films/silvergrass/
 │   ├── post/               # calligraphic titles, assembly, film QC
 │   ├── tools/              # contact sheets, single-act previews, flash QC
 │   └── render_supervisor.py
-├── docs/                   # customizing guide, film plan, staging rules, frame-by-frame shot breakdowns
-├── assets/                 # README images
-└── film.toml               # the film's steps and every tunable setting
+└── assets/                 # README images
 ```
 
 ## 🧭 How it works
@@ -138,7 +136,6 @@ films/silvergrass/
 
 <p align="center"><sub><b>Figure 1.</b> The SilverGrass pipeline. <b>(a)</b> The film is specified as data: shots, handoff states, beat grid, cues and motifs in <code>config.py</code>, plus six choreography lanes. <b>(b)</b> Inside Blender, each lane keys characters, cameras and VFX within its own frame span. The build isolates the lanes in NLA strips and checks the states at every handoff. One film clock, <code>fx_time</code>, keeps procedural effects in step with slow motion. <b>(c)</b> A supervisor renders per-shot chunks and re-renders a shot only when its content fingerprint changes. <b>(d)</b> Every move emits a timed event, and the events place the SFX and the score's accents on the exact frame. <b>(e)</b> Title cards, frames and the mastered mix are assembled sample-accurately and checked for flash safety, A/V sync and loudness.</sub></p>
 
-The design documents are the [film plan](docs/FILM_PLAN.md), the [staging rules](docs/STAGING.md) and the [shot breakdowns](docs/shots/).
 
 ## 📜 License
 

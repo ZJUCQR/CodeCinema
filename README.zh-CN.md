@@ -26,7 +26,7 @@
 
 ---
 
-CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来，将画面、配乐和音效组合成完整影片。可以在本地可视化编辑器中选模板并定制，也可以接入自己的渲染器与制作流程。每部影片是一个包含 `film.toml` 的文件夹；框架提供：
+CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来，将画面、配乐和音效组合成完整影片。可以在本地可视化编辑器中选模板并定制，也可以接入自己的渲染器与制作流程。每部影片在 `films/` 下有独立目录，配置统一放在根目录 `pyproject.toml`；框架提供：
 
 - **设置**：每部影片一套分层设置，支持本地覆盖和环境变量，并能自动查找工具和字体。
 - **声音**：共享的音频工具包，包括合成、物理建模、混响、真峰值限制和响度处理。
@@ -38,7 +38,7 @@ CodeCinema 是可扩展的开源影片制作框架，用代码让故事动起来
 ## ✨ 亮点
 
 - 🪄 **选模板、改内容、点一下出片**：本地 Studio 提供八种动态场景、可编辑分镜、标题、字幕、颜色、横竖屏与方形画幅，一次点击生成 MP4，无需 API Key。
-- 🧩 **约定很小，渲染器随意**：影片在 `film.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
+- 🧩 **约定很小，渲染器随意**：影片在 `pyproject.toml` 里声明自己的步骤，`codecinema run <影片> <步骤>` 会用这部影片的设置来运行它。Blender、2D 矢量绘图、着色器，任何能输出画面帧的方式都可以。
 - 🎼 **共享的声音工具包**：影片配乐背后的 DSP 库就是框架的一部分，包括振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。
 - 🎙️ **可选情绪配音**：在 Studio 逐镜头填写台词和表演提示，也可使用自己的录音。[语音教程](#speech)介绍本地语音包与可复用的口型时间接口。
 - ♻️ **可复现，可配置**：渲染结果确定，并行任务可断点续跑；分层设置无需改动受版本管理的文件；辅助工具支持 macOS、Linux 和 Windows。
@@ -133,7 +133,7 @@ py -3.12 -m venv .venv
       <h3><a href="films/xishen/README.zh-CN.md">我不是戏神 · 开篇三集</a></h3>
       <p>按原著开篇顺序，从陈伶雨夜归家、剧院噩梦到第一次编导演练，人物与时间线贯穿三集。</p>
       <p><strong>Skia 2D · 11 分钟 · 三集 · 中文配音</strong></p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/xishen/watch.html">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#xishen">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
     </td>
     <td width="50%" valign="top">
       <a href="films/beacon/README.zh-CN.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
@@ -189,11 +189,11 @@ codecinema run myfilm all --quality preview
 <details>
 <summary>影片接口、设置和共享模块</summary>
 
-每部影片一个目录，包含 `film.toml`、入口脚本 `src/run.py`、素材 `assets/` 和自动生成的 `out/`。个人覆盖设置放在 Git 忽略的 `film.local.toml`。
+每部影片一个目录，包含入口脚本 `src/run.py`、素材 `assets/` 和自动生成的 `out/`。个人覆盖设置放在 Git 忽略的 `film.local.toml`。
 
-CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入口脚本。`codecinema list` 查看影片与步骤，`presets` 查看预设，`check` 检查环境，`run <id> <step>` 运行步骤。
+影片配置统一放在根目录 `pyproject.toml` 的 `[tool.codecinema.films.<id>]` 表中，具体参数位于其 `settings` 子表。Studio 和 `codecinema new` 会根据 `[tool.codecinema.starter]` 默认值自动登记新影片。CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入口脚本。`codecinema list` 查看影片与步骤，`presets` 查看预设，`check` 检查环境，`run <id> <step>` 运行步骤。
 
-设置优先级由低到高：框架默认值 → `film.toml` 的 `[settings.*]` → `film.local.toml`（去掉 `settings.` 前缀）→ 影片前缀或 `CODECINEMA_*` 环境变量。工具还支持 `BLENDER_BIN`、`FFMPEG`、`FFPROBE`。
+设置优先级由低到高：框架默认值 → 根目录 `pyproject.toml` 的 `[tool.codecinema.films.<id>.settings.*]` → 影片目录中的 `film.local.toml`（直接使用 `[video]`、`[audio]` 等表）→ 影片前缀或 `CODECINEMA_*` 环境变量。工具还支持 `BLENDER_BIN`、`FFMPEG`、`FFPROBE`。
 
 | 模块 | 用途 |
 | --- | --- |
@@ -207,7 +207,7 @@ CLI 自动发现影片，设置 `CODECINEMA_FILM_DIR`，在影片目录执行入
 
 在生成的 `src/run.py` 中修改 `draw_frame(canvas, frame)` 和 `score()`，即可扩展画面与音乐。`plan`、`stills`、`render`、`audio`、`assemble`、`qc` 分别负责时间线、联系表、画面、声音、合成和质检；`all` 串起整个流程。
 
-Studio 和 `customize` 接受标记为 `[film] template = "starter-v1"` 的项目；独立示例遵循各自的制作指南。预览单独写入 `out/preview/` 和 `<id>_preview.mp4`。分步运行时，画质、画幅、FPS、时长必须一致；签名检查阻止拼接过期素材。
+Studio 和 `customize` 接受标记为 `[tool.codecinema.films.<id>]` 下的 `template = "starter-v1"` 的项目；独立示例遵循各自的制作指南。预览单独写入 `out/preview/` 和 `<id>_preview.mp4`。分步运行时，画质、画幅、FPS、时长必须一致；签名检查阻止拼接过期素材。
 
 开发时将故事、动作和音效放在同一时间线上，固定随机种子，用可续渲分块减少重复计算。完整接口示例见[英文参考](README.md#framework)。
 
@@ -321,7 +321,7 @@ codecinema run myfilm all --speech-engine local
 | 影片 ID 已存在 | 换一个 ID；或从“我的影片”打开原作品，命令行用 `customize` |
 | 端口被占用 | 启动时加 `studio --port 8788` |
 | 合成提示设置不一致 | 直接运行 `all`；分步制作需使用相同的画质、画幅、时长和帧率 |
-| 想撤回修改 | 把 `out/edits/<时间戳>/` 中的 `scenes.json` 和 `film.toml` 复制回影片目录，再生成一次 |
+| 想撤回修改 | 从 `out/edits/<时间戳>/` 恢复 `scenes.json`，将备份 `pyproject.toml` 中仅属于这部影片的配置表恢复到根配置，再生成一次 |
 
 </details>
 
@@ -342,7 +342,7 @@ codecinema run myfilm all --speech-engine local
 | `beacon` | `TheLastBeacon.mp4` |
 | `xishen` | `ep01.mp4`、`ep02.mp4`、`ep03.mp4`、`xishen_complete.mp4` |
 
-先完成渲染和影片质检，再推送源码、海报和页面；用 `gh release upload <tag> <MP4路径> --clobber` 更新有变化的成片。各影片的 `RELEASE.md` 是统一发布说明，使用 `gh release edit <tag> --notes-file films/<id>/RELEASE.md` 同步。
+先完成渲染和影片质检，再推送源码、海报和页面；用 `gh release upload <tag> <MP4路径> --clobber` 更新有变化的成片。所有影片的发布说明统一在 GitHub Release 页面编辑。
 
 素材上传完成后执行 `gh workflow run pages.yml --ref main`；替换附件不会触发新版本发布事件。网站构建器只下载声明的成片，验证大小和摘要，用附件 ID 更新缓存；素材不完整时保留线上旧站。
 
@@ -369,6 +369,7 @@ CodeCinema/
 │   ├── starters.py         # 预设选项与分镜数据校验
 │   ├── template/           # 创建新影片时复制的模板源文件
 │   ├── films.py            # 发现影片并执行制作步骤
+│   ├── registry.py         # 工作区影片配置管理
 │   ├── settings.py         # 配置、工具与字体查找
 │   ├── blender.py          # Blender 启动与共享工具
 │   ├── media.py            # FFmpeg 编码与成片合成
@@ -383,14 +384,13 @@ CodeCinema/
 ├── assets/images/          # 共用图标与 README 配图
 ├── site/                   # 双语项目主页与网站构建脚本
 ├── .github/workflows/      # CI 与 GitHub Pages 部署
-└── pyproject.toml          # 包信息与依赖
+└── pyproject.toml          # 包依赖与全部影片配置
 ```
 
 一部影片内部，以[《守灯人》](films/beacon/README.zh-CN.md)为例：
 
 ```text
 films/beacon/
-├── film.toml               # 影片信息、制作步骤、工具与美术设置
 ├── src/                    # 本片的制作代码
 │   ├── story.py            # 镜头时间线与画面、声音共用的提示点
 │   ├── scene.py            # Blender 人物、场景、动画与摄影机
@@ -402,13 +402,13 @@ films/beacon/
 └── out/                    # 渲染帧、音频中间文件与报告（运行后生成）
 ```
 
-`film.toml` 告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 `src/` 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 `scenes.json`，供 Studio 编辑分镜。`assets/film/` 和 `out/` 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 `film.local.toml`。
+根目录 `pyproject.toml` 中的影片配置告诉框架要执行哪个脚本、支持哪些步骤；《守灯人》还在其中配置渲染采样数、曝光和角色配色。各影片的 `src/` 按自己的渲染与音频流程组织，不要求文件完全相同。通过模板创建的项目另有 `scenes.json`，供 Studio 编辑分镜。`assets/film/` 和 `out/` 在运行后生成，不提交到 Git；最终 MP4 在 Release 下载。可选的个人覆盖设置放入 `film.local.toml`。
 
 ## 🧭 工作原理
 
 ![CodeCinema 影片的制作流程：数据规格、场景合成、渲染、声音、后期](assets/images/pipeline.svg)
 
-**图 1.** 一部 CodeCinema 影片是怎样制作出来的。**(a)** 影片先写成数据：`film.toml` 声明步骤和设置，一份 config 存放整个故事（时间轴、节拍、角色、写成音符的乐谱）。**(b)** 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。**(c)** 渲染器以并行、可续渲的分块绘制画面：一部示例用 Blender 3D，另一部用 skia 2D 绘画。**(d)** 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。**(e)** 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。
+**图 1.** 一部 CodeCinema 影片是怎样制作出来的。**(a)** 影片先写成数据：`pyproject.toml` 声明步骤和设置，一份 config 存放整个故事（时间轴、节拍、角色、写成音符的乐谱）。**(b)** 影片把这些数据变成场景：角色、动作编排、镜头、环境和特效，全部按同一个影片时钟打关键帧，每个动作都会发出带时间的声音事件。**(c)** 渲染器以并行、可续渲的分块绘制画面：一部示例用 Blender 3D，另一部用 skia 2D 绘画。**(d)** 配乐、音效和环境声根据音符和事件合成，再混音和母带处理。**(e)** 字幕、画面和声音按采样精度合成并通过质检。框架用影片自己的设置运行每一步，并提供共享的设置、声音工具包和 ffmpeg 工具。
 
 ## 参与贡献
 
