@@ -1,11 +1,6 @@
 <h1 align="center">CodeCinema</h1>
 
 <p align="center">
-  <strong>Make your story move.</strong><br>
-  An open-source filmmaking framework for picture, music, sound and the final cut.
-</p>
-
-<p align="center">
   <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
@@ -31,7 +26,7 @@
 
 ---
 
-CodeCinema is an extensible framework for making complete films with code. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film is a folder with a `film.toml`; the framework provides:
+CodeCinema is an extensible, open-source filmmaking framework that brings stories to life with code, combining picture, music and sound into a finished film. Start with a configurable template in the local visual editor, or build your own renderer and production pipeline. Each film is a folder with a `film.toml`; the framework provides:
 
 - **Settings:** one layered configuration per film, with local overrides and environment variables, plus discovery of tools and fonts.
 - **Sound:** a shared audio toolkit for synthesis, physical models, reverb, true-peak limiting and loudness.
