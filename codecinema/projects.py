@@ -121,7 +121,7 @@ def customize(path, *, title=None, subtitle=None, preset=None, seconds=None, for
         elif '"narration"' not in old_renderer and "'narration'" not in old_renderer:
             raise ValueError("This customized renderer does not support spoken scenes. Your code has been preserved. "
                              "Create a new starter and copy its scene data, or merge the narration support from "
-                             "codecinema/template/src/run.py. See docs/SPEECH.md.")
+                             "codecinema/template/src/run.py. See README.md#speech.")
     manifest = path / "film.toml"
     previous = manifest.read_text(encoding="utf-8")
     text = replace_value(previous, "film", "title", data["title"])

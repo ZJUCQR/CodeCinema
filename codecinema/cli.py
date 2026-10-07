@@ -136,7 +136,7 @@ def cmd_check(a):
     if missing_tools:
         print(diagnostics.ffmpeg_help())
     if not ok:
-        print("Setup guide: docs/GETTING_STARTED.md")
+        print("Setup guide: README.md#quick-start")
     return 0 if ok else 1
 
 

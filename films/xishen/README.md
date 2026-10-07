@@ -56,7 +56,7 @@ Each master includes burned-in captions, a selectable subtitle track and chapter
 
 ## Render and watch locally
 
-Install CodeCinema and FFmpeg using the [getting-started guide](../../docs/GETTING_STARTED.md), then run these commands from the repository root:
+Install CodeCinema and FFmpeg using the [getting-started guide](../../README.md#quick-start), then run these commands from the repository root:
 
 ```bash
 python -m pip install -e ".[speech]"
@@ -70,7 +70,7 @@ The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_compl
 
 **Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use; after that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
 
-**Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../docs/SPEECH.md) for reusable framework APIs and starter controls.
+**Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [speech guide](../../README.md#speech) for reusable framework APIs and starter controls.
 
 ## Character and story continuity
 
@@ -99,7 +99,7 @@ The sheet shows the same cast used throughout all three episodes. Clothing, prop
 | [src/art.py](src/art.py) / [src/scenes.py](src/scenes.py) | Shared character designs, environments, performance and camera motion |
 | [src/score.py](src/score.py) / [src/sound.py](src/sound.py) | Scene-led music, speech directions, timed foley and mixing |
 
-For a quick, independent first film, use the [configurable starter](../../docs/GETTING_STARTED.md#make-it-yours) instead. This trilogy's source ledger and timeline are tailored to the novel.
+For a quick, independent first film, use the [configurable starter](../../README.md#customization) instead. This trilogy's source ledger and timeline are tailored to the novel.
 
 <details>
 <summary><b>Individual stages and a single-episode render</b></summary>

@@ -18,7 +18,7 @@
 
 从项目根目录运行：
 
-先按[安装教程](../../docs/GETTING_STARTED.zh-CN.md)配置框架和 FFmpeg：
+先按[安装教程](../../README.zh-CN.md#quick-start)配置框架和 FFmpeg：
 
 ```bash
 python -m pip install -e ".[speech]"
@@ -27,7 +27,7 @@ python -m codecinema run xishen all --narration required --speech-engine local
 
 发布版使用 Apple Silicon 本地 Qwen3-TTS 情绪配音与 Qwen3 ForcedAligner 逐字对齐。首次运行会下载模型，之后缓存每句声音，无需 API key。不同人物固定声线，按镜头的恐惧、犹疑、疲惫和思考调整表演。口型跟随最终配音的实际时间和音节；停顿、旁白和内心独白时闭嘴。
 
-`--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`；没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../docs/SPEECH.zh-CN.md)。
+`--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`；没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../README.zh-CN.md#speech)。
 
 需要可显示简体中文的字体。Mac 自动查找宋体；其他系统可安装 Noto Serif CJK 或将 `XISHEN_FONTS_SONG`、`XISHEN_FONTS_KAITI` 指向对应字体文件。不同系统的字体和语音引擎可能产生不同的字形与声线；固定素材、版本和设置后，帧与配乐确定。
 

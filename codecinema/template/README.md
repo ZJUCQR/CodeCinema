@@ -12,7 +12,7 @@ Run commands from your project root. The finished MP4 is `assets/film/__FILM_ID_
 
 ## Make it yours
 
-In Studio, choose the film, edit the title, captions, runtime, frame and colors, then click **Render my film**. Expand **Personalize every scene** to add or reorder scenes, mix looks, and change individual captions and camera moves. **Add a voice** accepts optional spoken text, a voice and acting direction; leave it blank for music only. See the [speech guide](../../docs/SPEECH.md) for the optional local speech pack and supplied recordings.
+In Studio, choose the film, edit the title, captions, runtime, frame and colors, then click **Render my film**. Expand **Personalize every scene** to add or reorder scenes, mix looks, and change individual captions and camera moves. **Add a voice** accepts optional spoken text, a voice and acting direction; leave it blank for music only. See the [speech guide](../../README.md#speech) for the optional local speech pack and supplied recordings.
 
 The command line works too:
 
@@ -28,4 +28,4 @@ codecinema customize __FILM_ID__ --format portrait --quality high --render --ope
 
 Every visual or CLI customization saves the previous JSON and TOML in `out/edits/`. Render all after changes, or keep identical options for `render`, `audio`, `assemble` and `qc`; assembly rejects stale or mismatched stages. A storyboard and verification report are saved in `out/master/` (or `out/preview/`).
 
-The [simple tutorial](../../docs/GETTING_STARTED.md) covers installation and your first film. The [framework guide](../../docs/FRAMEWORK.md) explains writing a custom renderer.
+The [simple tutorial](../../README.md#quick-start) covers installation and your first film. The [framework guide](../../README.md#framework) explains writing a custom renderer.

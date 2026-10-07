@@ -24,7 +24,7 @@ All three episodes share one visual style and cast. Rain, theatre, investigation
 
 ## Reproduce
 
-Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/docs/GETTING_STARTED.md), then run from the repository root:
+Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start), then run from the repository root:
 
 ```bash
 python -m pip install -e ".[speech]"

@@ -12,7 +12,7 @@ The keeper is an original porcelain-and-brass automaton, with layered armor, sep
 
 ## Render in one command
 
-Install the framework using the [setup guide](../../docs/GETTING_STARTED.md), plus [Blender 5.2 or newer](https://www.blender.org/download/). From the repository root:
+Install the framework using the [setup guide](../../README.md#quick-start), plus [Blender 5.2 or newer](https://www.blender.org/download/). From the repository root:
 
 ```bash
 codecinema run beacon all
@@ -70,6 +70,6 @@ codecinema run beacon assemble
 
 ![Six shots from the finished film](assets/images/storyboard.jpg)
 
-Read the [film plan](docs/FILM_PLAN.md) for the story beats and review gates, or the shared [Blender guide](../../docs/BLENDER.md) to build your own renderer. The images and film are rendered from the included scene code; this is a stylized animated production.
+Read the [film plan](docs/FILM_PLAN.md) for the story beats and review gates, or the shared [Blender guide](../../README.md#blender) to build your own renderer. The images and film are rendered from the included scene code; this is a stylized animated production.
 
 Author: **ZJUCQR**. Code and original procedural assets: [MIT](../../LICENSE).

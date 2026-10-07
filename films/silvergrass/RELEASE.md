@@ -19,7 +19,7 @@ Only finished MP4s are attached to this release.
 
 ## Reproduce
 
-Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/docs/GETTING_STARTED.md), install Blender 5.2+, then run from the repository root:
+Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start), install Blender 5.2+, then run from the repository root:
 
 ```bash
 codecinema run silvergrass all

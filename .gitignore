@@ -17,7 +17,6 @@ _site/
 !site/media/*.mp4
 *.mov
 *.wav
-!docs/**/*.wav
 
 # Blender
 *.blend1

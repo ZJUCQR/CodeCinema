@@ -19,7 +19,7 @@ Only the finished MP4 is attached to this release.
 
 ## Reproduce
 
-Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/docs/GETTING_STARTED.md), install [Blender 5.2+](https://www.blender.org/download/), then run from the repository root:
+Follow the [setup guide](https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start), install [Blender 5.2+](https://www.blender.org/download/), then run from the repository root:
 
 ```bash
 codecinema run beacon all

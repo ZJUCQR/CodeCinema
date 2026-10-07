@@ -12,7 +12,7 @@
 
 ## 一条命令出片
 
-按[安装教程](../../docs/GETTING_STARTED.zh-CN.md)安装框架，另外安装 [Blender 5.2 或更新版本](https://www.blender.org/download/)，然后在仓库根目录运行：
+按[安装教程](../../README.zh-CN.md#quick-start)安装框架，另外安装 [Blender 5.2 或更新版本](https://www.blender.org/download/)，然后在仓库根目录运行：
 
 ```bash
 codecinema run beacon all
@@ -70,6 +70,6 @@ codecinema run beacon assemble
 
 ![成片六镜头](assets/images/storyboard.jpg)
 
-完整创作与检查方案见[影片规划](docs/FILM_PLAN.md)。接入自己的渲染器可参考[Blender 指南](../../docs/BLENDER.md)。示例图片和影片均由仓库内的场景代码渲染，整体采用风格化动画美术。
+完整创作与检查方案见[影片规划](docs/FILM_PLAN.md)。接入自己的渲染器可参考[Blender 指南](../../README.md#blender)。示例图片和影片均由仓库内的场景代码渲染，整体采用风格化动画美术。
 
 唯一作者：**ZJUCQR**。代码与原创程序化资产采用 [MIT](../../LICENSE) 许可。
