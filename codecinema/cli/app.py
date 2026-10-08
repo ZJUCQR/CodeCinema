@@ -1,12 +1,16 @@
 """
 CodeCinema command line.
 
-    codecinema list                          the films in films/ and their steps
-    codecinema run <film> <step> [args ...]  run one step of a film (e.g. `codecinema run nightrevels all`)
-    codecinema new <id> --render              create and render a configurable starter film
-    codecinema presets                       list starter looks
-    codecinema check                         toolchain and Python packages
+    codecinema list                          list the registered films with their steps and requirements
+    codecinema run <film> [step] [args ...]  run a film's step (default: all), e.g. `codecinema run nightrevels audio`
+    codecinema new <id> [--render]           create a film from scene data; add --render to produce it immediately
+    codecinema customize <film> [--render]   change a film's renderer, story and look without editing Python
+    codecinema studio                        open the local visual editor: choose, customize and render
+    codecinema presets                       list the starter looks and output options
+    codecinema renderers                     list built-in and installed rendering backends
+    codecinema check                         check the toolchain and Python packages
 
+Run `codecinema <command> -h` to see a command's options.
 `python -m codecinema ...` works the same without installing the console script.
 """
 import argparse
@@ -169,12 +173,12 @@ def main(argv=None):
             pass
     ap = argparse.ArgumentParser(prog="codecinema", description=f"CodeCinema {__version__}: films made with code.")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("list")
+    sub.add_parser("list", help="List the registered films with their steps and requirements")
     sub.add_parser("renderers", help="List built-in and installed rendering backends")
-    r = sub.add_parser("run")
-    r.add_argument("film")
-    r.add_argument("step", nargs="?", default="all")
-    r.add_argument("args", nargs=argparse.REMAINDER)
+    r = sub.add_parser("run", help="Run one production step of a film (default: all)")
+    r.add_argument("film", help="Film ID (see codecinema list)")
+    r.add_argument("step", nargs="?", default="all", help="Production step (default: all)")
+    r.add_argument("args", nargs=argparse.REMAINDER, help="Options passed to the step, e.g. --quality preview")
     n = sub.add_parser("new", help="Create a film from scene data; add --render to produce it immediately")
     n.add_argument("id")
     n.add_argument("--renderer", default="skia", help="Rendering backend (see codecinema renderers)")
@@ -205,7 +209,7 @@ def main(argv=None):
     studio = sub.add_parser("studio", help="Open the local visual editor: choose, customize and render")
     studio.add_argument("--port", type=int, default=8787)
     studio.add_argument("--no-open", action="store_true", help="Print the address without opening a browser")
-    sub.add_parser("check")
+    sub.add_parser("check", help="Check the toolchain and Python packages")
     a = ap.parse_args(argv)
     try:
         return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check,

@@ -44,7 +44,7 @@ def generate(context):
     mix = score(context)
     cues = [(spec, start, end) for spec, start, end in context.scenes if spec.get("narration", {}).get("text")]
     if cues:
-        from codecinema.audio.speech import SpeechEngine, read_wave
+        from codecinema.audio.speech import SpeechEngine, read_wave, system_voice
         from scipy.signal import resample_poly
         from scipy.ndimage import uniform_filter1d
 
@@ -62,7 +62,7 @@ def generate(context):
                     direction=cue.get("direction", "Speak naturally, with warmth and varied emphasis."),
                     language=cue.get("language", "Chinese"),
                     recording=recording,
-                    system_voice="Samantha" if cue.get("language") == "English" else "Tingting",
+                    system_voice=system_voice(cue.get("language", "Chinese")),
                 )
                 samples, rate = read_wave(path)
                 samples = resample_poly(samples, dsp.SR, rate).astype(np.float32)

@@ -10,6 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import wave
@@ -48,6 +49,42 @@ def local_available():
         return False
     from importlib.util import find_spec
     return find_spec("mlx_audio") is not None and find_spec("pypinyin") is not None
+
+
+# Narration languages, their macOS voice locales and the standard voice preferred for each one.
+SYSTEM_LOCALES = {"Chinese": "zh_CN", "English": "en_US", "Japanese": "ja_JP", "Korean": "ko_KR",
+                  "French": "fr_FR", "German": "de_DE", "Spanish": "es_ES", "Italian": "it_IT",
+                  "Portuguese": "pt_BR", "Russian": "ru_RU"}
+PREFERRED_SYSTEM_VOICES = {"zh_CN": "Tingting", "en_US": "Samantha", "ja_JP": "Kyoko", "ko_KR": "Yuna",
+                           "fr_FR": "Thomas", "de_DE": "Anna", "es_ES": "Mónica", "it_IT": "Alice",
+                           "pt_BR": "Luciana", "ru_RU": "Milena"}
+NOVELTY_VOICES = {"Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos", "Good News", "Jester",
+                  "Organ", "Superstar", "Trinoids", "Whisper", "Wobble", "Zarvox"}
+
+
+def _installed_system_voices():
+    """{locale: [voice, ...]} from `say -v ?`, or {} where macOS speech is unavailable."""
+    say = shutil.which("say")
+    if not say:
+        return {}
+    listing = subprocess.run([say, "-v", "?"], capture_output=True, text=True, encoding="utf-8",
+                             errors="replace").stdout
+    voices = {}
+    for line in listing.splitlines():
+        match = re.match(r"^(.*?)\s+([a-z]{2,3}_[A-Z]{2,3})\s+#", line)
+        if match:
+            voices.setdefault(match[2], []).append(match[1].strip())
+    return voices
+
+
+def system_voice(language="Chinese"):
+    """An installed macOS voice that speaks `language`: the standard voice if present, else any non-novelty one."""
+    locale = SYSTEM_LOCALES.get(language, "en_US")
+    preferred = PREFERRED_SYSTEM_VOICES[locale]
+    installed = _installed_system_voices().get(locale, [])
+    if preferred in installed or not installed:
+        return preferred
+    return next((voice for voice in installed if voice not in NOVELTY_VOICES), installed[0])
 
 
 class SpeechEngine:
@@ -114,7 +151,7 @@ class SpeechEngine:
         elif self.engine == "system":
             say = shutil.which("say")
             if not say:
-                raise RuntimeError("No system Mandarin voice. Supply assets/<film-id>/voices/<shot_id>.wav recordings.")
+                raise RuntimeError("System voices need macOS. Supply WAV recordings in assets/<film-id>/voices/ instead.")
             script, raw = self.cache / f"{key}.txt", self.cache / f"{key}.aiff"
             try:
                 script.write_text(text, encoding="utf-8")
@@ -145,7 +182,7 @@ class ForcedAligner:
     def __init__(self, model=ALIGN_MODEL):
         self.model_id, self.model = model, None
 
-    def align(self, samples, rate, text):
+    def align(self, samples, rate, text, language="Chinese"):
         import mlx.core as mx
         from mlx_audio.stt import load
         if self.model is None:
@@ -154,7 +191,7 @@ class ForcedAligner:
             print(f"Loading dialogue aligner: {self.model_id}", flush=True)
             self.model = load(self.model_id)
         audio = resample_poly(samples, 16000, rate).astype(np.float32)
-        result = self.model.generate(audio=audio, text=text, language="Chinese")
+        result = self.model.generate(audio=audio, text=text, language=language)
         duration = len(samples) / rate
         rows = [{"text": item.text, "start": max(0., float(item.start_time)),
                  "end": min(duration, float(item.end_time))} for item in result]
