@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from codecinema.productions import film_root, source_root
+from codecinema.workspace.paths import film_assets
 
 from dataclasses import dataclass
 import hashlib
@@ -101,7 +102,7 @@ def digest(extra=""):
     paths = [ROOT / "story.json",
              *sorted((source_root("xishen")).glob("*.py")),
              *sorted((source_root("xishen").parents[1] / "audio").glob("*.py")),
-             *sorted((ROOT / "assets/voices").glob("*.wav"))]
+             *sorted((film_assets(ROOT) / "voices").glob("*.wav"))]
     for path in paths:
         h.update(path.name.encode())
         h.update(path.read_bytes())

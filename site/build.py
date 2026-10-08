@@ -59,12 +59,13 @@ def build(output, repo):
             shutil.copytree(source, target)
         else:
             shutil.copy2(source, target)
-    shutil.copytree(ROOT / "assets/images", output / "img")
+    shutil.copytree(ROOT / "assets/_shared/site", output, dirs_exist_ok=True)
+    shutil.copytree(ROOT / "assets/_shared/images", output / "img")
     for film in ("silvergrass", "nightrevels", "beacon"):
-        shutil.copytree(ROOT / f"films/{film}/assets/images", output / f"img/{film}")
+        shutil.copytree(ROOT / f"assets/{film}/images", output / f"img/{film}")
     xishen = output / "xishen"
     xishen.mkdir(exist_ok=True)
-    shutil.copytree(ROOT / "films/xishen/assets/images", xishen / "assets/images")
+    shutil.copytree(ROOT / "assets/xishen/images", xishen / "assets/images")
 
     ids = []
     for tag, (folder, names) in FILMS.items():

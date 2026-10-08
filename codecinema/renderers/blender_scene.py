@@ -142,7 +142,7 @@ def render(job):
         custom = spec.get("blender", {})
         if scene_index != active:
             if custom.get("file"):
-                bpy.ops.wm.open_mainfile(filepath=str(Path(job["film"]) / custom["file"]))
+                bpy.ops.wm.open_mainfile(filepath=str(Path(job["assets"]) / custom["file"]))
                 scene = bpy.data.scenes.get(custom.get("scene", "")) if custom.get("scene") else bpy.context.scene
                 if scene is None:
                     raise ValueError("Requested Blender scene does not exist")

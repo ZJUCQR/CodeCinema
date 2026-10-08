@@ -11,6 +11,8 @@ import sys
 import numpy as np
 import skia
 
+from codecinema.workspace.paths import film_assets, project_root
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(os.path.dirname(HERE), "paint"), os.path.join(os.path.dirname(HERE), "common")]
 import config as C  # noqa: E402
@@ -22,7 +24,8 @@ from silk import make_grain, make_silk  # noqa: E402
 def _font(names, size):
     from PIL import ImageFont
     dirs = ["/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
-            os.path.expanduser("~/Library/Fonts"), "/usr/share/fonts", os.path.join(C.ROOT, "assets", "fonts")]
+            os.path.expanduser("~/Library/Fonts"), "/usr/share/fonts", str(film_assets(C.ROOT) / "fonts"),
+            os.path.join(project_root(C.ROOT), "assets", "_shared", "fonts")]
     import glob
     dirs += glob.glob("/System/Library/AssetsV2/com_apple_MobileAsset_Font*/*/AssetData")
     for n in names:

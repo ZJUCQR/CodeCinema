@@ -17,7 +17,7 @@
 
 <p align="center">
   <a href="https://zjucqr.github.io/CodeCinema/zh/#films">
-    <img src="assets/images/banner.jpg" width="100%" alt="CodeCinema 影片制作框架：让故事动起来，从画面与声音到最终成片">
+    <img src="assets/_shared/images/banner.jpg" width="100%" alt="CodeCinema 影片制作框架：让故事动起来，从画面与声音到最终成片">
   </a>
 </p>
 
@@ -25,7 +25,7 @@
 
 CodeCinema 是可扩展的开源影片制作框架，将画面、音乐、声音与最终剪辑连接起来。在本地 Studio 中编排故事，选择 Skia 或 Blender，为镜头添加文字、配乐和可选配音，再生成 MP4。
 
-影片文件夹只保存内容与素材。框架统一提供渲染器、声音和合成流程，无需复制或编写制作脚本。开发者可以通过插件扩展渲染技术。
+影片文件夹保存故事数据，媒体素材统一放在根目录 `assets/<影片 ID>/`。框架统一提供渲染器、声音和合成流程，无需复制或编写制作脚本。开发者可以通过插件扩展渲染技术。
 
 ## ✨ 亮点
 
@@ -96,20 +96,20 @@ py -3.12 -m venv .venv
 2. **改内容**：填写影片 ID、标题和字幕，选择 Skia 或 Blender，再设置时长、画幅与画质。
 3. **生成影片**：点击“生成我的影片”，完成后直接观看或下载 MP4。
 
-![Eight starter looks](assets/images/starters.jpg)
+![Eight starter looks](assets/_shared/images/starters.jpg)
 
 ## 🎞 示例影片
 
 <table width="100%">
   <tr>
     <td width="50%" valign="top">
-      <a href="films/silvergrass/README.zh-CN.md"><img src="assets/images/examples/silvergrass.jpg" width="100%" alt="芒原决战"></a>
+      <a href="films/silvergrass/README.zh-CN.md"><img src="assets/_shared/images/examples/silvergrass.jpg" width="100%" alt="芒原决战"></a>
       <h3><a href="films/silvergrass/README.zh-CN.md">芒原决战</a></h3>
       <p>落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#silvergrass">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/film">下载</a> · <a href="films/silvergrass/README.zh-CN.md">制作指南</a></p>
     </td>
     <td width="50%" valign="top">
-      <a href="films/nightrevels/README.zh-CN.md"><img src="assets/images/examples/nightrevels.jpg" width="100%" alt="韩熙载夜宴图 · 猫"></a>
+      <a href="films/nightrevels/README.zh-CN.md"><img src="assets/_shared/images/examples/nightrevels.jpg" width="100%" alt="韩熙载夜宴图 · 猫"></a>
       <h3><a href="films/nightrevels/README.zh-CN.md">韩熙载夜宴图 · 猫</a></h3>
       <p>一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#nightrevels">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">下载</a> · <a href="films/nightrevels/README.zh-CN.md">制作指南</a></p>
@@ -117,20 +117,19 @@ py -3.12 -m venv .venv
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="films/xishen/README.zh-CN.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="我不是戏神"></a>
+      <a href="films/xishen/README.zh-CN.md"><img src="assets/_shared/images/examples/xishen.jpg" width="100%" alt="我不是戏神"></a>
       <h3><a href="films/xishen/README.zh-CN.md">我不是戏神</a></h3>
       <p>从陈伶雨夜归家、剧院噩梦到第一次编导演练。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#xishen">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
     </td>
     <td width="50%" valign="top">
-      <a href="films/beacon/README.zh-CN.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
+      <a href="films/beacon/README.zh-CN.md"><img src="assets/_shared/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
       <h3><a href="films/beacon/README.zh-CN.md">守灯人</a></h3>
       <p>云海上的瓷白机械守灯人唤醒古老星环，远方的一点光给出了回应。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#beacon">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">下载</a> · <a href="films/beacon/README.zh-CN.md">制作指南</a></p>
     </td>
   </tr>
 </table>
-
 
 <a id="customization"></a>
 
@@ -155,7 +154,7 @@ py -3.12 -m venv .venv
 .venv/bin/python -m codecinema customize myfilm --renderer blender --render
 ```
 
-在 `new` 或 `customize` 后添加 `--story path/to/scenes.json` 可导入自己的分镜。显式指定的标题、字幕、时长和风格选项会覆盖导入值。剧情与素材保存在影片目录，渲染器和制作设置统一保存在根目录 `pyproject.toml`。
+在 `new` 或 `customize` 后添加 `--story path/to/scenes.json` 可导入自己的分镜。显式指定的标题、字幕、时长和风格选项会覆盖导入值。剧情保存在 `films/<id>/`，素材保存在 `assets/<id>/`，渲染器和制作设置统一保存在根目录 `pyproject.toml`。
 
 <a id="framework"></a>
 
@@ -166,7 +165,7 @@ py -3.12 -m venv .venv
 - **内容：** 镜头顺序、字幕、台词、时长和素材属于各部影片。
 - **制作流程：** 统一的分镜时钟连接规划、画面、配乐、配音、合成与成片检查。
 - **渲染器：** Skia 与 Blender 通过同一接口输出画面。已安装的插件会显示在 `codecinema renderers` 和 Studio 中。
-- **制作包：** 四部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据与素材。
+- **制作包：** 四部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据，素材放在 `assets/<id>/`。
 
 示例影片保留原有制作命令，并使用专门设计的制作包。它们的动作编排无法自动切换到另一种后端。新建 Studio 项目使用共享管线，可以直接更换渲染器。以前带有自定义入口脚本的项目仍可运行。
 
@@ -178,7 +177,7 @@ py -3.12 -m venv .venv
 
 安装 [Blender 5.2 或更新版本](https://www.blender.org/download/)，在 Studio 选择 **Blender · 3D**，或使用 `--renderer blender`。内置三维场景提供灯光与运动镜头，并与字幕、配乐和可选配音共用时间轴。
 
-要使用自己的角色和动画，将 `.blend` 文件放入影片的 `assets/` 文件夹。在分镜卡片中展开“Blender 场景”，填写相对路径和可选的摄像机名称。建议在 Blender 中打包外部素材，便于跨电脑使用。框架会按场景原有帧率读取动画。
+要使用自己的角色和动画，将 `.blend` 文件放入 `assets/<影片 ID>/`，例如 `assets/<影片 ID>/scenes/world.blend`。在分镜卡片中展开“Blender 场景”，填写 `scenes/world.blend` 和可选的摄像机名称，路径相对于该影片的素材目录。建议在 Blender 中打包外部素材，便于跨电脑使用。框架会按场景原有帧率读取动画。
 
 先用快速预览或少量静帧检查构图。Blender 渲染比 Skia 更慢，耗时取决于场景复杂度、分辨率与硬件。[《守灯人》说明](films/beacon/README.zh-CN.md) 展示了更完整的人物与镜头制作。
 
@@ -194,7 +193,7 @@ Apple Silicon Mac 可在仓库根目录安装本地情绪语音包，然后重�
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-首次配音会下载语音模型，后续制作可复用已有配音，无需 API Key。使用录音时，将 WAV 文件放入影片的 `assets/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。各平台均可使用录音。
+首次配音会下载语音模型，后续制作可复用已有配音，无需 API Key。使用录音时，将 WAV 文件放入 `assets/<影片 ID>/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。各平台均可使用录音。
 
 ## 🗂 项目结构
 
@@ -213,8 +212,7 @@ CodeCinema/
 │   │   ├── settings.py         # 分层配置、工具与字体查找
 │   │   ├── films.py            # 影片发现与制作进程启动
 │   │   ├── projects.py         # 创建、定制与备份
-│   │   ├── story.py            # 分镜校验、风格与画幅
-│   │   └── scaffold/           # 新影片的数据骨架
+│   │   └── story.py            # 分镜校验、风格与画幅
 │   ├── engine/                 # 共享制作管线
 │   │   ├── context.py          # 分镜时间轴与渲染上下文
 │   │   ├── pipeline.py         # 规划、画面、声音、合成与质检
@@ -226,8 +224,7 @@ CodeCinema/
 │   │   └── diagnostics.py      # 依赖检查与安装提示
 │   ├── studio/                 # 本地可视化编辑器
 │   │   ├── server.py           # HTTP 接口与媒体响应
-│   │   ├── jobs.py             # 项目状态与后台制作任务
-│   │   └── assets/             # 编辑器界面与风格缩略图
+│   │   └── jobs.py             # 项目状态与后台制作任务
 │   ├── renderers/              # Skia、Blender 与渲染插件接口
 │   ├── audio/                  # 配乐、音效、配音与表演时序
 │   └── productions/            # 示例影片的制作包
@@ -235,19 +232,31 @@ CodeCinema/
 │       ├── silvergrass/        # 动作、Blender 场景与后期
 │       ├── nightrevels/        # 角色绘制、长卷动画与音乐
 │       └── xishen/             # 角色、表演、配音与多集合成
-├── films/                    # 影片内容、素材与生成结果
+├── films/                    # 故事数据与生成的工作文件
 │   ├── silvergrass/          # 《芒原决战》
 │   ├── nightrevels/          # 《韩熙载夜宴图 · 猫》
 │   ├── xishen/               # 《我不是戏神》
 │   └── beacon/               # 《守灯人》
+├── assets/                   # 全部媒体素材，按影片归类
+│   ├── beacon/               # 守灯人的配图与 MP4 成片
+│   ├── silvergrass/          # 芒原决战的素材
+│   ├── nightrevels/          # 韩熙载夜宴图的素材
+│   ├── xishen/               # 剧集配图、录音与 MP4 成片
+│   └── _shared/              # 框架与网站的公共资源
+│       ├── images/           # 品牌图与 README 配图
+│       ├── studio/           # 编辑器界面与风格缩略图
+│       ├── scaffold/         # 新影片的初始文件
+│       └── site/             # 网站样式、脚本与预览媒体
 ├── pyproject.toml            # 依赖与所有影片配置
 ├── CONTRIBUTING.md           # 开发与贡献说明
 └── LICENSE                   # MIT 许可证
 ```
 
+每部影片使用 `assets/<id>/images/` 保存配图，使用 `assets/<id>/film/` 保存成片。需要时可在同一目录添加 `voices/`、`scenes/`、`models/`、`textures/` 或 `fonts/`。生成的中间文件仍放在 `films/<id>/out/`。配置中以 `assets/` 开头的路径相对于工作区根目录，其他相对路径以影片文件夹为起点。
+
 ## 🧭 工作原理
 
-![CodeCinema 影片制作流程](assets/images/pipeline.svg)
+![CodeCinema 影片制作流程](assets/_shared/images/pipeline.svg)
 
 1. **组织故事**：确定镜头顺序、内容与节奏。
 2. **制作画面**：由所选渲染器生成场景、动画与摄影机运动。

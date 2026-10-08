@@ -17,7 +17,7 @@
 
 [English](README.md) · **简体中文**
 
-<img src="assets/images/preview.gif" width="92%" alt="影片精彩片段">
+<img src="../../assets/silvergrass/images/preview.gif" width="92%" alt="影片精彩片段">
 
 </div>
 
@@ -50,7 +50,7 @@
 .venv/bin/python -m codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 → 合成
 ```
 
-成片输出到 `films/silvergrass/assets/film/芒原决战_Final.mp4`。完整渲染是最慢的一步，可以随时中断，再次运行会从中断处继续。想花几分钟先看某一幕，可以运行 `.venv/bin/python -m codecinema run silvergrass preview act2`。
+成片输出到 `assets/silvergrass/film/芒原决战_Final.mp4`。完整渲染是最慢的一步，可以随时中断，再次运行会从中断处继续。想花几分钟先看某一幕，可以运行 `.venv/bin/python -m codecinema run silvergrass preview act2`。
 
 下表每个命令都是影片的一个步骤：在仓库根目录运行 `.venv/bin/python -m codecinema run silvergrass <步骤>`。
 
@@ -71,11 +71,11 @@
 
 | | |
 |:---:|:---:|
-| <img src="assets/images/still_190.jpg" alt="片名：落日、孤松与无垠的芒草原"> | <img src="assets/images/still_597.jpg" alt="落日前的第一次弹刀"> |
+| <img src="../../assets/silvergrass/images/still_190.jpg" alt="片名：落日、孤松与无垠的芒草原"> | <img src="../../assets/silvergrass/images/still_597.jpg" alt="落日前的第一次弹刀"> |
 | **片名** | **一之幕 · 剑**：第一次弹刀 |
-| <img src="assets/images/still_1420.jpg" alt="斗笠被一刀两断"> | <img src="assets/images/still_2100.jpg" alt="火环中的刀枪相击"> |
+| <img src="../../assets/silvergrass/images/still_1420.jpg" alt="斗笠被一刀两断"> | <img src="../../assets/silvergrass/images/still_2100.jpg" alt="火环中的刀枪相击"> |
 | 完美弹反，斗笠被一刀两断 | **二之幕 · 焰**：火环中的枪与刀 |
-| <img src="assets/images/still_2500.jpg" alt="雷切：落雷分叉劈向孤松"> | <img src="assets/images/still_3560.jpg" alt="月出，剑豪单膝跪地"> |
+| <img src="../../assets/silvergrass/images/still_2500.jpg" alt="雷切：落雷分叉劈向孤松"> | <img src="../../assets/silvergrass/images/still_3560.jpg" alt="月出，剑豪单膝跪地"> |
 | **三之幕 · 雷**：雷切 | **终**：月出 |
 
 </div>
@@ -119,18 +119,20 @@ SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender .venv/bin/python -m codeci
 ```text
 films/silvergrass/
 ├── story.json              # 剧情、分镜与共用时间节点
-├── assets/                 # 素材、配图与生成的成片
 └── out/                    # 生成的中间文件与检查报告
+
+assets/silvergrass/
+├── images/                 # 海报与 README 配图
+└── film/                   # 生成的 MP4 成片
 ```
 
 ## 🧭 工作原理
 
 <div align="center">
-<img src="assets/images/pipeline.svg" width="100%" alt="SilverGrass 流程：数据规格、Blender 场景合成、渲染、声音合成与后期">
+<img src="../../assets/silvergrass/images/pipeline.svg" width="100%" alt="SilverGrass 流程：数据规格、Blender 场景合成、渲染、声音合成与后期">
 </div>
 
 <p align="center"><sub>SilverGrass 流程。<b>(a)</b> 影片以数据形式描述：<code>story.json</code> 保存镜头与分幕，制作包的 <code>common/config.py</code> 提供交接状态、节拍网格、提示点和主导动机，外加六条编舞线。<b>(b)</b> 在 Blender 里，每条编舞线只在自己的帧区间内为角色、镜头和特效打关键帧。构建时用 NLA 条带隔离各条线，并检查每个交接点的状态。统一的影片时钟 <code>fx_time</code> 让程序化特效和慢镜头同步。<b>(c)</b> 调度器按镜头分块渲染，只有内容指纹变化的镜头才会重渲。<b>(d)</b> 每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。<b>(e)</b> 字幕、画面和母带混音按采样精度合成，再检查光敏安全、音画同步和响度。</sub></p>
-
 
 ## 📜 许可
 

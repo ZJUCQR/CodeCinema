@@ -10,11 +10,11 @@ from urllib.parse import unquote, urlsplit
 
 from codecinema.workspace import projects
 from codecinema.workspace import story as starters
-from codecinema.workspace.paths import project_root
+from codecinema.workspace.paths import film_assets, project_root, resource_dir
 
 from .jobs import Studio
 
-ASSETS = Path(__file__).with_name("assets")
+ASSETS = resource_dir("studio")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -87,8 +87,8 @@ class Handler(BaseHTTPRequestHandler):
                 folder = self.studio.project(match[1])
                 try:
                     projects.read_starter(folder)
-                    candidate = folder / "assets" / "film" / match[2]
-                    if candidate.resolve().parent == (folder / "assets" / "film").resolve() and not candidate.is_symlink():
+                    candidate = film_assets(folder) / "film" / match[2]
+                    if candidate.resolve().parent == (film_assets(folder) / "film").resolve() and not candidate.is_symlink():
                         path = candidate
                 except (ValueError, OSError):
                     pass

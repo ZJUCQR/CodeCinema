@@ -37,9 +37,8 @@ Repository = "https://github.com/ZJUCQR/CodeCinema"
 include = ["codecinema*"]
 namespaces = false
 
-[tool.setuptools.package-data]
-"codecinema.workspace" = ["scaffold/*", "scaffold/**/*"]
-"codecinema.studio" = ["assets/*", "assets/**/*"]
+[tool.setuptools.cmdclass]
+build_py = "codecinema.runtime.build.BuildPy"
 
 [tool.setuptools.exclude-package-data]
 codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
@@ -48,7 +47,8 @@ codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
 line-length = 120
 extend-exclude = ["out", ".venv"]
 
-# Film metadata and settings. Paths are relative to films/<id>/.
+# Film metadata and settings. assets/ paths start at the workspace root.
+# Other relative paths start at films/<id>/. Absolute overrides are supported.
 
 [tool.codecinema.films.silvergrass]
 title = "Duel in the Silver Grass"
@@ -62,7 +62,7 @@ requires = ["blender>=5.2", "ffmpeg"]
 
 [tool.codecinema.films.silvergrass.settings.paths]
 out_dir = "out"                                   # every generated file (scene, frames, audio, previews)
-final_video = "assets/film/芒原决战_Final.mp4"     # the mastered film
+final_video = "assets/silvergrass/film/芒原决战_Final.mp4"     # the mastered film
 lock_dir = ""                                     # render-slot lock files shared by every process; "" = <out_dir>/.locks
 
 [tool.codecinema.films.silvergrass.settings.tools]
@@ -72,7 +72,7 @@ ffprobe = ""        # auto: $FFPROBE, `ffprobe` on PATH
 python = ""         # interpreter for plots launched from Blender; auto: .venv, then python3 on PATH
 
 [tool.codecinema.films.silvergrass.settings.fonts]
-# Title-card fonts (TTF/OTF/TTC). Auto-detection searches the OS font folders and assets/fonts/ for known file
+# Title-card fonts (TTF/OTF/TTC). Auto-detection searches the OS font folders and assets/<id>/fonts/ and assets/_shared/fonts/ for known file
 # names (e.g. STXingkai, Weibei, Kaiti, Songti, Zhi Mang Xing, Ma Shan Zheng, LXGW WenKai, Noto Serif CJK).
 calligraphy = ""    # main title, name cards, act cards, "End"
 weibei = ""         # heavy display face
@@ -153,7 +153,7 @@ requires = ["ffmpeg"]
 
 [tool.codecinema.films.nightrevels.settings.paths]
 out_dir = "out"                                 # generated files (events, notes, silk cache, video chunks, audio)
-final_video = "assets/film/NightRevels.mp4"     # the mastered film
+final_video = "assets/nightrevels/film/NightRevels.mp4"     # the mastered film
 
 [tool.codecinema.films.nightrevels.settings.tools]
 ffmpeg = ""          # auto: $FFMPEG, `ffmpeg` on PATH
@@ -185,7 +185,7 @@ requires = ["ffmpeg"]
 
 [tool.codecinema.films.xishen.settings.paths]
 out_dir = "out"
-final_video = "assets/film/xishen_complete.mp4"
+final_video = "assets/xishen/film/xishen_complete.mp4"
 
 [tool.codecinema.films.xishen.settings.video]
 width = 1920
@@ -214,6 +214,10 @@ production = "beacon"
 renderer = "blender"
 steps = ["check", "still", "render", "audio", "assemble", "all"]
 requires = ["blender>=5.2", "ffmpeg"]
+
+[tool.codecinema.films.beacon.settings.paths]
+out_dir = "out"
+final_video = "assets/beacon/film/TheLastBeacon.mp4"
 
 [tool.codecinema.films.beacon.settings.tools]
 blender = ""

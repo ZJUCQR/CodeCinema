@@ -21,8 +21,8 @@ from codecinema.runtime import blender
 from codecinema.runtime import process as procutil
 from codecinema.workspace import settings
 
-OUT = ROOT / "out"
-MASTER = ROOT / "assets/film/TheLastBeacon.mp4"
+OUT = Path(settings.path("paths", "out_dir"))
+MASTER = Path(settings.path("paths", "final_video"))
 
 
 def execute(args, **kwargs):

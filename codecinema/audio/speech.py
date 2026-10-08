@@ -114,7 +114,7 @@ class SpeechEngine:
         elif self.engine == "system":
             say = shutil.which("say")
             if not say:
-                raise RuntimeError("No system Mandarin voice. Supply assets/voices/<shot_id>.wav recordings.")
+                raise RuntimeError("No system Mandarin voice. Supply assets/<film-id>/voices/<shot_id>.wav recordings.")
             script, raw = self.cache / f"{key}.txt", self.cache / f"{key}.aiff"
             try:
                 script.write_text(text, encoding="utf-8")

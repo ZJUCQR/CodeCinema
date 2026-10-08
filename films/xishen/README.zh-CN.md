@@ -4,7 +4,7 @@
 
 **[在线观看](https://zjucqr.github.io/CodeCinema/zh/#xishen)** · **[下载三集与合集](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen)** · [English](README.md)
 
-![雨夜的陈伶、剧院观众和换上黑棉大衣后的同一人物](assets/images/banner.jpg)
+![雨夜的陈伶、剧院观众和换上黑棉大衣后的同一人物](../../assets/xishen/images/banner.jpg)
 
 | 集数 | 片名 | 原著范围 | 时长 |
 | --- | --- | --- | --- |
@@ -12,7 +12,7 @@
 | 02 | 我们在看着你 | 第 2–3 章 | 3:30 |
 | 03 | 陈氏编导法则 | 第 4–6 章 | 4:00 |
 
-在[项目主页](https://zjucqr.github.io/CodeCinema/zh/#xishen)选择剧集或连续播放。成片在 `assets/film/ep01.mp4`、`ep02.mp4`、`ep03.mp4`，合集在 `assets/film/xishen_complete.mp4`。视频包含已经绘制的字幕，以及可选择的中文字幕轨和章节标记。
+在[项目主页](https://zjucqr.github.io/CodeCinema/zh/#xishen)选择剧集或连续播放。成片在 `assets/xishen/film/ep01.mp4`、`ep02.mp4`、`ep03.mp4`，合集在 `assets/xishen/film/xishen_complete.mp4`。视频包含已经绘制的字幕，以及可选择的中文字幕轨和章节标记。
 
 ## 重新生成
 
@@ -25,7 +25,7 @@
 
 发布版使用 Apple Silicon 本地 Qwen3-TTS 情绪配音与 Qwen3 ForcedAligner 逐字对齐。首次运行会下载模型，之后缓存每句声音，无需 API key。不同人物固定声线，按镜头的恐惧、犹疑、疲惫和思考调整表演。口型跟随最终配音的实际时间和音节。停顿、旁白和内心独白时闭嘴。
 
-`--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`。Windows 命令中的解释器使用 `.\.venv\Scripts\python.exe`。没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../README.zh-CN.md#speech)。
+`--speech-engine local` 要求本地情绪引擎，不会自动换成基础声音。默认 `auto` 优先使用已安装的语音包，Mac 未安装时使用系统声音。Linux / Windows 可把录音放到 `assets/xishen/voices/<镜头 id>.wav`，使用 `--speech-engine recording --narration required`。Windows 命令中的解释器使用 `.\.venv\Scripts\python.exe`。没有本地对齐模型时，口型根据声音活动开合。`--narration off` 生成字幕与配乐版本。详见[框架语音教程](../../README.zh-CN.md#speech)。
 
 需要可显示简体中文的字体。Mac 自动查找宋体。其他系统可安装 Noto Serif CJK 或将 `XISHEN_FONTS_SONG`、`XISHEN_FONTS_KAITI` 指向对应字体文件。不同系统的字体和语音引擎可能产生不同的字形与声线。固定素材、版本和设置后，帧与配乐确定。
 
@@ -75,9 +75,9 @@ out/screenplay.md     生成的完整改编剧本
 out/continuity.json   逐镜头解析后的服装、道具和原著来源
 out/*.srt             每集及合集的字幕
 out/qc.json           本地生成的成片与连续性质检报告
-assets/images/        海报与展示配图
+assets/xishen/images/        海报与展示配图
 out/stills/           生成的分镜联系表与人物检查图
-assets/film/          三集 MP4 与合集
+assets/xishen/film/          三集 MP4 与合集
 ```
 
 质检核对剧情时序、跨集状态、期待值、字体、字幕宽度、67 个镜头的确定性和运动、帧数、画面尺寸、音画时长、字幕轨、章节、响度与真峰值，并完整解码成片检查错误。结果写入 `out/qc.json`。影片和中间音视频不提交 Git，可由上述命令重新生成。

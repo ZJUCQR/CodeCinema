@@ -4,7 +4,7 @@ A wordless Blender short about a small act of care, an ancient instrument and a 
 
 [Watch the film](https://zjucqr.github.io/CodeCinema/#beacon) · [Download MP4](https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon) · [Chinese](README.zh-CN.md)
 
-![The keeper and the celestial beacon](assets/images/poster.jpg)
+![The keeper and the celestial beacon](../../assets/beacon/images/poster.jpg)
 
 **48 seconds · 1920 × 1080 · 24 fps · stereo · Blender 5.2+**
 
@@ -20,7 +20,7 @@ On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`.
 .venv/bin/python -m codecinema run beacon all
 ```
 
-The finished film appears at `films/beacon/assets/film/TheLastBeacon.mp4`. No API key, downloaded model, texture pack or Blender add-on is needed. Blender and FFmpeg are detected automatically. Set `BLENDER_BIN`, `FFMPEG` or `FFPROBE` if they are installed elsewhere. Allow time for 1,152 full-resolution 3D frames. Speed depends on the GPU.
+The finished film appears at `assets/beacon/film/TheLastBeacon.mp4`. No API key, downloaded model, texture pack or Blender add-on is needed. Blender and FFmpeg are detected automatically. Set `BLENDER_BIN`, `FFMPEG` or `FFPROBE` if they are installed elsewhere. Allow time for 1,152 full-resolution 3D frames. Speed depends on the GPU.
 
 On a machine with sufficient GPU memory, `.venv/bin/python -m codecinema run beacon all --jobs 2` runs two non-overlapping frame ranges concurrently. Start with the default single process on smaller GPUs. Production commands are locked to prevent two invocations from overwriting the same film.
 
@@ -70,7 +70,7 @@ The six-shot structure and 48-second composition are authored together. Changing
 
 `out/audio/` contains separate music, ambience and effects stems, the stereo mix and its loudness report. `out/qc.json` records the final video probe, full-decode result and measured AAC loudness/true peak. Assembly checks all frames, requires exactly 1,152 decoded video frames and 48 seconds, and rejects an encoded audio peak above −1 dBTP. The mix targets −16 LUFS with headroom for AAC.
 
-![Six shots from the finished film](assets/images/storyboard.jpg)
+![Six shots from the finished film](../../assets/beacon/images/storyboard.jpg)
 
 See the [Blender setup](../../README.md#blender) to get started. The images and film are rendered from the included scene code. This is a stylized animated production.
 

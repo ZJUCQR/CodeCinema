@@ -17,7 +17,7 @@
 
 <p align="center">
   <a href="https://zjucqr.github.io/CodeCinema/#films">
-    <img src="assets/images/banner.jpg" width="100%" alt="CodeCinema filmmaking framework: make your story move, from picture and sound to a finished film">
+    <img src="assets/_shared/images/banner.jpg" width="100%" alt="CodeCinema filmmaking framework: make your story move, from picture and sound to a finished film">
   </a>
 </p>
 
@@ -25,7 +25,7 @@
 
 CodeCinema is an extensible, open-source filmmaking framework for picture, music, sound and the final cut. Write your story in the local Studio, choose Skia or Blender, and turn your scenes into an MP4 with music and optional voices.
 
-Film folders hold content and assets. The framework owns the renderers, sound and assembly, so you can make a film without copying or writing production scripts. Developers can add rendering backends through plugins.
+Film folders hold story data. Media lives in the root `assets/<film-id>/` directory. The framework owns the renderers, sound and assembly, so you can make a film without copying or writing production scripts. Developers can add rendering backends through plugins.
 
 ## ✨ Highlights
 
@@ -96,20 +96,20 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
 2. **Personalize:** enter a film ID, title and caption. Choose Skia or Blender, then set duration, frame and picture quality.
 3. **Render my film:** watch or download the finished MP4.
 
-![Eight starter looks](assets/images/starters.jpg)
+![Eight starter looks](assets/_shared/images/starters.jpg)
 
 ## 🎞 Example films
 
 <table width="100%">
   <tr>
     <td width="50%" valign="top">
-      <a href="films/silvergrass/README.md"><img src="assets/images/examples/silvergrass.jpg" width="100%" alt="Duel in the Silver Grass"></a>
+      <a href="films/silvergrass/README.md"><img src="assets/_shared/images/examples/silvergrass.jpg" width="100%" alt="Duel in the Silver Grass"></a>
       <h3><a href="films/silvergrass/README.md">Duel in the Silver Grass</a></h3>
       <p>A masterless shinobi faces an old sword master in a sea of silver grass, through Blade, Fire and Thunder.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#silvergrass">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/film">Download</a> · <a href="films/silvergrass/README.md">Film guide</a></p>
     </td>
     <td width="50%" valign="top">
-      <a href="films/nightrevels/README.md"><img src="assets/images/examples/nightrevels.jpg" width="100%" alt="The Night Revels of Han Xizai, Cat Edition"></a>
+      <a href="films/nightrevels/README.md"><img src="assets/_shared/images/examples/nightrevels.jpg" width="100%" alt="The Night Revels of Han Xizai, Cat Edition"></a>
       <h3><a href="films/nightrevels/README.md">The Night Revels of Han Xizai, Cat Edition</a></h3>
       <p>A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#nightrevels">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">Download</a> · <a href="films/nightrevels/README.md">Film guide</a></p>
@@ -117,20 +117,19 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="films/xishen/README.md"><img src="assets/images/examples/xishen.jpg" width="100%" alt="I Am Not the God of Drama"></a>
+      <a href="films/xishen/README.md"><img src="assets/_shared/images/examples/xishen.jpg" width="100%" alt="I Am Not the God of Drama"></a>
       <h3><a href="films/xishen/README.md">I Am Not the God of Drama</a></h3>
       <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#xishen">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
     </td>
     <td width="50%" valign="top">
-      <a href="films/beacon/README.md"><img src="assets/images/examples/beacon.jpg" width="100%" alt="The Last Beacon"></a>
+      <a href="films/beacon/README.md"><img src="assets/_shared/images/examples/beacon.jpg" width="100%" alt="The Last Beacon"></a>
       <h3><a href="films/beacon/README.md">The Last Beacon</a></h3>
       <p>A porcelain keeper rekindles a celestial observatory above the clouds. A distant light answers.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#beacon">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">Download</a> · <a href="films/beacon/README.md">Film guide</a></p>
     </td>
   </tr>
 </table>
-
 
 <a id="customization"></a>
 
@@ -155,7 +154,7 @@ Prefer the terminal? Run these commands from the repository root to create a fil
 .venv/bin/python -m codecinema customize myfilm --renderer blender --render
 ```
 
-Use `--story path/to/scenes.json` with `new` or `customize` to import a storyline. Explicit title, caption, duration and style options override the imported values. Scene data and assets stay in the film folder. Backend choices and production settings stay in the root `pyproject.toml`.
+Use `--story path/to/scenes.json` with `new` or `customize` to import a storyline. Explicit title, caption, duration and style options override the imported values. Scene data stays in `films/<id>/`, and media stays in `assets/<id>/`. Backend choices and production settings stay in the root `pyproject.toml`.
 
 <a id="framework"></a>
 
@@ -166,7 +165,7 @@ The framework separates film content from production code:
 - **Content:** scene order, captions, narration, timing and assets belong to each film.
 - **Production:** a shared scene clock connects planning, rendered frames, music, speech, assembly and quality checks.
 - **Renderers:** Skia and Blender turn scenes into frames through the same interface. Installed plugins appear in `codecinema renderers` and Studio.
-- **Production packs:** the four examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain the story data and assets.
+- **Production packs:** the four examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain story data, with media in `assets/<id>/`.
 
 The examples use specialized production packs and keep their existing commands. Their choreography cannot be switched automatically between backends. New Studio projects use the shared pipeline and can change renderer without moving their content. Existing projects with custom entry scripts remain runnable.
 
@@ -178,7 +177,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md#renderer-plugins) for the small renderer i
 
 Install [Blender 5.2 or later](https://www.blender.org/download/), then choose **Blender · 3D** in Studio or pass `--renderer blender`. The built-in worlds provide lit scenery and moving cameras. The same scene timeline places captions, music and optional narration.
 
-To use your own characters or animation, save a `.blend` file inside the film’s `assets/` folder. On its scene card, expand Blender scene and enter the relative file path and optional camera name. Pack external resources in Blender so the project can move between computers. Your scene animation is sampled using its own frame rate.
+To use your own characters or animation, save a `.blend` file under `assets/<film-id>/`, for example `assets/<film-id>/scenes/world.blend`. On its scene card, expand Blender scene and enter `scenes/world.blend` and an optional camera name. Paths are relative to that film’s asset directory. Pack external resources in Blender so the project can move between computers. Your scene animation is sampled using its own frame rate.
 
 Start with Quick preview or a few still frames. Blender rendering takes longer than Skia and depends on scene complexity, resolution and hardware. The [Last Beacon guide](films/beacon/README.md) demonstrates a more elaborate authored production.
 
@@ -194,7 +193,7 @@ On an Apple Silicon Mac, install the local expressive speech pack from the repos
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-The first spoken render downloads the voice model. Later renders can reuse existing takes, and no API key is needed. For recorded speech, put a WAV file in the film’s `assets/voices/` folder and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Recordings work on all platforms.
+The first spoken render downloads the voice model. Later renders can reuse existing takes, and no API key is needed. For recorded speech, put a WAV file in `assets/<film-id>/voices/` and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Recordings work on all platforms.
 
 ## 🗂 Project layout
 
@@ -213,8 +212,7 @@ CodeCinema/
 │   │   ├── settings.py         # layered settings, tools and fonts
 │   │   ├── films.py            # film discovery and worker launch
 │   │   ├── projects.py         # creation, customization and backups
-│   │   ├── story.py            # scene validation, looks and formats
-│   │   └── scaffold/           # data-only starting files for new films
+│   │   └── story.py            # scene validation, looks and formats
 │   ├── engine/                 # shared production pipeline
 │   │   ├── context.py          # validated timeline and render context
 │   │   ├── pipeline.py         # planning, picture, sound, assembly and QC
@@ -226,8 +224,7 @@ CodeCinema/
 │   │   └── diagnostics.py      # dependency checks and setup hints
 │   ├── studio/                 # local visual editor
 │   │   ├── server.py           # HTTP API and media delivery
-│   │   ├── jobs.py             # project state and background render jobs
-│   │   └── assets/             # editor interface and look thumbnails
+│   │   └── jobs.py             # project state and background render jobs
 │   ├── renderers/              # Skia, Blender and renderer plugin interface
 │   ├── audio/                  # music, effects, speech and performance timing
 │   └── productions/            # authored example production packs
@@ -235,19 +232,31 @@ CodeCinema/
 │       ├── silvergrass/        # choreography, Blender scenes and post-production
 │       ├── nightrevels/        # painted characters, scroll animation and music
 │       └── xishen/             # cast, acting, speech timing and episode assembly
-├── films/                    # film content, assets and generated outputs
+├── films/                    # story data and generated working files
 │   ├── silvergrass/          # Duel in the Silver Grass
 │   ├── nightrevels/          # The Night Revels of Han Xizai, Cat Edition
 │   ├── xishen/               # I Am Not the God of Drama
 │   └── beacon/               # The Last Beacon
+├── assets/                   # all media, grouped by film
+│   ├── beacon/               # The Last Beacon artwork and finished MP4
+│   ├── silvergrass/          # Duel in the Silver Grass media
+│   ├── nightrevels/          # The Night Revels media
+│   ├── xishen/               # episode artwork, recordings and finished MP4s
+│   └── _shared/              # resources shared by the framework and website
+│       ├── images/           # branding and README illustrations
+│       ├── studio/           # editor interface and look thumbnails
+│       ├── scaffold/         # starting files for new films
+│       └── site/             # website styles, scripts and preview media
 ├── pyproject.toml            # dependencies and all film configurations
 ├── CONTRIBUTING.md           # development and contribution guidance
 └── LICENSE                   # MIT license
 ```
 
+Each film uses `assets/<id>/images/` for illustrations and `assets/<id>/film/` for finished videos. Add `voices/`, `scenes/`, `models/`, `textures/` or `fonts/` there when needed. Generated working files remain in `films/<id>/out/`. In configuration, paths beginning with `assets/` are relative to the workspace root. Other relative paths start at the film folder.
+
 ## 🧭 How it works
 
-![The CodeCinema filmmaking workflow](assets/images/pipeline.svg)
+![The CodeCinema filmmaking workflow](assets/_shared/images/pipeline.svg)
 
 1. **Shape the story:** arrange shots, content and pacing.
 2. **Make the picture:** the chosen renderer builds scenes, animation and camera movement.

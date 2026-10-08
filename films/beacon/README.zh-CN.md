@@ -4,7 +4,7 @@
 
 [在线观看](https://zjucqr.github.io/CodeCinema/zh/#beacon) · [下载 MP4](https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon) · [English](README.md)
 
-![机械守灯人与天文台星环](assets/images/poster.jpg)
+![机械守灯人与天文台星环](../../assets/beacon/images/poster.jpg)
 
 **48 秒 · 1920 × 1080 · 24 fps · 立体声 · Blender 5.2+**
 
@@ -20,7 +20,7 @@ Windows 下将 `.venv/bin/python` 换成 `.\.venv\Scripts\python.exe`。
 .venv/bin/python -m codecinema run beacon all
 ```
 
-成片位于 `films/beacon/assets/film/TheLastBeacon.mp4`。不需要 API Key、外部模型、贴图包或 Blender 插件。程序会自动寻找 Blender 和 FFmpeg。自定义安装位置可通过 `BLENDER_BIN`、`FFMPEG`、`FFPROBE` 指定。整片需要渲染 1,152 张全分辨率 3D 画面，耗时取决于显卡。
+成片位于 `assets/beacon/film/TheLastBeacon.mp4`。不需要 API Key、外部模型、贴图包或 Blender 插件。程序会自动寻找 Blender 和 FFmpeg。自定义安装位置可通过 `BLENDER_BIN`、`FFMPEG`、`FFPROBE` 指定。整片需要渲染 1,152 张全分辨率 3D 画面，耗时取决于显卡。
 
 显存充足时，可以使用 `.venv/bin/python -m codecinema run beacon all --jobs 2`，同时渲染两个互不重叠的帧段。小显卡建议保留默认单进程。制作命令带有互斥锁，避免重复运行时相互覆盖。
 
@@ -70,7 +70,7 @@ scarf = [0.06, 0.20, 0.30]  # 线性 RGB：蓝色围巾
 
 `out/audio/` 保存音乐、环境声、音效分轨、总混音和响度报告。`out/qc.json` 记录成片参数、完整解码结果、AAC 响度与真峰值。合成阶段检查所有画面，要求正好 1,152 帧、48 秒，并拒绝真峰值超过 −1 dBTP 的成片。混音目标为 −16 LUFS，给 AAC 编码留出余量。
 
-![成片六镜头](assets/images/storyboard.jpg)
+![成片六镜头](../../assets/beacon/images/storyboard.jpg)
 
 环境准备可参考 [Blender 安装说明](../../README.zh-CN.md#blender)。示例图片和影片均由仓库内的场景代码渲染，整体采用风格化动画美术。
 

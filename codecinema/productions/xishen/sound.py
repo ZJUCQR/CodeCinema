@@ -11,6 +11,7 @@ from scipy.ndimage import uniform_filter1d
 from scipy.signal import butter, sosfilt
 
 from codecinema.workspace import settings
+from codecinema.workspace.paths import film_assets
 from codecinema.audio import dsp
 from story import ROOT, timeline
 
@@ -64,7 +65,7 @@ def prepare_voices(episode, out, mode="auto", engine="auto"):
             who = names.get(shot.data.get("speaker"))
             profile = CANON["characters"][who].get("speech", {}) if who else {"voice": "Serena"}
             voice = profile.get("voice", "Dylan")
-            provided = ROOT / "assets/voices" / f"{shot.id}.wav"
+            provided = film_assets(ROOT) / "voices" / f"{shot.id}.wav"
             try:
                 take_direction = direction_for(shot, profile)
                 source, key = speech.take(shot.text, voice=voice, direction=take_direction,

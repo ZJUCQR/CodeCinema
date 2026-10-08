@@ -13,6 +13,7 @@ import tomlkit
 from codecinema import renderers
 from codecinema.workspace import registry, settings
 from codecinema.workspace import story as starters
+from codecinema.workspace.paths import film_assets, resource_dir
 
 
 def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None, renderer="skia", story=None):
@@ -22,6 +23,8 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
         raise ValueError("Create films under films/<id>, using lower-case letters, digits, '-' or '_'")
     if os.path.lexists(path):
         raise ValueError(f"{path} already exists")
+    if os.path.lexists(film_assets(path)):
+        raise ValueError(f"Assets for {path.name} already exist; choose a new ID to preserve them")
     renderers.require(renderer)
     data = copy.deepcopy(story) if story is not None else starters.make_story(title, preset, seconds, subtitle)
     starters.validate_story(data)
@@ -45,7 +48,7 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             meta.update(production="story", renderer=renderer, requires=["ffmpeg", "ffprobe"] + (["blender>=5.2"] if renderer == "blender" else []))
             meta["title"] = title
             meta["env_prefix"] = re.sub(r"[^A-Z0-9]", "_", path.name.upper())
-            meta.setdefault("settings", {}).setdefault("paths", {})["final_video"] = f"assets/film/{path.name}.mp4"
+            meta.setdefault("settings", {}).setdefault("paths", {})["final_video"] = f"assets/{path.name}/film/{path.name}.mp4"
             meta["settings"].setdefault("video", {}).update(
                 width=width, height=height, crf=starters.QUALITIES[quality]["crf"],
                 preset=starters.QUALITIES[quality]["preset"],
@@ -53,7 +56,7 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             path.parent.mkdir(parents=True, exist_ok=True)
             with tempfile.TemporaryDirectory(prefix=".codecinema-", dir=path.parent) as temporary:
                 staged = Path(temporary) / path.name
-                source = Path(__file__).with_name("scaffold")
+                source = resource_dir("scaffold")
                 shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
                 for file in staged.rglob("*.md"):
                     content = file.read_text(encoding="utf-8")

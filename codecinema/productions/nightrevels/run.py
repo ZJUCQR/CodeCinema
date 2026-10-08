@@ -5,7 +5,7 @@ run.py - NightRevels command line.
     codecinema run nightrevels still F[,F]  render single frames to out/stills/
     codecinema run nightrevels render       render the film picture to out/video/picture.mp4 (parallel, resumable chunks)
     codecinema run nightrevels audio        synthesize score + SFX + ambience -> out/audio/final_mix.wav
-    codecinema run nightrevels assemble     mux picture + audio -> assets/film/NightRevels.mp4
+    codecinema run nightrevels assemble     mux picture + audio -> assets/nightrevels/film/NightRevels.mp4
     codecinema run nightrevels all
 """
 

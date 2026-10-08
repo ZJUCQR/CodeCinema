@@ -21,8 +21,10 @@ jobs:
           assert not any(m in sys.modules for m in ('numpy','skia','bpy','mlx_audio'));
           package=files('codecinema');
           assert sorted(p.name for p in package.iterdir() if p.name.endswith('.py'))==['__init__.py','__main__.py'];
-          assert files('codecinema.workspace').joinpath('scaffold/scenes.json').is_file();
-          assets=files('codecinema.studio').joinpath('assets');
+          from codecinema.workspace.paths import resource_dir;
+          assert resource_dir('scaffold').joinpath('scenes.json').is_file();
+          assets=resource_dir('studio');
+          assert assets.resolve().is_relative_to(package.resolve());
           assert all(assets.joinpath(p).is_file() for p in ('index.html','studio.js','studio.css'));
           assert len(list(assets.joinpath('presets').iterdir()))==8;
           from codecinema.workspace import settings; from codecinema.runtime import media, blender;
@@ -49,7 +51,9 @@ jobs:
           assert settings.load(root/'films/ci-preview')['video']['width']==360"
       - name: Render a short sample
         if: runner.os == 'Linux'
-        run: codecinema run ci-preview all
+        run: |
+          codecinema run ci-preview all
+          python -c "from pathlib import Path; assert Path('assets/ci-preview/film/ci-preview.mp4').is_file(); assert not Path('films/ci-preview/assets').exists()"
       - name: Import a story and honor explicit CLI edits
         run: >
           python -c "import json; from pathlib import Path; from codecinema import cli; from codecinema.workspace import registry;

@@ -14,7 +14,7 @@
 
 **English** · [简体中文](README.zh-CN.md)
 
-<img src="assets/images/still_470.jpg" width="92%" alt="Lady Li plays the pipa for the court cats">
+<img src="../../assets/nightrevels/images/still_470.jpg" width="92%" alt="Lady Li plays the pipa for the court cats">
 
 </div>
 
@@ -42,7 +42,7 @@ Follow the [setup guide](../../README.md#quick-start) to install the framework a
 .venv/bin/python -m codecinema run nightrevels all      # build → render → audio → assemble
 ```
 
-The finished film is written to `films/nightrevels/assets/film/NightRevels.mp4`. Every command below is a step: `.venv/bin/python -m codecinema run nightrevels <step>` from the repository root.
+The finished film is written to `assets/nightrevels/film/NightRevels.mp4`. Every command below is a step: `.venv/bin/python -m codecinema run nightrevels <step>` from the repository root.
 
 | Command | What it does |
 |---|---|
@@ -59,11 +59,11 @@ The finished film is written to `films/nightrevels/assets/film/NightRevels.mp4`.
 
 | | |
 |:---:|:---:|
-| <img src="assets/images/still_600.jpg" alt="The ginger cat nudges a cup to the table edge"> | <img src="assets/images/still_1300.jpg" alt="The dancer pounces at the moth"> |
+| <img src="../../assets/nightrevels/images/still_600.jpg" alt="The ginger cat nudges a cup to the table edge"> | <img src="../../assets/nightrevels/images/still_1300.jpg" alt="The dancer pounces at the moth"> |
 | **Listening to the pipa:** a cup, nudged to the edge | **The dance:** the moth, and the pounce |
-| <img src="assets/images/still_1560.jpg" alt="Han refuses the wash basin"> | <img src="assets/images/still_2230.jpg" alt="The flute players giggle after the squeak"> |
+| <img src="../../assets/nightrevels/images/still_1560.jpg" alt="Han refuses the wash basin"> | <img src="../../assets/nightrevels/images/still_2230.jpg" alt="The flute players giggle after the squeak"> |
 | **Intermission:** water? no, thank you | **The wind ensemble:** after the squeak |
-| <img src="assets/images/still_2650.jpg" alt="The moth lands on Han's nose"> | <img src="assets/images/still_3060.jpg" alt="The whole scroll"> |
+| <img src="../../assets/nightrevels/images/still_2650.jpg" alt="The moth lands on Han's nose"> | <img src="../../assets/nightrevels/images/still_3060.jpg" alt="The whole scroll"> |
 | **Farewell:** the moth lands | **The whole scroll** |
 
 </div>
@@ -104,8 +104,11 @@ NIGHTREVELS_RENDER_JOBS=2 .venv/bin/python -m codecinema run nightrevels render
 ```text
 films/nightrevels/
 ├── story.json              # story, shots and shared timing cues
-├── assets/                 # input assets, illustrations and generated masters
 └── out/                    # generated working files and quality reports
+
+assets/nightrevels/
+├── images/                 # posters and README illustrations
+└── film/                   # generated finished MP4s
 ```
 
 ## 🧭 How it works
@@ -115,8 +118,6 @@ films/nightrevels/
 3. **Painted, not rendered.** Each frame is drawn in 2D: silk, mounting, furniture, puppets sorted by depth, candlelight and night tint, a vignette and fibre grain.
 4. **Motion is sound.** Actions emit timed events (clink, chirp, purr, squeak…) that the audio engine places sample-accurately, beside the rendered score.
 5. **Fast and resumable.** Frames render in parallel straight into encoded chunks, and the sound is synthesized and mastered to -14 LUFS in seconds.
-
-
 
 ## 📜 License
 

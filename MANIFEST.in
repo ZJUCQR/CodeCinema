@@ -1,0 +1,3 @@
+graft assets/_shared/studio
+graft assets/_shared/scaffold
+global-exclude __pycache__ *.py[cod] .DS_Store

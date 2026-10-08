@@ -7,7 +7,7 @@ build/
 *.egg-info/
 
 # Finished masters and production reports belong in local output or Releases.
-films/*/assets/film/
+assets/*/film/
 
 # Generated output (renders, builds, audio stems, previews) — regenerate with `codecinema run <film> all`
 # Rendered frames are never uploaded
@@ -15,7 +15,7 @@ out/frames/
 out/
 _site/
 *.mp4
-!site/media/*.mp4
+!assets/_shared/site/media/*.mp4
 *.mov
 *.wav
 

@@ -14,7 +14,7 @@ from codecinema import renderers
 from codecinema.runtime import diagnostics
 from codecinema.workspace import films, projects, settings
 from codecinema.workspace import story as starters
-from codecinema.workspace.paths import IMPORT_ROOT
+from codecinema.workspace.paths import IMPORT_ROOT, film_assets
 
 FILM_ID = re.compile(r"[a-z][a-z0-9_-]*")
 
@@ -45,7 +45,7 @@ class Studio:
                 short = min(video["width"], video["height"])
                 name = Path(settings.load(str(path))["paths"]["final_video"]).name
                 result.append({"id": film.id, "story": story, "renderer": film.renderer,
-                               "video": f"/media/{film.id}/{name}?v={time.time_ns()}" if (path / "assets" / "film" / name).is_file() else None,
+                               "video": f"/media/{film.id}/{name}?v={time.time_ns()}" if (film_assets(path) / "film" / name).is_file() else None,
                                "format": "square" if video["width"] == video["height"] else
                                          "landscape" if video["width"] > video["height"] else "portrait",
                                "quality": "high" if short >= 1080 else "standard" if short >= 720 else "preview"})

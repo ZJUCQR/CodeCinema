@@ -14,7 +14,7 @@
 
 [English](README.md) · **简体中文**
 
-<img src="assets/images/still_470.jpg" width="92%" alt="李姬为满堂猫客弹奏琵琶">
+<img src="../../assets/nightrevels/images/still_470.jpg" width="92%" alt="李姬为满堂猫客弹奏琵琶">
 
 </div>
 
@@ -42,7 +42,7 @@
 .venv/bin/python -m codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 ```
 
-成片输出到 `films/nightrevels/assets/film/NightRevels.mp4`。下表每个命令都是影片的一个步骤：在仓库根目录运行 `.venv/bin/python -m codecinema run nightrevels <步骤>`。
+成片输出到 `assets/nightrevels/film/NightRevels.mp4`。下表每个命令都是影片的一个步骤：在仓库根目录运行 `.venv/bin/python -m codecinema run nightrevels <步骤>`。
 
 | 命令 | 作用 |
 |---|---|
@@ -59,11 +59,11 @@
 
 | | |
 |:---:|:---:|
-| <img src="assets/images/still_600.jpg" alt="橘猫把酒杯推到桌边"> | <img src="assets/images/still_1300.jpg" alt="舞者扑向飞蛾"> |
+| <img src="../../assets/nightrevels/images/still_600.jpg" alt="橘猫把酒杯推到桌边"> | <img src="../../assets/nightrevels/images/still_1300.jpg" alt="舞者扑向飞蛾"> |
 | **听乐**：酒杯被推到桌边 | **观舞**：飞蛾，和那一扑 |
-| <img src="assets/images/still_1560.jpg" alt="韩熙载拒绝洗手"> | <img src="assets/images/still_2230.jpg" alt="破音之后乐手们笑成一团"> |
+| <img src="../../assets/nightrevels/images/still_1560.jpg" alt="韩熙载拒绝洗手"> | <img src="../../assets/nightrevels/images/still_2230.jpg" alt="破音之后乐手们笑成一团"> |
 | **暂歇**：水？不用了，谢谢 | **清吹**：破音之后 |
-| <img src="assets/images/still_2650.jpg" alt="飞蛾落在韩熙载鼻子上"> | <img src="assets/images/still_3060.jpg" alt="整幅长卷"> |
+| <img src="../../assets/nightrevels/images/still_2650.jpg" alt="飞蛾落在韩熙载鼻子上"> | <img src="../../assets/nightrevels/images/still_3060.jpg" alt="整幅长卷"> |
 | **散宴**：飞蛾落下 | **整幅长卷** |
 
 </div>
@@ -104,8 +104,11 @@ NIGHTREVELS_RENDER_JOBS=2 .venv/bin/python -m codecinema run nightrevels render
 ```text
 films/nightrevels/
 ├── story.json              # 剧情、分镜与共用时间节点
-├── assets/                 # 素材、配图与生成的成片
 └── out/                    # 生成的中间文件与检查报告
+
+assets/nightrevels/
+├── images/                 # 海报与 README 配图
+└── film/                   # 生成的 MP4 成片
 ```
 
 ## 🧭 工作原理
@@ -115,8 +118,6 @@ films/nightrevels/
 3. **画出来，而不是渲染出来**：每一帧都用 2D 绘制，依次是绢、装裱、家具、按远近排序的角色木偶、烛光和夜色、暗角和纤维颗粒。
 4. **动作即声音**：动作会发出带时间的事件（碰杯声、猫的啁啾、呼噜、破音……），音频引擎把它们按采样精度放在渲染好的配乐旁边。
 5. **快速、可续渲**：画面并行渲染并直接编码成视频分块，声音几秒钟就能合成并做好母带（-14 LUFS）。
-
-
 
 ## 📜 许可
 

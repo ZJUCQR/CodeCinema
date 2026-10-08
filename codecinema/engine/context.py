@@ -8,7 +8,7 @@ from typing import Any
 
 from codecinema.workspace import settings
 from codecinema.workspace import story as starters
-from codecinema.workspace.paths import PACKAGE_ROOT
+from codecinema.workspace.paths import PACKAGE_ROOT, film_assets
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,11 @@ class RenderContext:
     final: Path
     signature: str
     options: Any
+
+    @property
+    def assets(self):
+        """Inputs and finished media in the workspace's assets/<film-id>/ directory."""
+        return film_assets(self.film)
 
     @classmethod
     def load(cls, options):
@@ -97,12 +102,13 @@ class RenderContext:
             *sorted((package / "audio").glob("*.py")),
         ]
         # Imported Blender scenes can also use local textures or models.
-        assets = film / "assets"
+        assets = film_assets(film)
         if assets.exists():
             sources += sorted(p for p in assets.rglob("*") if p.is_file() and p.relative_to(assets).parts[0] != "film")
         for path in sources:
             digest.update(
-                str(path.relative_to(film) if path.is_relative_to(film) else path.relative_to(package)).encode()
+                ("assets/" + path.relative_to(assets).as_posix() if path.is_relative_to(assets)
+                 else "code/" + path.relative_to(package).as_posix()).encode()
             )
             with path.open("rb") as stream:
                 for chunk in iter(lambda: stream.read(1024 * 1024), b""):

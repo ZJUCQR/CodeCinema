@@ -14,7 +14,7 @@ A rain-soaked return. An audience with crimson eyes. A director learning to surv
 [![Python](https://img.shields.io/badge/python-3.12%2B-3776ab?logo=python&logoColor=white)](../../pyproject.toml)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-2ea44f)](../../LICENSE)
 
-<img src="assets/images/banner.jpg" width="100%" alt="Chen Ling in his red stage robe, the silent audience and his next-morning black coat">
+<img src="../../assets/xishen/images/banner.jpg" width="100%" alt="Chen Ling in his red stage robe, the silent audience and his next-morning black coat">
 
 [**Watch online**](https://zjucqr.github.io/CodeCinema/#xishen) · [**Download the films**](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) · [Source ledger](story.json) · [Chinese guide](README.zh-CN.md)
 
@@ -28,18 +28,18 @@ All three episodes use the same Skia character designs and visual style, with a 
 
 ## See the atmosphere
 
-<p align="center"><img src="assets/images/preview.gif" width="100%" alt="Animated excerpts: Chen Ling in the rain, the watching audience and Doctor Lin's clinic"></p>
+<p align="center"><img src="../../assets/xishen/images/preview.gif" width="100%" alt="Animated excerpts: Chen Ling in the rain, the watching audience and Doctor Lin's clinic"></p>
 
 <p align="center"><sub>Excerpts from the actual rendered episodes. Documentation previews omit the caption bars. The films include Mandarin captions.</sub></p>
 
 | The rain-soaked return | The audience | Aurora over the district |
 | :---: | :---: | :---: |
-| ![Chen Ling in the rain](assets/images/still-rain.jpg) | ![Rows of crimson-eyed spectators](assets/images/still-audience.jpg) | ![Aurora over the wintry rooftops](assets/images/still-aurora.jpg) |
+| ![Chen Ling in the rain](../../assets/xishen/images/still-rain.jpg) | ![Rows of crimson-eyed spectators](../../assets/xishen/images/still-audience.jpg) | ![Aurora over the wintry rooftops](../../assets/xishen/images/still-aurora.jpg) |
 | **A fractured identity** | **Every move is watched** | **The world beyond the curtain** |
 
 | Han Meng | Doctor Lin's clinic | A new directing experiment |
 | :---: | :---: | :---: |
-| ![Han Meng and his rolled cigarette](assets/images/still-han.jpg) | ![A cup of tea in the clinic](assets/images/still-tea.jpg) | ![Chen Ling in his black padded coat](assets/images/still-director.jpg) |
+| ![Han Meng and his rolled cigarette](../../assets/xishen/images/still-han.jpg) | ![A cup of tea in the clinic](../../assets/xishen/images/still-tea.jpg) | ![Chen Ling in his black padded coat](../../assets/xishen/images/still-director.jpg) |
 
 ## Three episodes, one timeline
 
@@ -65,18 +65,18 @@ Install CodeCinema and FFmpeg using the [getting-started guide](../../README.md#
 
 Open the generated MP4 with your video player, or watch the published edition on the [project page](https://zjucqr.github.io/CodeCinema/#xishen).
 
-The outputs are `ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4` in this folder’s `assets/film/` directory. Rendered films and intermediate media are ignored by Git. The [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
+The outputs are `ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4` in the root `assets/xishen/film/` directory. Rendered films and intermediate media are ignored by Git. The [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
 **Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use. After that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
 
-**Other platforms:** on Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`. Supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [voice setup](../../README.md#speech) for the optional local speech pack.
+**Other platforms:** on Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`. Supply recordings as `assets/xishen/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [voice setup](../../README.md#speech) for the optional local speech pack.
 
 ## Character and story continuity
 
 <details>
 <summary><b>View the shared cast sheet</b></summary>
 
-<img src="assets/images/cast-en.jpg" width="100%" alt="The nine recurring on-screen characters, drawn with the same models used in the film">
+<img src="../../assets/xishen/images/cast-en.jpg" width="100%" alt="The nine recurring on-screen characters, drawn with the same models used in the film">
 
 The sheet shows the same cast used throughout all three episodes. Clothing, props, locations and event order follow the sourced details in the opening chapters.
 
@@ -111,7 +111,7 @@ For a quick, independent first film, use the [configurable starter](../../README
 .venv/bin/python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
-Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused. Changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`. Published posters and README illustrations stay in `assets/images/`.
+Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused. Changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`. Published posters and README illustrations stay in `assets/xishen/images/`.
 
 </details>
 

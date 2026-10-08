@@ -5,10 +5,12 @@ from pathlib import Path
 from PIL import Image
 from codecinema.runtime import blender
 from codecinema.workspace import settings
+from codecinema.workspace.paths import film_assets
 from codecinema.renderers.skia import Renderer as Compositor
 
 
 def validate(story, film):
+    assets = film_assets(film).resolve()
     for scene in story["scenes"]:
         spec = scene.get("blender", {})
         if not isinstance(spec, dict):
@@ -16,9 +18,9 @@ def validate(story, film):
         if spec.get("file"):
             if not isinstance(spec["file"], str):
                 raise ValueError("scene.blender.file must be a relative .blend path")
-            path = (film / spec["file"]).resolve()
-            if not path.is_relative_to(film.resolve()) or path.suffix != ".blend" or not path.is_file():
-                raise ValueError("Blender scene files must be existing .blend files inside this film folder")
+            path = (assets / spec["file"]).resolve()
+            if Path(spec["file"]).is_absolute() or not path.is_relative_to(assets) or path.suffix != ".blend" or not path.is_file():
+                raise ValueError("Blender scene files must be existing .blend files inside assets/<film-id>/")
         for key in ("camera", "scene"):
             if key in spec and not isinstance(spec[key], str):
                 raise ValueError(f"scene.blender.{key} must be text")
@@ -56,7 +58,7 @@ class Renderer:
             if not 1 <= samples <= 4096:
                 raise ValueError("Blender samples must be between 1 and 4096")
             job = {
-                "film": str(context.film),
+                "assets": str(context.assets),
                 "folder": str(folder),
                 "frames": missing,
                 "width": context.width,

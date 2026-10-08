@@ -53,7 +53,7 @@ def generate(context):
         try:
             for spec, start, end in cues:
                 cue = spec["narration"]
-                recording = context.film / "assets/voices" / cue["recording"] if cue.get("recording") else None
+                recording = context.assets / "voices" / cue["recording"] if cue.get("recording") else None
                 if recording and not recording.is_file():
                     raise ValueError(f"The narration recording is missing: {recording}")
                 path, _ = speech.take(

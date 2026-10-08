@@ -17,7 +17,7 @@
 
 **English** · [简体中文](README.zh-CN.md)
 
-<img src="assets/images/preview.gif" width="92%" alt="Highlights of the film">
+<img src="../../assets/silvergrass/images/preview.gif" width="92%" alt="Highlights of the film">
 
 </div>
 
@@ -50,7 +50,7 @@ Follow the [setup guide](../../README.md#quick-start) to install the framework a
 .venv/bin/python -m codecinema run silvergrass all       # build → render → audio → titles → assemble
 ```
 
-The finished film is written to `films/silvergrass/assets/film/芒原决战_Final.mp4`. The full render is the slow step, and you can stop it at any time: running the command again picks up where it left off. To look at one act in a few minutes, run `.venv/bin/python -m codecinema run silvergrass preview act2`.
+The finished film is written to `assets/silvergrass/film/芒原决战_Final.mp4`. The full render is the slow step, and you can stop it at any time: running the command again picks up where it left off. To look at one act in a few minutes, run `.venv/bin/python -m codecinema run silvergrass preview act2`.
 
 Each command below is a step of the film: `.venv/bin/python -m codecinema run silvergrass <step>` from the repository root.
 
@@ -71,11 +71,11 @@ Each command below is a step of the film: `.venv/bin/python -m codecinema run si
 
 | | |
 |:---:|:---:|
-| <img src="assets/images/still_190.jpg" alt="Main title: a lone pine and the setting sun over the silver grass"> | <img src="assets/images/still_597.jpg" alt="The first clash in front of the sun"> |
+| <img src="../../assets/silvergrass/images/still_190.jpg" alt="Main title: a lone pine and the setting sun over the silver grass"> | <img src="../../assets/silvergrass/images/still_597.jpg" alt="The first clash in front of the sun"> |
 | **Title card** | **Act I · Blade:** the first clash |
-| <img src="assets/images/still_1420.jpg" alt="The straw hat is cut in two"> | <img src="assets/images/still_2100.jpg" alt="Spear against sword inside a ring of fire"> |
+| <img src="../../assets/silvergrass/images/still_1420.jpg" alt="The straw hat is cut in two"> | <img src="../../assets/silvergrass/images/still_2100.jpg" alt="Spear against sword inside a ring of fire"> |
 | The perfect deflect: the hat is cut in two | **Act II · Fire:** spear against sword in the ring |
-| <img src="assets/images/still_2500.jpg" alt="Lightning forks onto the lone pine"> | <img src="assets/images/still_3560.jpg" alt="Moonrise over the kneeling master"> |
+| <img src="../../assets/silvergrass/images/still_2500.jpg" alt="Lightning forks onto the lone pine"> | <img src="../../assets/silvergrass/images/still_3560.jpg" alt="Moonrise over the kneeling master"> |
 | **Act III · Thunder:** the lightning cut | **Epilogue:** moonrise |
 
 </div>
@@ -119,18 +119,20 @@ SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender .venv/bin/python -m codeci
 ```text
 films/silvergrass/
 ├── story.json              # story, shots and shared timing cues
-├── assets/                 # input assets, illustrations and generated masters
 └── out/                    # generated working files and quality reports
+
+assets/silvergrass/
+├── images/                 # posters and README illustrations
+└── film/                   # generated finished MP4s
 ```
 
 ## 🧭 How it works
 
 <div align="center">
-<img src="assets/images/pipeline.svg" width="100%" alt="SilverGrass pipeline: specification, scene synthesis in Blender, rendering, sound synthesis and post-production">
+<img src="../../assets/silvergrass/images/pipeline.svg" width="100%" alt="SilverGrass pipeline: specification, scene synthesis in Blender, rendering, sound synthesis and post-production">
 </div>
 
 <p align="center"><sub>The SilverGrass pipeline. <b>(a)</b> The film is specified as data: shots and acts in <code>story.json</code>, handoff states, beat grid, cues and motifs in the production pack’s <code>common/config.py</code>, plus six choreography lanes. <b>(b)</b> Inside Blender, each lane keys characters, cameras and VFX within its own frame span. The build isolates the lanes in NLA strips and checks the states at every handoff. One film clock, <code>fx_time</code>, keeps procedural effects in step with slow motion. <b>(c)</b> A supervisor renders per-shot chunks and re-renders a shot only when its content fingerprint changes. <b>(d)</b> Every move emits a timed event, and the events place the SFX and the score's accents on the exact frame. <b>(e)</b> Title cards, frames and the mastered mix are assembled sample-accurately and checked for flash safety, A/V sync and loudness.</sub></p>
-
 
 ## 📜 License
 

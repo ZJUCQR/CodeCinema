@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from codecinema.productions import film_root
+from codecinema.workspace.paths import film_assets
 
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -85,7 +86,7 @@ def frame(episode,shot,t,w=W,h=H):
 
 
 def stills(episodes,options):
-    image_dir=FILM/"assets/images"; image_dir.mkdir(parents=True,exist_ok=True)
+    image_dir=film_assets(FILM)/"images"; image_dir.mkdir(parents=True,exist_ok=True)
     tiles=[]
     for episode in episodes:
         shots=list(timeline(episode))

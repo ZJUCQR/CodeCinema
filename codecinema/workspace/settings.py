@@ -25,7 +25,7 @@ import tomllib
 from pathlib import Path
 
 from codecinema.workspace import registry
-from codecinema.workspace.paths import project_root
+from codecinema.workspace.paths import film_assets, project_root, resolve_path
 
 REPO = project_root(os.environ.get("CODECINEMA_FILM_DIR"))
 
@@ -44,7 +44,7 @@ def _find_film_dir():
         cur = parent
 
 
-ROOT = _find_film_dir()               # the active film's directory (paths in its settings are relative to it)
+ROOT = _find_film_dir()               # the active film's content directory
 
 DEFAULTS = {
     "paths": {"out_dir": "out"},
@@ -120,9 +120,9 @@ def get(section, key, default=None):
 
 
 def path(section, key):
-    """A settings path resolved against the active film's directory."""
-    p = os.path.expanduser(str(get(section, key, "")))
-    return p if (not p or os.path.isabs(p)) else os.path.join(ROOT, p)
+    """Resolve assets/ from the workspace and other relative paths from the film."""
+    p = str(get(section, key, ""))
+    return str(resolve_path(p, ROOT)) if p else ""
 
 
 # ------------------------------------------------------------------------------------------------ tools
@@ -175,7 +175,7 @@ FONT_CANDIDATES = {
 
 def _font_dirs():
     home = os.path.expanduser("~")
-    dirs = [os.path.join(ROOT, "assets", "fonts"), os.path.join(REPO, "assets", "fonts")]
+    dirs = [str(film_assets(ROOT) / "fonts"), os.path.join(REPO, "assets", "_shared", "fonts")]
     if sys.platform == "darwin":
         dirs += ["/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
                  os.path.join(home, "Library", "Fonts")]
@@ -208,7 +208,7 @@ def font(role):
     else the first known candidate found on this machine, else ''."""
     explicit = get("fonts", role, "")
     if explicit:
-        return os.path.expanduser(explicit)
+        return str(resolve_path(explicit, ROOT))
     idx = _font_index()
     for name in FONT_CANDIDATES.get(role, []):
         hit = idx.get(name.lower())

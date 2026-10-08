@@ -144,7 +144,7 @@ def validate_story(data):
         if narration.get("language", "Chinese") not in ("Chinese", "English", "Japanese", "Korean", "French", "German", "Spanish", "Italian", "Portuguese", "Russian"):
             raise ValueError(f"{field}.narration.language is unsupported")
         if narration.get("recording") and not re.fullmatch(r"[a-zA-Z0-9_-]+\.wav", narration["recording"]):
-            raise ValueError(f"{field}.narration.recording must be a filename such as scene-1.wav in assets/voices/")
+            raise ValueError(f"{field}.narration.recording must be a filename such as scene-1.wav in assets/<film-id>/voices/")
         total += sec
     duration(total)
     return total

@@ -2,7 +2,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", "assets/images/**", "films/*/assets/images/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "assets/_shared/images/**", "assets/_shared/site/**", "assets/*/images/**", ".github/workflows/pages.yml"]
   release:
     types: [published, edited]
   workflow_dispatch:

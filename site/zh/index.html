@@ -66,7 +66,7 @@
     </div>
     <div class="hls">
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>选场景、改内容、点击出片</h3><p>本地 Studio 提供八种动态场景，支持标题、字幕、颜色、时长、横竖屏和逐镜头定制。选好模板，点击生成，即可得到带原创配乐的 MP4。</p></div></div>
-      <div class="hl reveal"><div class="ic">🧩</div><div><h3>选择适合故事的渲染器</h3><p>在 Studio 中选择 Skia 2D、Blender 3D 或已安装的插件。影片文件夹保存剧情与素材，框架统一处理画面、声音与合成。</p></div></div>
+      <div class="hl reveal"><div class="ic">🧩</div><div><h3>选择适合故事的渲染器</h3><p>在 Studio 中选择 Skia 2D、Blender 3D 或已安装的插件。剧情放在 films/，素材统一放在 assets/，框架处理画面、声音与合成。</p></div></div>
       <div class="hl reveal"><div class="ic">🎼</div><div><h3>共享的声音工具包</h3><p>影片共用框架的 DSP 库：振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。</p></div></div>
       <div class="hl reveal"><div class="ic">🎙️</div><div><h3>按情绪设计配音</h3><p>使用对白录音，或在 Apple Silicon 上本地生成带表演指令的配音。分镜时长、配音与音乐共用时间轴，方便调整节奏。</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>可复现，可配置</h3><p>在 Studio 中重新打开影片，或通过命令行重跑单个制作步骤。可用本地设置覆盖默认参数。各制作包提供适合自身渲染方式的缓存与并行策略。</p></div></div>
@@ -98,7 +98,7 @@ codecinema studio                    <span class="c"># 自动打开本地可视�
 
         <tr><td><code>codecinema list</code></td><td>列出 <code>films/</code> 里的影片，以及它们的步骤和依赖</td></tr>
         <tr><td><code>codecinema run &lt;影片&gt; &lt;步骤&gt; [参数]</code></td><td>用影片自己的设置运行它的一个步骤</td></tr>
-        <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>创建只包含剧情与素材的新影片</td></tr>
+        <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>创建影片剧情，并配置独立的素材目录</td></tr>
         <tr><td><code>codecinema renderers</code></td><td>列出内置与已安装的渲染器</td></tr>
         <tr><td><code>codecinema check</code></td><td>检查工具链和 Python 依赖</td></tr>
       </tbody>
@@ -193,7 +193,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
     <div class="reveal">
       <p class="eyebrow">项目结构</p>
       <h2>文件都在哪里</h2>
-      <p class="lead"><code>codecinema/</code> 统一提供渲染器与制作代码。<code>films/</code> 下每部影片只保存故事数据、素材与生成结果。</p>
+      <p class="lead"><code>codecinema/</code> 统一提供渲染器与制作代码。<code>films/</code> 保存故事数据，媒体素材按影片统一存放在根目录 <code>assets/</code>。</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">CodeCinema/</span></div>
@@ -226,7 +226,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
       <h2>一部影片是怎样制作的</h2>
     </div>
     <div class="figure reveal"><img src="../img/pipeline.svg" alt="CodeCinema 影片的制作流程" loading="lazy"></div>
-    <p class="caption reveal">一条共享时间轴连接影片制作。<b>(a)</b> 影片目录保存分镜与素材，<code>pyproject.toml</code> 选择渲染器并配置制作流程。<b>(b)</b> 框架读取场景内容与时间信息。<b>(c)</b> Skia、Blender 或渲染插件生成画面。<b>(d)</b> 配乐、音效与可选配音按镜头安排。<b>(e)</b> FFmpeg 合成成片并检查音画时长等输出参数。示例制作包在此基础上展示专门设计的人物、动作、声音与质检流程。</p>
+    <p class="caption reveal">一条共享时间轴连接影片制作。<b>(a)</b> <code>films/</code> 保存分镜，<code>assets/</code> 按影片保存素材，<code>pyproject.toml</code> 选择渲染器并配置制作流程。<b>(b)</b> 框架读取场景内容与时间信息。<b>(c)</b> Skia、Blender 或渲染插件生成画面。<b>(d)</b> 配乐、音效与可选配音按镜头安排。<b>(e)</b> FFmpeg 合成成片并检查音画时长等输出参数。示例制作包在此基础上展示专门设计的人物、动作、声音与质检流程。</p>
   </div>
 </section>
 
