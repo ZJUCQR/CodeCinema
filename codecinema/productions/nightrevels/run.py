@@ -105,7 +105,7 @@ def cmd_render(a):
     if previous.get("signature") != signature:
         for chunk in Path(VIDEO_DIR).glob("chunk_*.mp4"):
             chunk.unlink()
-    from codecinema.registry import atomic_write
+    from codecinema.workspace.registry import atomic_write
     atomic_write(edition, json.dumps({"signature": signature}))
     jobs = []
     for f0 in range(C.FRAME_START, C.FRAME_END + 1, CHUNK):

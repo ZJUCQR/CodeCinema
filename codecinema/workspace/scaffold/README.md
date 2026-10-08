@@ -18,5 +18,5 @@ recordings, models and Blender scenes belong in `assets/`. Finished videos go to
 `assets/film/`. The generated working files go to `out/`.
 
 This folder needs no Python scripts. CodeCinema owns the production pipeline.
-See the [repository README](../../README.md#quick-start) for installation and
-[CONTRIBUTING.md](../../CONTRIBUTING.md#renderer-plugins) for renderer plugins.
+See the [repository README](../../../README.md#quick-start) for installation and
+[CONTRIBUTING.md](../../../CONTRIBUTING.md#renderer-plugins) for renderer plugins.

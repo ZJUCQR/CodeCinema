@@ -5,7 +5,7 @@ import math
 import os
 import numpy as np
 import skia
-from codecinema import settings
+from codecinema.workspace import settings
 from codecinema.renderers.palettes import PALETTES
 
 

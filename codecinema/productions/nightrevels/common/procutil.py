@@ -1,4 +1,4 @@
-"""Film-side alias of codecinema.procutil (import procutil)."""
+"""Film-side alias of codecinema.runtime.process (import procutil)."""
 
 from codecinema.productions import film_root
 import os
@@ -11,6 +11,6 @@ while not os.path.isfile(os.path.join(_d, "codecinema", "__init__.py")) and os.p
     _d = os.path.dirname(_d)
 if _d not in sys.path:
     sys.path.insert(0, _d)
-from codecinema import procutil as _m  # noqa: E402
+from codecinema.runtime import process as _m  # noqa: E402
 
 sys.modules[__name__] = _m

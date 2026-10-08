@@ -17,7 +17,7 @@ import wave
 import numpy as np
 from scipy.signal import resample_poly
 
-from codecinema import settings
+from codecinema.workspace import settings
 
 TTS_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-6bit"
 ALIGN_MODEL = "mlx-community/Qwen3-ForcedAligner-0.6B-8bit"

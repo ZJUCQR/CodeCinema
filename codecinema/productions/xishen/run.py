@@ -24,7 +24,8 @@ import numpy as np  # noqa: E402
 from PIL import Image, ImageDraw  # noqa: E402
 import skia  # noqa: E402
 
-from codecinema import media, settings  # noqa: E402
+from codecinema.runtime import media
+from codecinema.workspace import settings  # noqa: E402
 from art import character, col, gradient, text, text_blob, typeface  # noqa: E402
 from scenes import SCENES, draw_frame  # noqa: E402
 from sound import synthesize  # noqa: E402

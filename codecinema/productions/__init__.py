@@ -1,11 +1,11 @@
 """Authored production packs, separate from film content and generated assets.
 
 Packs run in isolated processes so Blender and their artistic modules can keep
-independent dependencies. New declarative films use codecinema.pipeline instead.
+independent dependencies. New declarative films use codecinema.engine.pipeline instead.
 """
 import os
 from pathlib import Path
-from codecinema import films_dir
+from codecinema.workspace.paths import films_dir
 
 BUILTINS = ("beacon", "nightrevels", "silvergrass", "xishen")
 

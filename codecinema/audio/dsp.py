@@ -19,7 +19,7 @@ import hashlib
 import numpy as np
 from scipy import signal
 
-from codecinema import settings as _settings
+from codecinema.workspace import settings as _settings
 
 SR = int(_settings.get("audio", "sample_rate", 48000))   # the active film's sample rate
 NYQ = SR / 2.0

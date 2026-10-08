@@ -3,10 +3,10 @@
 import os
 import subprocess
 import sys
-from pathlib import Path
 
-from codecinema import films_dir, registry
-from codecinema.settings import film_meta
+from codecinema.workspace import registry
+from codecinema.workspace.paths import IMPORT_ROOT, films_dir
+from codecinema.workspace.settings import film_meta
 
 
 class Film:
@@ -28,13 +28,13 @@ class Film:
     def command(self, step, args=()):
         if self.steps and step not in self.steps:
             raise SystemExit(f"{self.id}: unknown step '{step}' (steps: {', '.join(self.steps)})")
-        return [sys.executable, "-m", "codecinema.worker", self.dir, step, *args]
+        return [sys.executable, "-m", "codecinema.engine.worker", self.dir, step, *args]
 
     def run(self, step, args=()):
         env = dict(os.environ, CODECINEMA_FILM_DIR=self.dir)
         env.setdefault("PYTHONIOENCODING", "utf-8")
         env["PYTHONPATH"] = os.pathsep.join(
-            filter(None, (str(Path(__file__).resolve().parent.parent), env.get("PYTHONPATH")))
+            filter(None, (str(IMPORT_ROOT), env.get("PYTHONPATH")))
         )
         return subprocess.call(self.command(step, args), cwd=self.dir, env=env)
 

@@ -3,12 +3,12 @@
 This module is safe to import without Blender. Scene scripts run in Blender's
 Python and import bpy there, rather than adding bpy to the framework's dependencies.
 """
-from pathlib import Path
-from contextlib import contextmanager
 import os
 import subprocess
+from contextlib import contextmanager
+from pathlib import Path
 
-from codecinema import settings
+from codecinema.workspace import settings
 
 
 def command(script, *args, blend=None, root=None, executable=None):

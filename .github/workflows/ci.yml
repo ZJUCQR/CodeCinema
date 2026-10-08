@@ -14,6 +14,21 @@ jobs:
           python-version: "3.12"
       - name: Install the framework and its dependencies
         run: pip install .
+      - name: Check installed package boundaries and resources
+        run: >
+          python -I -c "import sys, codecinema; from importlib.resources import files;
+          assert 'codecinema.workspace.settings' not in sys.modules;
+          assert not any(m in sys.modules for m in ('numpy','skia','bpy','mlx_audio'));
+          package=files('codecinema');
+          assert sorted(p.name for p in package.iterdir() if p.name.endswith('.py'))==['__init__.py','__main__.py'];
+          assert files('codecinema.workspace').joinpath('scaffold/scenes.json').is_file();
+          assets=files('codecinema.studio').joinpath('assets');
+          assert all(assets.joinpath(p).is_file() for p in ('index.html','studio.js','studio.css'));
+          assert len(list(assets.joinpath('presets').iterdir()))==8;
+          from codecinema.workspace import settings; from codecinema.runtime import media, blender;
+          assert codecinema.settings is settings and codecinema.media is media;
+          from codecinema.engine.context import RenderContext;
+          from codecinema.studio.jobs import Studio"
       - name: Install FFmpeg and the Linux graphics runtime
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core libgl1 libegl1 libfontconfig1
@@ -21,7 +36,7 @@ jobs:
         run: codecinema new ci-preview --preset aurora --duration 3 --quality preview
       - name: Customize one film without changing other configurations
         run: >
-          python -c "import copy; from pathlib import Path; from codecinema import registry, projects, settings;
+          python -c "import copy; from pathlib import Path; from codecinema.workspace import registry, projects, settings;
           root=Path.cwd(); before=copy.deepcopy(registry.definitions(root));
           projects.customize(root/'films/ci-preview', title='CI portrait', format_name='portrait');
           after=registry.definitions(root);
@@ -37,7 +52,7 @@ jobs:
         run: codecinema run ci-preview all
       - name: Import a story and honor explicit CLI edits
         run: >
-          python -c "import json; from pathlib import Path; from codecinema import cli, registry;
+          python -c "import json; from pathlib import Path; from codecinema import cli; from codecinema.workspace import registry;
           source=Path('films/ci-preview/scenes.json'); before=source.read_bytes();
           assert cli.main(['new','ci-import','--story',str(source),'--title','Imported edit',
           '--subtitle','New opening','--duration','6','--preset','ocean'])==0;
@@ -58,7 +73,7 @@ jobs:
         run: >
           python -c "import sys; sys.path[:0]=['codecinema/productions/silvergrass/common','codecinema/productions/silvergrass/audio','codecinema/productions/silvergrass/post'];
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
-          from codecinema import media, films, cli;
+          from codecinema.runtime import media; from codecinema.workspace import films; from codecinema import cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
       - name: Synthesize the Blender example soundtrack without Blender
         run: codecinema run beacon audio

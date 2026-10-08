@@ -17,7 +17,9 @@ os.environ["CODECINEMA_FILM_DIR"] = str(ROOT)
 sys.path.insert(0, str(ROOT.parents[1]))
 from story import FPS, FRAMES, HEIGHT, SECONDS, WIDTH
 
-from codecinema import blender, procutil, settings
+from codecinema.runtime import blender
+from codecinema.runtime import process as procutil
+from codecinema.workspace import settings
 
 OUT = ROOT / "out"
 MASTER = ROOT / "assets/film/TheLastBeacon.mp4"

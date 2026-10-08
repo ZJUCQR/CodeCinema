@@ -11,13 +11,17 @@ CodeCinema command line.
 """
 import argparse
 import json
-from pathlib import Path
 import os
 import re
 import shutil
 import sys
+from pathlib import Path
 
-from codecinema import __version__, diagnostics, films, films_dir, projects, settings, starters, renderers
+from codecinema import __version__, renderers
+from codecinema.runtime import diagnostics
+from codecinema.workspace import films, projects, settings
+from codecinema.workspace import story as starters
+from codecinema.workspace.paths import films_dir
 
 
 def cmd_list(a):

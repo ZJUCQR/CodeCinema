@@ -10,7 +10,7 @@ import numpy as np
 from scipy.ndimage import uniform_filter1d
 from scipy.signal import butter, sosfilt
 
-from codecinema import settings
+from codecinema.workspace import settings
 from codecinema.audio import dsp
 from story import ROOT, timeline
 

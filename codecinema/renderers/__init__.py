@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Iterable, Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from codecinema.context import RenderContext
+    from codecinema.engine.context import RenderContext
 
 
 class FrameRenderer(Protocol):

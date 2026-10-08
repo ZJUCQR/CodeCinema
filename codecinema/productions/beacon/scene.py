@@ -21,7 +21,7 @@ from story import CUES, FPS, FRAMES, HEIGHT, SHOTS, WIDTH, smooth
 ROOT = film_root("beacon")
 os.environ["CODECINEMA_FILM_DIR"] = str(ROOT)
 sys.path.insert(0, str(ROOT.parents[1]))
-from codecinema import settings
+from codecinema.workspace import settings
 
 RNG = random.Random(71)
 

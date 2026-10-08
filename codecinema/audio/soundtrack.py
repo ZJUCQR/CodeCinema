@@ -3,7 +3,7 @@
 import json
 import numpy as np
 from scipy.io import wavfile
-from codecinema import settings
+from codecinema.workspace import settings
 from codecinema.audio import dsp
 from codecinema.renderers.palettes import PALETTES
 

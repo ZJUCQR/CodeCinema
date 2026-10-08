@@ -203,29 +203,38 @@ The framework and film content have separate homes. Use this map to find the par
 ```text
 CodeCinema/
 ├── codecinema/               # shared framework and local Studio
-│   ├── cli.py                # commands for creating and running films
-│   ├── studio.py             # local editor server and production jobs
-│   ├── studio_assets/        # editor interface and look thumbnails
-│   ├── projects.py           # project creation, customization and backups
-│   ├── starters.py           # available looks, formats and scene validation
-│   ├── template/             # data-only scaffold for new films
-│   ├── context.py            # validated timeline and render context
-│   ├── pipeline.py           # common picture, sound, assembly and QC steps
-│   ├── renderers/            # Skia, Blender and the renderer plugin interface
-│   ├── productions/          # authored example production packs
-│   │   ├── beacon/           # character, observatory, performance and score
-│   │   ├── silvergrass/      # choreography, Blender scenes and post-production
-│   │   ├── nightrevels/      # painted characters, scroll animation and music
-│   │   └── xishen/           # cast, acting, speech timing and episode assembly
-│   ├── worker.py             # isolated execution for each film
-│   ├── films.py              # film discovery and production steps
-│   ├── registry.py           # film configuration in the workspace
-│   ├── settings.py           # settings, tools and font discovery
-│   ├── blender.py            # shared Blender production helpers
-│   ├── audio/                # music, effects, speech and mouth timing
-│   ├── media.py              # video encoding and final assembly
-│   ├── procutil.py           # process management and cross-platform helpers
-│   └── diagnostics.py        # dependency checks and setup hints
+│   ├── __init__.py             # package version and public convenience imports
+│   ├── __main__.py             # python -m codecinema entry point
+│   ├── cli/                    # command-line interface
+│   │   └── app.py              # commands, arguments and dispatch
+│   ├── workspace/              # film content and project management
+│   │   ├── paths.py            # workspace and package locations
+│   │   ├── registry.py         # film registration and atomic configuration edits
+│   │   ├── settings.py         # layered settings, tools and fonts
+│   │   ├── films.py            # film discovery and worker launch
+│   │   ├── projects.py         # creation, customization and backups
+│   │   ├── story.py            # scene validation, looks and formats
+│   │   └── scaffold/           # data-only starting files for new films
+│   ├── engine/                 # shared production pipeline
+│   │   ├── context.py          # validated timeline and render context
+│   │   ├── pipeline.py         # planning, picture, sound, assembly and QC
+│   │   └── worker.py           # isolated execution for each film
+│   ├── runtime/                # external tools and process support
+│   │   ├── blender.py          # Blender launch and shared scene helpers
+│   │   ├── media.py            # FFmpeg encoding, probing and muxing
+│   │   ├── process.py          # processes, locks and memory helpers
+│   │   └── diagnostics.py      # dependency checks and setup hints
+│   ├── studio/                 # local visual editor
+│   │   ├── server.py           # HTTP API and media delivery
+│   │   ├── jobs.py             # project state and background render jobs
+│   │   └── assets/             # editor interface and look thumbnails
+│   ├── renderers/              # Skia, Blender and renderer plugin interface
+│   ├── audio/                  # music, effects, speech and performance timing
+│   └── productions/            # authored example production packs
+│       ├── beacon/             # character, observatory, performance and score
+│       ├── silvergrass/        # choreography, Blender scenes and post-production
+│       ├── nightrevels/        # painted characters, scroll animation and music
+│       └── xishen/             # cast, acting, speech timing and episode assembly
 ├── films/                    # film content, assets and generated outputs
 │   ├── silvergrass/          # Duel in the Silver Grass
 │   ├── nightrevels/          # The Night Revels of Han Xizai, Cat Edition

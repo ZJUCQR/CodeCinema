@@ -5,7 +5,7 @@ from functools import lru_cache
 
 import skia
 
-from codecinema import settings
+from codecinema.workspace import settings
 from codecinema.audio.performance import activate, Performance
 from pathlib import Path
 

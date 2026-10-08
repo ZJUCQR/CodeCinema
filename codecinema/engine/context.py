@@ -1,12 +1,14 @@
 """A frame-accurate story and the paths shared by every production stage."""
 
-from dataclasses import dataclass
 import hashlib
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from codecinema import settings, starters
+from codecinema.workspace import settings
+from codecinema.workspace import story as starters
+from codecinema.workspace.paths import PACKAGE_ROOT
 
 
 @dataclass(frozen=True)
@@ -86,11 +88,11 @@ class RenderContext:
                 else options.speech_engine
             )
         digest = hashlib.sha256(json.dumps(data, sort_keys=True).encode())
-        package = Path(__file__).parent
+        package = PACKAGE_ROOT
         sources = [
-            package / "context.py",
-            package / "pipeline.py",
-            package / "starters.py",
+            package / "engine/context.py",
+            package / "engine/pipeline.py",
+            package / "workspace/story.py",
             *sorted((package / "renderers").glob("*.py")),
             *sorted((package / "audio").glob("*.py")),
         ]

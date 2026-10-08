@@ -96,7 +96,7 @@ def validate():
 def digest(extra=""):
     """Invalidate generated work when any story, renderer, audio or setting changes."""
     h = hashlib.sha256(extra.encode())
-    from codecinema.registry import film_config
+    from codecinema.workspace.registry import film_config
     h.update(json.dumps(film_config(ROOT), ensure_ascii=False, sort_keys=True).encode())
     paths = [ROOT / "story.json",
              *sorted((source_root("xishen")).glob("*.py")),

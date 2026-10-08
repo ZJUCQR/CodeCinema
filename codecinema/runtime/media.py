@@ -1,5 +1,5 @@
 """
-codecinema.media - small ffmpeg helpers shared by the films.
+codecinema.runtime.media - small ffmpeg helpers shared by the films.
 
     probe(path)                         -> dict(duration, width, height, fps, frames, audio_rate)
     encoder(path, w, h, fps, crf=...)   -> a Popen that takes raw RGBA frames on stdin and writes an H.264 file
@@ -11,7 +11,7 @@ import os
 import subprocess
 import tempfile
 
-from codecinema import settings
+from codecinema.workspace import settings
 
 
 def ffmpeg():

@@ -6,7 +6,7 @@ import math
 import numpy as np
 import skia
 
-from codecinema import settings
+from codecinema.workspace import settings
 from story import CANON
 
 INK = "#080f17"

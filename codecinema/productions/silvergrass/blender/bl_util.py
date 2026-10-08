@@ -177,7 +177,7 @@ def srgb_to_linear(c):
 # =============================================================================================
 def channelbag_of(id_or_obj):
     """ActionChannelbag of the action slot assigned to this ID (None if not animated)."""
-    from codecinema.blender import channelbag_of as shared_channelbag
+    from codecinema.runtime.blender import channelbag_of as shared_channelbag
     return shared_channelbag(id_or_obj)
 
 
@@ -185,7 +185,7 @@ def fcurves_of(id_or_obj, prefix=None):
     """List of F-curves of the ID's assigned action slot, optionally filtered by data_path prefix.
     Works for any ID: Object, Camera data (lens/dof), Light data, node groups (compositor/GN keys),
     material.node_tree / world.node_tree (shader node values). Object keys do NOT include obj.data keys."""
-    from codecinema.blender import fcurves_of as shared_fcurves
+    from codecinema.runtime.blender import fcurves_of as shared_fcurves
     return shared_fcurves(id_or_obj, prefix)
 
 
@@ -568,7 +568,7 @@ def sample_positions(targets, frames, where="head", scene=None):
 def muted_modifiers(objects=None, types=('NODES',)):
     """Temporarily set show_viewport=False on (GN) modifiers -> frame_set gets much cheaper while sampling
     (renders use show_render, unaffected). objects=None -> all objects."""
-    from codecinema.blender import muted_modifiers as shared_modifiers
+    from codecinema.runtime.blender import muted_modifiers as shared_modifiers
     with shared_modifiers(objects, types=types) as saved:
         yield saved
 

@@ -1,4 +1,4 @@
-"""Film-side alias of codecinema.settings, bound to this film's directory (import settings)."""
+"""Film-side alias of codecinema.workspace.settings, bound to this film's directory (import settings)."""
 
 from codecinema.productions import film_root
 import os
@@ -11,6 +11,6 @@ while not os.path.isfile(os.path.join(_d, "codecinema", "__init__.py")) and os.p
     _d = os.path.dirname(_d)
 if _d not in sys.path:
     sys.path.insert(0, _d)
-from codecinema import settings as _m  # noqa: E402
+from codecinema.workspace import settings as _m  # noqa: E402
 
 sys.modules[__name__] = _m

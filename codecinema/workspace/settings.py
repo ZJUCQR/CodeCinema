@@ -1,5 +1,5 @@
 """
-codecinema.settings - per-film settings (pure standard library; Python 3.11+, including Blender's Python).
+codecinema.workspace.settings - per-film settings (pure standard library; Python 3.11+, including Blender's Python).
 
 Every film lives in films/<id>/ and is registered under [tool.codecinema.films.<id>] in pyproject.toml.
 Settings precedence (later wins):
@@ -11,7 +11,7 @@ The active film is $CODECINEMA_FILM_DIR (set by the CLI and by each film's own e
 registered film directory containing the working directory.
 
 Usage:
-    from codecinema import settings
+    from codecinema.workspace import settings
     settings.get("render", "slots")          # -> 2
     settings.tool("ffmpeg")                  # -> absolute path or the bare name (let the OS resolve it)
     settings.font("calligraphy")             # -> absolute path of a matching font file, or "" if none found
@@ -24,7 +24,8 @@ import sys
 import tomllib
 from pathlib import Path
 
-from codecinema import project_root, registry
+from codecinema.workspace import registry
+from codecinema.workspace.paths import project_root
 
 REPO = project_root(os.environ.get("CODECINEMA_FILM_DIR"))
 

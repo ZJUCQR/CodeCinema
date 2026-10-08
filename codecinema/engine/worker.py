@@ -1,9 +1,9 @@
 """One isolated process per film, including its audio settings and Blender jobs."""
 
 import os
-from pathlib import Path
 import runpy
 import sys
+from pathlib import Path
 
 
 def main():
@@ -12,8 +12,8 @@ def main():
     path = Path(sys.argv[1]).resolve()
     os.environ["CODECINEMA_FILM_DIR"] = str(path)
     os.chdir(path)
-    from codecinema.films import Film
     from codecinema.productions import source_root
+    from codecinema.workspace.films import Film
 
     film = Film(path)
     args = sys.argv[2:]
@@ -22,7 +22,7 @@ def main():
         # Previously created, possibly customized projects remain runnable.
         entry = path / film.legacy_entry
     elif film.production == "story":
-        from codecinema.pipeline import main as produce
+        from codecinema.engine.pipeline import main as produce
 
         return produce(args)
     else:

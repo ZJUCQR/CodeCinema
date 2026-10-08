@@ -3,15 +3,15 @@
 Reads use only the standard library, including inside Blender. Editing imports
 tomlkit lazily to preserve comments and unrelated packaging configuration.
 """
-from contextlib import contextmanager
 import os
-from pathlib import Path
 import re
 import tempfile
 import threading
 import tomllib
+from contextlib import contextmanager
+from pathlib import Path
 
-from codecinema import project_root
+from codecinema.workspace.paths import project_root
 
 _EDIT_LOCK = threading.RLock()
 
@@ -70,7 +70,8 @@ def atomic_write(path, content):
 def edit(film_dir, rollback=None):
     """Serialize workspace edits across Studio threads and CLI processes."""
     import tomlkit
-    from codecinema import procutil
+
+    from codecinema.runtime import process as procutil
 
     path = manifest(film_dir)
     if not path.is_file():

@@ -38,7 +38,8 @@ include = ["codecinema*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-codecinema = ["template/**/*", "studio_assets/**/*", "studio_assets/*"]
+"codecinema.workspace" = ["scaffold/*", "scaffold/**/*"]
+"codecinema.studio" = ["assets/*", "assets/**/*"]
 
 [tool.setuptools.exclude-package-data]
 codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]

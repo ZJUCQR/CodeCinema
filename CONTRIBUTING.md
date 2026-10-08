@@ -15,8 +15,8 @@ Skia projects do not require Blender. Blender projects require Blender 5.2 or la
 
 ## Make a change
 
-- For a starter look, update the preset data in `codecinema/starters.py` and the rendering palette in `codecinema/renderers/palettes.py`. Include an actual rendered thumbnail for Studio.
-- For an editor improvement, update `codecinema/studio.py` or `codecinema/studio_assets/`. Check both languages and a narrow mobile viewport.
+- For a starter look, update the preset data in `codecinema/workspace/story.py` and the rendering palette in `codecinema/renderers/palettes.py`. Include an actual rendered thumbnail for Studio.
+- For an editor improvement, update `codecinema/studio/server.py`, `codecinema/studio/jobs.py` or `codecinema/studio/assets/`. Check both languages and a narrow mobile viewport.
 - For a renderer, implement the plugin interface below. Keep backend code in the framework or an installed package and keep film folders free of production scripts.
 - For documentation, keep English and Chinese setup instructions consistent. Describe the current behavior and provide commands a newcomer can copy.
 
@@ -33,6 +33,31 @@ Generated videos, render caches, recordings and local settings stay outside Git.
 For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI checks project creation and imports on macOS, Linux and Windows, and renders a short sample on Linux.
 
 Open a focused pull request explaining the problem, the resulting behavior and the checks you ran. Include a screenshot or short preview when the visual result changes. Report bugs in [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) with your OS, Python and FFmpeg versions, the command or Studio action, and the relevant error message. Remove private paths and credentials from logs.
+
+## Package boundaries
+
+- `cli/` translates terminal input into workspace or production operations.
+- `workspace/` owns film discovery, configuration, scene data and reversible edits.
+- `engine/` coordinates the shared timeline and production stages in isolated workers.
+- `runtime/` wraps external programs, file locks and dependency checks.
+- `studio/` separates HTTP handling in `server.py` from background jobs in `jobs.py`. Frontend resources live in `assets/`.
+- `renderers/` supplies picture backends, `audio/` supplies sound, and `productions/` holds the authored example packs.
+
+Keep package initializers lightweight. In particular, importing `codecinema` must
+not load film settings, graphics or audio libraries. The worker sets the active
+film before importing its pipeline. Settings reads and Blender helpers must work
+in Blender's Python without the Studio or optional speech dependencies.
+
+New extensions should use the grouped module paths, for example
+`codecinema.workspace.settings`, `codecinema.engine.context` and
+`codecinema.runtime.media`. The older `from codecinema import settings, media`
+convenience imports remain lazy aliases of the same module objects. Direct imports
+of the former flat modules should move to the new paths. The CLI commands and
+`codecinema.renderers` plugin entry-point group are unchanged.
+
+Package UI files under `studio/assets/` and starting film files under
+`workspace/scaffold/`. Check their inclusion in a built wheel and run from a
+separate workspace, since repository imports can conceal missing packaged files.
 
 ## Renderer plugins
 
@@ -53,7 +78,7 @@ zero-based frame, in order. Each buffer is exactly `width * height * 4` bytes.
 Bump `version` when dependencies or rendering behavior change. An optional
 `validate(context)` method can reject unsupported scene fields before production.
 
-`RenderContext` exposes the film path, story, quantized `(scene, start, end)`
+`RenderContext` in `codecinema.engine.context` exposes the film path, story, quantized `(scene, start, end)`
 intervals, dimensions, frame rate, duration and working paths. Intervals are
 half-open. Use `frame / context.fps` for time so picture and sound stay aligned.
 Do not mutate the context or scene dictionaries. Backend-specific data may be

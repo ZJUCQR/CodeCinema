@@ -4,7 +4,7 @@ import os
 import shutil
 import sys
 
-from codecinema import settings
+from codecinema.workspace import settings
 
 STARTER_MODULES = ("numpy", "scipy", "PIL", "skia")
 

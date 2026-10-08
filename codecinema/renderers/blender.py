@@ -3,7 +3,8 @@
 import json
 from pathlib import Path
 from PIL import Image
-from codecinema import blender, settings
+from codecinema.runtime import blender
+from codecinema.workspace import settings
 from codecinema.renderers.skia import Renderer as Compositor
 
 

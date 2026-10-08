@@ -74,7 +74,7 @@ VENV_PY = PYTHON
 
 def blender_cmd(script, *args, blend=None):
     """Headless Blender command line running `script` (path, absolute or relative to the repo root) on `blend`."""
-    from codecinema.blender import command
+    from codecinema.runtime.blender import command
     return command(script, *args, blend=blend, root=ROOT, executable=BLENDER_BIN)
 
 

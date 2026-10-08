@@ -1,15 +1,19 @@
 """Safe, reversible customization of the editable starter projects."""
 import copy
-from datetime import datetime, timezone
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
+
 import tomlkit
 
-from codecinema import registry, settings, starters, renderers
+from codecinema import renderers
+from codecinema.workspace import registry, settings
+from codecinema.workspace import story as starters
+
 
 def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None, renderer="skia", story=None):
     """Create a film folder and register its settings in the workspace configuration."""
@@ -49,11 +53,13 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             path.parent.mkdir(parents=True, exist_ok=True)
             with tempfile.TemporaryDirectory(prefix=".codecinema-", dir=path.parent) as temporary:
                 staged = Path(temporary) / path.name
-                source = Path(__file__).with_name("template")
+                source = Path(__file__).with_name("scaffold")
                 shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
                 for file in staged.rglob("*.md"):
                     content = file.read_text(encoding="utf-8")
                     content = content.replace("__FILM_ID__", path.name).replace("__FILM_TITLE__", title)
+                    content = content.replace("../../../README.md#quick-start", "../../README.md#quick-start")
+                    content = content.replace("../../../CONTRIBUTING.md#renderer-plugins", "../../CONTRIBUTING.md#renderer-plugins")
                     file.write_text(content, encoding="utf-8", newline="\n")
                 (staged / "scenes.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
                 if os.path.lexists(path):

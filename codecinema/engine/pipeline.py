@@ -7,11 +7,16 @@ import os
 import subprocess
 import sys
 import time
+
 from PIL import Image, ImageDraw
-from codecinema import diagnostics, media, settings, starters, procutil
+
 from codecinema.audio import dsp, soundtrack
-from codecinema.context import RenderContext
+from codecinema.engine.context import RenderContext
 from codecinema.renderers import get_renderer
+from codecinema.runtime import diagnostics, media
+from codecinema.runtime import process as procutil
+from codecinema.workspace import settings
+from codecinema.workspace import story as starters
 
 
 class Pipeline:

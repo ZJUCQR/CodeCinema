@@ -20,7 +20,7 @@ import time
 IS_WINDOWS = os.name == "nt"
 
 if IS_WINDOWS:
-    import msvcrt   # noqa: F401
+    import msvcrt  # noqa: F401
 else:
     import fcntl
 

@@ -203,29 +203,38 @@ Apple Silicon Mac 可在仓库根目录安装本地情绪语音包，然后重�
 ```text
 CodeCinema/
 ├── codecinema/               # 共享框架与本地 Studio
-│   ├── cli.py                # 创建与运行影片的命令入口
-│   ├── studio.py             # 本地编辑器服务与制作任务
-│   ├── studio_assets/        # 编辑器界面与风格缩略图
-│   ├── projects.py           # 项目创建、定制与备份
-│   ├── starters.py           # 风格、画幅选项与分镜校验
-│   ├── template/             # 新影片的数据骨架，不含制作脚本
-│   ├── context.py            # 分镜时间轴与渲染上下文
-│   ├── pipeline.py           # 统一画面、声音、合成与质检
-│   ├── renderers/            # Skia、Blender 与插件接口
-│   ├── productions/          # 四部示例的制作包
-│   │   ├── beacon/           # 人物、天文台、表演与配乐
-│   │   ├── silvergrass/      # 动作、Blender 场景与后期
-│   │   ├── nightrevels/      # 绘制、长卷动画与音乐
-│   │   └── xishen/           # 角色、表演、配音与多集合成
-│   ├── worker.py             # 各部影片的隔离执行入口
-│   ├── films.py              # 影片发现与制作步骤执行
-│   ├── registry.py           # 工作区中的影片配置管理
-│   ├── settings.py           # 参数、工具与字体查找
-│   ├── blender.py            # Blender 制作共用工具
-│   ├── audio/                # 配乐、音效、配音与口型时序
-│   ├── media.py              # 视频编码与成片合成
-│   ├── procutil.py           # 进程管理与跨平台工具
-│   └── diagnostics.py        # 依赖检查与安装提示
+│   ├── __init__.py             # 包版本与公共便捷导入
+│   ├── __main__.py             # python -m codecinema 启动入口
+│   ├── cli/                    # 命令行接口
+│   │   └── app.py              # 命令、参数与调度
+│   ├── workspace/              # 影片内容与项目管理
+│   │   ├── paths.py            # 工作区与框架资源路径
+│   │   ├── registry.py         # 影片注册与原子配置修改
+│   │   ├── settings.py         # 分层配置、工具与字体查找
+│   │   ├── films.py            # 影片发现与制作进程启动
+│   │   ├── projects.py         # 创建、定制与备份
+│   │   ├── story.py            # 分镜校验、风格与画幅
+│   │   └── scaffold/           # 新影片的数据骨架
+│   ├── engine/                 # 共享制作管线
+│   │   ├── context.py          # 分镜时间轴与渲染上下文
+│   │   ├── pipeline.py         # 规划、画面、声音、合成与质检
+│   │   └── worker.py           # 各部影片的隔离执行
+│   ├── runtime/                # 外部工具与进程支持
+│   │   ├── blender.py          # Blender 启动与共用场景工具
+│   │   ├── media.py            # FFmpeg 编码、探测与合成
+│   │   ├── process.py          # 进程、锁与内存工具
+│   │   └── diagnostics.py      # 依赖检查与安装提示
+│   ├── studio/                 # 本地可视化编辑器
+│   │   ├── server.py           # HTTP 接口与媒体响应
+│   │   ├── jobs.py             # 项目状态与后台制作任务
+│   │   └── assets/             # 编辑器界面与风格缩略图
+│   ├── renderers/              # Skia、Blender 与渲染插件接口
+│   ├── audio/                  # 配乐、音效、配音与表演时序
+│   └── productions/            # 示例影片的制作包
+│       ├── beacon/             # 角色、天文台、表演与配乐
+│       ├── silvergrass/        # 动作、Blender 场景与后期
+│       ├── nightrevels/        # 角色绘制、长卷动画与音乐
+│       └── xishen/             # 角色、表演、配音与多集合成
 ├── films/                    # 影片内容、素材与生成结果
 │   ├── silvergrass/          # 《芒原决战》
 │   ├── nightrevels/          # 《韩熙载夜宴图 · 猫》
