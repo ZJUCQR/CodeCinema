@@ -93,7 +93,7 @@ py -3.12 -m venv .venv
 这些命令直接使用虚拟环境，无需激活。Windows 使用更新的 Python 时，将 `-3.12` 替换为对应版本。Studio 自动打开 **http://127.0.0.1:8787/**。使用期间保持终端运行，按 `Ctrl+C` 退出。
 
 1. **选场景**：点击缩略图，选择影片的初始风格。
-2. **改内容**：填写影片 ID、标题和字幕，选择时长、画幅与画质。
+2. **改内容**：填写影片 ID、标题和字幕，选择 Skia 或 Blender，再设置时长、画幅与画质。
 3. **生成影片**：点击“生成我的影片”，完成后直接观看或下载 MP4。
 
 ![Eight starter looks](assets/images/starters.jpg)
@@ -148,14 +148,14 @@ py -3.12 -m venv .venv
 
 从“我的影片”重新打开项目，即可继续编辑。分镜卡片控制字幕、时长、风格与镜头运动，生成场景短片。它不会自动把一段小说转换成人物表演。自定义人物与动作可通过 Blender 场景或渲染器扩展接入。
 
-也可以从命令行新建影片，再切换渲染技术：
+也可以在仓库根目录运行以下命令，新建影片后切换渲染技术。Windows 下将 `.venv/bin/python` 换成 `.\.venv\Scripts\python.exe`：
 
 ```bash
-codecinema new myfilm --renderer skia --preset aurora --render
-codecinema customize myfilm --renderer blender --render
+.venv/bin/python -m codecinema new myfilm --renderer skia --preset aurora --render
+.venv/bin/python -m codecinema customize myfilm --renderer blender --render
 ```
 
-在 `new` 或 `customize` 后添加 `--story path/to/scenes.json` 可导入自己的分镜。剧情与素材保存在影片目录，渲染器和制作设置统一保存在根目录 `pyproject.toml`。
+在 `new` 或 `customize` 后添加 `--story path/to/scenes.json` 可导入自己的分镜。显式指定的标题、字幕、时长和风格选项会覆盖导入值。剧情与素材保存在影片目录，渲染器和制作设置统一保存在根目录 `pyproject.toml`。
 
 <a id="framework"></a>
 
@@ -184,7 +184,7 @@ codecinema customize myfilm --renderer blender --render
 
 <a id="speech"></a>
 
-## 🎙️ 配音与口型
+## 🎙️ 配音
 
 在 Studio 的分镜卡片中展开“添加配音”，填写台词、选择声音并描述情绪，例如“温柔而好奇”或“紧张但克制”。为台词留足时长，制作较长影片前先试听声音。台词留空时生成配乐版。
 
@@ -194,9 +194,7 @@ Apple Silicon Mac 可在仓库根目录安装本地情绪语音包，然后重�
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-首次配音会下载语音模型，后续制作可复用已有配音，无需 API Key。其他平台可使用录音。
-
-带有说话人物的渲染器可以根据最终语音驱动口型，让停顿和嘴部动作跟随实际声音。[《我不是戏神》制作指南](films/xishen/README.zh-CN.md)展示了包含配音、口型、字幕与配乐的完整制作流程。
+首次配音会下载语音模型，后续制作可复用已有配音，无需 API Key。使用录音时，将 WAV 文件放入影片的 `assets/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。各平台均可使用录音。
 
 ## 🗂 项目结构
 

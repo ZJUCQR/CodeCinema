@@ -36,15 +36,13 @@ The camera travels right to left along one long scroll, as a viewer unrolls a ha
 
 ## 🚀 Quick start
 
-```bash
-git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
-python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # the framework + all dependencies
+Follow the [setup guide](../../README.md#quick-start) to install the framework and FFmpeg. Run the commands below from the repository root. On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`.
 
-codecinema run nightrevels all      # build → render → audio → assemble
+```bash
+.venv/bin/python -m codecinema run nightrevels all      # build → render → audio → assemble
 ```
 
-The finished film is written to `assets/film/`. Every command below is a step: `codecinema run nightrevels <step>` from anywhere in the repo.
+The finished film is written to `films/nightrevels/assets/film/NightRevels.mp4`. Every command below is a step: `.venv/bin/python -m codecinema run nightrevels <step>` from the repository root.
 
 | Command | What it does |
 |---|---|
@@ -74,18 +72,19 @@ The finished film is written to `assets/film/`. Every command below is a step: `
 
 This folder contains no production scripts. [story.json](story.json) stores the authored shot data. Character, animation and sound code lives in the [framework production pack](../../codecinema/productions/nightrevels). Changes to authored shot timing require a matching review of choreography and sound.
 
-The story is data plus code. Sections, cue frames and tempo live in `story.json` and are read by the production config, the score in `codecinema/productions/nightrevels/common/music.py`, the cast in `codecinema/productions/nightrevels/story/cast.py`, and the choreography and camera in `codecinema/productions/nightrevels/story/film.py`. Machine settings (output, parallel jobs, encoding, loudness) live in the root `pyproject.toml` under `[tool.codecinema.films.nightrevels.settings]`.
+Sections, cue frames and tempo live in `story.json`. In the production pack, `common/config.py` reads those values, `common/music.py` defines the score, `story/cast.py` defines the cast, and `story/film.py` controls choreography and cameras. Machine settings (output, parallel jobs, encoding, loudness) live in the root `pyproject.toml` under `[tool.codecinema.films.nightrevels.settings]`.
 
 | To change… | Edit |
 |---|---|
 | Story beats and their timing | `cues` and `sections` in `story.json` |
-| The music (melodies, tempo, which instrument plays) | `music.py`. Playing paws follow the notes automatically |
+| Melodies and instruments | `common/music.py`. Playing paws follow the notes automatically |
+| Musical tempo | `tempo` in `story.json` |
 | A cat's breed, coat, eyes, costume | `BREEDS` and the costumes in `cast.py` |
 | Who stands where, gestures, gags, camera moves | `film.py` (keyed actor tracks and `Camera` keys) |
 | The painting style (ink, silk, faces, furniture) | `codecinema/productions/nightrevels/paint/` |
 | Parallel jobs, quality, loudness | `[tool.codecinema.films.nightrevels.settings]` in the root `pyproject.toml` |
 
-You can create your own configuration or override any setting:
+Override settings for this film in `films/nightrevels/film.local.toml`:
 
 ```toml
 # film.local.toml
@@ -94,8 +93,10 @@ jobs = 4
 crf = 12
 ```
 
+For a one-off override on macOS or Linux:
+
 ```bash
-NIGHTREVELS_RENDER_JOBS=2 codecinema run nightrevels render
+NIGHTREVELS_RENDER_JOBS=2 .venv/bin/python -m codecinema run nightrevels render
 ```
 
 ## 🗂 Project layout

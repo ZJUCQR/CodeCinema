@@ -43,18 +43,16 @@
 
 ## 🚀 快速开始
 
-```bash
-git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
-python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # 安装框架和全部依赖
+先按[安装教程](../../README.zh-CN.md#quick-start)配置框架和 FFmpeg。另外安装 [Blender 5.2 或更新版本](https://www.blender.org/download/)。以下命令在仓库根目录运行。Windows 下将 `.venv/bin/python` 换成 `.\.venv\Scripts\python.exe`。
 
-codecinema run silvergrass check     # 查找 Blender 5.2+、ffmpeg 和字幕字体，并报告缺少的部分
-codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 → 合成
+```bash
+.venv/bin/python -m codecinema run silvergrass check     # 查找 Blender 5.2+、ffmpeg 和字幕字体，并报告缺少的部分
+.venv/bin/python -m codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 → 合成
 ```
 
-成片输出到 `assets/film/`。完整渲染是最慢的一步，可以随时中断，再次运行会从中断处继续。想花几分钟先看某一幕，可以运行 `codecinema run silvergrass preview act2`。
+成片输出到 `films/silvergrass/assets/film/芒原决战_Final.mp4`。完整渲染是最慢的一步，可以随时中断，再次运行会从中断处继续。想花几分钟先看某一幕，可以运行 `.venv/bin/python -m codecinema run silvergrass preview act2`。
 
-下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run silvergrass <步骤>`。
+下表每个命令都是影片的一个步骤：在仓库根目录运行 `.venv/bin/python -m codecinema run silvergrass <步骤>`。
 
 | 命令 | 作用 |
 |---|---|
@@ -91,14 +89,14 @@ codecinema run silvergrass all       # 构建 → 渲染 → 音频 → 字幕 �
 | 想改什么 | 改哪里 |
 |---|---|
 | 片名、题记、名牌、幕名 | config 里的 `TITLES` |
-| 镜头长度、分幕、节奏、慢镜头、配乐提示点 | config 里的 `story.json` 中的 `shots`、`acts`，以及制作配置中的 `TEMPO_MAP`、`TIME_WARP`、`MUSIC_CUES` |
+| 镜头长度、分幕、节奏、慢镜头、配乐提示点 | `story.json` 中的 `shots`、`acts`，以及制作配置中的 `TEMPO_MAP`、`TIME_WARP`、`MUSIC_CUES` |
 | 角色配色和比例 | config 里的 `PALETTE`、`SHINOBI_HEIGHT`、`SAINT_HEIGHT`。造型在角色模块里 |
 | 某一幕的动作和镜头 | `codecinema/productions/silvergrass/blender/acts/` 中对应幕的模块 |
 | 天空、光照、风、芒草、特效 | 在编舞线里调用 `environment.*` 和 `vfx.*` |
 | 旋律、调式、乐器 | config 里的 `LEITMOTIFS`、`SCALE_IN`、`SCALE_YO`。编曲和乐器模块 |
 | 分辨率、采样数、运动模糊、编码、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.silvergrass.settings]` |
 
-你可以自己创建相应的配置，或者覆盖已有设置：
+在 `films/silvergrass/film.local.toml` 中覆盖当前影片的设置：
 
 ```toml
 # film.local.toml
@@ -110,8 +108,10 @@ slots = 1
 calligraphy = "~/fonts/ZhiMangXing-Regular.ttf"
 ```
 
+macOS / Linux 也可以临时使用环境变量覆盖：
+
 ```bash
-SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender codecinema run silvergrass all
+SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender .venv/bin/python -m codecinema run silvergrass all
 ```
 
 ## 🗂 项目结构
@@ -129,7 +129,7 @@ films/silvergrass/
 <img src="assets/images/pipeline.svg" width="100%" alt="SilverGrass 流程：数据规格、Blender 场景合成、渲染、声音合成与后期">
 </div>
 
-<p align="center"><sub>SilverGrass 流程。<b>(a)</b> 影片以数据形式描述：<code>config.py</code> 里的镜头、交接状态、节拍网格、提示点和主导动机，外加六条编舞线。<b>(b)</b> 在 Blender 里，每条编舞线只在自己的帧区间内为角色、镜头和特效打关键帧。构建时用 NLA 条带隔离各条线，并检查每个交接点的状态。统一的影片时钟 <code>fx_time</code> 让程序化特效和慢镜头同步。<b>(c)</b> 调度器按镜头分块渲染，只有内容指纹变化的镜头才会重渲。<b>(d)</b> 每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。<b>(e)</b> 字幕、画面和母带混音按采样精度合成，再检查光敏安全、音画同步和响度。</sub></p>
+<p align="center"><sub>SilverGrass 流程。<b>(a)</b> 影片以数据形式描述：<code>story.json</code> 保存镜头与分幕，制作包的 <code>common/config.py</code> 提供交接状态、节拍网格、提示点和主导动机，外加六条编舞线。<b>(b)</b> 在 Blender 里，每条编舞线只在自己的帧区间内为角色、镜头和特效打关键帧。构建时用 NLA 条带隔离各条线，并检查每个交接点的状态。统一的影片时钟 <code>fx_time</code> 让程序化特效和慢镜头同步。<b>(c)</b> 调度器按镜头分块渲染，只有内容指纹变化的镜头才会重渲。<b>(d)</b> 每个动作都会发出带时间的事件，音效和配乐重音按事件落在准确的帧上。<b>(e)</b> 字幕、画面和母带混音按采样精度合成，再检查光敏安全、音画同步和响度。</sub></p>
 
 
 ## 📜 许可

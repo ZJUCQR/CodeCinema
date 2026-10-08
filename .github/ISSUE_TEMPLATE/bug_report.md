@@ -14,7 +14,7 @@ labels: bug
 
 **Environment**
 - OS:
-- Blender version (`codecinema check`):
+- Blender version (`blender --version` or Help → About Blender):
 - Python version:
 
 **Evidence**

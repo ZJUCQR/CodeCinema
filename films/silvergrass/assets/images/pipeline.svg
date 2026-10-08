@@ -9,8 +9,8 @@
 <text x="42" y="109" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">prologue · act1a · act1b</text>
 <text x="42" y="126" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">act2 · act3 · finale</text>
 <rect x="30" y="174" width="208" height="252" rx="7" fill="#ffffff" stroke="#6e7781" stroke-width="1.1"/>
-<text x="42" y="195" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#1f2328" text-anchor="start">config.py</text>
-<text x="42" y="214" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">SHOTS · ACTS</text>
+<text x="42" y="195" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#1f2328" text-anchor="start">story.json + config.py</text>
+<text x="42" y="214" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">shots · acts (JSON)</text>
 <text x="42" y="231" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">HANDOFF states</text>
 <text x="42" y="248" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">TEMPO_MAP · MUSIC_CUES</text>
 <text x="42" y="265" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">TIME_WARP (slow motion)</text>
@@ -22,7 +22,7 @@
 <text x="42" y="410" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="italic" fill="#57606a" text-anchor="start">single source of truth</text>
 <rect x="30" y="440" width="208" height="128" rx="7" fill="#ffffff" stroke="#6e7781" stroke-width="1.1"/>
 <text x="42" y="461" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#1f2328" text-anchor="start">pyproject.toml</text>
-<text x="42" y="480" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">[tool.silvergrass]</text>
+<text x="42" y="480" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">SilverGrass settings</text>
 <text x="42" y="497" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">render · video · audio</text>
 <text x="42" y="514" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="normal" font-style="normal" fill="#57606a" text-anchor="start">tools · fonts · paths</text>
 <text x="42" y="552" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" font-style="italic" fill="#57606a" text-anchor="start">+ local file · env overrides</text>

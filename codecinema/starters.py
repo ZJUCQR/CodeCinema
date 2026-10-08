@@ -1,4 +1,5 @@
 """The starter presets and their editable scene-file contract (standard library only)."""
+import copy
 import math
 import re
 
@@ -76,6 +77,32 @@ def make_story(title, preset="moonrise", seconds=12.0, subtitle=None):
             "subtitle": subtitle if i == 0 and subtitle is not None else captions[i],
         })
     return {"version": 1, "title": title, "seed": 7, "scenes": scenes}
+
+
+def revise_story(story, *, title=None, subtitle=None, preset=None, seconds=None, accent=None):
+    """Apply explicit edits to a copy, preserving other scene and renderer data."""
+    data = copy.deepcopy(story)
+    before = validate_story(data)
+    if title is not None:
+        old_title = data["title"]
+        data["title"] = title
+        for scene in data["scenes"]:
+            if scene.get("title") == old_title:
+                scene["title"] = title
+    if subtitle is not None:
+        data["scenes"][0]["subtitle"] = subtitle
+    if preset is not None:
+        for scene in data["scenes"]:
+            scene["preset"] = preset
+    if accent is not None:
+        for scene in data["scenes"]:
+            scene["accent"] = accent
+    if seconds is not None:
+        ratio = duration(seconds) / before
+        for scene in data["scenes"]:
+            scene["duration_s"] *= ratio
+    validate_story(data)
+    return data
 
 
 def validate_story(data):

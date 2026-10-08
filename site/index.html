@@ -66,10 +66,10 @@
     </div>
     <div class="hls">
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>Choose, personalize, render</h3><p>The local Studio offers eight animated looks, editable scene cards, titles, captions, colors and three frame shapes. Choose a world and press Render to get an MP4 with original music.</p></div></div>
-      <div class="hl reveal"><div class="ic">🧩</div><div><h3>A small contract, any renderer</h3><p>A film declares its steps in <code>pyproject.toml</code>, and <code>codecinema run &lt;film&gt; &lt;step&gt;</code> runs them with that film's settings. Blender, vector drawing, shaders: anything that writes frames fits.</p></div></div>
+      <div class="hl reveal"><div class="ic">🧩</div><div><h3>Choose your renderer</h3><p>Select Skia 2D, Blender 3D or an installed plugin in Studio. Film folders hold stories and assets, while the framework handles picture, sound and assembly.</p></div></div>
       <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The films share a DSP library: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
-      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices with acting direction</h3><p>Add recorded dialogue or generate expressive voices locally on Apple Silicon. The shared performance tools turn speech timing into mouth animation, with aligned syllables when available.</p></div></div>
-      <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Deterministic renders, resumable parallel jobs, layered settings without editing tracked files, and helpers that work on macOS, Linux and Windows.</p></div></div>
+      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices with acting direction</h3><p>Use recorded dialogue or generate expressive voices locally on Apple Silicon. Scene lengths, speech and music share a timeline so you can refine the pacing.</p></div></div>
+      <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Reopen films in Studio or rerun individual production steps. Override defaults with local settings. Production packs provide caching and parallelism suited to their renderers.</p></div></div>
     </div>
   </div>
 </section>
@@ -79,11 +79,13 @@
     <div class="reveal">
       <p class="eyebrow">Quick start</p>
       <h2>Open Studio and start creating</h2>
+      <p class="lead">Install Python 3.12+, Git and FFmpeg first. The commands below are for macOS and Linux. See the <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start">setup guide</a> for Windows commands and platform dependencies.</p>
     </div>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">bash</span><button class="copy" type="button" data-done="Copied">Copy</button></div>
 <pre><code>git clone https://github.com/ZJUCQR/CodeCinema.git &amp;&amp; cd CodeCinema
-python3 -m venv .venv &amp;&amp; source .venv/bin/activate     <span class="c"># Windows: .venv\Scripts\activate</span>
+python3 -m venv .venv
+source .venv/bin/activate
 python -m pip install -e .                              <span class="c"># installs the `codecinema` command</span>
 
 codecinema studio                    <span class="c"># opens the local visual editor</span></code></pre>
@@ -96,7 +98,8 @@ codecinema studio                    <span class="c"># opens the local visual ed
 
         <tr><td><code>codecinema list</code></td><td>The films in <code>films/</code>, with their steps and requirements</td></tr>
         <tr><td><code>codecinema run &lt;film&gt; &lt;step&gt; [args]</code></td><td>Run one step of a film with that film's settings</td></tr>
-        <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>Start a new film from the template</td></tr>
+        <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>Create a film folder for story data and assets</td></tr>
+        <tr><td><code>codecinema renderers</code></td><td>List built-in and installed renderers</td></tr>
         <tr><td><code>codecinema check</code></td><td>Check the toolchain and the Python packages</td></tr>
       </tbody>
     </table></div>
@@ -108,12 +111,13 @@ codecinema studio                    <span class="c"># opens the local visual ed
     <div class="reveal">
       <p class="eyebrow">Make a film</p>
       <h2>Start your own</h2>
-      <p class="lead">Eight animated looks let you produce a scenic title film immediately. Use Studio to edit words, timing, frames, colors and scenes. Develop new characters or animation by extending the renderer when you need it. The <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start">three-step tutorial</a> includes exact setup commands for every platform.</p><img src="img/starters.jpg" width="100%" alt="Eight actual starter looks" loading="lazy" style="border-radius:12px;margin:18px 0 28px">
+      <p class="lead">Eight animated looks let you produce a scenic short immediately. Use Studio to choose a renderer and edit words, timing, frames, colors and scenes. Bring your own characters and animation through Blender scenes or renderer plugins. The <a href="https://github.com/ZJUCQR/CodeCinema/blob/main/README.md#quick-start">three-step tutorial</a> includes exact setup commands for every platform.</p><img src="img/starters.jpg" width="100%" alt="Eight actual starter looks" loading="lazy" style="border-radius:12px;margin:18px 0 28px">
     </div>
+    <p class="caption reveal">Install Blender 5.2 or newer before selecting the Blender renderer.</p>
     <div class="term reveal">
       <div class="term-bar"><i></i><i></i><i></i><span class="t">bash</span><button class="copy" type="button" data-done="Copied">Copy</button></div>
-<pre><code>codecinema new myfilm --preset aurora --title "My Film" --render --open
-codecinema customize myfilm --preset ocean --duration 20 --render
+<pre><code>codecinema new myfilm --renderer skia --preset aurora --title "My Film" --render --open
+codecinema customize myfilm --renderer blender --preset ocean --duration 20 --render
 codecinema run myfilm all --quality preview  <span class="c"># separate preview; preserves the master</span></code></pre>
     </div>
   </div>
@@ -234,7 +238,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       <h2>How a film is made</h2>
     </div>
     <div class="figure reveal"><img src="img/pipeline.svg" alt="How a CodeCinema film is produced" loading="lazy"></div>
-    <p class="caption reveal">How a CodeCinema film is produced. <b>(a)</b> The film is written as data: <code>pyproject.toml</code> declares its steps and settings, and film folders hold scenes, dialogue and assets. <b>(b)</b> The film turns that data into a scene: characters, choreography, cameras, environment and VFX, all keyed on one film clock, and every move emits a timed sound event. <b>(c)</b> A renderer draws the frames in parallel, resumable chunks: with Blender 3D, Skia 2D or an installed plugin. <b>(d)</b> The score, SFX and ambience are synthesized from the notes and events, then mixed and mastered. <b>(e)</b> Titles, picture and sound are assembled sample-accurately and checked. The framework runs every step with the film's settings and supplies the shared settings, sound toolkit and ffmpeg helpers.</p>
+    <p class="caption reveal">One timeline connects the production. <b>(a)</b> Film folders hold scenes and assets, while <code>pyproject.toml</code> selects the renderer and production settings. <b>(b)</b> The framework reads scene content and timing. <b>(c)</b> Skia, Blender or a renderer plugin produces the picture. <b>(d)</b> Music, effects and optional speech follow the shots. <b>(e)</b> FFmpeg assembles the film and the pipeline checks output dimensions and timing. The example production packs demonstrate dedicated character, choreography, sound and quality-check workflows.</p>
   </div>
 </section>
 

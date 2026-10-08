@@ -35,6 +35,19 @@ jobs:
       - name: Render a short sample
         if: runner.os == 'Linux'
         run: codecinema run ci-preview all
+      - name: Import a story and honor explicit CLI edits
+        run: >
+          python -c "import json; from pathlib import Path; from codecinema import cli, registry;
+          source=Path('films/ci-preview/scenes.json'); before=source.read_bytes();
+          assert cli.main(['new','ci-import','--story',str(source),'--title','Imported edit',
+          '--subtitle','New opening','--duration','6','--preset','ocean'])==0;
+          data=json.loads(Path('films/ci-import/scenes.json').read_text(encoding='utf-8'));
+          assert data['title']=='Imported edit';
+          assert data['scenes'][0]['subtitle']=='New opening';
+          assert all(s['preset']=='ocean' for s in data['scenes']);
+          assert abs(sum(s['duration_s'] for s in data['scenes'])-6)<1e-9;
+          assert registry.definitions(Path.cwd())['ci-import']['title']==data['title'];
+          assert source.read_bytes()==before"
       - name: Byte-compile the framework and films
         run: python -m compileall -q codecinema
       - name: List rendering backends

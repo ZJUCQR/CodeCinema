@@ -4,11 +4,11 @@ CodeCinema welcomes improvements to templates, Studio, renderer integrations, sh
 
 ## Set up
 
-Follow the [getting-started guide](README.md#quick-start) for Python 3.12+, FFmpeg and the system libraries required on your platform. Install an editable checkout:
+Follow the [getting-started guide](README.md#quick-start) for Python 3.12+, FFmpeg and the system libraries required on your platform. Run the following commands from the repository root. On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`:
 
 ```bash
-python -m pip install -e .
-codecinema studio
+.venv/bin/python -m pip install -e .
+.venv/bin/python -m codecinema studio
 ```
 
 Skia projects do not require Blender. Blender projects require Blender 5.2 or later.
@@ -25,9 +25,9 @@ Generated videos, render caches, recordings and local settings stay outside Git.
 ## Check your work
 
 ```bash
-python -m compileall -q codecinema
-codecinema list
-codecinema new checkfilm --preset aurora --duration 3 --quality preview --render
+.venv/bin/python -m compileall -q codecinema
+.venv/bin/python -m codecinema list
+.venv/bin/python -m codecinema new checkfilm --preset aurora --duration 3 --quality preview --render
 ```
 
 For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI checks project creation and imports on macOS, Linux and Windows, and renders a short sample on Linux.
@@ -75,7 +75,7 @@ class Renderer:
 ```
 
 Install the package into the same environment as CodeCinema, then run
-`codecinema new demo --renderer myrenderer --render`. Restart Studio to discover
+`.venv/bin/python -m codecinema new demo --renderer myrenderer --render`. Restart Studio to discover
 new plugins. Plugin frames include their own captions if desired. The built-in
 Skia and Blender backends share a caption compositor.
 

@@ -93,29 +93,8 @@ def _customize(path, document, undo, *, title=None, subtitle=None, preset=None, 
     """Validate all changes first, save a previous version, then update JSON and TOML."""
     path = Path(path)
     original = read_starter(path)
-    data = copy.deepcopy(story if story is not None else original)
-    before = starters.validate_story(data)
-    if title is not None:
-        old_title = data["title"]
-        data["title"] = title
-        for scene in data["scenes"]:
-            if scene.get("title") == old_title:
-                scene["title"] = title
-    if subtitle is not None:
-        data["scenes"][0]["subtitle"] = subtitle
-    if preset is not None:
-        if preset not in starters.PRESETS:
-            raise ValueError("Unknown preset")
-        for scene in data["scenes"]:
-            scene["preset"] = preset
-    if accent is not None:
-        for scene in data["scenes"]:
-            scene["accent"] = accent
-    if seconds is not None:
-        ratio = starters.duration(seconds) / before
-        for scene in data["scenes"]:
-            scene["duration_s"] *= ratio
-    starters.validate_story(data)
+    data = starters.revise_story(story if story is not None else original, title=title,
+                                subtitle=subtitle, preset=preset, seconds=seconds, accent=accent)
     legacy_entry = settings.film_meta(str(path)).get("entry")
     if legacy_entry and any(scene.get("narration", {}).get("text") for scene in data["scenes"]):
         source = (path / legacy_entry).read_text(encoding="utf-8")

@@ -14,20 +14,22 @@ The keeper is an original porcelain-and-brass automaton, with layered armor, sep
 
 Install the framework using the [setup guide](../../README.md#quick-start), plus [Blender 5.2 or newer](https://www.blender.org/download/). From the repository root:
 
+On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`.
+
 ```bash
-codecinema run beacon all
+.venv/bin/python -m codecinema run beacon all
 ```
 
 The finished film appears at `films/beacon/assets/film/TheLastBeacon.mp4`. No API key, downloaded model, texture pack or Blender add-on is needed. Blender and FFmpeg are detected automatically. Set `BLENDER_BIN`, `FFMPEG` or `FFPROBE` if they are installed elsewhere. Allow time for 1,152 full-resolution 3D frames. Speed depends on the GPU.
 
-On a machine with sufficient GPU memory, `codecinema run beacon all --jobs 2` runs two non-overlapping frame ranges concurrently. Start with the default single process on smaller GPUs. Production commands are locked to prevent two invocations from overwriting the same film.
+On a machine with sufficient GPU memory, `.venv/bin/python -m codecinema run beacon all --jobs 2` runs two non-overlapping frame ranges concurrently. Start with the default single process on smaller GPUs. Production commands are locked to prevent two invocations from overwriting the same film.
 
 For a quick look before the full render:
 
 ```bash
-codecinema run beacon check
-codecinema run beacon still                 # six representative 960 × 540 frames
-codecinema run beacon still 481 --full      # full-resolution contact moment
+.venv/bin/python -m codecinema run beacon check
+.venv/bin/python -m codecinema run beacon still                 # six representative 960 × 540 frames
+.venv/bin/python -m codecinema run beacon still 481 --full      # full-resolution contact moment
 ```
 
 Preview images go to `films/beacon/out/stills/`. They never replace master frames.
@@ -47,7 +49,7 @@ brass = [0.52, 0.28, 0.085]
 scarf = [0.06, 0.20, 0.30]  # linear RGB: a blue scarf
 ```
 
-Run `codecinema run beacon all` again. The renderer resumes an interrupted edition and automatically invalidates cached frames when scene code, story data or supported visual settings change. To deliberately rebuild unchanged frames, use `codecinema run beacon all --force`.
+Run `.venv/bin/python -m codecinema run beacon all` again. The renderer resumes an interrupted edition and automatically invalidates cached frames when scene code, story data or supported visual settings change. To deliberately rebuild unchanged frames, use `.venv/bin/python -m codecinema run beacon all --force`.
 
 | Change | File |
 | --- | --- |
@@ -61,9 +63,9 @@ The six-shot structure and 48-second composition are authored together. Changing
 ## Production steps
 
 ```bash
-codecinema run beacon render
-codecinema run beacon audio
-codecinema run beacon assemble
+.venv/bin/python -m codecinema run beacon render
+.venv/bin/python -m codecinema run beacon audio
+.venv/bin/python -m codecinema run beacon assemble
 ```
 
 `out/audio/` contains separate music, ambience and effects stems, the stereo mix and its loudness report. `out/qc.json` records the final video probe, full-decode result and measured AAC loudness/true peak. Assembly checks all frames, requires exactly 1,152 decoded video frames and 48 seconds, and rejects an encoded audio peak above −1 dBTP. The mix targets −16 LUFS with headroom for AAC.

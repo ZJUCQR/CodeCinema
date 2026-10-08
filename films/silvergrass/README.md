@@ -43,18 +43,16 @@ One command regenerates the whole film. Change a number and you get a different 
 
 ## 🚀 Quick start
 
-```bash
-git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
-python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # the framework + all dependencies
+Follow the [setup guide](../../README.md#quick-start) to install the framework and FFmpeg. Also install [Blender 5.2 or newer](https://www.blender.org/download/). Run the commands below from the repository root. On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`.
 
-codecinema run silvergrass check     # finds Blender 5.2+, ffmpeg and the title fonts, and reports anything missing
-codecinema run silvergrass all       # build → render → audio → titles → assemble
+```bash
+.venv/bin/python -m codecinema run silvergrass check     # finds Blender 5.2+, ffmpeg and the title fonts, and reports anything missing
+.venv/bin/python -m codecinema run silvergrass all       # build → render → audio → titles → assemble
 ```
 
-The finished film is written to `assets/film/`. The full render is the slow step, and you can stop it at any time: running the command again picks up where it left off. To look at one act in a few minutes, run `codecinema run silvergrass preview act2`.
+The finished film is written to `films/silvergrass/assets/film/芒原决战_Final.mp4`. The full render is the slow step, and you can stop it at any time: running the command again picks up where it left off. To look at one act in a few minutes, run `.venv/bin/python -m codecinema run silvergrass preview act2`.
 
-Each command below is a step of the film: `codecinema run silvergrass <step>` from anywhere in the repo.
+Each command below is a step of the film: `.venv/bin/python -m codecinema run silvergrass <step>` from the repository root.
 
 | Command | What it does |
 |---|---|
@@ -98,7 +96,7 @@ The film is data plus code, so every part of it can be changed. Authored shots a
 | Melodies, scales, instruments | `LEITMOTIFS`, `SCALE_IN`, `SCALE_YO` in config. Score and instrument modules |
 | Resolution, samples, motion blur, encoding, loudness | `[tool.codecinema.films.silvergrass.settings]` in the root `pyproject.toml` |
 
-You can create your own configuration or override any setting:
+Override settings for this film in `films/silvergrass/film.local.toml`:
 
 ```toml
 # film.local.toml
@@ -110,8 +108,10 @@ slots = 1
 calligraphy = "~/fonts/ZhiMangXing-Regular.ttf"
 ```
 
+For a one-off override on macOS or Linux:
+
 ```bash
-SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender codecinema run silvergrass all
+SILVERGRASS_VIDEO_CRF=18 BLENDER_BIN=/path/to/blender .venv/bin/python -m codecinema run silvergrass all
 ```
 
 ## 🗂 Project layout
@@ -129,7 +129,7 @@ films/silvergrass/
 <img src="assets/images/pipeline.svg" width="100%" alt="SilverGrass pipeline: specification, scene synthesis in Blender, rendering, sound synthesis and post-production">
 </div>
 
-<p align="center"><sub>The SilverGrass pipeline. <b>(a)</b> The film is specified as data: shots, handoff states, beat grid, cues and motifs in <code>config.py</code>, plus six choreography lanes. <b>(b)</b> Inside Blender, each lane keys characters, cameras and VFX within its own frame span. The build isolates the lanes in NLA strips and checks the states at every handoff. One film clock, <code>fx_time</code>, keeps procedural effects in step with slow motion. <b>(c)</b> A supervisor renders per-shot chunks and re-renders a shot only when its content fingerprint changes. <b>(d)</b> Every move emits a timed event, and the events place the SFX and the score's accents on the exact frame. <b>(e)</b> Title cards, frames and the mastered mix are assembled sample-accurately and checked for flash safety, A/V sync and loudness.</sub></p>
+<p align="center"><sub>The SilverGrass pipeline. <b>(a)</b> The film is specified as data: shots and acts in <code>story.json</code>, handoff states, beat grid, cues and motifs in the production pack’s <code>common/config.py</code>, plus six choreography lanes. <b>(b)</b> Inside Blender, each lane keys characters, cameras and VFX within its own frame span. The build isolates the lanes in NLA strips and checks the states at every handoff. One film clock, <code>fx_time</code>, keeps procedural effects in step with slow motion. <b>(c)</b> A supervisor renders per-shot chunks and re-renders a shot only when its content fingerprint changes. <b>(d)</b> Every move emits a timed event, and the events place the SFX and the score's accents on the exact frame. <b>(e)</b> Title cards, frames and the mastered mix are assembled sample-accurately and checked for flash safety, A/V sync and loudness.</sub></p>
 
 
 ## 📜 License

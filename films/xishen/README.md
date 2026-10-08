@@ -56,20 +56,20 @@ Each master includes burned-in captions, a selectable subtitle track and chapter
 
 ## Render and watch locally
 
-Install CodeCinema and FFmpeg using the [getting-started guide](../../README.md#quick-start), then run these commands from the repository root:
+Install CodeCinema and FFmpeg using the [getting-started guide](../../README.md#quick-start), then run these commands from the repository root on an Apple Silicon Mac:
 
 ```bash
-python -m pip install -e ".[speech]"
-python -m codecinema run xishen all --narration required --speech-engine local
+.venv/bin/python -m pip install -e ".[speech]"
+.venv/bin/python -m codecinema run xishen all --narration required --speech-engine local
 ```
 
 Open the generated MP4 with your video player, or watch the published edition on the [project page](https://zjucqr.github.io/CodeCinema/#xishen).
 
-The outputs are `assets/film/ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4`, relative to this folder. Rendered films and intermediate media are ignored by Git. The [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
+The outputs are `ep01.mp4`, `ep02.mp4`, `ep03.mp4` and `xishen_complete.mp4` in this folder’s `assets/film/` directory. Rendered films and intermediate media are ignored by Git. The [release](https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen) provides the finished masters.
 
 **Expressive voices:** the published edition uses Qwen3-TTS CustomVoice and Qwen3 ForcedAligner locally on an Apple Silicon Mac. The optional speech pack downloads the models on first use. After that, the takes are cached. No API key is needed. The default `--speech-engine auto` uses this pack when installed, with a basic macOS system-voice fallback. `--speech-engine local` requires the expressive engine and prevents fallback.
 
-**Other platforms:** supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [voice setup](../../README.md#speech) for the optional local speech pack.
+**Other platforms:** on Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`. Supply recordings as `assets/voices/<shot_id>.wav` and use `--speech-engine recording --narration required`. Without the local aligner, mouths follow audio activity rather than aligned syllables. `--narration off` creates a captions-and-music edition. Install a CJK font such as Noto Serif CJK, or set `XISHEN_FONTS_SONG` and `XISHEN_FONTS_KAITI` to font files. Font and voice choices affect the result across platforms. See the [voice setup](../../README.md#speech) for the optional local speech pack.
 
 ## Character and story continuity
 
@@ -103,12 +103,12 @@ For a quick, independent first film, use the [configurable starter](../../README
 <summary><b>Individual stages and a single-episode render</b></summary>
 
 ```bash
-python -m codecinema run xishen plan
-python -m codecinema run xishen stills
-python -m codecinema run xishen audio --episode ep01 --narration required --speech-engine local
-python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required --speech-engine local
-python -m codecinema run xishen assemble --episode ep01 --narration required --speech-engine local
-python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen plan
+.venv/bin/python -m codecinema run xishen stills
+.venv/bin/python -m codecinema run xishen audio --episode ep01 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen render --episode ep01 --jobs 3 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen assemble --episode ep01 --narration required --speech-engine local
+.venv/bin/python -m codecinema run xishen qc --episode ep01 --narration required --speech-engine local
 ```
 
 Keep picture settings, narration mode and speech engine consistent across stages. Audio is prepared before picture rendering, including when `render` is run alone. Completed render chunks can be reused. Changes to source or settings invalidate their signatures. Generated screenplay, continuity records and subtitle files live in `out/`. The `stills` step writes review contact sheets and cast checks to `out/stills/`. Published posters and README illustrations stay in `assets/images/`.

@@ -148,14 +148,14 @@ Use Personalize every scene in Studio to shape each shot. Mix different looks wi
 
 Reopen a project under My films to keep editing and rendering. The scene cards control captions, timing, looks and camera movement. They create scenic shorts, not automatic character acting from a prose prompt. For custom characters and animation, supply a Blender scene or extend a renderer.
 
-Prefer the terminal? These commands create a film, then change its visual backend:
+Prefer the terminal? Run these commands from the repository root to create a film and change its visual backend. On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`:
 
 ```bash
-codecinema new myfilm --renderer skia --preset aurora --render
-codecinema customize myfilm --renderer blender --render
+.venv/bin/python -m codecinema new myfilm --renderer skia --preset aurora --render
+.venv/bin/python -m codecinema customize myfilm --renderer blender --render
 ```
 
-Use `--story path/to/scenes.json` with `new` or `customize` to import a storyline. Scene data and assets stay in the film folder. Backend choices and production settings stay in the root `pyproject.toml`.
+Use `--story path/to/scenes.json` with `new` or `customize` to import a storyline. Explicit title, caption, duration and style options override the imported values. Scene data and assets stay in the film folder. Backend choices and production settings stay in the root `pyproject.toml`.
 
 <a id="framework"></a>
 
@@ -184,7 +184,7 @@ Start with Quick preview or a few still frames. Blender rendering takes longer t
 
 <a id="speech"></a>
 
-## 🎙️ Voices and mouth timing
+## 🎙️ Voices
 
 In Studio, expand Add a voice on a scene card to write dialogue, choose a voice and describe its mood, such as “warm and curious” or “nervous but composed.” Allow enough time for each line and listen to a sample before producing a longer film. Leave the text empty for music only.
 
@@ -194,9 +194,7 @@ On an Apple Silicon Mac, install the local expressive speech pack from the repos
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-The first spoken render downloads the voice model. Later renders can reuse existing takes, and no API key is needed. Other platforms can use recordings.
-
-Renderers with speaking characters can drive mouth movement from the final speech, keeping pauses and visible performance tied to the actual audio. The [I Am Not the God of Drama guide](films/xishen/README.md) shows a complete production with voices, mouth timing, subtitles and music.
+The first spoken render downloads the voice model. Later renders can reuse existing takes, and no API key is needed. For recorded speech, put a WAV file in the film’s `assets/voices/` folder and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Recordings work on all platforms.
 
 ## 🗂 Project layout
 

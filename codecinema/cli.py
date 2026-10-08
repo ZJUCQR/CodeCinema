@@ -51,7 +51,7 @@ def cmd_new(a):
         print(f"{dest} already exists")
         return 1
     try:
-        seconds = starters.duration(a.duration)
+        seconds = starters.duration(a.duration if a.duration is not None else 12.0)
         if a.accent is not None and not re.fullmatch(r"#[0-9a-fA-F]{6}", a.accent):
             raise ValueError("accent must be a hex color such as #c5e8db")
     except ValueError as exc:
@@ -67,12 +67,16 @@ def cmd_new(a):
             return 1
     story = json.loads(Path(a.story).read_text(encoding="utf-8")) if a.story else None
     if story is not None:
+        story = starters.revise_story(story, title=a.title, subtitle=a.subtitle,
+                                      preset=a.preset, seconds=a.duration, accent=a.accent)
         seconds = starters.validate_story(story)
+    preset = a.preset or "moonrise"
     title = a.title or a.id.replace("-", " ").replace("_", " ").title()
-    w, h = projects.create(dest, title=title, preset=a.preset, seconds=seconds, subtitle=a.subtitle,
+    w, h = projects.create(dest, title=title, preset=preset, seconds=seconds, subtitle=a.subtitle,
                             format_name=a.format, quality=a.quality, accent=a.accent, renderer=a.renderer,
                             story=story)
-    print(f"Created {os.path.relpath(dest)} · {a.preset} · {seconds:g}s · {w}×{h}", flush=True)
+    looks = ", ".join(sorted({scene["preset"] for scene in story["scenes"]})) if story else preset
+    print(f"Created {os.path.relpath(dest)} · {looks} · {seconds:g}s · {w}×{h}", flush=True)
     if a.render:
         args = ["--open"] if a.open else []
         result = films.Film(dest).run("all", args)
@@ -170,12 +174,12 @@ def main(argv=None):
     n = sub.add_parser("new", help="Create a film from scene data; add --render to produce it immediately")
     n.add_argument("id")
     n.add_argument("--renderer", default="skia", help="Rendering backend (see codecinema renderers)")
-    n.add_argument("--story", help="Import your scene JSON instead of the default story")
-    n.add_argument("--title", default="")
+    n.add_argument("--story", help="Import scene JSON, then apply any explicitly supplied story options")
+    n.add_argument("--title")
     n.add_argument("--subtitle", help="Opening caption (edit all captions later in scenes.json)")
     n.add_argument("--accent", help="Accent color, e.g. '#c5e8db'")
-    n.add_argument("--preset", choices=starters.PRESETS, default="moonrise")
-    n.add_argument("--duration", type=float, default=12.0, metavar="SECONDS", help="Total runtime (default: 12)")
+    n.add_argument("--preset", choices=starters.PRESETS, help="Look (default: moonrise, or imported story looks)")
+    n.add_argument("--duration", type=float, metavar="SECONDS", help="Total runtime (default: 12, or imported story duration)")
     n.add_argument("--format", choices=starters.FORMATS, default="landscape")
     n.add_argument("--quality", choices=starters.QUALITIES, default="standard", help="default: standard (720p)")
     n.add_argument("--render", action="store_true", help="Create, render, synthesize sound, assemble and verify")

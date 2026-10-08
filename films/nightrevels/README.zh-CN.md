@@ -36,15 +36,13 @@
 
 ## 🚀 快速开始
 
-```bash
-git clone https://github.com/ZJUCQR/CodeCinema.git && cd CodeCinema
-python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
-pip install .                                          # 安装框架和全部依赖
+先按[安装教程](../../README.zh-CN.md#quick-start)配置框架和 FFmpeg。以下命令在仓库根目录运行。Windows 下将 `.venv/bin/python` 换成 `.\.venv\Scripts\python.exe`。
 
-codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
+```bash
+.venv/bin/python -m codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 ```
 
-成片输出到 `assets/film/`。下表每个命令都是影片的一个步骤：在仓库任意位置运行 `codecinema run nightrevels <步骤>`。
+成片输出到 `films/nightrevels/assets/film/NightRevels.mp4`。下表每个命令都是影片的一个步骤：在仓库根目录运行 `.venv/bin/python -m codecinema run nightrevels <步骤>`。
 
 | 命令 | 作用 |
 |---|---|
@@ -78,14 +76,15 @@ codecinema run nightrevels all      # 构建 → 渲染 → 音频 → 合成
 
 | 想改什么 | 改哪里 |
 |---|---|
-| 故事节拍和时间 | config 里的 `CUE` 和 `SECTIONS` |
-| 音乐（旋律、速度、由哪件乐器演奏） | `music.py`。演奏的爪子会自动跟随音符 |
+| 故事节拍和时间 | `story.json` 中的 `cues` 和 `sections` |
+| 旋律和乐器 | `common/music.py`。演奏的爪子会自动跟随音符 |
+| 音乐速度 | `story.json` 中的 `tempo` |
 | 猫的品种、毛色、眼睛、服装 | `cast.py` 里的 `BREEDS` 和服装 |
 | 谁站在哪里、动作、笑点、镜头 | `film.py`（角色的关键帧轨道和 `Camera` 关键帧） |
 | 画风（墨线、绢、面部、家具） | `codecinema/productions/nightrevels/paint/` |
 | 并行数、画质、响度 | 根目录 `pyproject.toml` 的 `[tool.codecinema.films.nightrevels.settings]` |
 
-你可以自己创建相应的配置，或者覆盖已有设置：
+在 `films/nightrevels/film.local.toml` 中覆盖当前影片的设置：
 
 ```toml
 # film.local.toml
@@ -94,8 +93,10 @@ jobs = 4
 crf = 12
 ```
 
+macOS / Linux 也可以临时使用环境变量覆盖：
+
 ```bash
-NIGHTREVELS_RENDER_JOBS=2 codecinema run nightrevels render
+NIGHTREVELS_RENDER_JOBS=2 .venv/bin/python -m codecinema run nightrevels render
 ```
 
 ## 🗂 项目结构
