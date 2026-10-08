@@ -2,7 +2,8 @@
 codecinema.audio.composer -- music written as data: themes, styles and cues placed on a film timeline.
 
     render_score(music, duration, seed=0) -> {"melody", "harmony", "bass", "percussion", "fx": (2, n)} at dsp.SR
-    plan(music, duration, seed=0)         -> [{cue summary: style, key, tempo, bars, statements ...}]
+    plan(music, duration, seed=0)         -> [CuePlan]; summary(plans) -> rows with keys, tempi, downbeats, chords
+    catalog()                             -> [{"name", "description", "tempo", "meter", "mode", "key", "lead"}]
     music = {"themes": {name: theme}, "cues": [cue, ...]}
 
 A theme is {"key", "mode", "tempo", "meter", "melody", "chords"} in the notation of codecinema.audio.theory.
@@ -15,7 +16,9 @@ ring | fade | cut), "fade_in" s, "hits": [{"t", "kind": stinger | crash | swell 
 half and authentic cadences) over a progression drawn from the mode.  The tempo is nudged (at most about 6 %) so
 whole bars land on the cue end; the plan intros, repeats and varies the theme (instrument, octave, countermelody,
 density) and always ends on a cadence.  A style is an arrangement recipe: lead / doubling / countermelody
-instruments, accompaniment and bass patterns, percussion grids, dynamics, humanisation and reverb.
+instruments, accompaniment and bass patterns, percussion grids, dynamics, humanisation and reverb, optionally a
+swing feel (swing, swing_unit), seventh-chord cadences (sevenths), a progression family, a whole-cue effect (fx:
+memory | underwater | vinyl | creepy) and its own stinger kit (hit_kit) or pluck instrument (pluck).
 """
 import math
 from dataclasses import dataclass, field
@@ -63,7 +66,15 @@ LEAD_CENTER = {"flute": 79, "piccolo": 88, "violin": 76, "clarinet": 70, "oboe":
                "vibraphone": 74, "marimba": 74, "pipa": 72, "yangqin": 76, "strings": 76, "bassoon": 53, "harmonica": 74,
                "accordion": 72, "ocarina": 79, "recorder": 77, "kalimba": 78, "ukulele": 72, "steel_drums": 74,
                "trombone": 58, "tuba": 43, "harp": 74, "nylon_guitar": 66, "tin_whistle": 84, "sheng": 72,
-               "warm_pad": 70, "slow_strings": 76, "tremolo_strings": 76, "tubular_bells": 72}
+               "warm_pad": 70, "slow_strings": 76, "tremolo_strings": 76, "tubular_bells": 72, "alto_sax": 70,
+               "tenor_sax": 62, "fiddle": 77, "electric_piano": 72, "harpsichord": 74, "church_organ": 72,
+               "drawbar_organ": 72, "clean_guitar": 67, "overdriven_guitar": 64, "bagpipe": 74, "koto": 72,
+               "shakuhachi": 74, "shamisen": 69, "synth_lead": 76, "chip_square": 79, "theremin": 76,
+               "steel_guitar": 66}
+
+# lead instruments kept for the 'light' variation
+LIGHT_LEADS = ("glockenspiel", "celesta", "flute", "music_box", "whistle", "dizi", "pizzicato_strings", "clarinet",
+               "harp", "marimba", "piano", "electric_piano", "nylon_guitar", "koto", "harpsichord", "vibraphone")
 
 # ------------------------------------------------------------------------------------------------ percussion grids
 # one bar per string, 4 steps per quarter note: X accent, x normal, o soft, . rest
@@ -94,6 +105,23 @@ GRIDS = {
     "xiaoluo": {2: "..x...x.", 4: "..x...x...x...x.", 3: "..x...x...x.", "c": "...x.....x.."},
     "bangzi": {2: "x.x.x.x.", 4: "x.x.x.x.x.x.x.x.", 3: "x.x.x.x.x.x.", "c": "x..x..x..x.."},
     "muyu_tick": {2: "x...x...", 4: "x...x...x...x...", 3: "x...x...x...", "c": "x.....x....."},
+    # jazz: the ride's 'ding, ding-a', the hi-hat foot on two and four, feathered kick, brushed comping
+    "swing_ride": {4: "x...x.x.x...x.x.", 3: "x...x.x.x...", 2: "x...x.x.", "c": "x.....x..x.."},
+    "hat_24": {4: "....x.......x...", 3: "....x...x...", 2: "....x...", "c": "......x....."},
+    "kick_feather": {4: "o...o...o...o...", 3: "o...o...o...", 2: "o...o...", "c": "o.....o....."},
+    "brush_comp": {4: "......o...o...o.", 3: "......o...o.", 2: "......o.", "c": "....o.....o."},
+    # bossa nova: the rim click on the bossa clave, the surdo-like kick
+    "bossa_rim": {4: "x..x..x...x..x..", 3: "x..x..x...x.", 2: "x..x..x.", "c": "x..x..x..x.."},
+    "bossa_kick": {4: "x..x....x..x....", 3: "x..x....x...", 2: "x..x....", "c": "x....x.x...."},
+    # lo-fi: a lazy boom-bap kick
+    "lofi_kick": {4: "x.....x...x.....", 3: "x.....x.....", 2: "x.....x.", "c": "x.....x....."},
+    # western: hooves in the 'da-da-dum' of a gallop
+    "clip_clop": {4: "x.oxx.oxx.oxx.ox", 3: "x.oxx.oxx.ox", 2: "x.oxx.ox", "c": "x.ox.ox.ox.o"},
+    # celtic: a bodhran's down-up strokes in a jig
+    "jig_frame": {"c": "X.x.x.X.x.x.", 4: "X.x.x.X.x.x.X.x.", 3: "X.x.x.X.x.x.", 2: "X.x.x.X."},
+    # march: bass drum on the beats, the cymbal crash on two
+    "march_bass": {2: "X...x...", 4: "X...x...X...x...", 3: "X...x...x...", "c": "X.....x....."},
+    "march_cymbal": {2: "....x...", 4: "....x.......x...", 3: "....x...x...", "c": "......x....."},
 }
 FILLS = {
     "snare": {4: "........xxxxXXXX", 3: "....xxxxXXXX", 2: "xxxxXXXX", "c": "......xxxXXX"},
@@ -109,6 +137,7 @@ FILLS = {
 # bass: (instrument, pattern, (lo, hi), dB); drums: [(instrument, grid, dB, min intensity, articulation)]
 STYLES = {
     "playful": dict(
+        description="playful: pizzicato, clarinet and whistling over ukulele strums, marimba and a bouncy oom-pah bass",
         tempo=116, meter=4, mode="major", key="G", end_with="button",
         lead=[("pizzicato_strings", 0, "auto"), ("clarinet", 0, "auto"), ("whistle", 0, "auto"), ("marimba", 0, "auto")],
         double=("glockenspiel", 1, 0.62),
@@ -121,8 +150,9 @@ STYLES = {
                ("woodblock", "woodblock_play", -17.0, 0.4, None), ("kick", "kick_soft", -14.0, 0.75, None)],
         fill="woodblock", crash=None, reverb=("hall", 0.13), vel=(0.55, 0.88), human=(0.007, 0.06),
         legato=0.9, rubato=0.0, rit=0.03, intro=1, staccato_short=True,
-        gen=dict(cells="bouncy", center=7, span=(-5, 12), leap=0.35)),
+        gen=dict(cells="bouncy", center=7, span=(-5, 12))),
     "adventure": dict(
+        description="adventure: horns and trumpets over driving strings, brass stabs, toms and timpani",
         tempo=126, meter=4, mode="major", key="D", end_with="button",
         lead=[("french_horn", 0, "legato"), ("trumpet", 0, "auto"), ("strings", 1, "legato")],
         double=("strings", 1, 0.55),
@@ -134,8 +164,9 @@ STYLES = {
                ("bass_drum", "bass_drum_13", -11.0, 0.45, None), ("timpani", "timp_13", -11.0, 0.55, "tonic")],
         fill="toms", crash="cymbals", reverb=("hall", 0.2), vel=(0.6, 0.95), human=(0.006, 0.05),
         legato=1.0, rubato=0.0, rit=0.04, intro=1,
-        gen=dict(cells="heroic", center=7, span=(-5, 12), leap=0.4)),
+        gen=dict(cells="heroic", center=7, span=(-5, 12))),
     "tender": dict(
+        description="tender: piano, flute or violin over broken piano chords and soft strings",
         tempo=72, meter=4, mode="major", key="F", end_with="ring",
         lead=[("piano", 0, "normal"), ("flute", 0, "legato"), ("violin", 0, "legato"), ("oboe", 0, "legato")],
         double=None,
@@ -147,8 +178,9 @@ STYLES = {
         drums=[],
         fill=None, crash=None, reverb=("hall", 0.3), vel=(0.4, 0.75), human=(0.012, 0.05),
         legato=1.02, rubato=0.05, rit=0.12, intro=1,
-        gen=dict(cells="lyric", center=5, span=(-5, 12), leap=0.3)),
+        gen=dict(cells="lyric", center=5, span=(-5, 12))),
     "wonder": dict(
+        description="wonder: celesta and flute in lydian over harp arpeggios, strings and a soft choir",
         tempo=84, meter=4, mode="lydian", key="C", end_with="ring",
         lead=[("celesta", 0, "normal"), ("flute", 0, "legato"), ("voice_oohs", 0, "legato"), ("violin", 0, "legato")],
         double=("glockenspiel", 1, 0.6),
@@ -159,8 +191,9 @@ STYLES = {
         drums=[("triangle", "triangle_1", -17.0, 0.35, "phrase")],
         fill=None, crash="cymbal_swell", reverb=("hall", 0.38), vel=(0.45, 0.85), human=(0.01, 0.05),
         legato=1.02, rubato=0.03, rit=0.1, intro=1, gliss="harp", sparkle=True,
-        gen=dict(cells="lyric", center=7, span=(-3, 12), leap=0.35)),
+        gen=dict(cells="lyric", center=7, span=(-3, 12))),
     "mystery": dict(
+        description="mystery: low clarinet and flute in minor over tiptoeing pizzicato, celesta twinkles",
         tempo=76, meter=4, mode="minor", key="D", end_with="ring",
         lead=[("clarinet", -1, "legato"), ("flute", -1, "legato"), ("oboe", 0, "legato"), ("vibraphone", 0, "normal")],
         double=None,
@@ -171,8 +204,9 @@ STYLES = {
         drums=[("woodblock", "woodblock_tick", -19.0, 0.3, None)],
         fill=None, crash="cymbal_swell", reverb=("hall", 0.24), vel=(0.4, 0.7), human=(0.01, 0.05),
         legato=0.95, rubato=0.02, rit=0.06, intro=1,
-        gen=dict(cells="sneaky", center=5, span=(-7, 9), leap=0.3, chromatic=0.15)),
+        gen=dict(cells="sneaky", center=5, span=(-7, 9))),
     "tension": dict(
+        description="tension: low horns and cello over pulsing strings, a pedal bass and taiko heartbeats",
         tempo=104, meter=4, mode="minor", key="C", end_with="cut",
         lead=[("french_horn", -1, "legato"), ("cello", 0, "legato"), ("trombone", 0, "legato")],
         double=None,
@@ -185,8 +219,9 @@ STYLES = {
         fill="toms", crash="cymbal_swell", reverb=("hall", 0.2), vel=(0.5, 0.95), human=(0.005, 0.04),
         legato=1.0, rubato=0.0, rit=0.0, intro=2,
         progressions="tension",
-        gen=dict(cells="sparse_motif", center=3, span=(-5, 8), leap=0.25)),
+        gen=dict(cells="sparse_motif", center=3, span=(-5, 8))),
     "sad": dict(
+        description="sad: cello and oboe in minor over slow broken piano chords and sustained strings",
         tempo=64, meter=4, mode="minor", key="A", end_with="ring",
         lead=[("cello", 0, "legato"), ("oboe", 0, "legato"), ("violin", 0, "legato"), ("piano", 0, "normal")],
         double=None,
@@ -197,8 +232,9 @@ STYLES = {
         drums=[],
         fill=None, crash=None, reverb=("hall", 0.34), vel=(0.35, 0.7), human=(0.012, 0.05),
         legato=1.03, rubato=0.06, rit=0.15, intro=1,
-        gen=dict(cells="lyric", center=3, span=(-5, 10), leap=0.25)),
+        gen=dict(cells="lyric", center=3, span=(-5, 10))),
     "triumph": dict(
+        description="triumph: full brass over block string chords, fanfares, choir, timpani and snare",
         tempo=108, meter=4, mode="major", key="Bb", end_with="button",
         lead=[("brass_section", 0, "legato"), ("french_horn", 0, "legato"), ("trumpet", 0, "legato")],
         double=("strings", 1, 0.0),
@@ -210,8 +246,9 @@ STYLES = {
                ("bass_drum", "bass_drum_1", -10.0, 0.5, None)],
         fill="snare", crash="cymbals", reverb=("hall", 0.24), vel=(0.65, 1.0), human=(0.005, 0.04),
         legato=1.0, rubato=0.0, rit=0.08, intro=1,
-        gen=dict(cells="heroic", center=7, span=(-3, 12), leap=0.4)),
+        gen=dict(cells="heroic", center=7, span=(-3, 12))),
     "lullaby": dict(
+        description="lullaby in 3/4: music box and celesta over harp, a soft clarinet and strings",
         tempo=66, meter=3, mode="major", key="F", end_with="ring",
         lead=[("music_box", 0, "normal"), ("celesta", 0, "normal"), ("flute", 0, "legato")],
         double=None,
@@ -223,8 +260,9 @@ STYLES = {
         drums=[],
         fill=None, crash=None, reverb=("hall", 0.33), vel=(0.35, 0.65), human=(0.012, 0.04),
         legato=1.0, rubato=0.04, rit=0.15, intro=1,
-        gen=dict(cells="lullaby", center=4, span=(-3, 10), leap=0.25)),
+        gen=dict(cells="lullaby", center=4, span=(-3, 10))),
     "comic_chase": dict(
+        description="comic chase in 2/4: xylophone and piccolo over off-beat pizzicato, oom-pah tuba and snare",
         tempo=160, meter="2/4", mode="major", key="C", end_with="button",
         lead=[("xylophone", 0, "normal"), ("piccolo", 0, "auto"), ("trumpet", 0, "auto"), ("clarinet", 0, "auto")],
         double=("pizzicato_strings", 0, 0.5),
@@ -236,8 +274,9 @@ STYLES = {
                ("kick", "kick_soft", -13.0, 0.5, None)],
         fill="snare", crash="crash", reverb=("hall", 0.11), vel=(0.65, 0.95), human=(0.004, 0.05),
         legato=0.85, rubato=0.0, rit=0.0, intro=1, staccato_short=True,
-        gen=dict(cells="chase", center=7, span=(-5, 12), leap=0.3, chromatic=0.2)),
+        gen=dict(cells="chase", center=7, span=(-5, 12))),
     "festive_chinese": dict(
+        description="Chinese festival in 2/4: suona and dizi over pipa, guzheng and sheng, gongs and drums",
         tempo=132, meter="2/4", mode="gong", key="D", end_with="button",
         lead=[("suona", 0, "normal"), ("dizi", 0, "normal"), ("suona", 0, "normal")],
         double=("dizi", 1, 0.45),
@@ -251,8 +290,9 @@ STYLES = {
                ("bangzi", "bangzi", -19.0, 0.55, None)],
         fill="tanggu", crash="daluo", reverb=("hall", 0.17), vel=(0.65, 0.95), human=(0.004, 0.05),
         legato=0.95, rubato=0.0, rit=0.04, intro=2, luogu=True,
-        gen=dict(cells="festive", center=7, span=(-5, 12), leap=0.3)),
+        gen=dict(cells="festive", center=7, span=(-5, 12))),
     "tender_chinese": dict(
+        description="tender Chinese: erhu and dizi over flowing guzheng, strings and sheng",
         tempo=68, meter=4, mode="gong", key="G", end_with="ring",
         lead=[("erhu", 0, "legato"), ("dizi", 0, "legato"), ("erhu", 0, "legato"), ("guzheng", 0, "normal")],
         double=None,
@@ -264,8 +304,9 @@ STYLES = {
         drums=[],
         fill=None, crash=None, reverb=("hall", 0.33), vel=(0.4, 0.75), human=(0.012, 0.05),
         legato=1.03, rubato=0.05, rit=0.13, intro=1, gliss="guzheng",
-        gen=dict(cells="lyric", center=5, span=(-5, 12), leap=0.3)),
+        gen=dict(cells="lyric", center=5, span=(-5, 12))),
     "night": dict(
+        description="night: flute and dizi in dorian over slow harp, celesta twinkles and soft voices",
         tempo=66, meter=4, mode="dorian", key="D", end_with="ring",
         lead=[("flute", -1, "legato"), ("dizi", 0, "legato"), ("vibraphone", 0, "normal")],
         double=None,
@@ -276,8 +317,9 @@ STYLES = {
         drums=[],
         fill=None, crash="cymbal_swell", reverb=("hall", 0.4), vel=(0.35, 0.65), human=(0.012, 0.04),
         legato=1.02, rubato=0.04, rit=0.1, intro=2,
-        gen=dict(cells="lyric", center=5, span=(-5, 9), leap=0.3)),
+        gen=dict(cells="lyric", center=5, span=(-5, 9))),
     "flashback": dict(
+        description="flashback in 3/4: a music box and piano heard through warm, worn tape",
         tempo=76, meter=3, mode="major", key="D", end_with="ring",
         lead=[("music_box", 0, "normal"), ("piano", 0, "normal")],
         double=None,
@@ -288,8 +330,9 @@ STYLES = {
         drums=[],
         fill=None, crash=None, reverb=("hall", 0.36), vel=(0.35, 0.6), human=(0.014, 0.05),
         legato=1.0, rubato=0.05, rit=0.15, intro=1, fx="memory",
-        gen=dict(cells="lullaby", center=5, span=(-3, 10), leap=0.25)),
+        gen=dict(cells="lullaby", center=5, span=(-3, 10))),
     "underwater": dict(
+        description="underwater: voices and celesta in lydian over slow harp and a warm pad, the sound wavering",
         tempo=66, meter=4, mode="lydian", key="E", end_with="ring",
         lead=[("voice_oohs", 0, "legato"), ("celesta", 0, "normal"), ("flute", 0, "legato")],
         double=None,
@@ -300,9 +343,183 @@ STYLES = {
         drums=[],
         fill=None, crash="cymbal_swell", reverb=("hall", 0.42), vel=(0.4, 0.7), human=(0.012, 0.04),
         legato=1.03, rubato=0.03, rit=0.1, intro=1, fx="underwater",
-        gen=dict(cells="lyric", center=7, span=(-3, 12), leap=0.3)),
+        gen=dict(cells="lyric", center=7, span=(-3, 12))),
 }
-STYLES["heroic"] = STYLES["adventure"]
+STYLES.update({
+    "jazz_swing": dict(
+        description="small-group swing: saxophone over a walking bass, ride cymbal and Charleston piano comping",
+        tempo=138, meter=4, mode="major", key="F", end_with="button", swing=0.64,
+        lead=[("alto_sax", 0, "auto"), ("tenor_sax", 0, "auto"), ("muted_trumpet", 0, "auto"),
+              ("vibraphone", 0, "normal")],
+        double=None,
+        counter=("trombone", "guide", (50, 64), -9.0, 0.55, 1),
+        comp=[("piano", "swing_comp", (52, 72), -7.0, 0.0), ("clean_guitar", "four", (50, 67), -14.0, 0.45)],
+        pad=[],
+        bass=("acoustic_bass", "walking", (31, 50), -3.0),
+        drums=[("ride", "swing_ride", -15.0, 0.0, None), ("hihat_pedal", "hat_24", -16.0, 0.0, None),
+               ("kick", "kick_feather", -22.0, 0.35, None), ("brush_snare", "brush_comp", -20.0, 0.5, None)],
+        fill=None, crash=None, reverb=("room", 0.18), vel=(0.55, 0.9), human=(0.008, 0.06),
+        legato=0.92, rubato=0.0, rit=0.03, intro=1, staccato_short=True, sevenths=True, progressions="jazz",
+        gen=dict(cells="swing", center=7, span=(-5, 12))),
+    "lofi": dict(
+        description="lo-fi chill: lazy electric piano chords, a boom-bap beat behind the beat, warm vinyl crackle",
+        tempo=80, meter=4, mode="major", key="C", end_with="fade", swing=0.58, swing_unit=0.25,
+        lead=[("electric_piano", 0, "normal"), ("flute", 0, "legato"), ("vibraphone", 0, "normal"),
+              ("nylon_guitar", 0, "normal")],
+        double=None,
+        counter=None,
+        comp=[("electric_piano", "lofi_keys", (52, 74), -6.0, 0.0)],
+        pad=[("warm_pad", (52, 72), -16.0, 0.5)],
+        bass=("fingered_bass", "root_half", (31, 50), -4.0),
+        drums=[("kick", "lofi_kick", -10.0, 0.0, None), ("snare", "snare_back", -14.0, 0.0, None),
+               ("hihat_closed", "shaker16", -20.0, 0.25, None)],
+        fill=None, crash=None, reverb=("room", 0.2), vel=(0.45, 0.75), human=(0.014, 0.08),
+        legato=1.0, rubato=0.0, rit=0.0, intro=1, fx="vinyl", sevenths=True, progressions="lofi",
+        gen=dict(cells="lofi", center=5, span=(-5, 10))),
+    "epic": dict(
+        description="epic orchestral: horns and choir over driving string ostinatos, brass stabs, taiko and timpani",
+        tempo=96, meter=4, mode="minor", key="D", end_with="ring",
+        lead=[("french_horn", 0, "legato"), ("strings", 1, "legato"), ("choir_aahs", 0, "legato"),
+              ("brass_section", 0, "legato")],
+        double=("strings", 1, 0.5),
+        counter=("cello", "guide", (45, 62), -6.0, 0.4, 1),
+        comp=[("strings", "pulse8", (50, 69), -7.0, 0.0), ("brass_section", "stabs", (50, 69), -8.0, 0.6)],
+        pad=[("choir_aahs", (52, 72), -12.0, 0.45), ("slow_strings", (45, 64), -13.0, 0.0)],
+        bass=("contrabass", "drive8", (26, 45), -4.0),
+        drums=[("taiko", "taiko_pulse", -7.0, 0.0, None), ("timpani", "timp_13", -10.0, 0.4, "tonic"),
+               ("bass_drum", "bass_drum_1", -9.0, 0.55, None), ("tom_low", "toms_adv", -14.0, 0.75, None)],
+        fill="toms", crash="cymbals", reverb=("hall", 0.3), vel=(0.6, 1.0), human=(0.005, 0.04),
+        legato=1.0, rubato=0.0, rit=0.06, intro=2, progressions="epic",
+        gen=dict(cells="heroic", center=5, span=(-5, 12))),
+    "horror": dict(
+        description="horror: a warped music box over trembling strings, a slow heartbeat and Neapolitan shadows",
+        tempo=60, meter=4, mode="minor", key="C#", end_with="ring",
+        lead=[("music_box", 0, "normal"), ("theremin", 0, "legato"), ("celesta", 0, "normal"), ("violin", 0, "legato")],
+        double=None,
+        counter=None,
+        comp=[("tremolo_strings", "pad_high", (64, 84), -15.0, 0.3), ("celesta", "twinkle", (79, 96), -17.0, 0.5),
+              ("pizzicato_strings", "tiptoe", (45, 62), -11.0, 0.0)],
+        pad=[("slow_strings", (40, 60), -13.0, 0.35)],
+        bass=("contrabass", "root_whole", (26, 43), -9.0),
+        drums=[("bass_drum", "taiko_heart", -10.0, 0.3, None)],
+        fill=None, crash="cymbal_swell", reverb=("hall", 0.38), vel=(0.35, 0.7), human=(0.012, 0.05),
+        legato=1.0, rubato=0.04, rit=0.1, intro=1, fx="creepy", progressions="horror",
+        gen=dict(cells="creepy", center=5, span=(-5, 9))),
+    "western": dict(
+        description="spaghetti western: a lone whistle and harmonica over a galloping guitar, clip-clop, wide spaces",
+        tempo=104, meter=4, mode="minor", key="D", end_with="ring",
+        lead=[("whistle", 0, "legato"), ("harmonica", 0, "legato"), ("trumpet", 0, "legato"), ("whistle", 0, "legato")],
+        double=None,
+        counter=("cello", "guide", (45, 62), -8.0, 0.5, 1),
+        comp=[("steel_guitar", "gallop", (50, 69), -9.0, 0.0), ("nylon_guitar", "arp8", (45, 72), -14.0, 0.6)],
+        pad=[("strings", (52, 72), -15.0, 0.55)],
+        bass=("acoustic_bass", "oompah", (33, 50), -5.0),
+        drums=[("woodblock_low", "clip_clop", -19.0, 0.2, None), ("tom_low", "bass_drum_13", -13.0, 0.5, None),
+               ("tambourine", "tamb_backbeat", -21.0, 0.65, None)],
+        fill=None, crash=None, reverb=("hall", 0.3), vel=(0.5, 0.85), human=(0.008, 0.05),
+        legato=1.0, rubato=0.02, rit=0.08, intro=1, progressions="western",
+        gen=dict(cells="western", center=5, span=(-5, 12))),
+    "celtic": dict(
+        description="celtic jig in 6/8: tin whistle and fiddle over strummed guitar and harp, a bodhran, a pipe drone",
+        tempo=168, meter="6/8", mode="dorian", key="E", end_with="button",
+        lead=[("tin_whistle", 0, "auto"), ("fiddle", 0, "auto"), ("flute", 0, "auto"), ("accordion", 0, "auto")],
+        double=("fiddle", 0, 0.65),
+        counter=None,
+        comp=[("steel_guitar", "jig_strum", (52, 69), -9.0, 0.0), ("harp", "arp8", (48, 79), -13.0, 0.5),
+              ("bagpipe", "drone", (55, 62), -18.0, 0.55)],
+        pad=[],
+        bass=("acoustic_bass", "root_bar", (33, 50), -7.0),
+        drums=[("bodhran", "jig_frame", -11.0, 0.0, None)],
+        fill=None, crash=None, reverb=("hall", 0.2), vel=(0.55, 0.9), human=(0.006, 0.05),
+        legato=0.92, rubato=0.0, rit=0.04, intro=1, staccato_short=True,
+        gen=dict(cells="jig", center=7, span=(-5, 12))),
+    "bossa_nova": dict(
+        description="bossa nova: a breathy flute over syncopated nylon-guitar chords, a soft rim click and shaker",
+        tempo=132, meter=4, mode="major", key="F", end_with="ring",
+        lead=[("flute", 0, "legato"), ("alto_sax", 0, "legato"), ("vibraphone", 0, "normal"),
+              ("nylon_guitar", 0, "normal")],
+        double=None,
+        counter=("clarinet", "guide", (55, 67), -12.0, 0.55, 1),
+        comp=[("nylon_guitar", "bossa", (52, 71), -6.0, 0.0)],
+        pad=[("strings", (55, 74), -17.0, 0.6)],
+        bass=("acoustic_bass", "bossa_bass", (31, 50), -5.0),
+        drums=[("side_stick", "bossa_rim", -19.0, 0.0, None), ("shaker", "shaker16", -21.0, 0.2, None),
+               ("kick", "bossa_kick", -18.0, 0.35, None)],
+        fill=None, crash=None, reverb=("room", 0.22), vel=(0.45, 0.75), human=(0.008, 0.05),
+        legato=0.98, rubato=0.0, rit=0.06, intro=1, sevenths=True, progressions="bossa",
+        gen=dict(cells="bossa", center=7, span=(-5, 10))),
+    "chiptune": dict(
+        description="8-bit chiptune: a square-wave melody, chords as fast arpeggios, a triangle bass and noise drums",
+        tempo=150, meter=4, mode="major", key="C", end_with="button",
+        lead=[("chip_square", 0, "auto"), ("chip_square", 1, "auto")],
+        double=None,
+        counter=None,
+        comp=[("chip_square", "chip_arp", (60, 79), -10.0, 0.0)],
+        pad=[],
+        bass=("chip_triangle", "drive8", (33, 52), -2.0),
+        drums=[("chip_noise", "kick_drive", -9.0, 0.0, "kick"), ("chip_noise", "snare_back", -11.0, 0.0, None),
+               ("chip_noise", "hat8", -19.0, 0.4, "hat")],
+        fill=None, crash=None, reverb=("room", 0.04), vel=(0.6, 0.9), human=(0.0, 0.0),
+        legato=0.9, rubato=0.0, rit=0.0, intro=1, hit_kit=dict(chord="chip_square", drums=(("chip_noise", -6.0),)),
+        gen=dict(cells="chip", center=7, span=(-5, 12))),
+    "japanese": dict(
+        description="Japanese in scale: shakuhachi and koto over a sho-like drone, taiko and wooden clappers",
+        tempo=72, meter=4, mode="in", key="E", end_with="ring",
+        lead=[("shakuhachi", 0, "legato"), ("koto", 0, "normal"), ("shakuhachi", 0, "legato"),
+              ("shamisen", 0, "normal")],
+        double=None,
+        counter=("koto", "heterophony", (57, 84), -10.0, 0.5, 1),
+        comp=[("koto", "pent_flow", (45, 79), -8.0, 0.0), ("sheng", "pad_fifths", (57, 72), -17.0, 0.4)],
+        pad=[],
+        bass=None,
+        drums=[("taiko", "taiko_pulse", -10.0, 0.45, None), ("bangzi", "muyu_tick", -22.0, 0.65, None)],
+        fill=None, crash=None, reverb=("temple", 0.3), vel=(0.45, 0.85), human=(0.012, 0.05),
+        legato=1.03, rubato=0.05, rit=0.12, intro=1, gliss="koto", pluck="koto", progressions="in",
+        gen=dict(cells="slow_pent", center=5, span=(-5, 12))),
+    "march": dict(
+        description="a brass-band march in 2/4: trumpets and piccolo, oom-pah tuba, snare, bass drum and cymbals",
+        tempo=116, meter="2/4", mode="major", key="Bb", end_with="button",
+        lead=[("trumpet", 0, "auto"), ("brass_section", 0, "auto"), ("clarinet", 0, "auto"), ("trumpet", 0, "auto")],
+        double=("piccolo", 1, 0.6),
+        counter=("trombone", "fill", (46, 62), -6.0, 0.4, 1),
+        comp=[("brass_section", "offbeat", (55, 70), -8.0, 0.0)],
+        pad=[],
+        bass=("tuba", "oompah", (29, 46), -3.0),
+        drums=[("snare", "snare_march", -14.0, 0.0, None), ("bass_drum", "march_bass", -10.0, 0.0, None),
+               ("cymbals", "march_cymbal", -17.0, 0.5, None)],
+        fill="snare", crash="cymbals", reverb=("hall", 0.18), vel=(0.6, 0.95), human=(0.004, 0.04),
+        legato=0.9, rubato=0.0, rit=0.03, intro=1, staccato_short=True,
+        gen=dict(cells="march", center=7, span=(-3, 12))),
+    "waltz": dict(
+        description="a Viennese waltz in 3/4: violin and flute over oom-pah-pah strings, harp and a pizzicato bass",
+        tempo=152, meter=3, mode="major", key="D", end_with="ring",
+        lead=[("violin", 0, "legato"), ("flute", 0, "legato"), ("clarinet", 0, "legato"), ("strings", 1, "legato")],
+        double=("flute", 1, 0.65),
+        counter=("cello", "guide", (45, 62), -7.0, 0.45, 1),
+        comp=[("strings", "waltz_chords", (55, 74), -8.0, 0.0), ("harp", "waltz_arp", (43, 74), -13.0, 0.55)],
+        pad=[],
+        bass=("pizzicato_strings", "root_bar", (33, 50), -4.0),
+        drums=[("triangle", "triangle_1", -19.0, 0.6, "phrase")],
+        fill=None, crash=None, reverb=("hall", 0.28), vel=(0.5, 0.85), human=(0.008, 0.05),
+        legato=1.0, rubato=0.03, rit=0.1, intro=1,
+        gen=dict(cells="waltz", center=7, span=(-3, 12))),
+    "romantic": dict(
+        description="romantic: a singing cello and horn over rolling piano arpeggios, warm strings, a breathing tempo",
+        tempo=68, meter=4, mode="major", key="Db", end_with="ring",
+        lead=[("cello", 0, "legato"), ("violin", 0, "legato"), ("french_horn", 0, "legato"), ("piano", 0, "normal")],
+        double=("strings", 1, 0.7),
+        counter=("french_horn", "guide", (50, 65), -7.0, 0.45, 1),
+        comp=[("piano", "romantic_arp", (36, 79), -7.0, 0.0)],
+        pad=[("strings", (52, 72), -11.0, 0.3)],
+        bass=("contrabass", "root_whole", (28, 45), -10.0),
+        drums=[],
+        fill=None, crash="cymbal_swell", reverb=("hall", 0.36), vel=(0.4, 0.85), human=(0.012, 0.05),
+        legato=1.03, rubato=0.08, rit=0.16, intro=1, progressions="romantic",
+        gen=dict(cells="romantic", center=5, span=(-5, 12))),
+})
+STYLE_ALIASES = {"heroic": "adventure"}
+for _alias, _name in STYLE_ALIASES.items():
+    STYLES[_alias] = STYLES[_name]
 
 # rhythm cells: one bar each; negative = rest.  'cad' cells close a phrase (last element is the cadence note)
 CELLS = {
@@ -321,6 +538,26 @@ CELLS = {
                   [.5, .5, .5, .5]], "half": [[.5, .5, 1], [1, 1]], "full": [[.5, .5, 1], [1, -1]]},
     "festive": {2: [[.25, .25, .5, .5, .5], [.75, .25, .5, .5], [.5, .5, .25, .25, .5], [.5, .25, .25, 1],
                     [.5, .5, .5, .5]], "half": [[1.5, .5], [1, 1]], "full": [[1.5, -.5], [1, 1]]},
+    "swing": {4: [[1.5, .5, 1, 1], [.5, 1, .5, 1, 1], [1, .5, .5, .5, 1.5], [.5, .5, .5, .5, 2], [-.5, .5, 1, .5, 1.5]],
+              "half": [[1, .5, 2.5], [1.5, .5, 2]], "full": [[2, 2], [1, 1, 2], [3, -1]]},
+    "bossa": {4: [[1.5, 1, 1.5], [.5, 1, 1, 1.5], [1, .5, 1, 1.5], [1.5, .5, 2]], "half": [[1.5, 2.5], [1, 3]],
+              "full": [[4], [2.5, 1.5]]},
+    "lofi": {4: [[1.5, .5, 2], [.5, .5, 1, 2], [-.5, .5, .5, .5, 2], [1, .5, .5, 2]], "half": [[2, 2], [1.5, 2.5]],
+             "full": [[4], [3, -1]]},
+    "creepy": {4: [[2, 2], [1, 1, 2], [1.5, .5, 2], [-1, 1, 2]], "half": [[2, 2], [4]], "full": [[4], [2, -2]]},
+    "march": {2: [[.75, .25, .5, .5], [.5, .5, 1], [.75, .25, 1], [.5, .25, .25, .5, .5]],
+              "half": [[1, 1], [.75, .25, 1]], "full": [[1, 1], [2]]},
+    "waltz": {3: [[1, .5, .5, 1], [2, 1], [.5, .5, 1, 1], [1, 1, 1], [1.5, .5, 1]], "half": [[2, 1], [3]],
+              "full": [[3], [2, -1]]},
+    "jig": {"c": [[.5, .5, .5, .5, .5, .5], [1, .5, 1, .5], [1.5, .5, .5, .5], [.5, .5, .5, 1.5]],
+            "half": [[1.5, 1.5], [1, .5, 1.5]], "full": [[1.5, 1.5], [3]]},
+    "chip": {4: [[.5, .5, .5, .5, 1, 1], [.25, .25, .5, 1, .5, .5, 1], [1, .5, .5, 1, 1], [.5, .5, 1, .5, .5, 1]],
+             "half": [[1, 1, 2], [.5, .5, 1, 2]], "full": [[1, 1, 2], [2, 2]]},
+    "slow_pent": {4: [[2, 1, 1], [1.5, .5, 2], [3, 1], [1, 1, 2], [2, 2]], "half": [[2, 2], [4]],
+                  "full": [[4], [3, -1]]},
+    "romantic": {4: [[2, 1, 1], [1.5, .5, 1.5, .5], [3, 1], [1, 1, 2], [2.5, .5, 1]], "half": [[2, 2], [3, 1]],
+                 "full": [[4], [3, -1]]},
+    "western": {4: [[1.5, .5, 2], [1, 1, 2], [.5, .5, 1, 2], [3, 1]], "half": [[2, 2], [4]], "full": [[4], [3, -1]]},
 }
 # motif shapes in scale steps from the first note (extended by steps when a rhythm cell has more notes)
 MOTIF_SHAPES = {
@@ -332,6 +569,17 @@ MOTIF_SHAPES = {
     "sparse_motif": [[0, 1, -1, 0], [0, -1, 1, 3], [0, 2, 1, 0]],
     "chase": [[0, 1, 2, 3, 4, 2], [0, 2, 1, 3, 2, 4], [0, -1, 0, 1, 2, 4]],
     "festive": [[0, 1, 0, -1, -2, 0], [0, 2, 3, 2, 1, 0], [0, -1, -2, 0, 1, 2], [0, 1, 2, 4, 2, 1]],
+    "swing": [[0, 2, 4, 3, 2, 0], [0, -1, 0, 2, 4, 3], [0, 2, 1, 0, -1, -3], [0, 4, 2, 3, 1, 2]],
+    "bossa": [[0, 1, 2, 1], [0, -1, -2, 0], [0, 2, 3, 2], [0, 1, -1, 0]],
+    "lofi": [[0, 2, 1, 0], [0, -1, 1, 2], [0, 3, 2, 0]],
+    "creepy": [[0, 1, 0, -1], [0, -1, -2, -1], [0, 2, 1, 0]],
+    "march": [[0, 0, 2, 4, 2], [0, 2, 4, 4, 3], [0, -3, 0, 2, 4]],
+    "waltz": [[0, 2, 4, 3, 2], [0, -1, 0, 2, 1], [0, 4, 3, 2, 1]],
+    "jig": [[0, 1, 2, 4, 2, 1], [0, 2, 1, 0, -1, 0], [0, -1, 0, 2, 4, 2]],
+    "chip": [[0, 2, 4, 7, 4, 2], [0, 1, 2, 4, 2, 0], [0, 4, 2, 0, 2, 4]],
+    "slow_pent": [[0, 1, 2, 1], [0, -1, 0, 1], [0, 2, 1, 0]],
+    "romantic": [[0, 2, 4, 3], [0, 1, 3, 2, 1], [0, -1, 1, 3, 2]],
+    "western": [[0, 4, 3, 2], [0, 2, 1, 0], [0, -1, 0, 2]],
 }
 # progressions (roman numerals, one bar per item) for the two halves of a period
 PROGRESSIONS = {
@@ -345,7 +593,45 @@ PROGRESSIONS = {
     "lydian": (["I | II | I | II", "I | II | vii | iii", "I | II | iii | II"], ["I | II | vi | V", "I | II | I | I"]),
     "phrygian": (["i | II | i | VII", "i | II | III | II"], ["i | II | VII | i", "iv | II | i | i"]),
     "tension": (["i | i | VI | V", "i | bII | i | V", "i | VI | iv | V"], ["i | VI | bII | V", "i | iv | V | V"]),
+    # style families; a '_major' / '_minor' twin, when present, takes over in keys of the other kind
+    "jazz": (["ii7 | V7 | I7 | I7", "I7 | vi7 | ii7 | V7", "I7 | IV7 | iii7 | vi7", "iii7 | vi7 | ii7 | V7"],
+             ["ii7 | V7 | iii7 | vi7", "ii7 | V7 | I7 | I7", "IV7 | iii7 | ii7 V7 | I7"]),
+    "jazz_minor": (["i7 | iv7 | VII7 | IIImaj7", "i7 | VImaj7 | iiø | V7"],
+                   ["iv7 | VII7 | IIImaj7 | VImaj7", "iiø | V7 | i7 | i7"]),
+    "lofi": (["I7 | vi7 | ii7 | V7", "IV7 | iii7 | ii7 | I7", "ii7 | V7 | I7 | vi7"], ["IV7 | iii7 | ii7 | V7",
+                                                                                     "ii7 | V7 | I7 | I7"]),
+    "lofi_minor": (["i7 | iv7 | VImaj7 | V7", "i7 | VImaj7 | iv7 | iv7"], ["iv7 | VII7 | IIImaj7 | V7",
+                                                                          "VImaj7 | iv7 | V7 | i7"]),
+    "bossa": (["I7 | II7 | ii7 | V7", "I7 | vi7 | ii7 | V7", "I7 | I7 | ii7 | V7"], ["ii7 | V7 | I7 | vi7",
+                                                                                   "IV7 | iv7 | iii7 | VI7"]),
+    "bossa_minor": (["i7 | iv7 | VII7 | IIImaj7", "i7 | VImaj7 | iiø | V7"], ["iv7 | VII7 | IIImaj7 | V7",
+                                                                             "iiø | V7 | i7 | i7"]),
+    "epic": (["i | VI | III | VII", "i | VI | VII | i", "i | iv | VI | V", "i | III | VII | VI"],
+             ["VI | VII | i | i", "i | VI | VII | V", "iv | VI | V | i"]),
+    "epic_major": (["I | V | vi | IV", "I | IV | vi | V"], ["IV | V | I | I", "vi | IV | V | I"]),
+    "horror": (["i | bII | i | bII", "i | i | VI | V", "i | iv | i | V", "i | bII | VI | V"],
+               ["i | bII | iv | V", "VI | bII | V | i"]),
+    "horror_major": (["I | bVI | I | bII", "I | iv | I | bVI"], ["I | bII | iv | V", "bVI | bII | V | I"]),
+    "western": (["i | VII | VI | V", "i | iv | VII | III", "i | VI | VII | i"], ["i | VII | VI | V", "iv | i | V | i"]),
+    "western_major": (["I | IV | I | V", "I | V | IV | I"], ["I | IV | V | I", "IV | I | V | I"]),
+    "romantic": (["I | iii | IV | V", "I | V/vi | vi | IV", "I | vi | ii | V7", "I | IV | iv | I"],
+                 ["IV | V | iii | vi", "ii | V7 | I | I", "IV | iv | I | V"]),
+    "romantic_minor": (["i | VI | iv | V", "i | III | VI | V"], ["iv | V | i | i", "VI | iv | V | i"]),
+    # Japanese in scale: open and suspended tonics, the bII and iv that the scale holds whole
+    "in": (["isus4 | II | iv | isus4", "i5 | iv | II | II", "isus4 | iv | isus4 | II", "iv | II | isus4 | i5"],
+           ["isus4 | II | iv | II", "iv | isus4 | II | i5"]),
+    "in_major": (["I | IV | I | V", "I | ii | IV | I"], ["IV | V | I | I", "ii | IV | V | I"]),
 }
+
+
+def catalog():
+    """one row per style: name, description, tempo, meter, mode, key and the lead instruments (aliases noted)"""
+    rows = []
+    for name, st in sorted(STYLES.items()):
+        rows.append({"name": name, "description": f"same as {STYLE_ALIASES[name]}" if name in STYLE_ALIASES
+                     else st.get("description", ""), "tempo": st["tempo"], "meter": st["meter"], "mode": st["mode"],
+                     "key": st["key"], "lead": [x[0] for x in st["lead"]], "alias_of": STYLE_ALIASES.get(name)})
+    return rows
 
 
 # ------------------------------------------------------------------------------------------------ data
@@ -396,11 +682,18 @@ class CuePlan:
     seed: int
     beat_times: np.ndarray = None   # seconds at quarter-beat resolution (absolute)
     lead_shift: dict = field(default_factory=dict)
+    swing: float = 0.5              # share of a swing pair taken by its first note (0.5 straight, 2/3 triplet swing)
+    swing_unit: float = 0.5         # the swung note value in beats (0.5 eighths, 0.25 sixteenths)
 
     def time(self, beat):
-        """absolute seconds of a beat position (beats from the cue's first bar)"""
-        q = np.asarray(beat, dtype=np.float64) * 4.0
-        return np.interp(q, np.arange(len(self.beat_times)), self.beat_times)
+        """absolute seconds of a beat position (beats from the cue's first bar); off-beats swing when the style does"""
+        q = np.asarray(beat, dtype=np.float64)
+        if self.swing > 0.5:
+            pair = 2.0 * self.swing_unit
+            base = np.floor(q / pair + 1e-9) * pair
+            f = (q - base) / pair
+            q = base + pair * np.where(f < 0.5, f * 2.0 * self.swing, self.swing + (f - 0.5) * 2.0 * (1.0 - self.swing))
+        return np.interp(q * 4.0, np.arange(len(self.beat_times)), self.beat_times)
 
 
 def _rng(*keys):
@@ -415,17 +708,39 @@ def _lerp(a, b, u):
 def _prog_family(key, style):
     fam = style.get("progressions")
     if fam:
-        return fam
+        twin = fam + ("_minor" if key.minorish else "_major")
+        return twin if twin in PROGRESSIONS else fam
     hm = key.harmony_mode
     if hm in PROGRESSIONS:
         return hm
     return "minor" if key.minorish else "major"
 
 
+def _tonic(key, sevenths=False):
+    """the final chord: I or i (with its seventh in jazz-family styles) -- open fifths in the Japanese scales, which
+    have no third to give"""
+    hk = T.Key(key.tonic, key.harmony_mode)
+    if key.mode in T.JAPANESE:
+        return T.parse_chord("i5" if key.minorish else "I5", hk)
+    return T.parse_chord(("i" if key.minorish else "I") + ("7" if sevenths else ""), hk)
+
+
+def _dominant(key, sevenths=False):
+    """the chord before the final tonic: V (raised in minor), v in dorian / mixolydian, the diatonic bII in phrygian"""
+    if key.harmony_mode == "phrygian":
+        return T.parse_chord("II", T.Key(key.tonic, "phrygian"))
+    dom_key = T.Key(key.tonic, "harmonic_minor" if key.harmony_mode == "minor" else key.harmony_mode)
+    return T.parse_chord(("V" if key.harmony_mode in ("major", "minor", "harmonic_minor") else
+                          ("v" if key.harmony_mode in ("dorian", "mixolydian") else "V")) + ("7" if sevenths else ""),
+                         dom_key)
+
+
 def _choose_cells(style, beats, compound):
     kind = style.get("gen", {}).get("cells", "lyric")
     table = CELLS.get(kind, CELLS["lyric"])
     b = int(round(beats))
+    if compound and "c" in table:
+        return table["c"], table["half"], table["full"]
     if b in table:
         return table[b], table["half"], table["full"]
     # adapt a 4/4 table by scaling the cells to the bar length
@@ -450,12 +765,12 @@ def generate_theme(key, beats, compound, nbars, style, rng):
         chord_bars += chord_bars[: nbars - len(chord_bars)]
     chord_bars = chord_bars[:nbars]
     if nbars < 8:
-        chord_bars[-1] = [(0.0, beats, T.parse_chord("I" if not key.minorish else "i", hk))]
+        sevenths = bool(style.get("sevenths"))
+        chord_bars[-1] = [(0.0, beats, _tonic(key, sevenths))]
         if nbars >= 2:
-            v = T.parse_chord("V", T.Key(key.tonic, "harmonic_minor" if key.minorish else "major"))
+            v = _dominant(key, sevenths) if key.harmony_mode == "phrygian" or sevenths else \
+                T.parse_chord("V", T.Key(key.tonic, "harmonic_minor" if key.minorish else "major"))
             chord_bars[-2] = chord_bars[-2][:1] if chord_bars[-2][0][1] < beats else chord_bars[-2]
-            o, d, c = chord_bars[-2][-1]
-            chord_bars[-2][-1] = (o, d, c)
             if key.harmony_mode not in ("dorian", "mixolydian", "lydian"):
                 chord_bars[-2] = [(0.0, beats / 2, chord_bars[-2][0][2]), (beats / 2, beats / 2, v)] \
                     if chord_bars[-2][0][2].root != v.root else [(0.0, beats, v)]
@@ -490,7 +805,7 @@ def generate_theme(key, beats, compound, nbars, style, rng):
         rhythms = ([ra, rb, rc, pick(full_cells)] if nbars >= 4 else [ra, pick(full_cells)][-nbars:])[:nbars]
         roles[-1] = "final"
         rhythms[-1] = pick(full_cells)
-    dom_pcs = {key.degree_pc(4), key.degree_pc(1), key.degree_pc(6)}
+    dom_pcs = {pc for pc in (key.degree_pc(4), key.degree_pc(1), key.degree_pc(6)) if key.contains(pc)}
     bars, last = [], None
     first_start = None
     for b in range(nbars):
@@ -715,13 +1030,10 @@ def _theme_for(cue, themes):
     return T.parse_theme(spec, name if isinstance(name, str) else "theme"), name if isinstance(name, str) else "theme"
 
 
-def _cadence(bars, key, beats):
+def _cadence(bars, key, beats, sevenths=False):
     """make the final bar a tonic arrival with the melody on the tonic, approached through the dominant"""
-    hk = T.Key(key.tonic, key.harmony_mode)
-    tonic = T.parse_chord("i" if key.minorish else "I", hk)
-    dom_key = T.Key(key.tonic, "harmonic_minor" if key.harmony_mode == "minor" else key.harmony_mode)
-    dom = T.parse_chord("V" if key.harmony_mode in ("major", "minor", "harmonic_minor") else
-                        ("v" if key.harmony_mode in ("dorian", "mixolydian") else "V"), dom_key)
+    tonic = _tonic(key, sevenths)
+    dom = _dominant(key, sevenths)
     last = bars[-1]
     already = last.chords[-1][2].root == tonic.root and last.chords[0][2].root == tonic.root
     last.chords = [(0.0, beats, tonic)]
@@ -771,7 +1083,7 @@ def plan_cue(cue, index, themes, seed, usage, next_cue=None):
     key = T.parse_key(cue["key"], cue.get("mode") or base_key.mode) if cue.get("key") else base_key
     if cue.get("mode"):
         key = T.Key(key.tonic, cue["mode"])
-    if "minor" in variation:
+    if "minor" in variation and key.mode not in T.JAPANESE:
         key = T.Key(key.tonic, "yu" if key.mode in T.PENTATONIC else "minor")
     beats, compound = T.meter_beats(theme.beats if theme else style.get("meter", 4))
     if theme and theme.beats:
@@ -843,7 +1155,7 @@ def plan_cue(cue, index, themes, seed, usage, next_cue=None):
             pivot.chords = pivot.chords[:-1] + ([(o, d / 2, c), (o + d / 2, d / 2, new_dom)] if d >= 2 else [(o, d, new_dom)])
     final_key = T.Key((key.tonic + (bars[-1].shift if bars else 0)) % 12, key.mode)
     if end_with != "cut" and n >= 1:
-        _cadence_shifted(bars, final_key, beats, key)
+        _cadence_shifted(bars, final_key, beats, key, bool(style.get("sevenths")))
     if cue.get("modulate") and next_cue is not None and next_cue.get("key"):
         nk = T.parse_key(next_cue["key"], next_cue.get("mode", "major"))
         if nk.tonic != final_key.tonic and end_with in ("ring", "fade"):
@@ -860,22 +1172,23 @@ def plan_cue(cue, index, themes, seed, usage, next_cue=None):
     intensity = float(np.clip(cue.get("intensity", 0.6), 0.0, 1.0))
     plan = CuePlan(index, cue, style, style_name, key, tempo, beats, compound, bars, start, start + span, end,
                    intensity, variation, end_with, theme_name, s, cue_seed)
+    plan.swing, plan.swing_unit = float(style.get("swing", 0.5)), float(style.get("swing_unit", 0.5))
     plan.beat_times = _tempo_map(plan)
     return plan
 
 
-def _cadence_shifted(bars, key, beats, base_key):
+def _cadence_shifted(bars, key, beats, base_key, sevenths=False):
     """cadence in the key of the final bars (after a lift the bars carry a shift; notes stay unshifted)"""
     sh = bars[-1].shift
     if not sh:
-        _cadence(bars, key, beats)
+        _cadence(bars, key, beats, sevenths)
         return
     for b in bars[-2:]:
         for nt in b.melody:
             if nt.pitch is not None:
                 nt.pitch += sh
         b.chords = [(o, d, c.transpose(sh)) for o, d, c in b.chords]
-    _cadence(bars, key, beats)
+    _cadence(bars, key, beats, sevenths)
     for b in bars[-2:]:
         for nt in b.melody:
             if nt.pitch is not None:
@@ -987,8 +1300,7 @@ class Arranger:
             leads = [(instruments.get(x).name, 0, "auto") for x in custom]
         st = max(0, statement)
         if self.light:
-            light = [x for x in leads if x[0] in ("glockenspiel", "celesta", "flute", "music_box", "whistle", "dizi",
-                                                  "pizzicato_strings", "clarinet", "harp", "marimba", "piano")]
+            light = [x for x in leads if x[0] in LIGHT_LEADS]
             leads = light or leads
         return leads[st % len(leads)]
 
@@ -1059,6 +1371,8 @@ class Arranger:
                 a = "staccato"
             elif art_mode == "legato" and spec.kind == "sustain":
                 a = "legato" if gap_to_next is not None and gap_to_next < 1e-6 else "normal"
+            elif art_mode in spec.arts:
+                a = art_mode
             gate_beats = d * (legato if spec.kind == "sustain" else 1.0)
             if spec.kind == "decay":
                 gate_beats = d if art_mode != "staccato" else min(d, 0.5)
@@ -1532,6 +1846,131 @@ class Arranger:
                 b += step
         return prev
 
+    def _chord_hits(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev, hits, n=4, length=0.5, art="normal", spread=0.0,
+                    top=True):
+        """short chords at bar positions [(beat, velocity scale)], voiced under the melody, optionally rolled"""
+        mf = self.melody_floor(bar) if top else None
+        for b, g in hits:
+            if b >= self.beats - 1e-6:
+                continue
+            v = T.voicing(self.chord_at(bar, b), n, lo, hi, prev, None if mf is None else mf - 2)
+            prev = v
+            for k, p in enumerate(v):
+                self.add(self.t(i, b, rng, 0.004) + spread * k, inst, p, self.dur(i, b, length), self.vel(lvl * g, b,
+                                                                                                          rng),
+                         "harmony", art, (-0.3, -0.1, 0.1, 0.3)[k % 4], gdb)
+        return prev
+
+    def pat_swing_comp(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """jazz comping: short chords on the Charleston rhythm (one, the 'and' of two), now and then pushed"""
+        for o, d, ch in self.slots(bar):
+            u = rng.uniform()
+            hits = ((0.0, 0.8), (1.5, 0.75)) if d >= 3 - 1e-6 else ((0.0, 0.8),)
+            if d >= 4 - 1e-6 and u < 0.3:
+                hits = ((0.5, 0.8), (2.5, 0.75))
+            elif d >= 4 - 1e-6 and u < 0.45:
+                hits = ((0.0, 0.8), (2.5, 0.75), (3.5, 0.7))
+            prev = self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, [(o + h, g) for h, g in hits if h < d],
+                                    length=0.55)
+        return prev
+
+    def pat_four(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """rhythm guitar four to the bar: a short chord on every beat, two and four a little heavier"""
+        hits = [(float(b), 0.75 if b % 2 else 0.65) for b in range(int(self.beats))]
+        return self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, hits, 3, 0.4, "staccato", 0.006, False)
+
+    def pat_lofi_keys(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """lo-fi keys: a lazily rolled chord on each chord's downbeat, a softer echo of it late in the chord"""
+        for o, d, ch in self.slots(bar):
+            prev = self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, [(o, 0.75)], length=d * 0.7, spread=0.02)
+            if d >= 2.5 - 1e-6:
+                prev = self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, [(o + d - 1.5, 0.5)], length=1.2,
+                                        spread=0.02)
+        return prev
+
+    def pat_bossa(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """bossa nova guitar: chords on a syncopated two-bar figure (one, two-and, four | one-and, three)"""
+        figs = {4: ((0.0, 1.5, 3.0), (0.5, 2.0)), 2: ((0.0, 0.75, 1.5), (0.5,))}.get(int(round(self.beats)),
+                                                                                  ((0.0, 1.5), (0.5, 2.0)))
+        return self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, [(b, 0.7) for b in figs[i % 2]], length=0.6,
+                                spread=0.008)
+
+    def pat_chip_arp(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """8-bit arpeggio: the chord's tones cycled in thirty-seconds -- a whole chord on one voice"""
+        art = "duty12" if inst == "chip_square" else "staccato"
+        for o, d, ch in self.slots(bar):
+            seq = sorted(T.voicing(ch, 3, lo, hi, prev))
+            prev = seq
+            k, b = 0, o
+            while b < o + d - 1e-6:
+                self.add(self.t(i, b, rng), inst, seq[k % len(seq)], self.dur(i, b, 0.12), self.vel(lvl * 0.7, b, rng),
+                         "harmony", art, 0.2, gdb)
+                k += 1
+                b += 0.125
+        return prev
+
+    def pat_waltz_chords(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """the 'pah-pah' of a waltz: short chords on the beats after the downbeat"""
+        offs = (1.5,) if self.p.compound else ((1.0, 2.0) if int(round(self.beats)) == 3 else
+                                              ((1.0, 3.0) if self.beats >= 4 else (1.0,)))
+        return self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, [(b, 0.7) for b in offs], 3, 0.45,
+                                "staccato", 0.0, False)
+
+    def pat_gallop(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """western gallop: muted strums in a long-short-short rhythm on every beat"""
+        for o, d, ch in self.slots(bar):
+            v = T.voicing(ch, 4, lo, hi, prev)
+            prev = v
+            b = o
+            while b < o + d - 1e-6:
+                for off, g, down in ((0.0, 0.8, True), (0.5, 0.55, False), (0.75, 0.6, True)):
+                    bb = b + off * self.sub
+                    if bb >= o + d - 1e-6:
+                        break
+                    notes = v if down else v[::-1][:3]
+                    for k, p in enumerate(notes):
+                        pan = -0.2 + 0.4 * k / max(1, len(notes) - 1)
+                        self.add(self.t(i, bb, rng, 0.003) + 0.007 * k, inst, p, self.dur(i, bb, 0.18),
+                                 self.vel(lvl * g, bb, rng), "harmony", "staccato", pan, gdb)
+                b += 1.0 * self.sub
+        return prev
+
+    def pat_jig_strum(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """a jig accompaniment: in 6/8 a down-strum on each pulse with lighter up-strums between (D . U D . U)"""
+        hits = ((0.0, 0.85), (1.0, 0.55), (1.5, 0.8), (2.5, 0.55)) if self.p.compound else \
+            tuple((float(b), 0.8 if b % 2 == 0 else 0.6) for b in range(int(self.beats)))
+        return self._chord_hits(i, bar, inst, lo, hi, gdb, lvl, rng, prev, hits, 4, 0.45, "normal", 0.01, False)
+
+    def pat_drone(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """a drone: the key's tonic and fifth held four bars at a time (pipes, a shruti box)"""
+        if i % 4:
+            return prev
+        tonic = T.bass_note(T.Chord(self.key.tonic), lo, hi)
+        span = min(4, len(self.p.bars) - i) * self.beats
+        for k, p in enumerate((tonic, tonic + 7 if tonic + 7 <= hi else tonic - 5)):
+            self.add(self.t(i, 0.0, rng, 0.004), inst, p, self.dur(i, 0.0, span + 0.05), self.vel(lvl * 0.6, 0.5, rng),
+                     "harmony", "legato", (-0.3, 0.3)[k], gdb)
+        return prev
+
+    def pat_romantic_arp(self, i, bar, inst, lo, hi, gdb, lvl, rng, prev):
+        """romantic piano: a wide arpeggio rolling up from the bass through two octaves and back, the pedal held"""
+        step = self._sub(0.5)
+        mf = self.melody_floor(bar)
+        for o, d, ch in self.slots(bar):
+            base = lo + (ch.bass_pc - lo) % 12
+            up = [m for m in range(base, min(hi, base + 24) + 1) if ch.contains(m)]
+            if mf is not None:
+                up = [m for m in up if m <= mf - 1] or up
+            seq = up + up[-2:0:-1] if len(up) > 2 else up
+            k, b = 0, o
+            while b < o + d - 1e-6:
+                p = seq[k % len(seq)]
+                self.add(self.t(i, b, rng), inst, p, self.dur(i, b, o + d - b + 0.1), self.vel(lvl * 0.7, b, rng,
+                         -0.05 * (k % 2)), "harmony", "normal", -0.3 + 0.6 * (p - lo) / max(1, hi - lo), gdb)
+                k += 1
+                b += step
+        return prev
+
     # ------------------------------------------------------------------ bass
     def bass(self):
         b = self.s.get("bass")
@@ -1590,6 +2029,13 @@ class Arranger:
                                  else -0.05), "bass", "staccato", 0.0, gdb)
                         b2 += step
                         k += 1
+                elif pattern == "bossa_bass":
+                    hits = ((0.0, 1.4, root), (2.0, 1.4, fifth)) if d >= 4 - 1e-6 else ((0.0, min(d, 1.5) * 0.95,
+                                                                                         root),)
+                    for off, L, p_ in hits:
+                        if off < d - 1e-6:
+                            self.add(self.t(i, o + off, rng), inst, p_, self.dur(i, o + off, L), v(o + off), "bass",
+                                     "normal", 0.0, gdb)
                 elif pattern in ("walking", "tiptoe_bass"):
                     nxt = self._next_root(i, o + d, lo, hi, root)
                     line = [root, root + (ch.third - ch.root) % 12 if ch.third is not None else fifth, fifth,
@@ -1659,7 +2105,8 @@ class Arranger:
                     if inst == "timpani":
                         ch = self.chord_at(bar, b)
                         pitch = T.bass_note(T.Chord(ch.root if mode != "tonic" or b > 0 else self.key.tonic), 40, 52)
-                    art = "normal"
+                    art = mode if mode not in (None, "tonic",
+                                               "phrase") and mode in instruments.get(inst).arts else "normal"
                     if inst == "bo" and c == "o":
                         art = "muted"
                     if inst == "tanggu" and c == "o":
@@ -1737,17 +2184,16 @@ class Arranger:
             hits = {"playful": [("woodblock", -6.0), ("glockenspiel", -5.0), ("kick", -9.0)],
                     "comic_chase": [("crash", -9.0), ("kick", -8.0)],
                     "festive_chinese": [("daluo", -8.0), ("bo", -10.0), ("tanggu", -6.0)],
-                    "adventure": [("cymbals", -9.0), ("timpani", -6.0)], "triumph": [("cymbals", -7.0), ("timpani", -5.0)]}
+                    "adventure": [("cymbals", -9.0), ("timpani", -6.0)],
+                    "triumph": [("cymbals", -7.0), ("timpani", -5.0)], "jazz_swing": [("crash", -12.0), ("kick", -10.0)],
+                    "march": [("cymbals", -8.0), ("bass_drum", -8.0)], "chiptune": [("chip_noise", -8.0)],
+                    "celtic": [("bodhran", -6.0)]}
             for inst, gdb in hits.get(p.style_name, [("timpani", -8.0)] if self.s.get("drums") else []):
                 pitch = T.bass_note(T.Chord(self.key.tonic), 40, 52) if inst == "timpani" else (
                     T.voicing(ch, 1, 84, 96)[0] if inst == "glockenspiel" else 60)
                 self.add(t_b, inst, pitch, 0.3, v, "percussion", "normal", 0.0, gdb)
-        elif p.end_with == "ring":
-            if p.style_name in ("festive_chinese",):
-                self.add(self.t(i, 0.0), "daluo", 60, 1.0, 0.75, "percussion", "normal", -0.2, -10.0)
-            elif self.s.get("crash") == "cymbal_swell" or p.style_name in ("tender", "wonder", "sad", "lullaby"):
-                if self.s.get("gliss") or p.style_name in ("wonder",):
-                    pass
+        elif p.end_with == "ring" and p.style_name in ("festive_chinese",):
+            self.add(self.t(i, 0.0), "daluo", 60, 1.0, 0.75, "percussion", "normal", -0.2, -10.0)
 
     def embellish(self):
         p = self.p
@@ -1787,8 +2233,14 @@ class Arranger:
             bar = p.bars[bar_i]
             ch = self.chord_at(bar, 0.0)
             v = float(h.get("velocity", 0.85))
+            kit = self.s.get("hit_kit")
             if kind == "stinger":
-                if chinese:
+                if kit and not chinese:
+                    for m in T.voicing(ch, 3, 60, 79):
+                        self.add(t_hit, kit["chord"], m, 0.3, v, "fx", "accent", 0.0, -6.0 + gain)
+                    for inst_, gdb in kit.get("drums", ()):
+                        self.add(t_hit, inst_, 60, 0.3, v, "fx", "normal", 0.0, gdb + gain)
+                elif chinese:
                     for inst, gdb in (("daluo", -6.0), ("bo", -8.0), ("tanggu", -4.0)):
                         self.add(t_hit, inst, 60, 0.5, v, "fx", "normal", 0.0, gdb + gain)
                     for m in T.voicing(ch, 2, 72, 88):
@@ -1800,7 +2252,10 @@ class Arranger:
                     self.add(t_hit, "timpani", T.bass_note(ch, 40, 52), 0.5, v, "fx", "normal", 0.0, -5.0 + gain)
                     self.add(t_hit, "cymbals", 60, 1.0, v * 0.9, "fx", "normal", 0.3, -9.0 + gain)
             elif kind == "crash":
-                if chinese:
+                if kit and not chinese:
+                    for inst_, gdb in kit.get("drums", ()):
+                        self.add(t_hit, inst_, 60, 0.5, v, "fx", "normal", 0.0, gdb + gain)
+                elif chinese:
                     self.add(t_hit, "daluo", 60, 1.0, v, "fx", "normal", -0.2, -6.0 + gain)
                     self.add(t_hit, "bo", 60, 1.0, v, "fx", "normal", 0.3, -8.0 + gain)
                 else:
@@ -1812,7 +2267,7 @@ class Arranger:
                 for m in T.voicing(ch, 3, 55, 74):
                     self.add(t_hit - L, "strings", m, L, v * 0.8, "fx", "swell", 0.0, -12.0 + gain)
             elif kind in ("pluck_rise", "fall"):
-                inst = "guzheng" if chinese else "harp"
+                inst = self.s.get("pluck") or ("guzheng" if chinese else "harp")
                 tones = [m for m in range(55, 91) if ch.contains(m) or (chinese and self.key.contains(m))]
                 tones = tones[::2] if len(tones) > 12 else tones
                 n = min(10, len(tones))
@@ -1892,6 +2347,21 @@ def _underwater_fx(x, rng):
     return dsp.varispeed(y, 1.0 + wob, n_out=n)
 
 
+def _vinyl_fx(x, rng):
+    """a worn record: a slow wow, both ends of the spectrum rolled off, a little warmth"""
+    n = x.shape[-1]
+    wow = 0.0012 * np.sin(2 * np.pi * 0.5 * np.arange(n) / SR) + 0.0004 * dsp.ctrl_noise(n, rng, 5.0)
+    y = dsp.lowpass(dsp.highpass(dsp.varispeed(x, 1.0 + wow, n_out=n), 60, 2), 9000, 2)
+    return dsp.saturate(y * 1.4, 0.2) / 1.4
+
+
+def _creepy_fx(x, rng):
+    """a warped old mechanism: a slow, uneven sag of the pitch and a darker top"""
+    n = x.shape[-1]
+    wob = 0.004 * np.sin(2 * np.pi * 0.23 * np.arange(n) / SR + 1.0) + 0.0015 * dsp.ctrl_noise(n, rng, 0.8)
+    return dsp.lowpass(dsp.varispeed(x, 1.0 + wob, n_out=n), 7000, 2)
+
+
 def render_cue(plan, seed=0):
     """render one planned cue -> ({stem: (2, m)}, start_sample) with fades and reverb applied"""
     events = Arranger(plan, seed).build()
@@ -1913,10 +2383,21 @@ def render_cue(plan, seed=0):
             x = _memory_fx(x, rng)
         elif fx == "underwater":
             x = _underwater_fx(x, rng)
+        elif fx == "vinyl":
+            x = _vinyl_fx(x, rng)
+        elif fx == "creepy":
+            x = _creepy_fx(x, rng)
         w = wet * (0.6 if s == "bass" else (0.85 if s == "percussion" else 1.0))
         if w > 0:
             x = x + w * dsp.convolve_reverb(x, preset)
         stems[s] = x
+    if fx == "vinyl":
+        level = dsp.rms(sum(stems.values()))
+        crackle = np.vstack([dsp.crackle(n, rng, 7.0, 0.5, (0.0002, 0.0015), hp=1500.0) for _ in range(2)])
+        crackle = dsp.soft_limit(crackle, 4.0 * dsp.rms(crackle) + 1e-12)
+        hiss = dsp.bandpass(rng.standard_normal((2, n)), 2000, 9000, 2)
+        stems["fx"] = stems["fx"] + level * (crackle * dsp.db2lin(-30.0) / (dsp.rms(crackle) + 1e-12) +
+                                             hiss * dsp.db2lin(-44.0) / (dsp.rms(hiss) + 1e-12))
     # cue envelope: fade in, and the ending
     env = np.ones(n)
     fi = float(plan.cue.get("fade_in", 0.0) or 0.0)
@@ -1965,7 +2446,8 @@ def summary(plans):
         rows.append({"start": p.start, "end": p.end, "style": p.style_name, "theme": p.theme_name,
                      "key": f"{T.PC_NAME[p.key.tonic]} {p.key.mode}", "tempo": round(p.tempo, 2), "bars": len(p.bars),
                      "statements": p.statements, "end_with": p.end_with,
-                     "downbeats": [round(float(p.time(i * p.beats)), 3) for i in range(len(p.bars))]})
+                     "downbeats": [round(float(p.time(i * p.beats)), 3) for i in range(len(p.bars))],
+                     "chords": [" ".join(T.chord_name(c.transpose(b.shift)) for _, _, c in b.chords) for b in p.bars]})
     return rows
 
 

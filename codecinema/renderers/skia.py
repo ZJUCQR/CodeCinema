@@ -1,10 +1,17 @@
-"""Skia artwork and common title compositing, owned by the framework."""
+"""Skia artwork and common title compositing, owned by the framework.
+
+Caption fonts: [fonts] title and subtitle (a family from `codecinema library fonts`, a font file, or a list) with
+per-run fallback for characters they lack; when unset, one system typeface that covers every caption (as before),
+else the system fonts with per-run fallback. Han-only captions follow the story's "language".
+"""
 
 from functools import lru_cache
 import math
 import os
 import numpy as np
 import skia
+from codecinema import typography
+from codecinema.typography import scripts as writing, shaping
 from codecinema.workspace import settings
 from codecinema.renderers.palettes import PALETTES
 
@@ -27,10 +34,10 @@ def glow(canvas, x, y, radius, hex_value, alpha):
     canvas.drawCircle(x, y, radius, skia.Paint(Shader=shader, AntiAlias=True))
 
 
-def find_typeface(text):
-    chars = "".join(sorted(set(text) - set("\n\r\t")))
+def _typefaces():
+    """The [fonts] ui typeface when set, else the system fonts tried for captions, best first."""
     explicit = settings.get("fonts", "ui", "")
-    paths = [os.path.expanduser(explicit)] if explicit else [settings.font("ui"), settings.font("song")]
+    paths = [settings.font("ui")] if explicit else [settings.font("ui"), settings.font("song")]
     candidates = [skia.Typeface.MakeFromFile(p) for p in paths if p and os.path.isfile(p)]
     if explicit and not candidates:
         raise ValueError("fonts.ui does not point to a readable font file")
@@ -47,13 +54,92 @@ def find_typeface(text):
             "WenQuanYi Zen Hei",
         ):
             candidates.append(manager.matchFamilyStyle(family, skia.FontStyle()))
-    for face in candidates:
-        if face and all(skia.Font(face, 20).textToGlyphs(chars)):
-            return face
-    raise ValueError(
-        "The title or captions contain unsupported characters. Install a suitable font "
-        "(e.g. Noto Sans CJK for Chinese) or set [fonts] ui in film.local.toml."
-    )
+    return candidates
+
+
+def _covering(text, candidates):
+    chars = "".join(sorted(set(text) - set("\n\r\t")))
+    return next((face for face in candidates if face and all(skia.Font(face, 20).textToGlyphs(chars))), None)
+
+
+def find_typeface(text):
+    face = _covering(text, _typefaces())
+    if face is None:
+        raise ValueError(
+            "The title or captions contain unsupported characters. Install a suitable font "
+            "(e.g. Noto Sans CJK for Chinese) or set [fonts] ui in film.local.toml."
+        )
+    return face
+
+
+class Letters:
+    """The fonts of one caption field: a single typeface (as before), or typography faces with per-run fallback."""
+
+    def __init__(self, typeface=None, faces=()):
+        self.typeface, self.faces = typeface, list(faces)
+
+    def _font(self, face, size):
+        return skia.Font(shaping.typeface(face) if face is not None else self.typeface, size)
+
+    def _shaped(self, text, runs):
+        return writing.complex_text(text) and shaping.available() and all(face is not None for _, face in runs)
+
+    def measure(self, text, size):
+        if self.typeface is not None:
+            return skia.Font(self.typeface, size).measureText(text)
+        runs = typography.runs(text, self.faces)
+        if self._shaped(text, runs):
+            return shaping.line(tuple(runs), size)[1]
+        return sum(self._font(face, size).measureText(segment) for segment, face in runs)
+
+    def line(self, text, size):
+        """([(TextBlob or (Picture, baseline), x offset)], width) for one line of text."""
+        if self.typeface is not None:
+            font = skia.Font(self.typeface, size)
+            return [(skia.TextBlob.MakeFromText(text, font), 0.0)], font.measureText(text)
+        runs = typography.runs(text, self.faces)
+        if self._shaped(text, runs):
+            picture, width, baseline, _ = shaping.line(tuple(runs), size)
+            return [((picture, baseline), 0.0)], width
+        pieces, x = [], 0.0
+        for segment, face in runs:
+            font = self._font(face, size)
+            blob = skia.TextBlob.MakeFromText(segment, font)
+            if blob is not None:
+                pieces.append((blob, x))
+            x += font.measureText(segment)
+        return pieces, x
+
+
+def draw_line(canvas, pieces, x, y, hex_value, alpha):
+    """Draw one laid-out line with its baseline at y."""
+    for item, dx in pieces:
+        if isinstance(item, tuple):
+            picture, baseline = item
+            tint = skia.ColorFilters.Blend(color(hex_value, alpha).toColor(), skia.BlendMode.kSrcIn)
+            canvas.drawPicture(picture, skia.Matrix.Translate(x + dx, y - baseline), skia.Paint(ColorFilter=tint))
+        else:
+            canvas.drawTextBlob(item, x + dx, y, paint(hex_value, alpha))
+
+
+def caption_fonts():
+    """The configured [fonts] title and subtitle (subtitle defaults to title)."""
+    title = settings.get("fonts", "title", "")
+    return {"title": title, "subtitle": settings.get("fonts", "subtitle", "") or title}
+
+
+def letters_for(titles, subtitles, lang=None):
+    """Fonts for scene titles and subtitles; see the module docstring."""
+    chosen = caption_fonts()
+    if not any(chosen.values()):
+        candidates = _typefaces()
+        face = _covering(titles + subtitles, candidates)
+        if face is not None:
+            return {"title": Letters(face), "subtitle": Letters(face)}
+    system = [path for path in (settings.font("ui"), settings.font("song")) if path]
+    return {field: Letters(faces=typography.stack(chosen[field] or system, role="title" if chosen[field] else "ui",
+                                                  text=text, lang=lang))
+            for field, text in (("title", titles), ("subtitle", subtitles))}
 
 
 class Renderer:
@@ -64,14 +150,21 @@ class Renderer:
     def __init__(self):
         self.context = None
 
+    def validate(self, context):
+        problems = typography.check([name for name in caption_fonts().values() if name])
+        if problems:
+            raise ValueError("[fonts] " + "\n".join(problems))
+
     def prepare(self, context):
         if self.context is context:
             return
         self.context = context
         self.text_lines.cache_clear()
-        self.face = find_typeface(
-            context.title + "".join(s[0].get("title", "") + s[0].get("subtitle", "") for s in context.scenes)
-        )
+        story = context.story
+        lang = story.get("language") or next(
+            (s.get("narration", {}).get("language") for s in story.get("scenes", []) if s.get("narration")), None)
+        self.letters = letters_for(context.title + "".join(s[0].get("title", "") for s in context.scenes),
+                                   "".join(s[0].get("subtitle", "") for s in context.scenes), lang)
         self.stars = np.random.default_rng(context.story.get("seed", 7)).random((90, 3))
         self.layer = skia.Surface(context.width, context.height)
 
@@ -299,15 +392,15 @@ class Renderer:
         canvas.drawRect(skia.Rect.MakeWH(self.context.width, self.context.height), skia.Paint(Shader=vignette))
 
     @lru_cache(maxsize=256)
-    def text_lines(self, text, initial_size, max_lines):
+    def text_lines(self, field, text, initial_size, max_lines):
+        letters = self.letters[field]
         size = initial_size
         while size >= 6:
-            font = skia.Font(self.face, size)
             lines = []
             for paragraph in text.splitlines():
                 line = ""
                 for char in paragraph:
-                    if line and font.measureText(line + char) > self.context.width * 0.82:
+                    if line and letters.measure(line + char, size) > self.context.width * 0.82:
                         split = line.rfind(" ")
                         if split > len(line) // 2:
                             lines.append(line[:split].strip())
@@ -320,7 +413,7 @@ class Renderer:
                 if line:
                     lines.append(line.strip())
             if len(lines) <= max_lines:
-                return [(skia.TextBlob.MakeFromText(s, font), font.measureText(s)) for s in lines], size
+                return [letters.line(s, size) for s in lines], size
             size *= 0.9
         raise ValueError("A title or caption is too long to fit; shorten it in scenes.json")
 
@@ -345,12 +438,10 @@ class Renderer:
             value = spec.get(field, "")
             if not value:
                 continue
-            lines, actual = self.text_lines(value, size, limit)
-            for blob, width in lines:
-                canvas.drawTextBlob(
-                    blob, (self.context.width - width) / 2, y + actual * 0.035, paint("#0a1521", alpha * 0.65)
-                )
-                canvas.drawTextBlob(blob, (self.context.width - width) / 2, y, paint(hue, alpha))
+            lines, actual = self.text_lines(field, value, size, limit)
+            for pieces, width in lines:
+                draw_line(canvas, pieces, (self.context.width - width) / 2, y + actual * 0.035, "#0a1521", alpha * 0.65)
+                draw_line(canvas, pieces, (self.context.width - width) / 2, y, hue, alpha)
                 y += actual * 1.28
             y += self.context.height * 0.025
 

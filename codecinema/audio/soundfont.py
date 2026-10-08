@@ -2,10 +2,9 @@
 codecinema.audio.soundfont -- a pure-numpy SoundFont 2 (SF2) reader and sampler.
 
     bank = load(path)                              # parse once (cached per path)
-    bank.presets()                                 # [(bank, program, name), ...]
     bank.render_note(bank_no, program, key, velocity, duration_s, release_s=None) -> (2, n) float64 at dsp.SR
     default()                                      # the configured bank (setting audio.soundbank) or None
-    render_note(bank_no, program, key, velocity, duration_s, release_s=None)    # with default()
+    use("auto" | "off" | path)                     # override the setting for this process
 
 The reader parses RIFF/INFO, sdta (smpl + optional sm24) and every pdta list (phdr pbag pmod pgen inst ibag
 imod igen shdr), including global preset and instrument zones; preset generators add to instrument generators.
@@ -156,18 +155,12 @@ def _cstr(raw):
 
 
 class Zone:
-    __slots__ = ("gens", "keys", "mods", "vels")
+    """one preset or instrument zone: its generators and modulators"""
+    __slots__ = ("gens", "mods")
 
     def __init__(self, gens, mods):
         self.gens = gens
         self.mods = mods
-        lo_hi = gens.get(KEY_RANGE)
-        self.keys = lo_hi if lo_hi is not None else (0, 127)
-        lo_hi = gens.get(VEL_RANGE)
-        self.vels = lo_hi if lo_hi is not None else (0, 127)
-
-    def matches(self, key, vel):
-        return self.keys[0] <= key <= self.keys[1] and self.vels[0] <= vel <= self.vels[1]
 
 
 def _zones(bags, gens, mods, first, last, terminal):
@@ -266,19 +259,8 @@ class SoundFont:
             self._presets.setdefault(key, (_cstr(ph[p]["name"]), g, z))
         self._cache = OrderedDict()
         self._cached = 0
-        self._loudness = {}
 
     # -------------------------------------------------------------------------------------- lookup
-    def presets(self):
-        return sorted((b, p, v[0]) for (b, p), v in self._presets.items())
-
-    def preset_name(self, bank, program):
-        key = self._resolve(bank, program)
-        return self._presets[key][0] if key else None
-
-    def has_preset(self, bank, program):
-        return (int(bank), int(program)) in self._presets
-
     def _resolve(self, bank, program):
         bank, program = int(bank), int(program)
         for key in ((bank, program), (128, 0) if bank == 128 else (0, program)):
@@ -567,16 +549,6 @@ class SoundFont:
         at_gate = float(np.interp(gate, t, e)) if len(t) else 0.0
         return np.where(t >= gate, np.maximum(at_gate - (t - gate) / rel, 0.0), e)
 
-    def loudness(self, bank, program, key=60, velocity=100, duration_s=1.0):
-        """RMS (dBFS) of the first `duration_s` of a reference note -- for level matching across presets"""
-        k = (bank, program, key, velocity, duration_s)
-        if k not in self._loudness:
-            y = self.render_note(bank, program, key, velocity, duration_s, release_s=0.05)
-            m = y[:, : dsp.n_of(duration_s)]
-            self._loudness[k] = float(dsp.lin2db(np.sqrt(np.mean(m * m)) + 1e-12))
-        return self._loudness[k]
-
-
 def _trim_tail(y, keep, floor_db=-66.0):
     """drop the inaudible end of a clip (after sample `keep`): cut where the 10 ms envelope stays below the
     clip's peak by `floor_db`"""
@@ -643,15 +615,3 @@ def default():
         bank = load(path)
     _STATE.update(bank=bank, resolved=True)
     return bank
-
-
-def available():
-    return default() is not None
-
-
-def render_note(bank, program, key, velocity, duration_s, release_s=None, **kw):
-    """render_note on the default bank; raises RuntimeError when sampling is off or unavailable"""
-    sf = default()
-    if sf is None:
-        raise RuntimeError("No SoundFont bank is available (audio.soundbank is off or the download failed)")
-    return sf.render_note(bank, program, key, velocity, duration_s, release_s, **kw)

@@ -22,10 +22,11 @@ classifiers = [
 # Python packages for shared production tools and example packs.
 # External tools: FFmpeg for all films, Blender >= 5.2 for the Blender backend and production packs.
 dependencies = ["numpy>=2.0", "scipy>=1.13", "pillow>=10.0", "matplotlib>=3.8", "pyloudnorm>=0.1.1",
-                "skia-python>=87.0", "tomlkit>=0.13"]
+                "skia-python>=87.0", "tomlkit>=0.13", "fonttools>=4.40"]
 
 [project.optional-dependencies]
 speech = ["mlx-audio==0.5.8; sys_platform == 'darwin' and platform_machine == 'arm64'", "pypinyin>=0.55"]
+dev = ["pytest>=8", "ruff>=0.6", "build>=1.2"]
 
 [project.scripts]
 codecinema = "codecinema.cli:main"
@@ -44,6 +45,10 @@ sdist = "codecinema.runtime.build.Sdist"
 
 [tool.setuptools.exclude-package-data]
 codecinema = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
 
 [tool.ruff]
 line-length = 120

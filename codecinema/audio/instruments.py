@@ -7,7 +7,8 @@ codecinema.audio.instruments -- one catalog of named instruments with a uniform 
         velocity   0..1 (values above 1 are read as MIDI 1..127)
         articulation  normal | staccato | staccatissimo | tenuto | legato | accent | marcato | swell | fp | sfz |
                    dim | scoop | fall | bend_up | trill | vibrato | slide, plus per-instrument ones (pizz, trem,
-                   spiccato, mute, harmonic, gliss, gliss_down, press, grace, roll, choke, muted, rim, edge, flam)
+                   spiccato, mute, harmonic, gliss, gliss_down, press, grace, roll, choke, muted, rim, edge, flam,
+                   slap, low, duty12, duty50, kick, hat)
         opts       bend (cents: scalar, array at dsp.SR or [(t, cents), ...]), vibrato (depth_cents, rate_hz, delay_s),
                    slide_from (MIDI pitch to glide from) + slide_time, scale (semitone offsets for glissandi),
                    source ('sampled' | 'synth' to force one)
@@ -15,9 +16,10 @@ codecinema.audio.instruments -- one catalog of named instruments with a uniform 
     names(family=None), source(name), get(name)
 
 A named instrument plays its General MIDI program from the sound bank (soundfont.default()) when one is available,
-otherwise its synthesized model (codecinema.audio.synth / percussion).  The Chinese plucked and blown instruments are
-always synthesized.  Every source is loudness-matched once (short-term RMS of a reference note), so velocity 0.8
-sounds equally loud on every instrument; the velocity law is amplitude ~ velocity^2 for both sources.
+otherwise its synthesized model (codecinema.audio.synth / percussion).  The Chinese plucked and blown instruments, the
+8-bit voices, the theremin, the bodhran and the taiko are always synthesized.  Every source is loudness-matched once
+(short-term RMS of a reference note), so velocity 0.8 sounds equally loud on every instrument; the velocity law is
+amplitude ~ velocity^2 for both sources.
 Synthesized notes are rendered once per pitch / velocity layer and then shaped (damper, release, crossfade loop),
 which makes long scores fast; notes with bends are rendered individually.
 """
@@ -57,6 +59,7 @@ class Instrument:
     scoop: float = 0.0            # sampled path: cents scoop into every note
     trim_db: float = 0.0          # balance trim after loudness matching
     ref: int = None               # reference pitch for loudness matching
+    keys: tuple = ()              # sampled drums: ((articulation, GM key), ...) for strokes on other keys
 
     @property
     def pitched(self):
@@ -159,6 +162,36 @@ def _sleigh(m, g, v, r, a, c):
     return perc.sleigh_bells(v, r, dur=max(0.2, min(g, 2.0)))
 
 
+def _organ(kind):
+    return lambda m, g, v, r, a, c: synth.organ(kind, m, g, v, r, cents=c)
+
+
+def _fiddle(m, g, v, r, a, c):
+    mode = {"trem": "tremolo", "spiccato": "spiccato", "swell": "swell", "sfz": "sfz", "fp": "sfz"}.get(a, "sustain")
+    return synth.fiddle(m, g, v, r, cents=c, mode=mode)
+
+
+def _chip(kind):
+    return lambda m, g, v, r, a, c: synth.chip(kind, m, g, v, r, cents=c,
+                                               duty={"duty12": 0.125, "duty50": 0.5}.get(a, 0.25))
+
+
+def _chip_noise(m, g, v, r, a, c):
+    return perc.chip_noise(v, r, kind=a if a in ("kick", "hat") else "snare")
+
+
+def _bodhran(m, g, v, r, a, c):
+    return perc.bodhran(v, r, stroke=a if a in ("muted", "rim") else "open")
+
+
+def _conga(m, g, v, r, a, c):
+    return perc.conga(v, r, stroke=a if a in ("muted", "slap") else "open")
+
+
+def _bongo(m, g, v, r, a, c):
+    return perc.bongo(v, r, high=(a != "low"))
+
+
 # ------------------------------------------------------------------------------------------------ the catalog
 _STRINGS_ARTS = ("pizz", "trem", "spiccato")
 _GLISS = ("gliss", "gliss_down")
@@ -179,6 +212,15 @@ _LIST = [
     Instrument("steel_drums", "mallets", "steel pan", _m("steel_drums"), (0, 114), 55, 88, "decay", 0.3),
     Instrument("church_bells", "mallets", "church bells", lambda m, g, v, r, a, c: synth.bells(m, g, v, r), (8, 14),
                48, 84, "decay", 1.5),
+    Instrument("harpsichord", "keys", "harpsichord: two quill-plucked choirs, bright and nasal",
+               lambda m, g, v, r, a, c: synth.harpsichord(m, g, v, r, cents=c), (0, 6), 29, 89, "decay", 0.12, ref=64),
+    Instrument("electric_piano", "keys", "tine electric piano: a bell-like attack, a warm long tone, gentle tremolo",
+               lambda m, g, v, r, a, c: synth.electric_piano(m, g, v, r, cents=c), (0, 4), 28, 103, "decay", 0.15,
+               ref=62),
+    Instrument("church_organ", "keys", "pipe organ: a principal chorus up to a mixture, with chiff and wind",
+               _organ("church"), (0, 19), 24, 96, "sustain", 0.25, ref=60),
+    Instrument("drawbar_organ", "keys", "tonewheel organ: drawbars 8886, key click, percussion, a slow rotary speaker",
+               _organ("drawbar"), (0, 16), 36, 96, "sustain", 0.03, ref=60),
     # plucked
     Instrument("harp", "plucked", "orchestral harp", _p("harp"), (0, 46), 24, 103, "decay", 0.6, ("harmonic",) + _GLISS),
     Instrument("nylon_guitar", "plucked", "classical (nylon) guitar", _p("nylon_guitar"), (0, 24), 40, 84, "decay", 0.2,
@@ -193,6 +235,12 @@ _LIST = [
                ref=40, trim_db=1.5),
     Instrument("fingered_bass", "plucked", "electric bass, fingered", _p("fingered_bass"), (0, 33), 28, 64, "decay",
                0.12, ref=40, trim_db=1.0),
+    Instrument("clean_guitar", "plucked", "electric guitar, clean: a bright pickup tone with a long sustain",
+               lambda m, g, v, r, a, c: synth.plucked("electric_guitar", m, g, v, r, cents=c, let_ring=True), (0, 27),
+               40, 88, "decay", 0.15, ref=59),
+    Instrument("overdriven_guitar", "plucked", "electric guitar through an overdriven amp: warm, singing distortion",
+               lambda m, g, v, r, a, c: synth.overdriven_guitar(m, g, v, r, cents=c), (0, 29), 40, 88, "decay", 0.15,
+               ref=55, trim_db=-2.0),
     # bowed strings
     Instrument("violin", "strings", "solo violin", _bow(1), (0, 40), 55, 100, "sustain", 0.3, _STRINGS_ARTS),
     Instrument("viola", "strings", "solo viola", _bow(1), (0, 41), 48, 88, "sustain", 0.3, _STRINGS_ARTS),
@@ -209,6 +257,8 @@ _LIST = [
                "sustain", 0.4),
     Instrument("pizzicato_strings", "strings", "string ensemble, pizzicato",
                lambda m, g, v, r, a, c: synth.pizz_section(m, g, v, r, cents=c), (0, 45), 28, 96, "decay", 0.2),
+    Instrument("fiddle", "strings", "folk fiddle: brighter and drier than the concert violin", _fiddle, (0, 110), 55,
+               96, "sustain", 0.2, _STRINGS_ARTS),
     # woodwinds
     Instrument("flute", "woodwinds", "concert flute", _w("flute"), (0, 73), 60, 96, "sustain", 0.1),
     Instrument("piccolo", "woodwinds", "piccolo", _w("piccolo"), (0, 72), 74, 108, "sustain", 0.08, trim_db=-2.0),
@@ -224,6 +274,12 @@ _LIST = [
     Instrument("harmonica", "woodwinds", "diatonic harmonica", _w("harmonica"), (0, 22), 60, 96, "sustain", 0.08),
     Instrument("accordion", "woodwinds", "accordion (musette)",
                lambda m, g, v, r, a, c: synth.accordion(m, g, v, r, cents=c), (8, 21), 48, 89, "sustain", 0.1),
+    Instrument("alto_sax", "woodwinds", "alto saxophone: warm and singing, with a breathy edge", _w("alto_sax"),
+               (0, 65), 49, 81, "sustain", 0.08, ref=65),
+    Instrument("tenor_sax", "woodwinds", "tenor saxophone: husky and round", _w("tenor_sax"), (0, 66), 44, 76, "sustain",
+               0.09, ref=58),
+    Instrument("bagpipe", "woodwinds", "highland bagpipe chanter: bright, nasal and unbroken", _w("bagpipe"), (0, 109),
+               67, 81, "sustain", 0.05, trim_db=-2.0),
     # brass
     Instrument("french_horn", "brass", "french horns", _b("french_horn"), (0, 60), 34, 77, "sustain", 0.2, ref=58),
     Instrument("trumpet", "brass", "trumpet", _b("trumpet"), (0, 56), 54, 86, "sustain", 0.1, ("mute",)),
@@ -241,6 +297,22 @@ _LIST = [
                "sustain", 0.6),
     Instrument("warm_pad", "pads", "warm analogue pad", lambda m, g, v, r, a, c: synth.pad(m, g, v, r, cents=c), (0, 89),
                36, 96, "sustain", 1.2),
+    # synthesizers and 8-bit voices
+    Instrument("synth_lead", "synth", "square-wave synth lead: a filter that opens on each note, a late vibrato",
+               lambda m, g, v, r, a, c: synth.synth_lead(m, g, v, r, cents=c), (0, 80), 48, 96, "sustain", 0.08,
+               trim_db=-2.0),
+    Instrument("synth_bass", "synth", "analogue synth bass: a saw and a sub-octave square, a snappy resonant filter",
+               lambda m, g, v, r, a, c: synth.synth_bass(m, g, v, r, cents=c), (0, 38), 24, 60, "sustain", 0.05,
+               ref=40),
+    Instrument("chip_square", "synth", "8-bit pulse voice, 25 % duty (articulations duty12, duty50)", _chip("square"),
+               None, 36, 96, "sustain", 0.02, ("duty12", "duty50"), sampled=False, trim_db=-3.0),
+    Instrument("chip_triangle", "synth", "8-bit triangle voice: the console's stepped bass", _chip("triangle"), None,
+               24, 72, "sustain", 0.01, sampled=False, ref=40),
+    Instrument("chip_noise", "synth", "8-bit noise drum (articulations kick, hat; default snare)", _chip_noise, None,
+               kind="drum", arts=("kick", "hat"), sampled=False, trim_db=-3.0),
+    Instrument("theremin", "synth", "theremin: an eerie gliding voice with a wide vibrato",
+               lambda m, g, v, r, a, c: synth.theremin(m, g, v, r, cents=c), None, 48, 96, "sustain", 0.15,
+               sampled=False),
     # Chinese instruments
     Instrument("pipa", "chinese", "pipa: plucked lute (articulations: trem = lunzhi tremolo)", _pipa, None, 45, 93,
                "decay", 0.25, ("trem",), sampled=False),
@@ -295,6 +367,12 @@ _LIST = [
     Instrument("triangle", "drums", "triangle (articulation muted)", _drum(perc.triangle), (128, 0, 81), kind="drum",
                arts=("muted", "roll"), trim_db=-6.0),
     Instrument("castanets", "drums", "castanets", _drum(perc.castanets), (128, 0, 85), kind="drum", trim_db=-3.0),
+    Instrument("claves", "drums", "claves: two hardwood sticks", _drum(perc.claves), (128, 0, 75), kind="drum",
+               trim_db=-4.0),
+    Instrument("conga", "drums", "conga, high drum (articulations muted, slap)", _conga, (128, 0, 63), kind="drum",
+               arts=("muted", "slap"), keys=(("muted", 62), ("slap", 62))),
+    Instrument("bongo", "drums", "bongos, high (articulation low)", _bongo, (128, 0, 60), kind="drum", arts=("low",),
+               keys=(("low", 61),), trim_db=-2.0),
     # orchestral percussion
     Instrument("timpani", "percussion", "timpani (pitched; articulation roll)", _timpani, (0, 47), 38, 57, "drum",
                arts=("roll",), ref=45),
@@ -308,6 +386,8 @@ _LIST = [
                trim_db=-4.0),
     Instrument("taiko", "percussion", "taiko drum (articulation rim)", _taiko, None, kind="drum", arts=("rim", "roll"),
                sampled=False),
+    Instrument("bodhran", "percussion", "bodhran frame drum struck with a tipper (articulations muted, rim)", _bodhran,
+               None, kind="drum", arts=("muted", "rim"), sampled=False),
     # Chinese percussion
     Instrument("daluo", "chinese_percussion", "big gong: pitch falls after the strike", _hit(perc.daluo), None,
                kind="drum", sampled=False, trim_db=-2.0),
@@ -534,11 +614,12 @@ def _synth_raw(inst, midi, gate, vel, art, seed, cents):
         return y
     layer = min(LAYERS if inst.kind == "decay" else LAYERS_SUSTAIN, key=lambda v: abs(v - vel))
     rr = int(seed) % (2 if inst.kind == "decay" else 1)
-    key = (inst.name, round(float(midi), 2), layer, rr)
+    own = art if art in inst.arts else "normal"
+    key = (inst.name, round(float(midi), 2), layer, rr) + ((own,) if own != "normal" else ())
     y = _cache_get(key)
     if y is None:
         long_gate = 60.0 if inst.kind == "decay" else LONG_SUSTAIN
-        y = inst.synth(midi, long_gate, layer, dsp.rng(inst.name, key), "normal", None)
+        y = inst.synth(midi, long_gate, layer, dsp.rng(inst.name, key), own, None)
         y = _cache_put(key, _norm_layer(dsp.as_stereo(y) if y.ndim == 2 else dsp.pan_mono(y, 0.0), layer))
     if inst.kind == "decay":
         out = _shape_decay(y, gate, inst.release if art not in ("staccato", "staccatissimo") else min(inst.release, 0.12))
@@ -550,7 +631,7 @@ def _synth_raw(inst, midi, gate, vel, art, seed, cents):
 def _sampled_raw(inst, sf, midi, gate, vel, art, seed, cents, opts):
     if inst.kind == "drum" and len(inst.gm) > 2:
         bank, prog, key = inst.gm
-        y = sf.render_note(bank, prog, key, _midi_vel(vel), max(gate, 0.3))
+        y = sf.render_note(bank, prog, dict(inst.keys).get(art, key), _midi_vel(vel), max(gate, 0.3))
         return y
     bank, prog = inst.gm[:2]
     if art == "pizz" and inst.family == "strings":

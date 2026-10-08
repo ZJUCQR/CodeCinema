@@ -66,9 +66,10 @@
     </div>
     <div class="hls">
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>选场景、改内容、点击出片</h3><p>本地 Studio 提供八种动态场景，支持标题、字幕、颜色、时长、横竖屏和逐镜头定制。选好模板，点击生成，即可得到带原创配乐的 MP4。</p></div></div>
+      <div class="hl feature reveal"><div class="ic">🎭</div><div><h3>用剧本做动画短片</h3><p>从 24 个角色中挑选演员，选择场景、时段和景别，再写下走路、挥手、说话、注视等动作节拍。CodeCinema 在 Blender 中完成动画、构图、配音、配乐与混音：<a href="#pebble">《小企鹅飞起来》</a>和<a href="#nian">《年》</a>都只是一份剧本。</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>选择适合故事的渲染器</h3><p>在 Studio 中选择 Skia 2D、Blender 3D 或已安装的插件。剧情放在 films/，素材统一放在 assets/，框架处理画面、声音与合成。</p></div></div>
-      <div class="hl reveal"><div class="ic">🎼</div><div><h3>共享的声音工具包</h3><p>影片共用框架的 DSP 库：振荡器、拨弦和模态物理模型、卷积混响、真峰值限制器和响度工具。</p></div></div>
-      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>按情绪设计配音</h3><p>使用对白录音，或在 Apple Silicon 上本地生成带表演指令的配音。分镜时长、配音与音乐共用时间轴，方便调整节奏。</p></div></div>
+      <div class="hl reveal"><div class="ic">🎼</div><div><h3>真正的声音库</h3><p>113 种乐器，从采样管弦乐团到中国、日本乐器与 8-bit 音色，27 种音乐风格、163 种音效、30 种环境声和 20 种卡通嗓音，对白时音乐自动避让，并按响度目标混音。</p></div></div>
+      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>各平台都能配音</h3><p>录音、Apple Silicon 上的本地情绪语音、macOS、Windows 与 Linux 的系统语音，或无需安装的卡通嗓音。配音可随影片保存，在任何电脑上声音都一样。</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>可复现，可配置</h3><p>在 Studio 中重新打开影片，或通过命令行重跑单个制作步骤。可用本地设置覆盖默认参数。各制作包提供适合自身渲染方式的缓存与并行策略。</p></div></div>
     </div>
   </div>
@@ -100,6 +101,7 @@ codecinema studio                    <span class="c"># 自动打开本地可视�
         <tr><td><code>codecinema run &lt;影片&gt; &lt;步骤&gt; [参数]</code></td><td>用影片自己的设置运行它的一个步骤</td></tr>
         <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>创建影片剧情，并配置独立的素材目录</td></tr>
         <tr><td><code>codecinema renderers</code></td><td>列出内置与已安装的渲染器</td></tr>
+        <tr><td><code>codecinema library [kind]</code></td><td>浏览角色、场景、动作、表情、音效、乐器、音乐风格与字体</td></tr>
         <tr><td><code>codecinema check</code></td><td>检查工具链和 Python 依赖</td></tr>
       </tbody>
     </table></div>
@@ -118,6 +120,7 @@ codecinema studio                    <span class="c"># 自动打开本地可视�
       <div class="term-bar"><i></i><i></i><i></i><span class="t">bash</span><button class="copy" type="button" data-done="已复制">复制</button></div>
 <pre><code>codecinema new myfilm --renderer skia --preset aurora --title "我的影片" --render --open
 codecinema customize myfilm --renderer blender --preset ocean --duration 20 --render
+codecinema new myshort --template cartoon --render  <span class="c"># 用剧本制作 3D 动画短片</span>
 codecinema run myfilm all --quality preview  <span class="c"># 预览另存，保留正式成片</span></code></pre>
     </div>
   </div>
@@ -130,6 +133,34 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
       <h2 id="films-heading">在这里，直接观看</h2>
     </div>
     <div class="film-grid reveal">
+      <article id="pebble" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-pebble" controls preload="metadata" playsinline poster="../img/pebble/poster.jpg" aria-label="小企鹅飞起来" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/pebble/Pebble.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
+            <source src="../films/Pebble.mp4" type="video/mp4">
+            <track kind="subtitles" src="../films/Pebble.zh.vtt" srclang="zh" label="中文" default>
+            <track kind="subtitles" src="../films/Pebble.en.vtt" srclang="en" label="English">
+            <p>你的浏览器不支持内嵌视频。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/pebble/Pebble.mp4">下载 MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <h3>小企鹅飞起来</h3>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+        </div>
+      </article>
+      <article id="nian" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-nian" controls preload="metadata" playsinline poster="../img/nian/poster.jpg" aria-label="年" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nian/Nian.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
+            <source src="../films/Nian.mp4" type="video/mp4">
+            <track kind="subtitles" src="../films/Nian.zh.vtt" srclang="zh" label="中文">
+            <track kind="subtitles" src="../films/Nian.en.vtt" srclang="en" label="English">
+            <p>你的浏览器不支持内嵌视频。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nian/Nian.mp4">下载 MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <h3>年</h3>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+        </div>
+      </article>
       <article id="silvergrass" class="film-card film-feature" data-film>
         <div class="player">
           <video id="film-silvergrass" controls preload="metadata" playsinline poster="../media/poster.jpg" aria-label="《芒原决战》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
@@ -144,7 +175,7 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
       </article>
       <article id="nightrevels" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-nightrevels" controls preload="metadata" playsinline poster="../media/poster_nr.jpg" aria-label="《韩熙载夜宴图 · 猫》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
+          <video id="film-nightrevels" controls preload="metadata" playsinline poster="../img/nightrevels/still_470.jpg" aria-label="《韩熙载夜宴图 · 猫》" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="视频暂时无法加载，请刷新页面后重试。">
             <source src="../films/NightRevels.mp4" type="video/mp4">
             <p>您的浏览器暂不支持视频播放。 <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">下载 MP4</a></p>
           </video>
@@ -177,9 +208,12 @@ codecinema run myfilm all --quality preview  <span class="c"># 预览另存，�
 │   ├── runtime/           <span class="c"># 外部工具与进程支持</span>
 │   ├── studio/            <span class="c"># 本地可视化编辑器</span>
 │   ├── renderers/         <span class="c"># Skia、Blender 与渲染插件接口</span>
-│   ├── audio/             <span class="c"># 配乐、音效、配音与表演时序</span>
+│   ├── cartoon/           <span class="c"># 剧本动画：素材库、动作、摄像机与配音</span>
+│   ├── audio/             <span class="c"># 乐器、作曲、音效、环境声、嗓音与混音</span>
 │   └── productions/       <span class="c"># 示例影片的制作包</span>
 ├── films/                  <span class="c"># 各自独立的影片项目</span>
+│   ├── pebble/             <span class="c"># 《小企鹅飞起来》（动画剧本）</span>
+│   ├── nian/               <span class="c"># 《年》（动画剧本）</span>
 │   ├── silvergrass/        <span class="c"># 《芒原决战》</span>
 │   └── nightrevels/        <span class="c"># 《韩熙载夜宴图 · 猫》</span>
 └── pyproject.toml          <span class="c"># 包依赖与全部影片配置</span></code></pre>

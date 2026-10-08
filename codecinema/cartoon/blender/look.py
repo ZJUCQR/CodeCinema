@@ -483,16 +483,6 @@ def sky_material(name, top, horizon, bottom=None, sun=None, stars=0.0, clouds=0.
     return m
 
 
-def ambient_world(scene, color, strength):
-    world = bpy.data.worlds.new("Ambient")
-    world.use_nodes = True
-    bg = world.node_tree.nodes.get("Background")
-    bg.inputs["Color"].default_value = rgba(color)
-    bg.inputs["Strength"].default_value = strength
-    scene.world = world
-    return world
-
-
 def sun(name, direction_deg, color, strength, angle_deg=1.0, shadow=True):
     """A sun from (azimuth, elevation) in degrees; azimuth 0 shines from -Y (behind the camera's usual side)."""
     data = bpy.data.lights.new(name, "SUN")

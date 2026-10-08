@@ -1,17 +1,17 @@
 # Contributing to CodeCinema
 
-CodeCinema welcomes improvements to templates, Studio, renderer integrations, shared production tools and documentation.
+CodeCinema welcomes improvements to templates, Studio, renderer integrations, shared production tools and documentation. Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md); report security problems privately as described in [SECURITY.md](SECURITY.md).
 
 ## Set up
 
 Follow the [getting-started guide](README.md#quick-start) for Python 3.12+, FFmpeg and the system libraries required on your platform. Run the following commands from the repository root. On Windows, use `.\.venv\Scripts\python.exe` in place of `.venv/bin/python`:
 
 ```bash
-.venv/bin/python -m pip install -e .
+.venv/bin/python -m pip install -e ".[dev]"
 .venv/bin/python -m codecinema studio
 ```
 
-Skia projects do not require Blender. Blender projects require Blender 5.2 or later.
+The `dev` extra adds pytest, Ruff and the package builder. Skia projects do not require Blender. Blender projects require Blender 5.2 or later.
 
 ## Make a change
 
@@ -27,12 +27,13 @@ Generated videos, render caches, recordings and local settings stay outside Git.
 ## Check your work
 
 ```bash
+.venv/bin/python -m pytest
 .venv/bin/python -m compileall -q codecinema
 .venv/bin/python -m codecinema list
 .venv/bin/python -m codecinema new checkfilm --preset aurora --duration 3 --quality preview --render
 ```
 
-For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI checks project creation and imports on macOS, Linux and Windows, and renders a short sample on Linux.
+The tests need neither Blender nor a network connection; set `CODECINEMA_AUDIO_SOUNDBANK=off` to test the synthesized instruments. For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI runs the tests, project creation, imports and the cartoon plans on macOS, Linux and Windows, and renders a short sample on Linux. Notable changes go in [CHANGELOG.md](CHANGELOG.md).
 
 Open a focused pull request explaining the problem, the resulting behavior and the checks you ran. Include a screenshot or short preview when the visual result changes. Report bugs in [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) with your OS, Python and FFmpeg versions, the command or Studio action, and the relevant error message. Remove private paths and credentials from logs.
 
@@ -92,13 +93,17 @@ Screenplay films build everything from small, data-first libraries. Each entry h
 
 | Library | Where | Add an entry |
 | --- | --- | --- |
-| Characters | `codecinema/cartoon/cast.py` (`ARCHETYPES`) | a body plan (`biped`, `penguin`, `bird`), proportions, colors, face, hair, outfit, accessories and voice |
+| Characters | `codecinema/cartoon/cast.py` (`ARCHETYPES`) | a body plan (`biped`, `penguin`, `bird`), proportions, a body `shape` and `head_shape`, colors, face, hair, outfit, accessories, animal parts, voice and a `sheet` pose |
 | Faces and expressions | `codecinema/cartoon/faces.py` | a cell painter for `EYES`, `BROWS` or `MOUTHS`, then an entry in `EXPRESSIONS` |
 | Actions | `codecinema/cartoon/motion.py` | an `act_<name>(tau, dur, params, track)` returning a partial pose, plus a line in `NOTES` |
 | Sets, times and props | `codecinema/cartoon/sets.py` and `codecinema/cartoon/blender/sets.py`, `props.py` | data in `SETS`, `TIMES` or `PROPS`, then a `_build_<kind>` method in Blender |
 | Sounds and music | `codecinema/audio/` | an effect in `sfx.py`, a bed in `ambience.py`, an instrument in `instruments.py` or a style in `composer.py` |
 
-Keep ground shapes in `sets.ground_height`, the one function shared by the set builder, the motion planner and the camera, so feet stay on the terrain. Actions receive the character's proportions through `track.m`; express hand targets relative to arm length so they work for every body. A new body plan needs a builder and a pose method in `blender/cast.py` and proportions in `cast.metrics`.
+Keep ground shapes in `sets.ground_height`, the one function shared by the set builder, the motion planner and the camera, so feet stay on the terrain. Actions receive the character's proportions through `track.m`; express hand targets relative to arm length so they work for every body, and keep the elbows bent rather than reaching full length. A new body plan needs a builder and a pose method in `blender/cast.py` and proportions in `cast.metrics`.
+
+Characters are assembled from shared parts, so a new one is usually data. Body shapes (`SHAPES`: egg, pear, barrel, slim, broad, round) reshape the torso and shoulders, `HAIR_STYLES` and `HATS` dress the head, `ACCESSORIES` add glasses, a scarf, earmuffs, a ribbon, a hat, a moustache, a bow tie or a backpack, and `animal` entries pick ears, snouts and tails (cat, fox, rabbit, dog, bear, mouse, pig, nian). The `sheet` entry poses the character for `codecinema library --sheet`.
+
+An action only describes the pose it aims for. The motion layer does the rest: springy entry and exit with a little overshoot (`DAMPING`), a wind-up for actions in `WIND_UP`, minimum transition times for big changes of posture (`MIN_FADE`), arcs for the hands, follow-through on heads, ears, tails, flippers and scarves, squash and stretch, weight shifts, eye movements and gestures while speaking. Keep repeated beats at or below `MAX_BEAT` so they read at 24 fps. `codecinema run <film> plan` warns about moves that are too fast for their gait, and `tests/test_cartoon.py` checks every example film for sudden jumps inside shots.
 
 ## Authored production packs
 

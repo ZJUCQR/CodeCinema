@@ -18,13 +18,11 @@ import subprocess
 import wave
 
 import numpy as np
-from scipy.signal import resample_poly
 
 from codecinema.workspace import settings
 
 TTS_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-6bit"
 DESIGN_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-VoiceDesign-6bit"
-ALIGN_MODEL = "mlx-community/Qwen3-ForcedAligner-0.6B-8bit"
 
 
 def write_wave(path, samples, rate):
@@ -249,33 +247,3 @@ class SpeechEngine:
         subprocess.run([settings.tool("ffmpeg"), "-v", "error", "-y", "-i", str(source),
                         "-ar", "24000", "-ac", "1", "-c:a", "pcm_s16le", str(temporary)], check=True)
         temporary.replace(target)
-
-
-class ForcedAligner:
-    """Align the *final* waveform, including any editing, to its spoken text."""
-
-    def __init__(self, model=ALIGN_MODEL):
-        self.model_id, self.model = model, None
-
-    def align(self, samples, rate, text, language="Chinese"):
-        import mlx.core as mx
-        from mlx_audio.stt import load
-        if self.model is None:
-            mx.set_memory_limit(6 * 1024**3)
-            mx.set_cache_limit(128 * 1024**2)
-            print(f"Loading dialogue aligner: {self.model_id}", flush=True)
-            self.model = load(self.model_id)
-        audio = resample_poly(samples, 16000, rate).astype(np.float32)
-        result = self.model.generate(audio=audio, text=text, language=language)
-        duration = len(samples) / rate
-        rows = [{"text": item.text, "start": max(0., float(item.start_time)),
-                 "end": min(duration, float(item.end_time))} for item in result]
-        if not rows or any(r["end"] < r["start"] for r in rows):
-            raise ValueError("Forced alignment returned invalid dialogue timestamps")
-        return rows
-
-    def close(self):
-        self.model = None
-        gc.collect()
-        import mlx.core as mx
-        mx.clear_cache()

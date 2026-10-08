@@ -48,7 +48,6 @@ RENDER_LOG_NAME = "render_log.jsonl"              # written next to the frames
 FINAL_MIX_WAV = os.path.join(AUDIO_DIR, "final_mix.wav")
 DEMO_MIX_WAV = os.path.join(AUDIO_DIR, "demo_mix.wav")
 MIX_REPORT_JSON = os.path.join(AUDIO_DIR, "mix_report.json")
-DRAFT_EVENTS_JSON = os.path.join(AUDIO_DIR, "draft_events.json")
 FINAL_QC_JSON = os.path.join(OUT, "final_qc.json")
 FINAL_VIDEO = _settings.path("paths", "final_video")
 FRAME_DIGITS = 5

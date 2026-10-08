@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import shutil
 import subprocess
 from pathlib import Path
 
@@ -224,8 +223,3 @@ class Casting:
         subprocess.run([settings.tool("ffmpeg"), "-v", "error", "-y", "-i", str(wav), "-ar", "24000", "-ac", "1",
                         "-sample_fmt", "s16", "-compression_level", "8", str(target)], check=True)
         self.manifest[line["id"]] = _key(line, voice, self.language)
-
-
-def available_engines():
-    return {"local": speaking.local_available(), "system": speaking.system_backend() is not None, "babble": True,
-            "ffmpeg": bool(shutil.which(settings.tool("ffmpeg")) or Path(settings.tool("ffmpeg")).exists())}

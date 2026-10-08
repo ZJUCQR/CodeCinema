@@ -1,0 +1,2 @@
+# Font licenses are checked byte for byte: keep their line endings as committed.
+assets/_shared/fonts/*.txt -text

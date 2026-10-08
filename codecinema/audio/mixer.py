@@ -69,7 +69,9 @@ FOLEY = {
     "flap": ("wing_flap_small", ("dur",)), "sit": ("sit", ("weight",)),
 }
 _SURF = {"grass": "grass", "sand": "sand", "snow": "snow", "wood": "wood", "stone": "stone", "rock": "stone",
-         "wet_rock": "wet_rock", "ground": "grass", "dirt": "grass", "floor": "wood", "ice": "stone"}
+         "wet_rock": "wet_rock", "ground": "grass", "dirt": "grass", "floor": "wood", "ice": "stone",
+         "carpet": "carpet", "rug": "carpet", "metal": "metal", "grate": "metal", "tile": "tile", "marble": "tile",
+         "gravel": "gravel", "pebbles": "gravel", "leaves": "leaves", "forest": "leaves", "mud": "mud", "puddle": "mud"}
 
 
 # ------------------------------------------------------------------------------------------------ files

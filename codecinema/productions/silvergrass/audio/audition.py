@@ -440,7 +440,7 @@ def main():
     ap.add_argument("--calib", action="store_true", help="only print the SFX level hierarchy table")
     a = ap.parse_args()
     only = set(a.only.split(","))
-    ev = a.events or config.DRAFT_EVENTS_JSON
+    ev = a.events or config.EVENTS_JSON
     doc = tl.load(ev)
     if a.calib:
         rows = sfx_calibration(doc)

@@ -46,7 +46,8 @@ def _sheet(items, path, title, fmax=12000, cols=4):
         if len(m) < 512:
             m = np.pad(m, (0, 512 - len(m)))
         ax.axis("on")
-        ax.specgram(m + 1e-9, NFFT=1024, Fs=dsp.SR, noverlap=768, cmap="magma", vmin=-140, vmax=-25)
+        with np.errstate(divide="ignore"):          # exact digital silence has no level in dB
+            ax.specgram(m + 1e-9, NFFT=1024, Fs=dsp.SR, noverlap=768, cmap="magma", vmin=-140, vmax=-25)
         ax.set_ylim(0, fmax)
         ax.set_title(name, fontsize=8)
         ax.tick_params(labelsize=6)
@@ -84,11 +85,13 @@ def _phrase(name):
 
 def instruments_demo(out):
     from codecinema.audio import instruments
+    from codecinema.audio.theory import pitch_name
     items = []
     for e in instruments.catalog():
         x = _phrase(e["name"])
         _write(out / f"{e['name']}.wav", x)
-        items.append((f"{e['name']} ({e['source'][:5]})", x))
+        span = f" {pitch_name(e['range'][0])}-{pitch_name(e['range'][1])}" if e["range"] else ""
+        items.append((f"{e['name']}{span} ({e['source'][:5]})", x))
     _sheet(items, out / "instruments.png", "instruments")
     return len(items)
 
@@ -96,9 +99,7 @@ def instruments_demo(out):
 def styles_demo(out):
     from codecinema.audio import composer
     items = []
-    for name in sorted(composer.STYLES):
-        if name == "heroic":
-            continue
+    for name in [row["name"] for row in composer.catalog() if not row["alias_of"]]:
         music = {"cues": [{"start": 0.0, "end": 20.0, "style": name, "intensity": 0.7, "seed": 3}]}
         stems = composer.render_score(music, 21.0, seed=3)
         x = sum(stems.values())
@@ -140,7 +141,8 @@ def voices_demo(out):
             items.append((f"{prof} {lang}", x))
     for kind in babble.VOCALIZATIONS:
         prof = {"squawk": "seagull", "chirp": "small_bird", "yip": "fox", "growl_soft": "creature_big",
-                "rumble_happy": "creature_big"}.get(kind, "robot" if kind.startswith("beep") else "girl")
+                "rumble_happy": "creature_big", "snore": "grandpa", "cough": "man", "sneeze": "woman", "whistle": "boy",
+                "hum": "woman", "gulp": "boy"}.get(kind, "robot" if kind.startswith("beep") else "girl")
         x = babble.vocalize(kind, prof, seed=1)
         _write(out / f"vocal_{kind}_{prof}.wav", x)
         items.append((f"{kind} ({prof})", x))
@@ -167,7 +169,9 @@ def main(argv=None):
         count = jobs[cat](out)
         print(f"{cat}: {count} files in {out} ({time.monotonic() - t:.1f}s)", flush=True)
     bank = soundfont.default()
-    print(f"Instruments: {'sampled from ' + bank.path.name if bank else 'synthesized'}", flush=True)
+    print(f"Instruments: {'sampled from ' + bank.path.name if bank else 'synthesized'}"
+          + (f" ({soundfont.BANK_CREDIT})" if bank and bank.path.name == Path(soundfont.BANK_NAME).name else ""),
+          flush=True)
     return 0
 
 

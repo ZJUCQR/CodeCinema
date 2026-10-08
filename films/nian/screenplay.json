@@ -669,7 +669,7 @@
        "t": 0.2,
        "who": "xiaoman",
        "sneak": "yard",
-       "dur": 3.2
+       "dur": 3.9
       },
       {
        "t": 0.0,
@@ -707,8 +707,8 @@
       {
        "t": 0.0,
        "who": "xiaoman",
-       "sneak": "hide",
-       "dur": 1.8
+       "dur": 2.0,
+       "run": "hide"
       },
       {
        "t": 1.9,
@@ -753,9 +753,11 @@
        "t": 0.0,
        "who": "xiaoman",
        "tiptoe": [
-        "corner",
         "lane_west",
-        "gate"
+        [
+         -8.0,
+         -2.35
+        ]
        ],
        "dur": 4.5
       },
@@ -764,7 +766,13 @@
        "who": "xiaoman",
        "face": "determined"
       }
-     ]
+     ],
+     "cast": {
+      "xiaoman": {
+       "at": "corner",
+       "facing": "lane_west"
+      }
+     }
     }
    ]
   },
@@ -791,7 +799,10 @@
    },
    "start": {
     "xiaoman": {
-     "at": "path_in",
+     "at": [
+      -5.4,
+      -1.9
+     ],
      "facing": "meet",
      "face": "worried"
     },
@@ -1484,8 +1495,8 @@
     },
     "nainai": {
      "at": [
-      -9.5,
-      -3.0
+      -5.6,
+      -1.6
      ],
      "facing": "nian",
      "face": "worried"
@@ -1524,17 +1535,10 @@
        "t": 0.0,
        "who": "nainai",
        "walk": [
-        [
-         -6.5,
-         -1.2
-        ],
-        [
-         -1.6,
-         0.4
-        ]
+        -1.6,
+        0.4
        ],
-       "dur": 4.6,
-       "speed": 0.6
+       "dur": 4.6
       },
       {
        "t": 2.0,
@@ -1802,11 +1806,11 @@
          3.4
         ],
         [
-         2.6,
-         6.2
+         2.3,
+         5.0
         ]
        ],
-       "dur": 2.6
+       "dur": 4.4
       },
       {
        "t": 3.0,

@@ -5,15 +5,17 @@ codecinema.audio.babble -- cartoon voices without text-to-speech.
                                                          "text", "f0", "stress"}]}
     render(text, profile="girl", mood="neutral", seed=0) -> mono float64 at dsp.SR, following plan() exactly
     vocalize(kind, profile="girl", seed=0, mood=None) -> mono float64 at dsp.SR
+    catalog() -> [{"name", "kind": profile | vocalization, "description"}]
     PROFILES, MOODS, VOCALIZATIONS
 
 The planner is pure arithmetic on the text (no audio, no optional packages), so lip-sync can be built from it before
 any sound exists: Latin text is split into syllables at vowel groups, every CJK character is one syllable (its
 vowel chosen deterministically), punctuation becomes pauses and intonation (a question rises, an exclamation
 peaks).  Vowels are 'a' 'e' 'i' 'o' 'u'.  Human profiles speak through a glottal source with pitch contour, jitter
-and shimmer, three formant resonators per vowel scaled by vocal-tract size, consonant noise bursts and breath;
-creature profiles turn the same syllables into their calls (gull squawks, cat mews, fox yips, bird chirps, robot
-beeps, the gentle rumbling hums of a big friendly beast).
+and shimmer, three formant resonators per vowel scaled by vocal-tract size, consonant noise bursts and breath
+(optionally vocal fry or a growl); creature profiles turn the same syllables into their calls (gull squawks, cat mews,
+fox yips, puppy woofs and whines, bird chirps, robot beeps, the gentle rumbling hums of a big friendly beast), and the
+alien speaks through a ring modulator.  Vocalizations are always cartoon-sized: never harsh, at the line's level.
 """
 import re
 
@@ -49,6 +51,26 @@ PROFILES = {
     "cat": dict(f0=470, range=7.0, tract=1.5, rate=2.6, breath=0.05, jitter=0.015, tremor=0, nasal=0.15, kind="cat"),
     "small_bird": dict(f0=3200, range=7.0, tract=1.0, rate=7.0, breath=0.0, jitter=0.0, tremor=0, nasal=0.0, kind="bird"),
     "robot": dict(f0=1300, range=12.0, tract=1.0, rate=5.0, breath=0.0, jitter=0.0, tremor=0, nasal=0.0, kind="robot"),
+    "baby": dict(f0=420, range=8.0, tract=1.55, rate=3.2, breath=0.07, jitter=0.02, tremor=0, nasal=0.15, kind="voice"),
+    "teen": dict(f0=225, range=6.5, tract=1.15, rate=5.0, breath=0.05, jitter=0.009, tremor=0, nasal=0.0, kind="voice"),
+    "old_man": dict(f0=92, range=4.0, tract=0.95, rate=3.0, breath=0.16, jitter=0.03, tremor=30, nasal=0.08,
+                    kind="voice", creak=0.35),
+    "mouse": dict(f0=560, range=9.0, tract=1.75, rate=6.4, breath=0.04, jitter=0.012, tremor=0, nasal=0.3,
+                  kind="voice"),
+    "monster": dict(f0=58, range=6.0, tract=0.55, rate=2.6, breath=0.12, jitter=0.02, tremor=12, nasal=0.25,
+                    kind="beast", growl=0.6),
+    "alien": dict(f0=260, range=14.0, tract=1.3, rate=5.5, breath=0.02, jitter=0.0, tremor=0, nasal=0.3, kind="alien"),
+    "puppy": dict(f0=620, range=8.0, tract=1.5, rate=3.0, breath=0.08, jitter=0.02, tremor=0, nasal=0.2, kind="dog"),
+}
+DESCRIPTIONS = {
+    "girl": "a young girl", "boy": "a young boy", "woman": "an adult woman", "man": "an adult man",
+    "grandma": "an old woman, breathy with a tremble", "grandpa": "an old man, breathy with a tremble",
+    "penguin_kid": "a squeaky, nasal little penguin", "creature_big": "a big friendly beast's rumbling hums",
+    "seagull": "gull squawks", "fox": "a fox's yips", "cat": "cat mews", "small_bird": "bird chirps",
+    "robot": "robot beeps", "baby": "a babbling baby", "teen": "a teenager",
+    "old_man": "a gravelly old man (vocal fry)",
+    "mouse": "a tiny, quick, high voice", "monster": "a deep, growling (friendly) monster",
+    "alien": "a wobbly, ring-modulated alien", "puppy": "a puppy: yips, little woofs and whines",
 }
 MOODS = {
     # pitch offset (semitones), range factor, speed factor, loudness, breathiness, final contour, extra tremor (cents)
@@ -64,7 +86,8 @@ MOODS = {
 }
 VOCALIZATIONS = ("laugh", "giggle", "gasp", "sigh", "cry", "sob", "yay", "hmm", "huh", "wow", "oh", "ouch", "yawn",
                  "sniff", "growl_soft", "whimper", "rumble_happy", "squawk", "chirp", "yip", "beep_happy", "beep_sad",
-                 "beep_question")
+                 "beep_question", "scream", "cheer", "snore", "cough", "sneeze", "hiccup", "whistle", "hum", "lala",
+                 "yawn_squeak", "phew", "uh_oh", "aww", "eek", "gulp", "shush")
 
 _PLOSIVE, _FRIC, _NASAL, _LIQUID = set("pbtdkgqc"), set("sfvzhjx"), set("mn"), set("lrwy")
 _PUNCT = {",": 0.2, ";": 0.25, ":": 0.25, ".": 0.38, "!": 0.32, "?": 0.34, "…": 0.55, "-": 0.12, "—": 0.3,
@@ -258,6 +281,11 @@ def _voice(p, md, rows, duration, r, seed):
     if beast:
         sub = np.sin(TWO_PI * dsp.phase_cycles(f * 0.5, n, r.uniform()))
         src = src + 0.35 * sub * (0.6 + 0.4 * np.sin(TWO_PI * 24.0 * t))
+    if p.get("creak"):          # vocal fry: alternate glottal pulses weaker (period doubling)
+        src = src * (1.0 + 0.6 * p["creak"] * np.tanh(3.0 * np.sin(TWO_PI * dsp.phase_cycles(f * 0.5, n, r.uniform()))))
+    if p.get("growl"):          # a rough flutter of the false folds
+        src = src * (1.0 + 0.5 * p["growl"] * np.sin(TWO_PI * dsp.phase_cycles(28.0 + 6.0 * dsp.ctrl_noise(n, r, 1.0),
+                                                                               n)))
     breath = r.standard_normal(n) * p["breath"] * md["breath"] * 3.0
     exc = src + breath
     total_w = sum(dsp.onepole(w[v], 25.0) for v in VOWELS) + 1e-9
@@ -300,6 +328,11 @@ def _creature(p, md, rows, duration, r):
             call = _yip(rr, f0, min(d, 0.22))
         elif kind == "bird":
             call = _chirp(rr, f0, min(d, 0.12))
+        elif kind == "dog":
+            if row["stress"]:
+                call = _woof(rr, f0, min(d, 0.2))
+            else:
+                call = _whine(rr, f0 * 1.3, d * 1.1) if row["semis"] > 3.0 else _yip(rr, f0 * 1.2, min(d, 0.15))
         else:
             call = _beep_seq(rr, f0, d, row["semis"])
         dsp.place(y, call * row["level"], n_of(row["t0"]))
@@ -348,6 +381,72 @@ def _chirp(r, f0, d):
     return y * np.sin(np.pi * np.clip(tt / d, 0, 1)) ** 1.2
 
 
+def _woof(r, f0, d):
+    """a small dog's 'arf': a quick pitch drop through a mouth that opens and closes"""
+    n = n_of(d)
+    tt = t_axis(n)
+    u = tt / d
+    src = _glottal(f0 * (1.15 - 0.35 * u), n, r, 1800.0) + 0.4 * r.standard_normal(n)
+    o = np.sin(np.pi * np.clip(u * 1.1, 0, 1)) ** 0.7
+    y = _vowel_bank(src, "a", 1.5) * o + _vowel_bank(src, "u", 1.5) * (1.0 - o)
+    return y * np.exp(-tt / (d * 0.5)) * np.clip(tt / 0.005, 0, 1)
+
+
+def _whine(r, f0, d):
+    """a soft nasal whine rising and falling"""
+    n = n_of(d)
+    u = t_axis(n) / d
+    src = _glottal(f0 * (1.0 + 0.2 * np.sin(np.pi * u) - 0.1 * u), n, r, 1000.0, soft=0.5)
+    return _vowel_bank(src, "u", 1.5, nasal=0.6) * np.sin(np.pi * np.clip(u, 0, 1)) ** 0.8
+
+
+def _alienize(y, r):
+    """an alien voice: half ring-modulated by a low carrier (a metallic warble), a slowly sweeping comb, a soft top"""
+    n = len(y)
+    t = t_axis(n)
+    y = 0.55 * y + 0.45 * y * np.sin(TWO_PI * 45.0 * t + r.uniform(0, TWO_PI))
+    d = (0.002 + 0.0012 * np.sin(TWO_PI * 0.7 * t)) * dsp.SR
+    y = y + 0.6 * dsp.interp_cubic(y, np.clip(np.arange(n) - d, 0.0, n - 1.0))
+    return dsp.lowpass(y, 6000, 2)
+
+
+def _tune(r, notes=None, lo=-3, hi=9):
+    """a short pentatonic tune: [(semitones, beats)] stepping mostly by scale steps, ending on the tonic"""
+    scale = [-5, -3, 0, 2, 4, 7, 9, 12]
+    k = int(r.integers(6, 10)) if notes is None else notes
+    i = 2
+    out = []
+    for j in range(k):
+        if j:
+            i = int(np.clip(i + r.choice([-2, -1, -1, 1, 1, 2]), 0, len(scale) - 1))
+        out.append((scale[i], (0.5, 0.5, 1.0, 1.0, 1.5)[int(r.integers(5))]))
+    out[-1] = (0, 2.0)
+    return [(max(lo, min(hi, s)), b) for s, b in out]
+
+
+def _whistle(r, p):
+    """a few bars whistled: pure tones gliding between the notes of a little tune, vibrato on the long ones"""
+    base = 1300.0 * r.uniform(0.95, 1.08)
+    beat = r.uniform(0.17, 0.24)
+    tune = _tune(r)
+    n = n_of(sum(b for _, b in tune) * beat + 0.3)
+    t = t_axis(n)
+    semis = np.zeros(n)
+    amp = np.zeros(n)
+    at = 0.0
+    for s, b in tune:
+        a, e = n_of(at), n_of(at + b * beat)
+        semis[a:e] = s
+        amp[a:e] = np.minimum(1.0, np.sin(np.pi * np.clip((t[a:e] - at) / (b * beat), 0, 1)) * 4.0)
+        at += b * beat
+    semis = dsp.onepole(semis, 30.0)
+    vib = 0.3 * np.sin(TWO_PI * 5.5 * t) * dsp.smoothstep((amp - 0.9) * 10.0)
+    f = base * 2.0 ** ((semis + vib) / 12.0)
+    ph = dsp.phase_cycles(f, n)
+    y = np.sin(TWO_PI * ph) + 0.04 * np.sin(TWO_PI * 2 * ph) + 0.05 * dsp.bandpass(r.standard_normal(n), 1500, 6000, 2)
+    return y * dsp.onepole(amp, 60.0)
+
+
 def _beep_seq(r, f0, d, semis):
     n = n_of(d * 0.9)
     tt = t_axis(n)
@@ -368,11 +467,19 @@ def render(text, profile="girl", mood="neutral", seed=0):
     r = dsp.rng("babble", text, profile, mood, seed)
     if not rows:
         return np.zeros(n_of(pl["duration"]))
-    if p["kind"] in ("voice", "beast"):
+    if p["kind"] in ("voice", "beast", "alien"):
         y = _voice(p, md, rows, pl["duration"], r, seed)
+        if p["kind"] == "alien":
+            y = _alienize(y, r)
     else:
         y = _creature(p, md, rows, pl["duration"], r)
     return _level(y)
+
+
+def catalog():
+    """profiles and vocalizations: [{"name", "kind" (profile | vocalization), "description"}]"""
+    rows = [{"name": k, "kind": "profile", "description": DESCRIPTIONS.get(k, v["kind"])} for k, v in PROFILES.items()]
+    return rows + [{"name": k, "kind": "vocalization", "description": k.replace("_", " ")} for k in VOCALIZATIONS]
 
 
 def _level(y, ref_lu=-14.0):
@@ -405,7 +512,15 @@ def _breath_noise(r, d, tract, vowel="a", inhale=False, level=1.0):
 
 def vocalize(kind, profile="girl", seed=0, mood=None):
     """non-verbal sounds: laugh giggle gasp sigh cry sob yay hmm huh wow oh ouch yawn sniff growl_soft whimper
-    rumble_happy squawk chirp yip beep_happy beep_sad beep_question"""
+    rumble_happy squawk chirp yip beep_happy beep_sad beep_question scream cheer snore cough sneeze hiccup whistle hum
+    lala yawn_squeak phew uh_oh aww eek gulp shush"""
+    y = _vocalize(kind, profile, seed, mood)
+    if PROFILES[profile]["kind"] == "alien" and kind not in ("beep_happy", "beep_sad", "beep_question"):
+        y = _level(_alienize(y, dsp.rng("alien", kind, seed)))
+    return y
+
+
+def _vocalize(kind, profile, seed, mood):
     if kind not in VOCALIZATIONS:
         raise KeyError(f"Unknown vocalization {kind!r}. Known: {', '.join(VOCALIZATIONS)}")
     p = dict(PROFILES[profile])
@@ -429,6 +544,10 @@ def vocalize(kind, profile="girl", seed=0, mood=None):
                     _yip(rr, f0 * r.uniform(0.95, 1.1), r.uniform(0.12, 0.18)))
             dsp.place(y, call * r.uniform(0.7, 1.0), n_of(k * r.uniform(0.18, 0.32)))
         return _level(y)
+    if kind == "whistle":
+        return _level(_whistle(r, p))
+    if kind in ("shush", "snore", "gulp"):
+        return _level({"shush": _shush, "snore": _snore, "gulp": _gulp}[kind](r, p))
     beast = p["kind"] == "beast"
     if p["kind"] not in ("voice", "beast"):
         p = dict(PROFILES["girl"], f0=p["f0"] * 0.5 if p["f0"] > 600 else p["f0"], tract=min(p["tract"], 1.4))
@@ -494,12 +613,60 @@ def vocalize(kind, profile="girl", seed=0, mood=None):
         rows += [_syl(0.05, 0.4, "u", 0.0, 0.6, "m"), _syl(0.5, 0.55, "o", 3.0, 0.7)]
         extra.append(("contour", [(0.05, 0.0), (0.45, 2.0), (0.6, 3.5), (1.05, 0.5)]))
         extra.append(("growl", 30.0))
+    elif kind == "scream":
+        rows.append(_syl(0.04, 0.9, "a", 9.0, 1.0, "h"))
+        extra.append(("contour", [(0.04, 6.0), (0.2, 12.0), (0.8, 11.0), (0.94, 7.0)]))
+        p["tremor"] = max(p["tremor"], 35)
+    elif kind == "cheer":
+        rows += [_syl(0.05, 0.16, "u", 2.0, 0.8, "h"), _syl(0.23, 0.5, "e", 7.0, 1.0, "r")]
+        extra.append(("contour", [(0.05, 1.0), (0.21, 4.0), (0.4, 9.0), (0.73, 6.0)]))
+    elif kind == "cough":
+        t0 = 0.03
+        for j in range(int(r.integers(2, 4))):
+            rows.append(_syl(t0 + 0.03, 0.1, "a", 1.0 - j, 0.55, "k"))
+            extra.append(("burst", (t0, 0.12, 0.55)))
+            t0 += r.uniform(0.25, 0.4)
+    elif kind == "sneeze":
+        rows += [_syl(0.05, 0.28, "a", 2.0, 0.45, "h"), _syl(0.45, 0.25, "a", 5.0, 0.55, "h"),
+                 _syl(0.88, 0.22, "u", 4.0, 0.9)]
+        extra += [("burst", (0.8, 0.12, 0.9)),
+                  ("contour", [(0.05, 1.0), (0.33, 3.0), (0.45, 4.0), (0.7, 7.0), (0.88, 6.0), (1.1, 1.0)])]
+    elif kind == "hiccup":
+        t0 = 0.04
+        for j in range(int(r.integers(1, 3))):
+            extra.append(("inhale", (t0, 0.05)))
+            rows.append(_syl(t0 + 0.05, 0.07, "i", 9.0 + r.normal(0, 0.5), 0.8))
+            t0 += r.uniform(0.6, 0.9)
+    elif kind in ("hum", "lala"):
+        at, beat = 0.05, r.uniform(0.18, 0.26)
+        for j, (sem, b) in enumerate(_tune(r)):
+            rows.append(_syl(at, b * beat * 0.92, "u" if kind == "hum" else "a", sem, 0.55 if kind == "hum" else 0.75,
+                             "l" if kind == "lala" else ("m" if j == 0 else "")))
+            at += b * beat
+        if kind == "hum":
+            p["nasal"] = max(p["nasal"], 0.8)
+    elif kind == "yawn_squeak":
+        rows += [_syl(0.05, 0.55, "a", 2.0, 0.45), _syl(0.6, 0.12, "i", 14.0, 0.5),
+                 _syl(0.74, 0.25, "u", 3.0, 0.3, "m")]
+        extra.append(("contour", [(0.05, 1.0), (0.45, 6.0), (0.6, 13.0), (0.72, 15.0), (0.74, 4.0), (0.99, 1.0)]))
+    elif kind == "phew":
+        rows.append(_syl(0.12, 0.5, "u", 2.0, 0.5, "f"))
+        extra += [("contour", [(0.12, 4.0), (0.62, -3.0)]), ("fric", (0.0, 0.16))]
+    elif kind == "uh_oh":
+        rows += [_syl(0.05, 0.18, "a", 3.0, 0.8), _syl(0.32, 0.36, "o", -1.0, 0.8)]
+    elif kind == "aww":
+        rows.append(_syl(0.05, 0.75, "a", 4.0, 0.7))
+        extra.append(("contour", [(0.05, 5.0), (0.3, 5.5), (0.8, -2.0)]))
+    elif kind == "eek":
+        rows.append(_syl(0.03, 0.22, "i", 12.0, 0.9))
+        extra.append(("contour", [(0.03, 10.0), (0.12, 14.0), (0.25, 12.0)]))
+        p["tremor"] = max(p["tremor"], 30)
     if beast:
         for row in rows:
             row["vowel"] = {"i": "u", "e": "o", "a": "o"}.get(row["vowel"], row["vowel"])
     dur = max([row["t1"] for row in rows] + [0.5]) + 0.3
     for kind_e, v in extra:
-        if kind_e == "inhale":
+        if kind_e in ("inhale", "burst", "fric"):
             dur = max(dur, v[0] + v[1] + 0.2)
     n = n_of(dur)
     y = np.zeros(n)
@@ -519,6 +686,19 @@ def vocalize(kind, profile="girl", seed=0, mood=None):
             dsp.place(y, _breath_noise(r, d, p["tract"], "a", True, 1.0) * (dsp.rms(y) * 3.0 + 0.05), n_of(at))
         elif kind_e == "breath_pre":
             dsp.place(y, _breath_noise(r, v, p["tract"], "o", True, 0.6) * (dsp.rms(y) * 2.0 + 0.03), 0)
+        elif kind_e == "burst":
+            at, d, g = v
+            k = n_of(d)
+            tk = t_axis(k)
+            b = 0.8 * _vowel_bank(r.standard_normal(k), "a", p["tract"])
+            b = b + 0.2 * dsp.bandpass(r.standard_normal(k), 1500, 4500, 2)
+            b = dsp.lowpass(b, 4500, 2) * np.exp(-tk / (d * 0.3)) * np.clip(tk / 0.006, 0, 1)
+            dsp.place(y, b * g * (dsp.rms(y) * 3.0 + 0.05) / (dsp.rms(b) + 1e-9), n_of(at))
+        elif kind_e == "fric":
+            at, d = v
+            k = n_of(d)
+            fr = dsp.bandpass(r.standard_normal(k), 1200, 7000, 2) * np.sin(np.pi * np.linspace(0, 1, k))
+            dsp.place(y, fr * (dsp.rms(y) * 2.0 + 0.02) / (dsp.rms(fr) + 1e-9), n_of(at))
         elif kind_e == "sniff":
             k = n_of(0.12)
             s = dsp.bandpass(r.standard_normal(k), 2500, 7500, 2) * np.sin(np.pi * np.linspace(0, 1, k)) ** 2
@@ -528,6 +708,52 @@ def vocalize(kind, profile="girl", seed=0, mood=None):
             s = dsp.bandpass(r.standard_normal(k), 2500, 6000, 2) * np.sin(np.pi * np.linspace(0, 1, k))
             dsp.place(y, s * (dsp.rms(y) * 2.0 + 0.02), n_of(v))
     return _level(y)
+
+
+def _shush(r, p):
+    """'shhh': a hushing hiss shaped by the lips"""
+    d = r.uniform(0.7, 1.0)
+    n = n_of(d + 0.1)
+    tr = min(p["tract"], 1.5)
+    sh = dsp.bandpass(r.standard_normal(n), 1800 * tr, 5500 * tr, 2)
+    sh = sh + 0.5 * dsp.biquad(r.standard_normal(n), "bp", 2600 * tr, 3.0)
+    return sh * dsp.env_points([(0, 0), (0.06, 1.0), (d * 0.7, 0.85), (d, 0.0), (n / dsp.SR, 0.0)], n, "cos")
+
+
+def _snore(r, p):
+    """a cartoon snore: a fluttering in-breath through the soft palate, then a gentle whistling out-breath"""
+    tr = min(p["tract"], 1.4)
+    d_in, d_out, gap = r.uniform(0.9, 1.3), r.uniform(0.6, 0.9), 0.15
+    n_in, n_out = n_of(d_in), n_of(d_out)
+    t = t_axis(n_in)
+    flutter = (0.5 + 0.5 * np.sin(TWO_PI * r.uniform(25, 35) * t)) ** 2
+    inhale = dsp.lowpass(_vowel_bank(r.standard_normal(n_in), "o", tr), 1800, 2) * flutter * \
+        np.sin(np.pi * np.clip(t / d_in, 0, 1)) ** 0.8
+    to = t_axis(n_out)
+    env = np.sin(np.pi * np.clip(to / d_out, 0, 1)) ** 1.2
+    puff = dsp.bandpass(r.standard_normal(n_out), 1200, 4500, 2) * env
+    whistle = np.sin(TWO_PI * dsp.phase_cycles(1300.0 - 400.0 * to / d_out, n_out)) * env
+    y = np.zeros(n_in + n_of(gap) + n_out + n_of(0.1))
+    y[:n_in] += inhale / (dsp.peak(inhale) + 1e-12)
+    y[n_in + n_of(gap):n_in + n_of(gap) + n_out] += 0.35 * puff / (dsp.peak(puff) + 1e-12) + 0.12 * whistle
+    return y
+
+
+def _gulp(r, p):
+    """a gulp: the tongue's click, then the low, bubbly 'glk' of a swallow"""
+    tr = min(p["tract"], 1.4)
+    n = n_of(0.4)
+    y = np.zeros(n)
+    k = n_of(0.006)
+    dsp.place(y, dsp.bandpass(r.standard_normal(k), 1500, 5000, 2) * np.exp(-t_axis(k) / 0.0015), n_of(0.02))
+    m = n_of(0.09)
+    tm = t_axis(m)
+    glk = _vowel_bank(_glottal(p["f0"] * 0.8 * (1.0 - 0.3 * tm / 0.09), m, r, 900.0, soft=0.4), "u", tr)
+    dsp.place(y, glk * np.sin(np.pi * np.clip(tm / 0.09, 0, 1)) / (dsp.peak(glk) + 1e-12), n_of(0.06))
+    b = n_of(0.05)
+    tb = t_axis(b)
+    dsp.place(y, 0.5 * np.sin(TWO_PI * dsp.phase_cycles(250.0 + 350.0 * tb / 0.05, b)) * np.exp(-tb / 0.02), n_of(0.17))
+    return dsp.highpass(y, 80, 2)
 
 
 def _recontour(p, md, rows, dur, r, seed, pts):

@@ -8,9 +8,12 @@ dsp.SR whose first sample is the note onset.  Single sources return mono (n,), e
 The clip includes the natural release / ring after the gate.  Peak level ~ velocity (the catalog matches loudness).
 
     families  modal (mallets, bells, yangqin, kalimba, steel drums), piano, plucked (Karplus-Strong guitars, harp,
-              basses, ukulele, banjo, pizzicato, pipa, guzheng, guqin), bowed (solo strings, sections, tremolo,
-              erhu), winds (flutes, whistles, ocarina, reeds, suona, dizi, sheng, accordion, harmonica), brass, voices
-              (choir aahs, voice oohs), pads
+              basses, ukulele, banjo, pizzicato, pipa, guzheng, guqin, harpsichord, electric guitars with a pickup
+              comb, overdrive), bowed (solo strings, fiddle, sections, tremolo, erhu), winds (flutes, whistles,
+              ocarina, reeds, saxophones, bagpipe chanter, suona, dizi, sheng, accordion, harmonica), brass, voices
+              (choir aahs, voice oohs), pads, keyboards (tine electric piano by FM, pipe and tonewheel organs from
+              wavetable ranks), synthesizers (square lead, analogue bass, theremin) and 8-bit voices (pulse with
+              duty cycles and a stepped volume, the 32-step triangle)
 Pipa, guqin, dizi, sheng and the string/choir ensembles are adapted from the Night Revels and Silver Grass packs.
 """
 import numpy as np
@@ -331,6 +334,14 @@ PLUCKED = {
     "guzheng": dict(t60=4.5, scale=0.4, loop=0.7, exc=0.75, pos=0.12, click=0.3, damp=0.35, settle=10,
                     body=[("peak", 160, 3.0, 1.2), ("peak", 380, 2.0, 1.5), ("peak", 900, 1.5, 1.4),
                           ("peak", 3500, 2.0, 1.0), ("hp", 60, 0, 0.7)]),
+    # quill on a thin string near its end: very bright, nasal soundboard, quick felt damper
+    "harpsichord": dict(t60=5.0, scale=0.55, loop=0.86, exc=0.95, pos=0.08, click=0.35, damp=0.12, settle=3,
+                        body=[("peak", 220, 3.0, 1.2), ("peak", 600, 2.0, 1.4), ("peak", 1800, 2.5, 1.2),
+                              ("peak", 3500, 2.0, 1.2), ("highshelf", 9000, -3.0, 0.7), ("hp", 60, 0, 0.7)]),
+    # steel string over a magnetic pickup (comb at the pickup position), no acoustic body
+    "electric_guitar": dict(t60=5.0, scale=0.4, loop=0.8, exc=0.75, pos=0.15, click=0.12, damp=0.15, settle=6,
+                            pickup=0.22, body=[("peak", 120, 1.5, 1.0), ("peak", 2200, 2.5, 1.2),
+                                               ("highshelf", 6000, -6.0, 0.7), ("hp", 70, 0, 0.7)]),
 }
 
 
@@ -360,9 +371,36 @@ def plucked(kind, midi, dur, vel=0.7, r=None, cents=None, press=None, let_ring=F
     k = n_of(0.012)
     click = dsp.highpass(r.standard_normal(k), 2500, 2) * np.exp(-t[:k] / 0.0012)
     y[:k] += p["click"] * vel * _nrm(click)
+    if p.get("pickup"):
+        d = max(1, int(round(p["pickup"] * SR / f0)))
+        y[d:] = y[d:] - y[:-d].copy()
     y = dsp.eq_chain(y, p["body"])
     y = dsp.dc_block(y, 25.0)
     return _end_fade(_nrm(y), 0.03) * vel
+
+
+def harpsichord(midi, dur, vel=0.7, r=None, cents=None):
+    """harpsichord: two quill-plucked choirs, the 8' and the 4' an octave above; the quill gives little dynamic range"""
+    r = r if r is not None else dsp.rng("harpsichord", midi)
+    v = 0.75 + 0.25 * float(np.clip(vel, 0.0, 1.0))
+    y = plucked("harpsichord", midi, dur, v, r, cents=cents)
+    if hz(midi + 12) < NYQ_SAFE * 0.5:
+        hi = plucked("harpsichord", midi + 12, dur, v, dsp.rng("harpsichord4", midi, r.integers(1 << 30)), cents=cents)
+        n = max(len(y), len(hi))
+        y = dsp.pad_to(y, n) + 0.4 * dsp.pad_to(hi, n)
+    return _nrm(y) * vel
+
+
+def overdriven_guitar(midi, dur, vel=0.7, r=None, cents=None):
+    """electric guitar into an overdriven amp: mid push, 4x-oversampled soft clipping, a closed-back cabinet"""
+    y = plucked("electric_guitar", midi, dur, max(vel, 0.6), r, cents=cents)
+    y = dsp.peq(y, 800, 6.0, 0.8)
+    up = signal.resample_poly(y, 4, 1)
+    up = dsp.softclip(up + 0.08, 4.0 + 8.0 * vel) - dsp.softclip(np.array(0.08), 4.0 + 8.0 * vel)
+    y = signal.resample_poly(up, 1, 4)[:len(y)]
+    y = dsp.eq_chain(y, [("lp", 4500, 0, 0.7), ("lp", 5500, 0, 0.7), ("peak", 110, 3.0, 1.0), ("peak", 400, -3.0, 1.0),
+                         ("peak", 2200, 3.0, 1.4), ("hp", 80, 0, 0.7)])
+    return _end_fade(_nrm(dsp.dc_block(y, 20.0)), 0.03) * vel
 
 
 def pizz_section(midi, dur, vel=0.7, r=None, cents=None, players=3):
@@ -498,37 +536,6 @@ def guzheng(midi, dur, vel=0.7, r=None, cents=None, press=None, vibrato=True):
     if vibrato and dur > 0.45:
         c = c + _vib(n_guess, r, 14.0, 5.0, delay=0.25, ramp=0.4)
     return plucked("guzheng", midi, dur, vel, r, cents=c, press=press, let_ring=True)
-
-
-def gliss(engine, midi, dur, vel, r, scale_offsets=(0, 2, 4, 7, 9), span=12, up=True, sweep=0.35, **kw):
-    """harp / guzheng style glissando into (up=True) or away from the note: string after string over `sweep` s.
-    Returns mono/stereo audio whose target note starts at sample n_of(sweep) (up) or 0 (down)."""
-    notes = []
-    for octave in range(-2, 2):
-        for s in scale_offsets:
-            m = midi + 12 * octave + s
-            if (midi - span <= m < midi) if up else (midi - span < m <= midi):
-                notes.append(m)
-    notes = sorted(set(notes)) if up else sorted(set(notes), reverse=True)
-    if not up:
-        notes = notes[1:] if notes and notes[0] == midi else notes
-    seq = notes + [midi] if up else [midi] + notes
-    step = sweep / max(1, len(seq) - 1)
-    clips = []
-    for i, m in enumerate(seq):
-        last = (i == len(seq) - 1) if up else (i == 0)
-        v = vel * (0.45 + 0.55 * (i + 1) / len(seq)) if up else vel * (1.0 - 0.6 * i / len(seq))
-        d = dur if last else max(0.25, sweep * 1.5)
-        clips.append((n_of(i * step), engine(m, d, v if not last else vel, dsp.rng("gliss", m, i, r.integers(1 << 30)), **kw)))
-    n = max(s + c.shape[-1] for s, c in clips)
-    stereo = any(c.ndim == 2 for _, c in clips)
-    out = np.zeros((2, n)) if stereo else np.zeros(n)
-    for s, c in clips:
-        if stereo:
-            out[:, s:s + c.shape[-1]] += dsp.as_stereo(c)
-        else:
-            out[s:s + len(c)] += c
-    return out
 
 
 # ======================================================================================  bowed strings
@@ -676,6 +683,16 @@ WINDS = {
                       chiff=0.05, vib=(6, 6.0, 0.3), attack=0.03, release=0.06, hp=200, scoop=-30, tremolo=(5.5, 0.18)),
     "shakuhachi": dict(slope=(3.2, 2.2), even=0.55, formants=[(900, 3.0, 1.2)], breath=0.18, chiff=0.2,
                        vib=(16, 4.6, 0.4), attack=0.08, release=0.12, hp=180, scoop=-50),
+    # conical brass body, single reed: every harmonic, a bore resonance and a bright edge that grows with the breath
+    "alto_sax": dict(slope=(1.9, 0.85), even=0.85, formants=[(700, 6.0, 1.2), (1500, 4.0, 1.4), (2900, 3.0, 1.6)],
+                     breath=0.07, chiff=0.06, vib=(18, 5.3, 0.3), attack=0.04, release=0.08, hp=130, scoop=-45,
+                     buzz=0.1),
+    "tenor_sax": dict(slope=(1.9, 0.9), even=0.85, formants=[(480, 6.0, 1.2), (1100, 4.0, 1.4), (2300, 3.0, 1.6)],
+                      breath=0.08, chiff=0.06, vib=(16, 5.0, 0.35), attack=0.045, release=0.09, hp=70, scoop=-40,
+                      buzz=0.12),
+    # highland chanter: a double reed at full pressure, nasal and unbroken, no vibrato
+    "bagpipe": dict(slope=(0.9, 0.8), even=0.9, formants=[(1100, 7.0, 1.4), (2400, 6.0, 1.6), (3600, 4.0, 1.6)],
+                    breath=0.02, chiff=0.03, vib=(0, 5.0, 1.0), attack=0.015, release=0.04, hp=250, buzz=0.22),
 }
 
 
@@ -977,3 +994,177 @@ def pad(midi, dur, vel=0.5, r=None, cents=None, attack=0.7, release=1.4, cutoff=
     out = dsp.lp_varying(out, fc, 0.8, spacing=0.5) * env
     out = dsp.eq_chain(out, [("hp", 70, 0, 0.7), ("peak", 300, 1.5, 0.8)])
     return _end_fade(_nrm(out), 0.05) * vel
+
+
+def fiddle(midi, dur, vel=0.7, r=None, cents=None, mode="sustain"):
+    """folk fiddle: a solo violin played brighter and drier -- quick bow attacks, a narrow, late vibrato"""
+    y = bowed(midi, dur, vel, r, cents=cents, voices=1, vib_depth=8.0, vib_rate=6.2, attack=0.035, release=0.18,
+              mode=mode)
+    y = dsp.eq_chain(y, [("peak", 2800, 3.5, 1.2), ("peak", 650, -2.0, 1.0), ("highshelf", 8000, -2.0, 0.7)])
+    return _nrm(y) * vel
+
+
+# ======================================================================================  keyboards: electric and pipe
+def _table(partials, size=4096):
+    """one period of a sum of harmonics [(k, amplitude)] -- a wavetable"""
+    x = np.arange(size) / size
+    return sum(a * np.sin(TWO_PI * k * x) for k, a in partials)
+
+
+def _read(table, ph):
+    """wavetable lookup at phase ph (cycles), linear interpolation"""
+    pos = (ph % 1.0) * len(table)
+    i = pos.astype(np.int64)
+    fr = pos - i
+    return table[i] * (1.0 - fr) + table[(i + 1) % len(table)] * fr
+
+
+def electric_piano(midi, dur, vel=0.7, r=None, cents=None):
+    """tine electric piano: the tine's near-sine tone with a bright FM attack that mellows, a bell 'ping', pickup bark
+    when hit hard, a long decay, the damper at the gate, a gentle stereo tremolo"""
+    r = r if r is not None else dsp.rng("epiano", midi)
+    f0 = hz(midi)
+    vel = float(np.clip(vel, 0.02, 1.2))
+    t60 = float(np.clip(7.0 * (220.0 / f0) ** 0.5, 1.2, 9.0))
+    L = min(dur + 0.4, t60 + 0.2)
+    n = n_of(L)
+    t = t_axis(n)
+    f = f0 * dsp.cents2ratio(_cents(cents, n)) if cents is not None else f0
+    y = dsp.fm(f, n, 1.0, (0.6 + 2.4 * vel) * np.exp(-t / 0.35) + 0.15) * np.exp(-LN1000 * t / t60)
+    for ratio, a, life in ((7.0, 0.25, 0.25), (13.3, 0.12, 0.12)):
+        if f0 * ratio < NYQ_SAFE * 0.8:
+            y += a * vel * np.sin(TWO_PI * f0 * ratio * t + r.uniform(0, TWO_PI)) * np.exp(-LN1000 * t / life)
+    drive = 1.0 + 2.0 * vel ** 2
+    y = np.tanh(drive * (y + 0.15)) - np.tanh(0.15 * drive)
+    y *= np.clip(t / 0.0015, 0.0, 1.0)
+    if dur < L:
+        y = _damp(y, dur, 0.12)
+    y = dsp.dc_block(dsp.eq_chain(y, [("peak", 180, 2.0, 1.0), ("highshelf", 7000, -4.0, 0.7)]), 20.0)
+    out = dsp.pan_mono(y, 0.25 * np.sin(TWO_PI * dsp.phase_cycles(4.5, n, r.uniform())))
+    return _end_fade(_nrm(out), 0.05) * vel
+
+
+ORGANS = {
+    # stops: (pitch ratio to the note, level, harmonic slope); chiff, wind, attack, release, key click, percussion
+    "church": dict(stops=((0.5, 0.35, 2.4), (1.0, 1.0, 1.4), (2.0, 0.6, 1.6), (3.0, 0.3, 2.5), (4.0, 0.35, 2.0),
+                          (6.0, 0.15, 3.0), (8.0, 0.15, 3.0)), chiff=0.18, wind=0.02, attack=0.06, release=0.18),
+    # tonewheel drawbars 16' 5 1/3' 8' 4' (pure sines), registration 8886 000 00, third-harmonic percussion
+    "drawbar": dict(stops=((0.5, 1.0, 9.0), (1.5, 1.0, 9.0), (1.0, 1.0, 9.0), (2.0, 0.6, 9.0)), click=0.12,
+                    perc=(3.0, 0.5, 0.25), attack=0.004, release=0.02, rotary=(0.8, 0.22)),
+}
+
+
+def organ(kind, midi, dur, vel=0.7, r=None, cents=None):
+    """organ: ranks of pipes (church: principal chorus up to a mixture, chiff and wind) or tonewheel drawbars (key
+    click, percussion, a slow rotary speaker); each rank a band-limited wavetable, ranks detuned a hair, stereo"""
+    r = r if r is not None else dsp.rng("organ", kind, midi)
+    p = ORGANS[kind]
+    f0 = hz(midi)
+    rel = p["release"]
+    n = n_of(dur + rel + 0.05)
+    t = t_axis(n)
+    c = _cents(cents, n)
+    att = p["attack"] * (1.0 + 0.8 * max(0.0, (60.0 - midi) / 24.0))
+    env = _sustain_env(n, att, dur, rel, 1.0, 0.95, 0.1)
+    out = np.zeros((2, n))
+    lim = NYQ_SAFE * 0.85
+    for j, (ratio, level, slope) in enumerate(p["stops"]):
+        fr = f0 * ratio
+        if fr > lim:
+            continue
+        kmax = max(1, int(lim / fr))
+        tab = _table([(k, k ** -slope) for k in range(1, min(kmax, 16) + 1)])
+        ph = dsp.phase_cycles(fr * dsp.cents2ratio(c + r.normal(0.0, 1.2) + 0.6 * dsp.ctrl_noise(n, r, 0.5)), n,
+                              r.uniform())
+        out += dsp.pan_mono(level * _read(tab, ph), (-0.35, 0.35)[j % 2])
+    if p.get("perc"):
+        ratio, level, life = p["perc"]
+        if f0 * ratio < lim:
+            out += dsp.pan_mono(level * np.sin(TWO_PI * dsp.phase_cycles(f0 * ratio, n)) * np.exp(-t / life), 0.0)
+    out = out * env
+    if p.get("chiff"):
+        k = n_of(0.06)
+        burst = dsp.bandpass(r.standard_normal(k), min(2.0 * f0, lim * 0.5), min(6.0 * f0, lim), 2)
+        out[:, :k] += p["chiff"] * dsp.peak(out) * _nrm(burst * np.exp(-t[:k] / 0.015))
+        out += p["wind"] * dsp.peak(out) * dsp.bandpass(r.standard_normal((2, n)), 500, 3000, 2) * env
+    if p.get("click"):
+        k = n_of(0.004)
+        out[:, :k] += p["click"] * dsp.peak(out) * _nrm(dsp.bandpass(r.standard_normal((2, k)), 1000, 6000, 2))
+    if p.get("rotary"):
+        rate, depth = p["rotary"]
+        ph = dsp.phase_cycles(rate * (1.0 + 0.05 * dsp.ctrl_noise(n, r, 0.3)), n, r.uniform())
+        out[0] *= 1.0 - depth * (0.5 + 0.5 * np.sin(TWO_PI * ph))
+        out[1] *= 1.0 - depth * (0.5 + 0.5 * np.cos(TWO_PI * ph))
+        out = dsp.saturate(out * 1.3, 0.2) / 1.3
+    return _end_fade(_nrm(dsp.highpass(out, 30, 2)), 0.02) * vel
+
+
+# ======================================================================================  synthesizers and 8-bit voices
+def synth_lead(midi, dur, vel=0.7, r=None, cents=None):
+    """square-wave lead: two pulse oscillators seven cents apart, a resonant low-pass that opens with each attack,
+    a delayed vibrato"""
+    r = r if r is not None else dsp.rng("lead", midi)
+    f0 = hz(midi)
+    n = n_of(dur + 0.12)
+    t = t_axis(n)
+    f = f0 * dsp.cents2ratio(_cents(cents, n) + _vib(n, r, 18.0, 5.6, delay=0.3, ramp=0.4))
+    osc = dsp.osc_square(f, n, r.uniform(), 0.5) + 0.7 * (dsp.osc_square(f * dsp.cents2ratio(7.0), n, r.uniform(), 0.45)
+                                                          + 0.1)
+    fc = np.clip(1.5 * f0 + (1500.0 + 4500.0 * vel) * (0.35 + 0.65 * np.exp(-t / 0.25)), 200.0, 14000.0)
+    y = dsp.lp_varying(osc, fc, 1.6, spacing=0.5) * _sustain_env(n, 0.006, dur, 0.08, 1.0, 0.8, 0.25)
+    return _end_fade(_nrm(y), 0.01) * vel
+
+
+def synth_bass(midi, dur, vel=0.7, r=None, cents=None):
+    """analogue synth bass: a saw and a sub-octave square through a resonant low-pass with a snappy envelope"""
+    r = r if r is not None else dsp.rng("synth_bass", midi)
+    f0 = hz(midi)
+    n = n_of(dur + 0.08)
+    t = t_axis(n)
+    f = f0 * dsp.cents2ratio(_cents(cents, n)) if cents is not None else f0
+    osc = dsp.osc_saw(f, n, r.uniform()) + 0.6 * dsp.osc_square(np.asarray(f) * 0.5, n, r.uniform(), 0.5)
+    fc = np.clip(1.2 * f0 + (300.0 + 2200.0 * vel) * np.exp(-t / 0.12), 60.0, 9000.0)
+    y = dsp.lp_varying(osc, fc, 2.2, spacing=0.5) * _sustain_env(n, 0.003, dur, 0.05, 1.0, 0.75, 0.2)
+    return _end_fade(_nrm(dsp.saturate(_nrm(y), 0.3)), 0.01) * vel
+
+
+def _frames(env, n, levels=15, rate=60.0):
+    """a volume envelope as an 8-bit console sets it: 16 levels, updated once per 60 Hz frame (edges smoothed)"""
+    step = SR / rate
+    idx = np.minimum((np.floor(np.arange(n) / step) * step).astype(np.int64), n - 1)
+    return dsp.onepole(np.round(np.clip(env[idx], 0.0, 1.0) * levels) / levels, 400.0)
+
+
+def chip(kind, midi, dur, vel=0.7, r=None, cents=None, duty=0.25):
+    """8-bit console voices, band-limited: the pulse (duty 12.5 / 25 / 50 %, a stepped volume envelope and a late
+    vibrato) and the 32-step triangle (no volume control: on or off)"""
+    r = r if r is not None else dsp.rng("chip", kind, midi)
+    f0 = hz(midi)
+    n = n_of(dur + 0.03)
+    t = t_axis(n)
+    c = _cents(cents, n)
+    if kind == "triangle":
+        k = 8
+        ph = dsp.phase_cycles(np.repeat(f0 * dsp.cents2ratio(c), k) / k, n * k, r.uniform())
+        step = np.floor((ph % 1.0) * 32.0)
+        x = np.where(step < 16, 15.0 - step, step - 16.0) / 7.5 - 1.0
+        y = signal.resample_poly(x, 1, k)[:n]
+        gate = np.clip(t / 0.002, 0, 1) * np.clip((dur + 0.002 - t) / 0.002, 0, 1)
+        return _nrm(y * gate) * vel
+    f = f0 * dsp.cents2ratio(c + _vib(n, r, 20.0, 6.0, delay=0.3, ramp=0.2))
+    y = dsp.osc_square(f, n, r.uniform(), duty) - (2.0 * duty - 1.0)      # a narrow pulse carries a DC offset
+    env = _frames(_sustain_env(n, 0.002, dur, 0.02, 1.0, 0.75, 0.15), n)
+    return _end_fade(_nrm(dsp.highpass(dsp.lowpass(y, 15000, 2) * env, 30, 2)), 0.005) * vel
+
+
+def theremin(midi, dur, vel=0.6, r=None, cents=None):
+    """theremin: a near-sine voice gliding up into each note, a wide and slightly wandering vibrato, a soft swell"""
+    r = r if r is not None else dsp.rng("theremin", midi)
+    f0 = hz(midi)
+    n = n_of(dur + 0.2)
+    t = t_axis(n)
+    c = _cents(cents, n) - 120.0 * np.exp(-t / 0.06) + _vib(n, r, 28.0, 6.2, delay=0.15, ramp=0.4) + \
+        4.0 * dsp.ctrl_noise(n, r, 0.6)
+    ph = dsp.phase_cycles(f0 * dsp.cents2ratio(c), n, r.uniform())
+    y = np.sin(TWO_PI * ph) + 0.12 * np.sin(TWO_PI * 2 * ph) + 0.05 * np.sin(TWO_PI * 3 * ph)
+    return _end_fade(_nrm(y * _sustain_env(n, 0.08, dur, 0.15, 1.0, 0.92, 0.2)), 0.02) * vel

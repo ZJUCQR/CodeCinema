@@ -202,10 +202,10 @@ def _norm_event(raw, idx, doc):
 
 
 def load(path=None):
-    """Load events.json (default: out/events.json, fallback out/audio/draft_events.json)."""
+    """Load events.json (default: out/events.json)."""
     doc = Doc()
     if path is None:
-        path = config.EVENTS_JSON if os.path.exists(config.EVENTS_JSON) else config.DRAFT_EVENTS_JSON
+        path = config.EVENTS_JSON
     doc.path = path
     raw = {}
     if path and os.path.exists(path):

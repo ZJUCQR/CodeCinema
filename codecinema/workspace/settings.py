@@ -15,6 +15,10 @@ Usage:
     settings.get("render", "slots")          # -> 2
     settings.tool("ffmpeg")                  # -> absolute path or the bare name (let the OS resolve it)
     settings.font("calligraphy")             # -> absolute path of a matching font file, or "" if none found
+
+[fonts] values are font files or family names from `codecinema library fonts` (downloaded on first use);
+title / subtitle / credits choose caption and title-card fonts; mirror and download control font downloads
+(CODECINEMA_FONTS_MIRROR, CODECINEMA_FONTS_DOWNLOAD=off).
 """
 import copy
 import glob
@@ -25,7 +29,7 @@ import tomllib
 from pathlib import Path
 
 from codecinema.workspace import registry
-from codecinema.workspace.paths import film_assets, project_root, resolve_path
+from codecinema.workspace.paths import font_dirs, project_root, resolve_path
 
 REPO = project_root(os.environ.get("CODECINEMA_FILM_DIR"))
 
@@ -50,7 +54,9 @@ DEFAULTS = {
     "paths": {"out_dir": "out"},
     "tools": {"blender": "", "ffmpeg": "", "ffprobe": "", "python": ""},
     "fonts": {"calligraphy": "", "weibei": "", "kaiti": "", "song": "", "ui": "", "mono": "", "display": "",
-              "display_cjk": ""},
+              "display_cjk": "", "title": "", "subtitle": "", "credits": "",
+              "mirror": "",        # font download mirrors: URL templates or base URLs, tried before the built-ins
+              "download": "auto"},  # "auto" (download catalog fonts on first use) | "off"
     "video": {"width": 1920, "height": 1080, "fps": 24, "codec": "libx264", "crf": 16, "preset": "slow",
               "pix_fmt": "yuv420p", "audio_bitrate": "320k"},
     "audio": {"sample_rate": 48000, "target_lufs": -14.0, "true_peak_db": -1.0,
@@ -180,22 +186,8 @@ FONT_CANDIDATES = {
 
 
 def _font_dirs():
-    home = os.path.expanduser("~")
-    package = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # The workspace's shared fonts, then the copies bundled with the package (wheel or source checkout).
-    dirs = [str(film_assets(ROOT) / "fonts"), os.path.join(REPO, "assets", "_shared", "fonts"),
-            os.path.join(package, "_assets", "fonts"), os.path.join(os.path.dirname(package), "assets", "_shared", "fonts")]
-    if sys.platform == "darwin":
-        dirs += ["/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
-                 os.path.join(home, "Library", "Fonts")]
-        dirs += glob.glob("/System/Library/AssetsV2/com_apple_MobileAsset_Font*/*/AssetData")
-    elif sys.platform == "win32":
-        dirs += [os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts"),
-                 os.path.join(os.environ.get("LOCALAPPDATA", ""), "Microsoft", "Windows", "Fonts")]
-    else:
-        dirs += ["/usr/share/fonts", "/usr/local/share/fonts", os.path.join(home, ".fonts"),
-                 os.path.join(home, ".local", "share", "fonts")]
-    return [d for d in dirs if d and os.path.isdir(d)]
+    # The film's and workspace's fonts, the copies bundled with the package, then the user's and system folders.
+    return [str(path) for path, _kind in font_dirs(ROOT) if path.is_dir()]
 
 
 _FONT_INDEX = None
@@ -213,12 +205,19 @@ def _font_index():
 
 
 def font(role):
-    """Font file for a role ('calligraphy' | 'weibei' | 'kaiti' | 'song' | 'ui' | 'mono' | 'display' | 'display_cjk'):
-    the settings/env value if set,
-    else the first known candidate found on this machine, else ''."""
+    """Font file for a role ('calligraphy' | 'weibei' | 'kaiti' | 'song' | 'ui' | 'mono' | 'display' | 'display_cjk'
+    | 'title' | 'subtitle' | 'credits'): the settings/env value if set (a font file, or a family name resolved and
+    downloaded by codecinema.typography), else the first known candidate found on this machine, else ''."""
     explicit = get("fonts", role, "")
+    if isinstance(explicit, (list, tuple)):
+        explicit = explicit[0] if explicit else ""
     if explicit:
-        return str(resolve_path(explicit, ROOT))
+        path = resolve_path(explicit, ROOT)
+        if path.exists() or any(sep in str(explicit) for sep in ("/", "\\")) or \
+                str(explicit).lower().endswith((".ttf", ".otf", ".ttc", ".otc", ".woff", ".woff2")):
+            return str(path)
+        from codecinema.typography import find  # standard library only, so this works inside Blender too
+        return find(str(explicit)).path
     idx = _font_index()
     for name in FONT_CANDIDATES.get(role, []):
         hit = idx.get(name.lower())

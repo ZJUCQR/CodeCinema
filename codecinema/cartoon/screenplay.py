@@ -76,6 +76,7 @@ class Compiler:
         for pid, entry in data.get("props", {}).items():
             self.props[pid] = sets.resolve_prop(entry, pid)
         self.events = {cid: [] for cid in self.cast}
+        self.held = {}
         self.prop_events = {pid: [] for pid in self.props}
         self.shots, self.scenes = [], []
         self.sfx, self.fx, self.lines, self.titles, self.ambience, self.spaces = [], [], [], [], [], []
@@ -144,6 +145,8 @@ class Compiler:
                 self.events[cid].append({"t": t, "type": "hide", "order": -2})
             for pid in self.props:
                 self.prop_events[pid].append({"t": t, "type": "hide", "order": -2})
+            for cid in self.cast:   # poses held from an earlier scene end here
+                self._release(cid, t)
             starts = scene.get("start", {})
             for cid, state in starts.items():
                 self._state(cid, state, scene, t, present, phase="place")
@@ -228,13 +231,22 @@ class Compiler:
         if "look" in state:
             ev.append({"t": t, "type": "look", "at": self._look_target(state["look"], scene, t), "dur": 0.01,
                        "order": 1})
-        if "act" in state:
-            ev.append({"t": t, "type": "act", "name": state["act"], "dur": float(state.get("dur", 3600)),
-                       "params": state.get("params", {}), "fade": 0.01, "order": 1})
+        self._release(cid, t)
+        if "act" in state:   # held until the character's next starting state (or the next scene)
+            held = {"t": t, "type": "act", "name": state["act"], "dur": float(state.get("dur", 3600)),
+                    "params": state.get("params", {}), "fade": 0.01, "order": 1}
+            ev.append(held)
+            self.held[cid] = held
         if "blush" in state:
             ev.append({"t": t, "type": "blush", "value": float(state["blush"]), "order": 1})
         if "scale" in state:
             ev.append({"t": t, "type": "scale", "value": float(state["scale"]), "dur": 0.0, "order": 1})
+
+    def _release(self, cid, t):
+        """End the pose a character has been holding since its last starting state."""
+        held = self.held.pop(cid, None)
+        if held is not None and held["t"] + held["dur"] > t:
+            held["dur"] = max(0.01, t - held["t"])
 
     def _look_target(self, value, scene, t):
         if value in (None, "none", False):
@@ -332,7 +344,7 @@ class Compiler:
             if beat.get("say"):
                 line["subtitles"].setdefault(self.data.get("subtitle", "en"), beat["say"])
             self.lines.append(line)
-            ev.append({"t": t, "type": "say", "line": line_id, "dur": 1.0})
+            ev.append({"t": t, "type": "say", "line": line_id, "dur": 1.0, "mood": line["mood"]})
         if "sfx" in beat:
             at = beat.get("at")
             pos = None

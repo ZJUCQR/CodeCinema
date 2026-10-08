@@ -184,6 +184,20 @@ class Director:
             target = (cx, cy, foot_z + frame_h * 0.46)
         else:
             target = (cx, cy, foot_z + frame_h * 0.32)
+        # Headroom: the top of every head stays in frame for the whole shot (a jump or a flap lifts it), so heads
+        # are sampled finely enough to catch the top of a quick hop.
+        span = (samples[0], samples[-1])
+        steps = max(1, int((span[1] - span[0]) / 0.1))
+        top = max(max(p[2] for p in heads),
+                  max(self._subject(n, span[0] + (span[1] - span[0]) * k / steps)[1][2]
+                      for n in names for k in range(steps + 1))) + max(radii) * 1.3
+        excess = top - target[2] - frame_h * 0.44
+        if excess > 0 and not cam.get("exact"):
+            if mode == "head":   # widen the frame and raise its center: 0.5 + 0.44 * 1.3 > 1 covers the excess
+                frame_h += excess * 1.3
+                target = (target[0], target[1], target[2] + excess / 2)
+            else:
+                target = (target[0], target[1], target[2] + excess)
         lens = float(cam.get("lens", LENS[size]))
         vfov = 2 * math.atan(36.0 / self.aspect / 2 / lens)
         distance = frame_h / 2 / math.tan(vfov / 2)

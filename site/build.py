@@ -18,6 +18,8 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 FILMS = {
+    "pebble": ("films", ("Pebble.mp4", "Pebble.en.vtt", "Pebble.zh.vtt")),
+    "nian": ("films", ("Nian.mp4", "Nian.en.vtt", "Nian.zh.vtt")),
     "film": ("films", ("SilverGrass.mp4",)),
     "nightrevels": ("films", ("NightRevels.mp4",)),
 }
@@ -59,7 +61,7 @@ def build(output, repo):
             shutil.copy2(source, target)
     shutil.copytree(ROOT / "assets/_shared/site", output, dirs_exist_ok=True)
     shutil.copytree(ROOT / "assets/_shared/images", output / "img")
-    for film in ("silvergrass", "nightrevels"):
+    for film in ("pebble", "nian", "silvergrass", "nightrevels"):
         shutil.copytree(ROOT / f"assets/{film}/images", output / f"img/{film}")
 
     ids = []

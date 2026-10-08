@@ -5,7 +5,8 @@ CodeCinema command line.
     codecinema run <film> [step] [args ...]  run a film's step (default: all), e.g. `codecinema run nightrevels audio`
     codecinema new <id> [--render]           create a film from scene data; add --render to produce it immediately
     codecinema new <id> --template cartoon   start a screenplay-driven 3D cartoon (Blender, voices, score)
-    codecinema library [kind]                browse characters, sets, props, actions, expressions, sounds and music
+    codecinema library [kind]                browse characters, sets, props, actions, expressions, sounds, music, fonts
+    codecinema library fonts --download ja   prefetch font families (names, writing systems or all) for offline use
     codecinema customize <film> [--render]   change a film's renderer, story and look without editing Python
     codecinema studio                        open the local visual editor: choose, customize and render
     codecinema presets                       list the starter looks and output options
@@ -141,26 +142,129 @@ def _library(kind):
         from codecinema.audio import ambience
         return [(row["name"], row["description"]) for row in ambience.catalog()]
     if kind == "instruments":
-        from codecinema.audio import instruments
-        return [(row["name"], f"[{row['family']}, {row['source']}] {row['description']}") for row in instruments.catalog()]
+        from codecinema.audio import instruments, soundfont
+        from codecinema.runtime import downloads
+        cached = downloads.is_cached(soundfont.BANK_NAME, soundfont.BANK_SHA256, soundfont.BANK_SIZE)
+        if not cached and soundfont.setting() == "auto":
+            soundfont.use("off")   # listing never downloads the 32 MB sound bank
+        rows = []
+        for row in instruments.catalog():
+            inst = instruments.get(row["name"])
+            source = row["source"] if cached or not (inst.sampled and inst.gm) else "sampled once the bank is downloaded"
+            rows.append((row["name"], f"[{row['family']}, {source}] {row['description']}"))
+        return rows
     if kind == "styles":
         from codecinema.audio import composer
-        return [(name, f"lead {style.get('lead', '?')}, tempo {style.get('tempo', '?')}")
-                for name, style in sorted(composer.STYLES.items())]
+        return [(row["name"], f"same as {row['alias_of']}" if row.get("alias_of") else
+                 f"{row['description'].split(': ', 1)[-1]} ({row['tempo']} bpm, {row['key']} {row['mode']})")
+                for row in sorted(composer.catalog(), key=lambda r: r["name"])]
     if kind == "voices":
         from codecinema.audio import babble, speech
-        rows = [(name, "cartoon voice (no speech model needed)") for name in babble.PROFILES]
+        rows = [(row["name"], f"[{row['kind']}] {row['description']}") for row in babble.catalog()]
         rows.append(("speech engines", f"neural: {'yes' if speech.local_available() else 'no'} · system: "
                                        f"{speech.system_backend() or 'none'} · recordings: always"))
         return rows
+    if kind == "fonts":
+        from codecinema import typography
+        return [(f.name, f"[{f.category}, {typography.SCRIPTS[f.script]}] {f.license}") for f in typography.FAMILIES]
     raise ValueError(f"Unknown library '{kind}'")
 
 
 LIBRARIES = ("characters", "sets", "times", "props", "actions", "expressions", "effects", "sounds", "ambience",
-             "instruments", "styles", "voices")
+             "instruments", "styles", "voices", "fonts")
+
+
+def _megabytes(n):
+    return f"{n / 1e6:.1f} MB" if n >= 1e5 else f"{n / 1e3:.0f} kB"
+
+
+def _font_details(fam):
+    from codecinema import typography
+    from codecinema.typography import resolve
+    print(f"{fam.name} ({fam.id}) · {fam.category} · {fam.designer}")
+    print(f"  writing systems  {', '.join(typography.SCRIPTS[s] for s in fam.scripts)}")
+    print(f"  weights          {fam.weights()}")
+    license_text = typography.license_path(fam)
+    print(f"  license          {typography.LICENSES[fam.license]} ({fam.license}) · "
+          + (str(license_text) if license_text else "text downloaded with the font"))
+    print(f"  status           {typography.status(fam)} · {_megabytes(fam.size)}")
+    for file in fam.files:
+        weight = "-".join(map(str, file.weights)) if file.weights[0] != file.weights[1] else file.weights[0]
+        shipped = resolve.bundled_path(fam, file.name)
+        print(f"  {file.name}  {weight} {file.style}  {_megabytes(file.size)}  sha256 {file.sha256[:16]}…")
+        print(f"      {shipped or fam.urls(file)[0]}")
+
+
+def _font_listing(families):
+    from codecinema import typography
+    from codecinema.runtime import downloads
+    counts, waiting = {}, 0
+    for script in dict.fromkeys(f.script for f in families):
+        group = [f for f in families if f.script == script]
+        print(f"{typography.SCRIPTS[script]} ({len(group)})")
+        for fam in group:
+            state = typography.status(fam)
+            counts[state] = counts.get(state, 0) + 1
+            waiting += fam.size if state in ("downloadable", "partial") else 0
+            others = " ".join(s for s in fam.scripts[1:])
+            print(f"  {fam.name:24s} {fam.category:11s} {fam.license:10s} {state:12s} "
+                  f"{_megabytes(fam.size):>8s}  {others}")
+    summary = " · ".join(f"{state} {counts[state]}" for state in ("bundled", "installed", "cached", "partial",
+                                                                     "downloadable") if state in counts)
+    print(f"\n{len(families)} families · {summary}" + (f" ({_megabytes(waiting)} to download)" if waiting else ""))
+    print(f"Pinned to github.com/google/fonts @ {typography.COMMIT[:7]}, SHA-256 verified · cache: "
+          f"{downloads.cache_root() / 'fonts'}" + ("" if typography.downloads_enabled() else " · downloads off"))
+    print('Use in a film: "fonts": {"title": "Lilita One"} in screenplay.json, or [fonts] title = "Lilita One" '
+          "in its settings")
+    print("Details: --names \"Lilita One\"  ·  prefetch: --download ja  ·  specimen: --sheet fonts.png")
+
+
+def _fonts(a):
+    from codecinema import typography
+    from codecinema.runtime import downloads
+    if a.download:
+        families = typography.select(a.download)
+        todo = [f for f in families if typography.status(f) in ("downloadable", "partial")]
+        print(f"{len(families)} famil{'y' if len(families) == 1 else 'ies'}: {len(families) - len(todo)} already "
+              f"available, {len(todo)} to download ({_megabytes(sum(f.size for f in todo))}) into "
+              f"{downloads.cache_root() / 'fonts'}", flush=True)
+        if todo and downloads.offline():
+            print("CODECINEMA_OFFLINE is set, so nothing can be downloaded now.", file=sys.stderr)
+            return 1
+        failed = []
+        for fam in todo:
+            try:
+                typography.fetch(fam)
+            except (downloads.DownloadError, typography.FontError) as exc:
+                failed.append(fam.name)
+                print(f"  {fam.name}: {exc}", file=sys.stderr, flush=True)
+        print(f"Failed: {', '.join(failed)}" if failed else "All requested fonts are available offline.")
+        return 1 if failed else 0
+    names = [n.strip() for n in a.names.split(",") if n.strip()] if a.names else None
+    if a.sheet:
+        from codecinema.typography.sheet import specimen
+        chosen = typography.select(",".join(names)) if names else typography.FAMILIES
+        missing = sum(typography.status(f) == "downloadable" for f in chosen)
+        if missing and typography.downloads_enabled():
+            print(f"{missing} of {len(chosen)} families are downloaded first (one file each). Choose fewer with "
+                  "--names, or set CODECINEMA_OFFLINE=1 to show only the fonts on this machine.", flush=True)
+        print(specimen(a.sheet, names), flush=True)
+        return 0
+    families = typography.select(",".join(names)) if names else list(typography.FAMILIES)
+    if len(families) == 1:
+        _font_details(families[0])
+    else:
+        _font_listing(families)
+    return 0
 
 
 def cmd_library(a):
+    if a.download and a.kind not in (None, "fonts"):
+        print("--download prefetches fonts: codecinema library fonts --download <family|writing system|all>",
+              file=sys.stderr)
+        return 1
+    if a.kind == "fonts" or a.download:
+        return _fonts(a)
     if a.sheet:
         from codecinema.cartoon.sheet import character_sheet
         names = a.names.split(",") if a.names else None
@@ -222,10 +326,40 @@ def cmd_studio(a):
     return serve(port=a.port, open_browser=not a.no_open)
 
 
+def _check_fonts():
+    """Font lines for `codecinema check`; False when a film names a font that does not exist."""
+    from codecinema import typography
+    from codecinema.typography import shaping
+    states = {fam.id: typography.status(fam) for fam in typography.FAMILIES}
+    bundled = [fam.name for fam in typography.FAMILIES if states[fam.id] == "bundled"]
+    ready = sum(state in ("installed", "cached") for state in states.values())
+    mirrors = typography.mirrors()
+    print(f"  [{'ok' if bundled else '!!'}] fonts       {', '.join(bundled) or 'bundled fonts missing'} bundled · "
+          f"{ready} of {len(states)} catalog families installed or cached · "
+          + ("others download on first use" if typography.downloads_enabled() else "downloads off (offline)")
+          + (f" · mirror {' '.join(mirrors)}" if mirrors else ""))
+    print(f"  [{'ok' if shaping.available() else '--'}] text        "
+          + ("Arabic, Hebrew, Indic and Thai shaped by skia" if shaping.available()
+             else "complex scripts need skia-python with text layout"))
+    ok = bool(bundled)
+    for film in films.discover().values():
+        fonts = settings.load(film.dir)["fonts"]
+        names = [fonts[k] for k in ("title", "subtitle", "credits", "display", "display_cjk") if fonts.get(k)]
+        problems = typography.check([n for name in names for n in ([name] if isinstance(name, str) else name)])
+        script = Path(film.dir) / "screenplay.json"
+        if film.production == "cartoon" and script.is_file():
+            from codecinema.cartoon.finish import check_fonts
+            problems += check_fonts(json.loads(script.read_text(encoding="utf-8")))
+        for problem in problems:
+            ok = False
+            print(f"  [!!] fonts       {film.id}: {problem}")
+    return ok
+
+
 def cmd_check(a):
     ok = True
     missing_tools = False
-    for mod in ("numpy", "scipy", "PIL", "matplotlib", "pyloudnorm", "skia"):
+    for mod in ("numpy", "scipy", "PIL", "matplotlib", "pyloudnorm", "skia", "fontTools"):
         try:
             __import__(mod)
             print(f"  [ok] py:{mod}")
@@ -250,6 +384,7 @@ def cmd_check(a):
         backend = speech.system_backend()
         print(f"  [{'ok' if backend else '--'}] speech      system voice: {backend or 'none (Linux: install espeak-ng)'}"
               f" · neural voice: {'installed' if speech.local_available() else 'not installed'} · babble: always")
+    ok &= _check_fonts()
     print("\nall good" if ok else "\nsome checks failed")
     if missing_tools:
         print(diagnostics.ffmpeg_help())
@@ -304,10 +439,15 @@ def main(argv=None):
     studio = sub.add_parser("studio", help="Open the local visual editor: choose, customize and render")
     studio.add_argument("--port", type=int, default=8787)
     studio.add_argument("--no-open", action="store_true", help="Print the address without opening a browser")
-    lib = sub.add_parser("library", help="Browse characters, sets, props, actions, expressions, sounds and music")
+    lib = sub.add_parser("library",
+                         help="Browse characters, sets, props, actions, expressions, sounds, music and fonts")
     lib.add_argument("kind", nargs="?", choices=LIBRARIES)
-    lib.add_argument("--sheet", metavar="PNG", help="Render the character library as a picture (needs Blender)")
-    lib.add_argument("--names", help="Comma-separated characters for --sheet (default: all)")
+    lib.add_argument("--sheet", metavar="PNG", help="Render the character library as a picture (needs Blender); "
+                     "with fonts, a specimen sheet (downloads missing fonts unless offline)")
+    lib.add_argument("--names", help="Comma-separated characters for --sheet; with fonts, families, writing systems "
+                     "(ja, zh-Hant, Korean ...) or categories to list or show (default: all)")
+    lib.add_argument("--download", metavar="FONTS", help="With fonts: download families, writing systems or 'all' "
+                     "for offline use, e.g. --download ja or --download \"Lilita One,ko\"")
     sub.add_parser("check", help="Check the toolchain and Python packages")
     a = ap.parse_args(argv)
     try:

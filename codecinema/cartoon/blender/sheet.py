@@ -33,9 +33,15 @@ for row, width in zip(rows, widths):
     m = row["metrics"]
     x += width / 2
     rig = cast.Rig(row["id"], row["spec"], m, look, row["atlas"], col)
-    track = motion.Track(row["id"], row["spec"], m, [{"t": 0, "type": "place", "at": [x, 0]}])
-    pose = track.pose(0.6)
-    pose.update({"pos": (x, 0.0, 0.0), "facing": math.radians(-12)})
+    # Each character shows off in its own signature pose, turned its own way.
+    show = row["spec"].get("sheet", {})
+    facing = math.radians(show.get("facing", -12))
+    events = [{"t": 0, "type": "place", "at": [x, 0], "facing": facing}]
+    if show.get("act"):
+        events.append({"t": 0.0, "type": "act", "name": show["act"], "dur": 4.0, "params": show.get("params", {})})
+    track = motion.Track(row["id"], row["spec"], m, events)
+    pose = track.pose(float(show.get("at", 0.6)))
+    pose.update({"pos": (x, 0.0, pose["pos"][2]), "facing": facing})
     pose["face"] = {"eyes": "open", "brows": "raised", "mouth": "smile", "blush": 0.5, "gaze": (0.0, 0.0)}
     rig.apply(pose)
     placed.append((row["id"], x, m["height"]))

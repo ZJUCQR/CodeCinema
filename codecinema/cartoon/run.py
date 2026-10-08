@@ -93,7 +93,7 @@ class Production:
 
     # ------------------------------------------------------------------ steps
     def cmd_plan(self):
-        from codecinema.cartoon import faces, screenplay
+        from codecinema.cartoon import faces, motion, screenplay
         source = self.film / "screenplay.json"
         if not source.is_file():
             raise SystemExit(f"Missing {source}")
@@ -101,13 +101,17 @@ class Production:
         for cid, info in plan["cast"].items():
             info["atlas"] = faces.paint(info["spec"]["face"], self.out / "faces")
         data = json.loads(source.read_text(encoding="utf-8"))
+        from codecinema.cartoon import finish
+        problems = finish.check_fonts(data)   # a misspelled font fails now, not at the last step
+        if problems:
+            raise screenplay.ScreenplayError("; ".join(problems))
         plan["scene_marks"] = {s.get("id"): s.get("marks", {}) for s in data["scenes"]}
         self.out.mkdir(parents=True, exist_ok=True)
         partial = self.plan_path.with_suffix(".partial.json")
         partial.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
         partial.replace(self.plan_path)
         print(screenplay.summary(plan), flush=True)
-        for warning in screenplay.timing_warnings(plan, self.voices()):
+        for warning in screenplay.timing_warnings(plan, self.voices()) + motion.motion_warnings(plan):
             print(f"  ! {warning}", flush=True)
         from codecinema.audio import sfx
         known = set(sfx.names())

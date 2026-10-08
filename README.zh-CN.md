@@ -30,11 +30,12 @@ CodeCinema 是可扩展的开源影片制作框架，将画面、音乐、声音
 
 ## ✨ 亮点
 
-- 🎭 **用剧本做动画短片**：14 个角色、7 个场景、13 种时段光线、54 种动作、12 种步态、28 种表情，自动构图、口型、拟音与字幕。
+- 🎭 **用剧本做动画短片**：24 个角色、7 个场景、13 种时段光线、54 种动作、12 种步态、28 种表情，自动构图、口型、拟音与字幕。
+- 🏃 **有分量的动作**：预备与回弹，头、耳朵、尾巴和鳍的跟随与重叠，挤压拉伸，重心转移，说话时的点头与手势，转身时迈步而不是原地打转。
 - 🪄 **从场景到成片**：八种动态风格，可调整文字、配色、时长与镜头，支持横屏、竖屏和方形。
-- 🎼 **真正的声音库**：采样管弦乐团与合成的中国、日本乐器，16 种音乐风格、71 种音效、12 种环境声与卡通嗓音，按播出响度混音。
+- 🎼 **真正的声音库**：113 种乐器，从采样管弦乐团到中国、日本乐器与 8-bit 音色，27 种音乐风格、163 种音效、30 种环境声和 20 种卡通嗓音，按播出响度混音。
+- 🔤 **多语言字体**：73 套开源字体，覆盖拉丁字母、中文、日文、韩文、阿拉伯文、天城文、泰文与希伯来文，中英日韩混排的片名按文字自动选用字体。
 - 🧩 **选择渲染技术**：切换 Skia 2D 与 Blender 3D，使用自己的 Blender 场景，也可安装渲染插件。
-- 💻 **在 macOS、Linux 和 Windows 本地运行**：三个平台都能使用系统语音，无需 API Key。
 - ♻️ **持续修改与迭代**：在 Studio 中重新打开作品，也可通过命令行分步运行制作流程。
 
 <a id="quick-start"></a>
@@ -197,7 +198,11 @@ py -3.12 -m venv .venv
 
 ![角色库](assets/_shared/images/characters.jpg)
 
-建议分步制作：`plan` 检查剧本并提示台词重叠，`stills` 每个镜头渲染一帧作为分镜表，`render --preview` 快速渲染半尺寸全片，`--frames 12s,40s` 只渲染几个时刻。默认使用 EEVEE 渲染；没有显卡的机器可在 `pyproject.toml` 该影片的 `settings.render` 中设置 `engine = "cycles"`，速度较慢，明暗更柔和。
+角色由共用部件组合而成：六种体型、十余种发型、七种帽子，眼镜、围巾、胡子、背包等配饰，以及动物的耳朵、口鼻和尾巴。在演员表里覆盖任意一项即可，例如 `{"from": "dog", "shape": "slim", "accessories": [{"kind": "hat", "style": "straw"}]}`。
+
+动作只需写明目标姿势，其余由动作层完成：做手势前有预备、结束时略有回弹，头发、耳朵、尾巴和鳍会滞后并甩过头，落地时身体挤压、奔跑时身体前倾，说话时随语音点头和比划，行进路线自动圆滑转弯。步频不会超过步态的上限，脚踩在地上，不会滑行。
+
+建议分步制作：`plan` 检查剧本，提示台词重叠以及对步态来说过快的移动，`stills` 每个镜头渲染一帧作为分镜表，`render --preview` 快速渲染半尺寸全片，`--frames 12s,40s` 只渲染几个时刻。默认使用 EEVEE 渲染；没有显卡的机器可在 `pyproject.toml` 该影片的 `settings.render` 中设置 `engine = "cycles"`，速度较慢，明暗更柔和。
 
 <a id="framework"></a>
 
@@ -240,11 +245,25 @@ py -3.12 -m venv .venv
 
 首次配音会下载语音模型。动画角色还可以根据一段文字描述设计嗓音。使用录音时，将 WAV 文件放入 `assets/<影片 ID>/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。动画短片用 `run <影片> voices --keep-voices` 保存配音，在一台电脑上做好的影片，换到任何电脑上声音都一样。
 
+<a id="fonts"></a>
+
+## 🔤 字体
+
+片名、片尾和字幕可以使用 73 套开源字体中的任意一套。Fredoka 与站酷快乐体随 CodeCinema 提供；其他字体在首次使用时从 Google Fonts 仓库的固定版本下载，经 SHA-256 校验后与许可证一起保存。
+
+```bash
+.venv/bin/python -m codecinema library fonts                 # 按文字列出字体、许可证与状态
+.venv/bin/python -m codecinema library fonts --download ja   # 预先下载，便于离线工作
+.venv/bin/python -m codecinema library fonts --sheet fonts.png
+```
+
+在剧本里按名称选择字体，例如 `"fonts": {"title": "Lilita One", "credits": "Nunito"}`，也可在任意影片设置的 `[fonts]` 中指定。多语言混排时逐段选用字体并对齐基线，阿拉伯文、希伯来文、天城文和泰文在各平台都能正确成形。访问 GitHub 较慢时可设置 `CODECINEMA_FONTS_MIRROR`，设置 `CODECINEMA_OFFLINE=1` 则完全离线。
+
 <a id="sound"></a>
 
 ## 🎼 声音
 
-配乐以数据形式写成，由采样管弦乐团演奏：CodeCinema 用自带的 SoundFont 播放器演奏 S. Christian Collins 的 General MIDI 音色库 [GeneralUser GS](https://www.schristiancollins.com/generaluser.php)。音色库 32 MB，首次使用时下载一次；离线或设置 `CODECINEMA_AUDIO_SOUNDBANK=off` 时改用内置合成乐器。`codecinema library instruments`、`styles`、`sounds` 和 `ambience` 可列出全部素材。每部影片都会在对白时自动压低音乐，并按响度目标完成母带处理。
+配乐以数据形式写成，由采样管弦乐团演奏：CodeCinema 用自带的 SoundFont 播放器演奏 S. Christian Collins 的 General MIDI 音色库 [GeneralUser GS](https://www.schristiancollins.com/generaluser.php)。音色库 32 MB，首次使用时下载一次；离线或设置 `CODECINEMA_AUDIO_SOUNDBANK=off` 时改用内置合成乐器。`codecinema library instruments`、`styles`、`sounds`、`ambience` 和 `voices` 可列出可用内容：113 种乐器，从摇篮曲到爵士摇摆、8-bit 和日本风格的 27 种音乐风格，带多普勒效果的交通工具与十余种地面脚步声在内的 163 种音效，30 种环境声，以及 20 种卡通嗓音和 39 种无词音效。每部影片都会在对白时自动压低音乐，并按响度目标完成母带处理。
 
 ## 🗂 项目结构
 
@@ -280,6 +299,7 @@ CodeCinema/
 │   ├── cartoon/                # 剧本动画：素材库、动作、摄像机、配音与成片
 │   │   └── blender/            # 在 Blender 中搭建角色、场景、道具与特效
 │   ├── audio/                  # 乐器、作曲、音效、环境声、嗓音与混音
+│   ├── typography/             # 字体目录、文字识别、回退与文字绘制
 │   └── productions/            # 示例影片的制作包
 │       ├── silvergrass/        # 动作、Blender 场景与后期
 │       └── nightrevels/        # 角色绘制、长卷动画与音乐
@@ -299,7 +319,9 @@ CodeCinema/
 │       ├── studio/           # 编辑器界面与风格缩略图
 │       ├── scaffold/         # 新影片的初始文件
 │       └── site/             # 网站样式、脚本与预览媒体
+├── tests/                    # 测试（pytest），无需 Blender 或网络
 ├── pyproject.toml            # 依赖与所有影片配置
+├── CHANGELOG.md              # 各版本的重要变更
 ├── CONTRIBUTING.md           # 开发与贡献说明
 └── LICENSE                   # MIT 许可证
 ```
@@ -317,7 +339,7 @@ CodeCinema/
 
 ## 参与贡献
 
-欢迎改进场景、Studio、渲染器和文档。请先阅读[贡献指南](CONTRIBUTING.md)，了解开发环境与验证方式。提出问题或功能建议时，请在 [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) 中描述使用场景，涉及视觉修改时可附上截图或短片。
+欢迎改进场景、Studio、渲染器、素材库和文档。请先阅读[贡献指南](CONTRIBUTING.md)，了解开发环境与验证方式；`pip install -e ".[dev]"` 后运行 `python -m pytest` 即可执行测试。参与者请遵守[行为准则](CODE_OF_CONDUCT.md)，安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。提出问题或功能建议时，请在 [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) 中描述使用场景，涉及视觉修改时可附上截图或短片。
 
 ## 📜 许可
 

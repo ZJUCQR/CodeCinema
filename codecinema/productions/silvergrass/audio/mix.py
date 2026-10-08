@@ -3,7 +3,6 @@ mix.py -- render the complete soundtrack of Duel in the Silver Grass from an eve
 
 usage:
     .venv/bin/python codecinema/productions/silvergrass/audio/mix.py                                   # out/events.json -> out/audio/final_mix.wav
-    .venv/bin/python codecinema/productions/silvergrass/audio/mix.py --events out/audio/draft_events.json --out out/audio/demo_mix.wav
     .venv/bin/python codecinema/productions/silvergrass/audio/mix.py --strict                          # exit 2 if a QC check in the report fails
 
 Outputs (paths derive from --out, so a demo run never touches the final's files)
@@ -971,7 +970,7 @@ def _plot_loudness_map(y, path, doc, spans, t_hits):
 
 def main():
     ap = argparse.ArgumentParser(description="render + master the 芒原决战 soundtrack")
-    ap.add_argument("--events", default=None, help="events.json (default out/events.json, fallback out/audio/draft_events.json)")
+    ap.add_argument("--events", default=None, help="events.json (default out/events.json)")
     ap.add_argument("--out", default=config.FINAL_MIX_WAV)
     ap.add_argument("--report", default=None, help=f"default: {config.MIX_REPORT_JSON} for {config.FINAL_MIX_WAV}, "
                                                     "else <out>_report.json")
@@ -983,9 +982,7 @@ def main():
     ap.add_argument("--strict", action="store_true", help="exit code 2 if any report check fails (outputs are still "
                                                           "written); draft events always fail checks.events_real")
     a = ap.parse_args()
-    ev = a.events
-    if ev is None:
-        ev = config.EVENTS_JSON if os.path.exists(config.EVENTS_JSON) else config.DRAFT_EVENTS_JSON
+    ev = a.events or config.EVENTS_JSON
     rep = render(ev, a.out, a.report, a.stems_dir, a.spec_dir, a.target_lufs, a.ceiling, not a.no_spectrograms)
     if a.strict and not rep["checks"]["all_pass"]:
         sys.exit(2)

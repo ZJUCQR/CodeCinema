@@ -66,9 +66,10 @@
     </div>
     <div class="hls">
       <div class="hl feature reveal"><div class="ic">🤖</div><div><h3>Choose, personalize, render</h3><p>The local Studio offers eight animated looks, editable scene cards, titles, captions, colors and three frame shapes. Choose a world and press Render to get an MP4 with original music.</p></div></div>
+      <div class="hl feature reveal"><div class="ic">🎭</div><div><h3>Cartoon films from a screenplay</h3><p>Cast 24 library characters, pick sets, times of day and shot sizes, and write beats such as walk, wave, say and look. CodeCinema animates, frames, voices, scores and mixes the film in Blender: <a href="#pebble">Pebble</a> and <a href="#nian">Nian</a> are each one screenplay.</p></div></div>
       <div class="hl reveal"><div class="ic">🧩</div><div><h3>Choose your renderer</h3><p>Select Skia 2D, Blender 3D or an installed plugin in Studio. Stories live in films/ and media in assets/, while the framework handles picture, sound and assembly.</p></div></div>
-      <div class="hl reveal"><div class="ic">🎼</div><div><h3>A shared sound toolkit</h3><p>The films share a DSP library: oscillators, plucked-string and modal models, convolution reverb, a true-peak limiter and loudness helpers.</p></div></div>
-      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices with acting direction</h3><p>Use recorded dialogue or generate expressive voices locally on Apple Silicon. Scene lengths, speech and music share a timeline so you can refine the pacing.</p></div></div>
+      <div class="hl reveal"><div class="ic">🎼</div><div><h3>A real sound library</h3><p>113 instruments from a sampled orchestra to Chinese, Japanese and 8-bit voices, 27 music styles, 163 sound effects, 30 ambience beds and 20 cartoon voices, mixed with dialogue ducking to a loudness target.</p></div></div>
+      <div class="hl reveal"><div class="ic">🎙️</div><div><h3>Voices on every platform</h3><p>Recordings, an expressive local voice on Apple Silicon, the system voice on macOS, Windows and Linux, or cartoon babble that needs nothing installed. Takes can be stored with a film so it sounds the same everywhere.</p></div></div>
       <div class="hl reveal"><div class="ic">♻️</div><div><h3>Reproducible and configurable</h3><p>Reopen films in Studio or rerun individual production steps. Override defaults with local settings. Production packs provide caching and parallelism suited to their renderers.</p></div></div>
     </div>
   </div>
@@ -100,6 +101,7 @@ codecinema studio                    <span class="c"># opens the local visual ed
         <tr><td><code>codecinema run &lt;film&gt; &lt;step&gt; [args]</code></td><td>Run one step of a film with that film's settings</td></tr>
         <tr><td><code>codecinema new &lt;id&gt; [--title "…"]</code></td><td>Create a film with its own story and central asset directory</td></tr>
         <tr><td><code>codecinema renderers</code></td><td>List built-in and installed renderers</td></tr>
+        <tr><td><code>codecinema library [kind]</code></td><td>Browse characters, sets, actions, expressions, sounds, instruments, music styles and fonts</td></tr>
         <tr><td><code>codecinema check</code></td><td>Check the toolchain and the Python packages</td></tr>
       </tbody>
     </table></div>
@@ -118,6 +120,7 @@ codecinema studio                    <span class="c"># opens the local visual ed
       <div class="term-bar"><i></i><i></i><i></i><span class="t">bash</span><button class="copy" type="button" data-done="Copied">Copy</button></div>
 <pre><code>codecinema new myfilm --renderer skia --preset aurora --title "My Film" --render --open
 codecinema customize myfilm --renderer blender --preset ocean --duration 20 --render
+codecinema new myshort --template cartoon --render  <span class="c"># a 3D cartoon from a screenplay</span>
 codecinema run myfilm all --quality preview  <span class="c"># separate preview; preserves the master</span></code></pre>
     </div>
   </div>
@@ -130,6 +133,34 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       <h2 id="films-heading">Watch the examples</h2>
     </div>
     <div class="film-grid reveal">
+      <article id="pebble" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-pebble" controls preload="metadata" playsinline poster="img/pebble/poster.jpg" aria-label="Pebble" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/pebble/Pebble.mp4" data-error="The video could not load. Please reload the page and try again.">
+            <source src="films/Pebble.mp4" type="video/mp4">
+            <track kind="subtitles" src="films/Pebble.en.vtt" srclang="en" label="English">
+            <track kind="subtitles" src="films/Pebble.zh.vtt" srclang="zh" label="中文">
+            <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/pebble/Pebble.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <h3>Pebble</h3>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+        </div>
+      </article>
+      <article id="nian" class="film-card film-feature" data-film>
+        <div class="player">
+          <video id="film-nian" controls preload="metadata" playsinline poster="img/nian/poster.jpg" aria-label="Nian" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nian/Nian.mp4" data-error="The video could not load. Please reload the page and try again.">
+            <source src="films/Nian.mp4" type="video/mp4">
+            <track kind="subtitles" src="films/Nian.en.vtt" srclang="en" label="English" default>
+            <track kind="subtitles" src="films/Nian.zh.vtt" srclang="zh" label="中文">
+            <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nian/Nian.mp4">Download MP4</a></p>
+          </video>
+        </div>
+        <div class="film-card-body">
+          <h3>Nian · 年</h3>
+          <p class="player-status" role="status" aria-live="polite" hidden></p>
+        </div>
+      </article>
       <article id="silvergrass" class="film-card film-feature" data-film>
         <div class="player">
           <video id="film-silvergrass" controls preload="metadata" playsinline poster="media/poster.jpg" aria-label="Duel in the Silver Grass" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/film/SilverGrass.mp4" data-error="The video could not load. Please reload the page and try again.">
@@ -144,7 +175,7 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
       </article>
       <article id="nightrevels" class="film-card film-feature" data-film>
         <div class="player">
-          <video id="film-nightrevels" controls preload="metadata" playsinline poster="media/poster_nr.jpg" aria-label="The Night Revels of Han Xizai, Cat Edition" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="The video could not load. Please reload the page and try again.">
+          <video id="film-nightrevels" controls preload="metadata" playsinline poster="img/nightrevels/still_470.jpg" aria-label="The Night Revels of Han Xizai, Cat Edition" data-fallback="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4" data-error="The video could not load. Please reload the page and try again.">
             <source src="films/NightRevels.mp4" type="video/mp4">
             <p>Your browser does not support embedded video. <a href="https://github.com/ZJUCQR/CodeCinema/releases/download/nightrevels/NightRevels.mp4">Download MP4</a></p>
           </video>
@@ -177,9 +208,12 @@ codecinema run myfilm all --quality preview  <span class="c"># separate preview;
 │   ├── runtime/           <span class="c"># external tools and process support</span>
 │   ├── studio/            <span class="c"># local visual editor</span>
 │   ├── renderers/         <span class="c"># Skia, Blender and renderer plugin interface</span>
-│   ├── audio/             <span class="c"># music, effects, speech and performance timing</span>
+│   ├── cartoon/           <span class="c"># screenplay films: libraries, motion, camera, voices</span>
+│   ├── audio/             <span class="c"># instruments, composer, effects, ambience, voices, mixer</span>
 │   └── productions/       <span class="c"># authored example production packs</span>
 ├── films/                  <span class="c"># independent film projects</span>
+│   ├── pebble/             <span class="c"># Pebble (cartoon screenplay)</span>
+│   ├── nian/               <span class="c"># Nian (cartoon screenplay)</span>
 │   ├── silvergrass/        <span class="c"># Duel in the Silver Grass</span>
 │   └── nightrevels/        <span class="c"># The Night Revels of Han Xizai, Cat Edition</span>
 └── pyproject.toml          <span class="c"># package dependencies and all film configurations</span></code></pre>

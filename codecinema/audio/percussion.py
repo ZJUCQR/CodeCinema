@@ -10,12 +10,14 @@ sample is the stroke (anchor 0), except cymbal_swell (the crescendo peaks at the
     orchestral  timpani (pitched; rolls), bass_drum, cymbals (clash / choke), cymbal_swell, sleigh_bells, taiko
     Chinese     daluo (big gong, pitch falls), xiaoluo (small opera gong, pitch rises), bo (cymbals; muted 'qi'),
                 tanggu (hall drum: center / edge / rim), bangzi (hardwood clapper), muyu (wooden fish)
+    hand        bodhran (open / muted / rim), conga (open / muted / slap), bongo (high / low), claves
+    8-bit       chip_noise: the console's shift-register noise as snare, kick or hat
 Taiko is adapted from the Silver Grass pack.
 """
 import numpy as np
 
 from codecinema.audio import dsp
-from codecinema.audio.dsp import TWO_PI, n_of, t_axis
+from codecinema.audio.dsp import SR, TWO_PI, n_of, t_axis
 
 
 def _nrm(x):
@@ -490,3 +492,98 @@ def muyu(vel=0.7, r=None, size=1.0):
     k = n_of(0.005)
     y[:k] += 0.35 * vel * _nrm(dsp.bandpass(r.standard_normal(k), 1500, 6000, 2))
     return _nrm(dsp.highpass(y, 200, 2)) * vel
+
+
+# ======================================================================================  hand drums and 8-bit noise
+def bodhran(vel=0.8, r=None, stroke="open"):
+    """bodhran frame drum struck with a tipper: a deep, loose goatskin boom (stroke open | muted | rim)"""
+    r = _r(r, "bodhran", vel, stroke)
+    if stroke == "rim":
+        n = n_of(0.15)
+        modes = np.array([1100, 2600, 4100]) * r.uniform(0.95, 1.05)
+        y = dsp.modal(modes, [1.0, 0.5, 0.2], [0.04, 0.025, 0.015], n, r=r)
+        return _nrm(dsp.highpass(y, 400, 2)) * vel
+    muted = stroke == "muted"
+    f0 = r.uniform(85, 105) * (1.25 if muted else 1.0)
+    n = n_of(0.35 if muted else 0.9)
+    t = t_axis(n)
+    t60 = np.array([0.45, 0.3, 0.2, 0.18, 0.12, 0.1]) * (0.3 if muted else 1.0)
+    y = dsp.modal(f0 * np.array([1.0, 1.59, 2.14, 2.3, 2.65, 2.92]), [1.0, 0.5, 0.35, 0.3, 0.2, 0.12], t60, n, r=r,
+                  fdrift=1.0 + 0.12 * vel * np.exp(-t / 0.04), attack=0.001)
+    k = n_of(0.03)
+    y = _nrm(y)
+    y[:k] += 0.35 * vel * _nrm(_burst(r, k, 300, 3000, 0.005))
+    return _nrm(dsp.fade(dsp.highpass(y, 40, 2), 0.0, 0.05)) * vel
+
+
+def claves(vel=0.8, r=None):
+    """two hardwood sticks: one bright, woody 'tock'"""
+    r = _r(r, "claves", vel)
+    n = n_of(0.25)
+    f = r.uniform(2300, 2600)
+    y = _nrm(dsp.modal([f, f * 2.71, f * 4.6], [1.0, 0.12, 0.04], [0.14, 0.04, 0.02], n, r=r, attack=0.0003))
+    y[:n_of(0.002)] += 0.4 * _nrm(dsp.highpass(r.standard_normal(n_of(0.002)), 3000, 2))
+    return _nrm(dsp.highpass(y, 600, 2)) * vel
+
+
+def conga(vel=0.8, r=None, stroke="open"):
+    """conga, high drum: an open ringing tone, a muted tone or a sharp slap (stroke open | muted | slap)"""
+    r = _r(r, "conga", vel, stroke)
+    f0 = r.uniform(195, 215)
+    n = n_of(0.6)
+    t = t_axis(n)
+    life = {"open": 1.0, "muted": 0.25, "slap": 0.3}.get(stroke, 1.0)
+    y = _nrm(dsp.modal(f0 * np.array([1.0, 1.59, 2.14, 2.65]), [1.0, 0.45, 0.3, 0.15],
+                       np.array([0.35, 0.2, 0.15, 0.1]) * life, n, r=r, fdrift=1.0 + 0.04 * vel * np.exp(-t / 0.03)))
+    k = n_of(0.02)
+    slap = 1.2 if stroke == "slap" else 0.3
+    y[:k] += slap * vel * _nrm(_burst(r, k, 1000 if stroke == "slap" else 400, 6000, 0.003))
+    return _nrm(dsp.fade(dsp.highpass(y, 80, 2), 0.0, 0.05)) * vel
+
+
+def bongo(vel=0.8, r=None, high=True):
+    """bongos: a small tight membrane, high (macho) or low (hembra)"""
+    r = _r(r, "bongo", vel, high)
+    f0 = r.uniform(400, 440) if high else r.uniform(290, 320)
+    n = n_of(0.35)
+    t = t_axis(n)
+    y = _nrm(dsp.modal(f0 * np.array([1.0, 1.59, 2.14, 2.3]), [1.0, 0.4, 0.25, 0.15], [0.18, 0.1, 0.07, 0.05], n, r=r,
+                       fdrift=1.0 + 0.05 * vel * np.exp(-t / 0.02)))
+    k = n_of(0.015)
+    y[:k] += 0.35 * vel * _nrm(_burst(r, k, 800, 7000, 0.002))
+    return _nrm(dsp.fade(dsp.highpass(y, 120, 2), 0.0, 0.03)) * vel
+
+
+_LFSR = {}
+
+
+def _lfsr():
+    """the 15-bit noise shift register of 8-bit consoles (one full 32767-step period, +-1)"""
+    if not _LFSR:
+        reg, out = 1, np.empty(32767)
+        for i in range(32767):
+            bit = (reg ^ (reg >> 1)) & 1
+            reg = (reg >> 1) | (bit << 14)
+            out[i] = 1.0 if reg & 1 else -1.0
+        _LFSR[0] = out
+    return _LFSR[0]
+
+
+def chip_noise(vel=0.8, r=None, kind="snare"):
+    """8-bit noise drum: the shift-register noise clocked at a chosen rate under a stepped decay (kind snare | kick |
+    hat); the kick adds the console's falling triangle thump"""
+    r = _r(r, "chip_noise", vel, kind)
+    presets = {"kick": (3500.0, 0.08, 2500.0), "hat": (120000.0, 0.03, 14000.0), "snare": (17000.0, 0.11, 9000.0)}
+    clock, decay, lp = presets.get(kind, presets["snare"])
+    n = n_of(decay * 4.0 + 0.03)
+    t = t_axis(n)
+    seq = _lfsr()
+    pos = np.cumsum(np.full(n, clock / SR) * (1.0 + (2.0 * np.exp(-t / 0.01) if kind == "kick" else 0.0)))
+    y = dsp.lowpass(seq[(pos + r.integers(len(seq))).astype(np.int64) % len(seq)], lp, 2)
+    frames = (np.floor(t * 60.0) / 60.0)
+    y = y * np.round(np.exp(-frames / decay) * 15.0) / 15.0
+    if kind == "kick":
+        y = 0.6 * y + np.sin(TWO_PI * dsp.phase_cycles(50.0 + 250.0 * np.exp(-t / 0.02), n)) * np.exp(-t / 0.07)
+    if kind == "hat":
+        y = dsp.highpass(y, 5000, 2)
+    return _nrm(dsp.fade(y, 0.0005, 0.01)) * vel

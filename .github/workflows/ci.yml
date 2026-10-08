@@ -76,6 +76,13 @@ jobs:
           codecinema run nian plan
           codecinema new ci-cartoon --template cartoon
           codecinema run ci-cartoon plan
+      - name: Run the test suite
+        shell: bash
+        env:
+          CODECINEMA_AUDIO_SOUNDBANK: "off"
+        run: |
+          pip install pytest
+          python -m pytest
       - name: Byte-compile the framework and films
         run: python -m compileall -q codecinema
       - name: List rendering backends

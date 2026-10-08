@@ -8,11 +8,12 @@ Conventions
     * every random process takes a numpy Generator (see rng()) -> fully deterministic renders
 
 Contents
-    oscillators (sine, PolyBLEP saw/square, additive triangle, FM), noise (white/pink/brown),
-    envelopes, filters (Butterworth, RBJ biquads, block-wise time-varying biquad, SVF, filter-bank sweep),
+    oscillators (sine, PolyBLEP saw/square, additive partials, FM), noise (pink/brown, control curves, crackle),
+    envelopes, filters (Butterworth, RBJ biquads, block-wise time-varying biquad, filter-bank sweeps, comb),
     one-pole smoothers, resonator/modal synthesis, Karplus-Strong (vectorised per period),
     cubic-interpolated resampling / varispeed / pitch shift, synthetic stereo convolution reverb,
-    equal-power pan, compressor, true-peak lookahead limiter, soft clip, Timeline placement helper.
+    equal-power pan, compressor, true-peak lookahead limiter, soft clip and saturation, K-weighted loudness,
+    clip placement.
 """
 import hashlib
 
@@ -124,17 +125,6 @@ def pan_stereo(x, pan=0.0, width=1.0):
     return np.vstack([l * gl * k, r * gr * k])
 
 
-def spread_voices(voices, pans):
-    """list of mono voices + pans -> stereo sum"""
-    n = max(len(v) for v in voices)
-    out = np.zeros((2, n))
-    for v, p in zip(voices, pans):
-        gl, gr = pan_gains(p)
-        out[0, :len(v)] += v * gl
-        out[1, :len(v)] += v * gr
-    return out
-
-
 # =====================================================================================  oscillators
 def phase_cycles(freq, n, phase0=0.0):
     """instantaneous phase in cycles; phase[0] == phase0; freq scalar or array(n)"""
@@ -182,22 +172,6 @@ def osc_square(freq, n, phase0=0.0, pw=0.5):
     return y
 
 
-def osc_tri(freq, n, phase0=0.0, max_harm=40):
-    """additive band-limited triangle (odd harmonics 1/k^2), harmonics faded near Nyquist"""
-    f = np.broadcast_to(np.asarray(freq, dtype=np.float64), (n,))
-    ph = TWO_PI * phase_cycles(f, n, phase0)
-    y = np.zeros(n)
-    sgn = 1.0
-    for k in range(1, 2 * max_harm, 2):
-        fk = f * k
-        if np.min(fk) > NYQ * 0.9:
-            break
-        w = np.clip((NYQ * 0.9 - fk) / (NYQ * 0.1), 0.0, 1.0)
-        y += sgn * w * np.sin(k * ph) / (k * k)
-        sgn = -sgn
-    return y * (8.0 / np.pi ** 2)
-
-
 def additive(f0, n, partials, phase_rng=None, amp_env=None):
     """sum of harmonic/inharmonic partials following f0 (scalar or array).
     partials: iterable of (ratio, amp) or (ratio, amp, t60). Partials above 0.92*Nyquist are skipped
@@ -237,10 +211,6 @@ _PINK_B = np.array([0.049922035, -0.095993537, 0.050612699, -0.004408786])
 _PINK_A = np.array([1.0, -2.494956002, 2.017265875, -0.522189400])
 
 
-def white(n, r):
-    return r.standard_normal(n)
-
-
 def pink(n, r):
     """pink (1/f) noise, unit RMS approx (Kellet 3-pole filter)"""
     w = r.standard_normal(n + 2000)
@@ -254,10 +224,6 @@ def brown(n, r, leak=0.998):
     y = signal.lfilter([1.0], [1.0, -leak], w)[4000:]
     y = dc_block(y, 8.0)
     return y / (np.sqrt(1.0 / (1.0 - leak * leak)) * 0.93)
-
-
-def noise_band(n, r, lo, hi, order=2):
-    return bandpass(white(n, r), lo, hi, order)
 
 
 def lp_noise(n, r, fc, order=2):
@@ -323,32 +289,6 @@ def env_points(points, n, curve="lin"):
         u = 0.5 - 0.5 * np.cos(np.pi * u)
         return v0 + (v1 - v0) * u
     return np.interp(t, ts, vs)
-
-
-def env_decay(n, t60, attack=0.0015, hold=0.0):
-    """linear attack (s), optional hold, exponential decay reaching -60 dB after t60 s"""
-    t = t_axis(n)
-    e = np.exp(-LN1000 * np.maximum(t - attack - hold, 0.0) / max(t60, 1e-4))
-    if attack > 0:
-        e *= np.clip(t / attack, 0.0, 1.0)
-    return e
-
-
-def env_adsr(n, a, d, s, r, gate=None, curve=3.0):
-    """ADSR; gate = note-on length in seconds (default: n - release). Exponential-ish segments."""
-    t = t_axis(n)
-    gate = (n / SR - r) if gate is None else gate
-    e = np.zeros(n)
-    a = max(a, 1e-4)
-    ma = t < a
-    e[ma] = (t[ma] / a) ** (1.0 / max(curve * 0.5, 1.0))
-    md = (t >= a) & (t < gate)
-    e[md] = s + (1.0 - s) * np.exp(-curve * (t[md] - a) / max(d, 1e-4))
-    # release from whatever level at gate
-    lvl_gate = s + (1.0 - s) * np.exp(-curve * max(gate - a, 0) / max(d, 1e-4)) if gate > a else min(gate / a, 1.0)
-    mr = t >= gate
-    e[mr] = lvl_gate * np.exp(-LN1000 * (t[mr] - gate) / max(r, 1e-4))
-    return e
 
 
 def fade(x, fin=0.0, fout=0.0, shape="cos"):
@@ -457,10 +397,6 @@ def peq(x, fc, gain_db, q=1.0):
     return biquad(x, "peak", fc, q, gain_db)
 
 
-def shelf(x, fc, gain_db, kind="low", q=0.7071):
-    return biquad(x, "lowshelf" if kind == "low" else "highshelf", fc, q, gain_db)
-
-
 def eq_chain(x, bands):
     """bands: list of (kind, fc, gain_db, q)"""
     if not bands:
@@ -488,37 +424,6 @@ def tv_biquad(x, kind, fc, q=0.7071, gain_db=0.0, block=128):
             y[:, s:e], zi = signal.sosfilt(sos, x[:, s:e], axis=-1, zi=zi)
         else:
             y[s:e], zi = signal.sosfilt(sos, x[s:e], zi=zi)
-    return y
-
-
-def svf(x, fc, q=0.7071, mode="lp"):
-    """per-sample TPT state-variable filter (Zavalishin) with audio-rate fc; pure python loop,
-    use only on short clips (< ~1 s). mode: lp | bp | hp | notch"""
-    x = np.asarray(x, dtype=np.float64)
-    n = len(x)
-    fc = np.broadcast_to(np.asarray(fc, dtype=np.float64), (n,))
-    gs = np.tan(np.pi * np.clip(fc, 5.0, NYQ * 0.95) / SR)
-    k = 1.0 / q
-    y = np.empty(n)
-    ic1 = ic2 = 0.0
-    xl = x.tolist()
-    gl = gs.tolist()
-    for i in range(n):
-        gg = gl[i]
-        a1 = 1.0 / (1.0 + gg * (gg + k))
-        v3 = xl[i] - ic2
-        v1 = a1 * ic1 + gg * a1 * v3
-        v2 = ic2 + gg * v1
-        ic1 = 2 * v1 - ic1
-        ic2 = 2 * v2 - ic2
-        if mode == "lp":
-            y[i] = v2
-        elif mode == "bp":
-            y[i] = v1
-        elif mode == "hp":
-            y[i] = xl[i] - k * v1 - v2
-        else:
-            y[i] = xl[i] - k * v1
     return y
 
 
@@ -1009,34 +914,10 @@ def loudness_peak(x, window=0.1):
     return float(np.max(fast_loudness(x, window)))
 
 
-# =====================================================================================  timeline
-class Timeline:
-    """stereo accumulation buffer; add clips at absolute sample offsets (negative/overflow-safe)"""
-
-    def __init__(self, n, channels=2):
-        self.n = int(n)
-        self.buf = np.zeros((channels, self.n))
-
-    def add(self, clip, start, gain=1.0):
-        """clip: mono (added equally, no pan law) or stereo; start: sample index (int)"""
-        clip = np.asarray(clip, dtype=np.float64)
-        if clip.ndim == 1:
-            clip = np.vstack([clip, clip])
-        m = clip.shape[-1]
-        s = int(start)
-        a = max(0, -s)
-        b = min(m, self.n - s)
-        if b <= a:
-            return
-        self.buf[:, s + a: s + b] += gain * clip[:, a:b]
-
-    def add_at(self, clip, t_sec, anchor=0, gain=1.0):
-        """place so that clip sample `anchor` lands exactly at t_sec"""
-        self.add(clip, int(round(t_sec * SR)) - int(anchor), gain)
-
-
+# =====================================================================================  placement
 def place(buf, clip, start, gain=1.0):
-    """functional variant of Timeline.add for raw (2,n) or (n,) buffers"""
+    """add a clip into a (2, n) or (n,) buffer at sample `start` (negative / overflowing parts are dropped); a mono
+    clip goes equally into both channels of a stereo buffer"""
     clip = np.asarray(clip, dtype=np.float64)
     if buf.ndim == 2 and clip.ndim == 1:
         clip = np.vstack([clip, clip])

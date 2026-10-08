@@ -772,7 +772,7 @@
        "t": 0.2,
        "who": "pebble",
        "run": "bottom",
-       "speed": 1.5
+       "speed": 1.0
       },
       {
        "t": 0.2,
@@ -1120,7 +1120,7 @@
         -1.3,
         -1.6
        ],
-       "speed": 0.6
+       "speed": 0.35
       },
       {
        "t": 0.6,
@@ -1291,20 +1291,29 @@
        "t": 0.0,
        "who": "grandpa",
        "waddle": "beside",
-       "dur": 3.2
+       "dur": 3.4
       },
       {
-       "t": 3.3,
+       "t": 3.5,
        "who": "grandpa",
        "turn": "back"
       },
       {
-       "t": 3.4,
+       "t": 3.6,
        "who": "grandpa",
        "act": "sit",
        "dur": 30
       }
-     ]
+     ],
+     "cast": {
+      "grandpa": {
+       "at": [
+        -2.2,
+        0.2
+       ],
+       "facing": "beside"
+      }
+     }
     },
     {
      "id": "still",
@@ -1524,10 +1533,10 @@
    "start": {
     "pebble": {
      "at": [
-      9.4,
-      -1.4
+      12.2,
+      -0.1
      ],
-     "facing": 70,
+     "facing": "lookout",
      "face": "happy"
     },
     "skye": {
@@ -1575,7 +1584,7 @@
        "t": 0.0,
        "who": "pebble",
        "waddle": "lookout",
-       "dur": 3.2
+       "dur": 3.4
       },
       {
        "t": 0.0,
@@ -1606,13 +1615,13 @@
        "mood": "excited"
       },
       {
-       "t": 3.4,
+       "t": 3.6,
        "who": "pebble",
        "act": "cheer",
        "dur": 1.5
       },
       {
-       "t": 3.4,
+       "t": 3.6,
        "who": "pebble",
        "face": "joy"
       }
@@ -1913,6 +1922,11 @@
         0.0
        ],
        "dur": 1.4
+      },
+      {
+       "t": 2.15,
+       "who": "pebble",
+       "hide": true
       }
      ]
     }
@@ -2427,25 +2441,25 @@
         -0.2,
         1.4
        ],
-       "dur": 2.6
+       "dur": 3.6
       },
       {
        "t": 0.8,
        "who": "tuck",
-       "waddle": [
+       "dur": 3.4,
+       "run": [
         -0.9,
         0.9
-       ],
-       "dur": 2.4
+       ]
       },
       {
        "t": 0.9,
        "who": "bo",
-       "waddle": [
+       "dur": 3.5,
+       "run": [
         -1.4,
         1.3
-       ],
-       "dur": 2.6
+       ]
       }
      ]
     },

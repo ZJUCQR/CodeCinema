@@ -30,11 +30,12 @@ Film folders hold story data. Media lives in the root `assets/<film-id>/` direct
 
 ## ✨ Highlights
 
-- 🎭 **Cartoon films from a screenplay.** 14 library characters, 7 sets, 13 times of day, 54 actions, 12 gaits and 28 expressions, with automatic framing, lip sync, Foley and subtitles.
+- 🎭 **Cartoon films from a screenplay.** 24 library characters, 7 sets, 13 times of day, 54 actions, 12 gaits and 28 expressions, with automatic framing, lip sync, Foley and subtitles.
+- 🏃 **Motion with weight.** Anticipation and overshoot, follow-through on heads, ears, tails and flippers, squash and stretch, weight shifts, talking gestures and turns that step rather than swivel.
 - 🪄 **From a look to a finished film.** Eight animated styles with editable text, colors, timing and camera moves, in landscape, portrait or square.
-- 🎼 **A real sound library.** A sampled orchestra plus synthesized Chinese and Japanese instruments, 16 music styles, 71 sound effects, 12 ambience beds and cartoon voices, mixed to broadcast loudness.
+- 🎼 **A real sound library.** 113 instruments from a sampled orchestra to Chinese, Japanese and 8-bit voices, 27 music styles, 163 sound effects, 30 ambience beds and 20 cartoon voices, mixed to broadcast loudness.
+- 🔤 **Type in any language.** 73 open-licensed font families for Latin, Chinese, Japanese, Korean, Arabic, Devanagari, Thai and Hebrew, with per-script fallback in mixed-language titles.
 - 🧩 **Choose your renderer.** Switch between Skia 2D and Blender 3D, use your own Blender scenes, or install a renderer plugin.
-- 💻 **Runs locally on macOS, Linux and Windows.** System voices work on all three. No API key is needed.
 - ♻️ **Made for iteration.** Reopen saved projects in Studio or run individual production steps from the command line.
 
 <a id="quick-start"></a>
@@ -197,7 +198,11 @@ Browse the libraries from the terminal, or render the character library as a pic
 
 ![The character library](assets/_shared/images/characters.jpg)
 
-Work in steps: `plan` checks the screenplay and warns about lines that overlap, `stills` renders one frame per shot as a storyboard, and `render --preview` renders a half-size pass. `--frames 12s,40s` renders single moments. Rendering uses EEVEE by default. On a machine without a GPU, set `engine = "cycles"` under the film's `settings.render` in `pyproject.toml`; Cycles is slower and shades more softly.
+Characters are assembled from shared parts: six body shapes, a dozen hair styles, seven hats, accessories such as glasses, a scarf, a moustache or a backpack, and animal ears, snouts and tails. Override any of them in the cast, for example `{"from": "dog", "shape": "slim", "accessories": [{"kind": "hat", "style": "straw"}]}`.
+
+An action only names the pose it aims for; the motion layer adds the craft. Characters wind up before a gesture and overshoot a little after it, hair, ears, tails and flippers trail behind and swing past, bodies squash on landing and lean into a run, speakers nod and gesture with their voice, and paths round their corners. Steps never go faster than a gait allows, so feet stay planted instead of skating.
+
+Work in steps: `plan` checks the screenplay and warns about lines that overlap and moves too fast for their gait, `stills` renders one frame per shot as a storyboard, and `render --preview` renders a half-size pass. `--frames 12s,40s` renders single moments. Rendering uses EEVEE by default. On a machine without a GPU, set `engine = "cycles"` under the film's `settings.render` in `pyproject.toml`; Cycles is slower and shades more softly.
 
 <a id="framework"></a>
 
@@ -240,11 +245,25 @@ Speech works on every platform. CodeCinema uses, in order: a recording you suppl
 
 The first spoken render downloads the voice model. Cartoon characters can also get a voice designed from a description. For recorded speech, put a WAV file in `assets/<film-id>/voices/` and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Cartoon films store their takes with `run <film> voices --keep-voices`, so a film made on one computer sounds the same on any other.
 
+<a id="fonts"></a>
+
+## 🔤 Fonts
+
+Titles, credits and captions can use any of 73 open-licensed families. Fredoka and ZCOOL KuaiLe ship with CodeCinema; the others download on first use from a pinned commit of the Google Fonts repository, verified by SHA-256 and stored with their licenses.
+
+```bash
+.venv/bin/python -m codecinema library fonts                 # families by script, license and status
+.venv/bin/python -m codecinema library fonts --download ja   # prefetch for offline work
+.venv/bin/python -m codecinema library fonts --sheet fonts.png
+```
+
+Choose fonts by name in a screenplay, `"fonts": {"title": "Lilita One", "credits": "Nunito"}`, or for any film under `[fonts]` in its settings. Mixed-language text falls back per run on one baseline, and Arabic, Hebrew, Devanagari and Thai are shaped on every platform. Set `CODECINEMA_FONTS_MIRROR` when GitHub is slow to reach, or `CODECINEMA_OFFLINE=1` to stay offline.
+
 <a id="sound"></a>
 
 ## 🎼 Sound
 
-The score is written as data and played by a sampled orchestra: CodeCinema plays the General MIDI sound bank [GeneralUser GS](https://www.schristiancollins.com/generaluser.php) by S. Christian Collins with its own SoundFont player. The bank, 32 MB, downloads once on first use. Offline, or with `CODECINEMA_AUDIO_SOUNDBANK=off`, the score uses the built-in synthesized instruments. `codecinema library instruments`, `styles`, `sounds` and `ambience` list what is available. Every film is mixed with dialogue ducking and mastered to its loudness target.
+The score is written as data and played by a sampled orchestra: CodeCinema plays the General MIDI sound bank [GeneralUser GS](https://www.schristiancollins.com/generaluser.php) by S. Christian Collins with its own SoundFont player. The bank, 32 MB, downloads once on first use. Offline, or with `CODECINEMA_AUDIO_SOUNDBANK=off`, the score uses the built-in synthesized instruments. `codecinema library instruments`, `styles`, `sounds`, `ambience` and `voices` list what is available: 113 instruments, 27 styles from lullaby to jazz swing, chiptune and Japanese, 163 effects with Doppler passes and footsteps on a dozen surfaces, 30 ambience beds and 20 cartoon voices with 39 wordless sounds. Every film is mixed with dialogue ducking and mastered to its loudness target.
 
 ## 🗂 Project layout
 
@@ -280,6 +299,7 @@ CodeCinema/
 │   ├── cartoon/                # screenplay films: libraries, motion, camera, voices, finishing
 │   │   └── blender/            # characters, sets, props and effects built in Blender
 │   ├── audio/                  # instruments, composer, sound effects, ambience, voices and mixer
+│   ├── typography/             # font catalog, script detection, fallback and text drawing
 │   └── productions/            # authored example production packs
 │       ├── silvergrass/        # choreography, Blender scenes and post-production
 │       └── nightrevels/        # painted characters, scroll animation and music
@@ -299,7 +319,9 @@ CodeCinema/
 │       ├── studio/           # editor interface and look thumbnails
 │       ├── scaffold/         # starting files for new films
 │       └── site/             # website styles, scripts and preview media
+├── tests/                    # test suite (pytest), no Blender or network needed
 ├── pyproject.toml            # dependencies and all film configurations
+├── CHANGELOG.md              # notable changes by release
 ├── CONTRIBUTING.md           # development and contribution guidance
 └── LICENSE                   # MIT license
 ```
@@ -317,7 +339,7 @@ Each film uses `assets/<id>/images/` for illustrations and `assets/<id>/film/` f
 
 ## Contributing
 
-Improvements to looks, Studio, renderers and documentation are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and checks. Use [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) for bugs and feature ideas, and include a screenshot or short clip when discussing a visual change.
+Improvements to looks, Studio, renderers, libraries and documentation are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and checks; `pip install -e ".[dev]"` and `python -m pytest` run the test suite. Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md), and security issues are reported privately as described in [SECURITY.md](SECURITY.md). Use [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) for bugs and feature ideas, and include a screenshot or short clip when discussing a visual change.
 
 ## 📜 License
 

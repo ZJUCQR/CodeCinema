@@ -14,8 +14,8 @@ Melody notation (C4 = MIDI 60), tokens separated by spaces, '|' marks bar lines:
 Chords: bars separated by '|'; chord slots inside a bar share it equally; '%' repeats the previous chord and '.'
 or '-' holds it.  Symbols: C Cm C7 Cmaj7 Cm7 C6 Cm6 Csus2 Csus4 C7sus4 Cdim Cdim7 Cm7b5 Caug Cadd9 C9 Cmaj9 Cm9 C5
 with an optional slash bass (A/C#), or roman numerals in the key (I ii iii IV V vi vii°, V7, ii7, bVII, IV/5 ...).
-Modes: major minor harmonic_minor dorian mixolydian lydian phrygian and the Chinese pentatonic modes
-gong shang jue zhi yu (the key names the tonic of the mode).
+Modes: major minor harmonic_minor dorian mixolydian lydian phrygian, the Chinese pentatonic modes gong shang jue
+zhi yu, and the Japanese scales in (= miyako_bushi) yo hirajoshi (the key names the tonic of the mode).
 """
 import itertools
 import re
@@ -32,11 +32,14 @@ MODES = {
     "mixolydian": (0, 2, 4, 5, 7, 9, 10), "lydian": (0, 2, 4, 6, 7, 9, 11), "phrygian": (0, 1, 3, 5, 7, 8, 10),
     "gong": (0, 2, 4, 7, 9), "shang": (0, 2, 5, 7, 10), "jue": (0, 3, 5, 8, 10), "zhi": (0, 2, 5, 7, 9),
     "yu": (0, 3, 5, 7, 10), "pentatonic": (0, 2, 4, 7, 9), "minor_pentatonic": (0, 3, 5, 7, 10),
+    "in": (0, 1, 5, 7, 8), "miyako_bushi": (0, 1, 5, 7, 8), "yo": (0, 2, 5, 7, 9), "hirajoshi": (0, 2, 3, 7, 8),
 }
 # heptatonic parent of each pentatonic mode (used for harmony)
 PARENT = {"gong": "major", "pentatonic": "major", "shang": "dorian", "jue": "phrygian", "zhi": "mixolydian",
-          "yu": "minor", "minor_pentatonic": "minor"}
+          "yu": "minor", "minor_pentatonic": "minor", "in": "phrygian", "miyako_bushi": "phrygian", "yo": "mixolydian",
+          "hirajoshi": "minor"}
 PENTATONIC = ("gong", "shang", "jue", "zhi", "yu", "pentatonic", "minor_pentatonic")
+JAPANESE = ("in", "miyako_bushi", "yo", "hirajoshi")
 
 QUALITIES = {
     "": (0, 4, 7), "maj": (0, 4, 7), "M": (0, 4, 7), "m": (0, 3, 7), "min": (0, 3, 7), "-": (0, 3, 7),

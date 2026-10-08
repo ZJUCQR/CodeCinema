@@ -13,6 +13,7 @@ import numpy as np
 from mathutils import Euler, Matrix, Vector
 
 from codecinema.cartoon.blender import geometry as geo
+from codecinema.cartoon.cast import SHAPES
 from codecinema.cartoon.blender.look import add_outline, link, math_node, mix_color, node, rgba
 
 
@@ -45,6 +46,16 @@ def _sphere_point(radius, azimuth, elevation, center=(0, 0, 0)):
     a, e = math.radians(azimuth), math.radians(elevation)
     return Vector((center[0] + radius * math.cos(e) * math.sin(a), center[1] - radius * math.cos(e) * math.cos(a),
                    center[2] + radius * math.sin(e)))
+
+
+def _interp(points, u):
+    """Piecewise-linear value of (u, value) pairs at u, clamped to the ends."""
+    if u <= points[0][0]:
+        return points[0][1]
+    for (u0, a), (u1, b) in zip(points, points[1:]):
+        if u <= u1:
+            return a + (b - a) * (u - u0) / max(u1 - u0, 1e-9)
+    return points[-1][1]
 
 
 def rest_hand(m, side):
@@ -82,6 +93,7 @@ class Rig:
         self.neck = geo.empty(f"{cid}.neck", (0, 0, m["neck"] - m["chest"]), self.chest, collection)
         self.limbs = {}
         self.wings = {}
+        self.flippers = {}
         self.ears = {}
         self.tail = None
         self.beak = None
@@ -209,7 +221,9 @@ class Rig:
         hair = self.mat("hair", color, rim=0.45)
         r = radius
         bangs_line = 0.52
-        back_line = -0.62 if style not in ("bob", "braids", "twintails", "ponytail") else -0.75
+        back_line = -0.62 if style not in ("bob", "braids", "twintails", "ponytail", "long") else -0.75
+        if style == "long":
+            back_line = -0.88
         if style == "elder_bun":
             bangs_line, back_line = 0.42, -0.55
         if style == "bald":
@@ -244,7 +258,7 @@ class Rig:
             verts = geo.tube_vertices(pts, radii, 8, thick, twist_up=tuple(normal))
             locks.append((verts, geo.tube_faces(9, 8)))
 
-        if style in ("buns", "twintails", "bob", "short", "ponytail", "braids", "spiky"):
+        if style in ("buns", "twintails", "bob", "short", "ponytail", "braids", "spiky", "long"):
             n = 7 if style != "spiky" else 6
             for i in range(n):
                 az = -60 + 120 * i / (n - 1)
@@ -252,12 +266,16 @@ class Rig:
                 lock(az, 64 - 6 * abs(az) / 60, length, r * 0.21, droop=0.92, curl=0.1 * (1 if az > 0 else -1),
                      out=0.08, thick=0.38)
             for az in (-80, 80):
-                lock(az, 40, r * (1.05 if style in ("bob", "twintails", "buns") else 0.7), r * 0.18, droop=0.96,
-                     out=0.06)
+                lock(az, 40, r * (1.05 if style in ("bob", "twintails", "buns") else 1.55 if style == "long" else 0.7),
+                     r * 0.18, droop=0.96, out=0.06)
         if style == "bob":
             for i in range(9):
                 az = 100 + 160 * i / 8
                 lock(az, 20, r * 0.95, r * 0.24, droop=0.95, out=0.08)
+        if style == "long":   # straight hair falling well past the shoulders
+            for i in range(11):
+                az = 95 + 170 * i / 10
+                lock(az, 22, r * (1.75 - 0.25 * abs(i - 5) / 5), r * 0.26, droop=0.97, out=0.08, tip=0.3)
         if style == "spiky":
             for i in range(9):
                 az = -150 + 300 * i / 8
@@ -266,6 +284,23 @@ class Rig:
         if style == "short":
             for i in range(6):
                 lock(120 + 24 * i, 25, r * 0.4, r * 0.22, droop=0.9)
+        if style in ("curly", "afro"):
+            # Curls: round tufts packed over the crown (a cloud of them for an afro).
+            center = Vector((0, r * 0.06, r * (0.32 if style == "afro" else 0.06)))
+            big = 1.42 if style == "afro" else 1.04
+            n = 70 if style == "afro" else 46
+            golden = math.pi * (3 - math.sqrt(5))
+            for k in range(n):
+                z = 1 - 2 * (k + 0.5) / n
+                if z < (-0.1 if style == "afro" else 0.18):
+                    continue
+                ring = math.sqrt(1 - z * z)
+                a = golden * k
+                d = Vector((ring * math.cos(a), ring * math.sin(a), z))
+                if d.y < -0.55 and d.z < 0.62 and style == "curly":   # keep the brow clear
+                    continue
+                size = r * (0.2 if style == "curly" else 0.3) * (0.85 + 0.3 * ((k * 7) % 5) / 4)
+                locks.append(geo.ellipsoid_data((size, size, size * 0.9), tuple(center + d * r * big), 8, 12))
         if locks:
             obj = geo.merge(f"{self.id}.locks", locks, hair, collection=self.collection, parent=head)
             obj.data.shade_smooth()
@@ -412,6 +447,40 @@ class Rig:
                                      el + 5 + (85 - el) * math.sin(math.pi * i / 12)) for i in range(13)]
                 self.ink(geo.tube(f"{self.id}.muff_band", arc, r * 0.05, band, segments=6, parent=head,
                                   collection=self.collection), 0.6)
+            elif kind == "hat":
+                self._hat(item, r, head)
+            elif kind == "mustache":
+                col = self.mat("mustache", item.get("color", "#3a2a22"), rim=0.3)
+                for side in (-1, 1):
+                    pts = geo.bezier(Vector((side * r * 0.03, -r * 0.99, -r * 0.2)),
+                                     Vector((side * r * 0.26, -r * 0.97, -r * 0.29)),
+                                     Vector((side * r * 0.48, -r * 0.8, -r * 0.13)), 10)
+                    self.ink(geo.tube(f"{self.id}.mustache", pts, geo.taper(10, r * 0.1, r * 0.025, bulge=r * 0.04),
+                                      col, segments=8, flatten=0.7, parent=head, collection=self.collection), 0.6)
+            elif kind == "bowtie":
+                col = self.mat("bowtie", item.get("color", "#c0392b"), rim=0.3)
+                m = self.m
+                z = (m["neck"] - m["chest"]) - r * 0.1
+                y = -m["torso_r"] * 0.55 - r * 0.06
+                for side in (-1, 1):
+                    lobe = geo.ellipsoid(f"{self.id}.bowtie", (r * 0.2, r * 0.07, r * 0.13), (side * r * 0.17, y, z),
+                                         col, parent=self.chest, collection=self.collection, rings=10, segments=16)
+                    lobe.rotation_euler = (0, math.radians(side * -14), 0)
+                    self.ink(lobe, 0.6)
+                self.ink(geo.ellipsoid(f"{self.id}.bowtie_knot", (r * 0.07, r * 0.07, r * 0.08), (0, y - r * 0.02, z),
+                                       col, parent=self.chest, collection=self.collection, rings=8, segments=12), 0.6)
+            elif kind == "backpack":
+                col = self.mat("backpack", item.get("color", "#e07a3a"), rim=0.3)
+                m = self.m
+                tr = m["torso_r"]
+                pack = geo.ellipsoid(f"{self.id}.backpack", (tr * 0.72, tr * 0.36, tr * 0.86), (0, tr * 1.05, 0), col,
+                                     parent=self.chest, collection=self.collection, rings=16, segments=24,
+                                     squash_bottom=0.3)
+                self.ink(pack)
+                self.ink(geo.ellipsoid(f"{self.id}.backpack_flap", (tr * 0.6, tr * 0.2, tr * 0.32),
+                                       (0, tr * 1.3, tr * 0.42), self.mat("backpack flap", _shade(item.get(
+                                           "color", "#e07a3a"), -0.15)), parent=self.chest,
+                                       collection=self.collection, rings=10, segments=16), 0.6)
             elif kind == "ribbon":
                 bow = self.mat("ribbon", item.get("color", "#e23b3b"))
                 p = _sphere_point(r * 1.04, item.get("azimuth", 35), item.get("elevation", 62))
@@ -420,6 +489,70 @@ class Rig:
                                          tuple(p + Vector((side * r * 0.15, 0, 0))), bow, parent=head,
                                          collection=self.collection, rings=10, segments=16)
                     self.ink(lobe, 0.6)
+
+    def _hat(self, item, r, head):
+        """Hats sit on the crown: cap, beanie, straw, chef, top, beret or party hat."""
+        style = item.get("style", "cap")
+        color = item.get("color", {"chef": "#f8f6f0", "straw": "#e8c878", "top": "#2a2a30", "party": "#e2554a",
+                                   "beanie": "#d9534f", "beret": "#b8393b", "cap": "#3c78c9"}[style])
+        mat = self.mat("hat", color, rim=0.4, soft=0.2)
+        trim = self.mat("hat trim", item.get("trim", {"straw": "#c0392b", "top": "#8a2a2a", "party": "#f6d55c",
+                                                      "beanie": "#f8f4ec", "cap": "#f8f4ec"}.get(style, color)))
+        hat = geo.empty(f"{self.id}.hat", (0, r * 0.04, 0), head, self.collection)
+        hat.rotation_euler = (math.radians(item.get("tilt", -6)), math.radians(item.get("roll", 0)), 0)
+        ring = lambda radius, z, thick, mat_: self.ink(geo.tube(   # noqa: E731
+            f"{self.id}.hat_band", [Vector((radius * math.cos(a), radius * math.sin(a), z))
+                                    for a in np.linspace(0, 2 * math.pi, 41)], thick, mat_, segments=8,
+            parent=hat, collection=self.collection), 0.6)
+        if style in ("cap", "beanie"):
+            low = 0.24 if style == "cap" else 0.3
+            dome = [(r * 1.11 * math.cos(a), r * (1.08 if style == "cap" else 1.18) * math.sin(a))
+                    for a in np.linspace(math.asin(low), math.pi / 2, 10)]
+            self.ink(geo.lathe(f"{self.id}.hat_dome", dome, 48, material=mat, parent=hat, collection=self.collection))
+            if style == "cap":
+                brim = geo.ellipsoid(f"{self.id}.hat_brim", (r * 0.66, r * 0.62, r * 0.05), (0, -r * 0.98, r * 0.27),
+                                     mat, parent=hat, collection=self.collection, rings=10, segments=28)
+                brim.rotation_euler = (math.radians(-10), 0, 0)
+                self.ink(brim)
+                geo.ellipsoid(f"{self.id}.hat_button", (r * 0.09,) * 3, (0, 0, r * 1.08), trim, parent=hat,
+                              collection=self.collection)
+            else:
+                ring(r * 1.12, r * 0.36, r * 0.11, trim)
+                self.ink(geo.ellipsoid(f"{self.id}.hat_pom", (r * 0.25,) * 3, (0, 0, r * 1.3), trim, parent=hat,
+                                       collection=self.collection, rings=12, segments=18))
+        elif style in ("straw", "top"):
+            brim_r, crown_r, crown_h = (r * 1.85, r * 0.86, r * 0.62) if style == "straw" else (r * 1.32, r * 0.8,
+                                                                                                r * 1.1)
+            base = r * 0.42 if style == "straw" else r * 0.6
+            self.ink(geo.lathe(f"{self.id}.hat_brim", [(brim_r, base - r * 0.02), (brim_r * 0.97, base + r * 0.03)],
+                               56, material=mat, parent=hat, collection=self.collection))
+            crown = [(crown_r, base), (crown_r * 1.02, base + crown_h * 0.6), (crown_r * 0.9, base + crown_h)]
+            self.ink(geo.lathe(f"{self.id}.hat_crown", crown, 48, material=mat, parent=hat,
+                               collection=self.collection))
+            ring(crown_r * 1.03, base + r * 0.1, r * 0.06, trim)
+        elif style == "chef":
+            self.ink(geo.lathe(f"{self.id}.hat_band", [(r * 1.0, r * 0.38), (r * 1.04, r * 0.82)], 48, material=mat,
+                               parent=hat, collection=self.collection))
+            for k, (x, z, size) in enumerate(((0, 1.3, 1.0), (-0.45, 1.15, 0.62), (0.45, 1.15, 0.62),
+                                              (0, 1.12, 0.6))):
+                self.ink(geo.ellipsoid(f"{self.id}.hat_puff", (r * 0.8 * size, r * 0.72 * size, r * 0.55 * size),
+                                       (r * x, r * 0.1 * (k == 3), r * z), mat, parent=hat,
+                                       collection=self.collection, rings=12, segments=20))
+        elif style == "beret":
+            top = geo.ellipsoid(f"{self.id}.hat_beret", (r * 1.22, r * 1.15, r * 0.34), (r * 0.12, 0, r * 0.86), mat,
+                                parent=hat, collection=self.collection, rings=12, segments=32)
+            top.rotation_euler = (0, math.radians(14), 0)
+            self.ink(top)
+        elif style == "party":
+            cone = geo.cone(f"{self.id}.hat_cone", r * 0.46, 0.0, r * 1.15, (0, 0, 0), mat, parent=hat,
+                            collection=self.collection, segments=24)
+            cone.location = (r * 0.18, 0, r * 0.75)
+            cone.rotation_euler = (0, math.radians(12), 0)
+            self.ink(cone)
+            tip = Vector((r * 0.18 + math.sin(math.radians(12)) * r * 1.15, 0,
+                          r * 0.75 + math.cos(math.radians(12)) * r * 1.15))
+            self.ink(geo.ellipsoid(f"{self.id}.hat_pom", (r * 0.14,) * 3, tuple(tip), trim, parent=hat,
+                                   collection=self.collection))
 
     # ------------------------------------------------------------------ biped
     def _build_biped(self):
@@ -449,6 +582,9 @@ class Rig:
         else:
             prof = [(tr * f, hem + (top_z - hem) * u) for u, f in
                     ((0.0, 0.98), (0.3, 0.93), (0.6, 0.97), (0.85, 0.88), (1.0, 0.45))]
+        # The body shape widens or narrows the outfit along its height (pear, barrel, broad shoulders...).
+        widths = SHAPES[s.get("shape", "egg")]["profile"]
+        prof = [(rr * _interp(widths, (zz - hem) / max(top_z - hem, 1e-6)), zz) for rr, zz in prof]
         belly = animal.get("belly") if style == "fur" else None
         if belly:
             mid = hem + (top_z - hem) * 0.4
@@ -472,7 +608,7 @@ class Rig:
             prof = [(tr * 1.5, -r * 0.75), (tr * 1.2, -r * 0.45), (tr * 0.95, -r * 0.1), (tr * 0.9, r * 0.1)]
             self.ink(geo.lathe(f"{self.id}.skirt", prof, 40, (1.0, 0.9), skirt, parent=self.body,
                                collection=self.collection))
-        self._head(r, shape=(1.0, 0.95, 0.93), chin=0.12 if not animal else 0.04)
+        self._head(r, shape=tuple(s.get("head_shape", (1.0, 0.95, 0.93))), chin=0.12 if not animal else 0.04)
         hair = s.get("hair", {})
         self._hair(hair.get("style", "none"), hair.get("color", "#2c1d24"), r)
         if animal:
@@ -486,6 +622,9 @@ class Rig:
         shoe_color = outfit.get("shoes", "#3d2b2b")
         shoes = self.mat("shoes", shoe_color)
         hand_mat = skin if style != "fur" else self.mat("paw", _shade(animal.get("fur", s["skin"]), -0.15))
+        if animal.get("limbs"):
+            sleeve = legs = shoes = self.mat("limbs", animal["limbs"])
+            hand_mat = self.mat("paw", _shade(animal["limbs"], 0.08))
         rows = 10
         for side, label in ((1, "l"), (-1, "r")):
             arm = geo.tube(f"{self.id}.arm_{label}", [(0, 0, -0.01 * i) for i in range(rows)], r * 0.1, sleeve,
@@ -516,6 +655,7 @@ class Rig:
         head = self.parts["head"]
         fur = animal.get("fur", self.spec["skin"])
         furm = self.mat("fur", fur, rim=0.4)
+        earm = self.mat("ear", animal["ear_color"], rim=0.4) if animal.get("ear_color") else furm
         inner = self.mat("inner ear", animal.get("inner", "#f2a7a0"))
         kind = animal.get("ears")
         for side in (-1, 1):
@@ -540,6 +680,33 @@ class Rig:
                                     parent=pivot, collection=self.collection)
                 geo.ellipsoid(f"{self.id}.ear_in", (r * 0.09, r * 0.04, r * 0.45), (0, -r * 0.05, r * 0.55),
                               inner, parent=pivot, collection=self.collection)
+            elif kind == "bear":   # small, round, set high
+                pivot.location = _sphere_point(r * 0.86, side * 44, 52)
+                pivot.rotation_euler = (math.radians(-6), math.radians(side * 32), 0)
+                ear = geo.ellipsoid(f"{self.id}.ear", (r * 0.27, r * 0.13, r * 0.25), (0, 0, r * 0.13), earm,
+                                    parent=pivot, collection=self.collection, rings=14, segments=20)
+                geo.ellipsoid(f"{self.id}.ear_in", (r * 0.15, r * 0.05, r * 0.14), (0, -r * 0.09, r * 0.12), inner,
+                              parent=pivot, collection=self.collection, rings=10, segments=16)
+            elif kind == "mouse":  # big round discs
+                pivot.location = _sphere_point(r * 0.84, side * 50, 46)
+                pivot.rotation_euler = (math.radians(-4), math.radians(side * 36), 0)
+                ear = geo.ellipsoid(f"{self.id}.ear", (r * 0.48, r * 0.08, r * 0.46), (0, 0, r * 0.36), earm,
+                                    parent=pivot, collection=self.collection, rings=16, segments=28)
+                geo.ellipsoid(f"{self.id}.ear_in", (r * 0.33, r * 0.04, r * 0.31), (0, -r * 0.06, r * 0.36), inner,
+                              parent=pivot, collection=self.collection, rings=12, segments=24)
+            elif kind == "dog":    # long, soft, hanging: they swing whenever the head moves
+                pivot.location = _sphere_point(r * 0.95, side * 74, 40)
+                pivot.rotation_euler = (math.radians(4), math.radians(side * -8), 0)
+                ear = geo.ellipsoid(f"{self.id}.ear", (r * 0.26, r * 0.11, r * 0.62), (side * r * 0.2, 0, -r * 0.48),
+                                    earm, parent=pivot, collection=self.collection, rings=16, segments=22)
+            elif kind == "pig":    # small triangles flopping forward
+                pivot.location = _sphere_point(r * 0.86, side * 46, 56)
+                pivot.rotation_euler = (math.radians(38), math.radians(side * 24), 0)
+                ear = geo.cone(f"{self.id}.ear", r * 0.22, 0.0, r * 0.34, material=earm, parent=pivot,
+                               collection=self.collection, segments=16)
+                ear.scale = (1.0, 0.42, 1.0)
+                geo.cone(f"{self.id}.ear_in", r * 0.13, 0.0, r * 0.22, (0, -r * 0.05, r * 0.03), inner, parent=pivot,
+                         collection=self.collection, segments=12).scale = (1.0, 0.35, 1.0)
             else:  # nian: wide, soft, sound-sensitive ears
                 base = _sphere_point(r * 0.9, side * 82, 30)
                 pivot.location = base
@@ -585,6 +752,43 @@ class Rig:
             self.ink(snout)
             geo.ellipsoid(f"{self.id}.nose", (r * 0.07, r * 0.06, r * 0.05), (0, -r * 1.27, -r * 0.27),
                           self.mat("nose", "#2a1a1a"), parent=head, collection=self.collection)
+        snout = animal.get("snout")
+        muzzle = self.mat("muzzle", animal.get("belly", fur), rim=0.3)
+        nose = self.mat("nose", animal.get("nose", "#2a1a1a"))
+        if snout in ("dog", "bear"):
+            big = 1.0 if snout == "dog" else 0.9
+            self.ink(geo.ellipsoid(f"{self.id}.snout", (r * 0.36 * big, r * 0.32 * big, r * 0.25 * big),
+                                   (0, -r * 0.8, -r * 0.2), muzzle, parent=head, collection=self.collection,
+                                   rings=16, segments=24))
+            geo.ellipsoid(f"{self.id}.nose", (r * 0.14, r * 0.09, r * 0.09), (0, -r * (1.08 if big == 1 else 1.04),
+                                                                             -r * 0.1), nose, parent=head,
+                          collection=self.collection, rings=10, segments=16)
+        elif snout == "pig":
+            pink = self.mat("snout", _shade(fur, -0.1), rim=0.3)
+            disc = geo.lathe(f"{self.id}.snout", [(r * 0.3, 0.0), (r * 0.33, r * 0.12), (r * 0.31, r * 0.3)], 28,
+                             (1.0, 0.78), pink, parent=head, collection=self.collection)
+            disc.location = (0, -r * 0.8, -r * 0.36)
+            disc.rotation_euler = (math.radians(90), 0, 0)
+            self.ink(disc)
+            for side in (-1, 1):
+                geo.ellipsoid(f"{self.id}.nostril", (r * 0.055, r * 0.03, r * 0.08), (side * r * 0.11, -r * 1.11,
+                                                                                     -r * 0.36),
+                              self.mat("nostril", _shade(fur, -0.55)), parent=head, collection=self.collection,
+                              rings=8, segments=12)
+        elif snout == "mouse":
+            cone = geo.cone(f"{self.id}.snout", r * 0.24, r * 0.05, r * 0.36, (0, 0, 0), furm, parent=head,
+                            collection=self.collection, segments=16)
+            cone.location = (0, -r * 0.8, -r * 0.22)
+            cone.rotation_euler = (math.radians(95), 0, 0)
+            self.ink(cone)
+            geo.ellipsoid(f"{self.id}.nose", (r * 0.07, r * 0.06, r * 0.06), (0, -r * 1.17, -r * 0.25),
+                          self.mat("nose", animal.get("nose", "#f08aa0")), parent=head, collection=self.collection)
+            for side in (-1, 1):   # whiskers
+                for k in (-1, 1):
+                    root = Vector((side * r * 0.14, -r * 1.02, -r * 0.24 + k * r * 0.03))
+                    tip = root + Vector((side * r * 0.5, r * 0.1, k * r * 0.08))
+                    geo.tube(f"{self.id}.whisker", [root, (root + tip) / 2, tip], r * 0.008,
+                             self.mat("whisker", "#3a3438"), segments=4, parent=head, collection=self.collection)
         tail = animal.get("tail")
         if tail:
             if tail == "puff":
@@ -593,8 +797,9 @@ class Rig:
                                           collection=self.collection)
                 self.ink(self.tail)
             else:
-                size = {"cat": 0.11, "fox": 0.26, "nian": 0.3}[tail] * r
-                length = {"cat": 1.5, "fox": 1.6, "nian": 1.2}[tail] * (self.m["hip"] + r * 0.3)
+                size = {"cat": 0.11, "fox": 0.26, "nian": 0.3, "dog": 0.13, "mouse": 0.04, "pig": 0.07}[tail] * r
+                length = {"cat": 1.5, "fox": 1.6, "nian": 1.2, "dog": 1.0, "mouse": 2.3, "pig": 0.45}[tail] * (
+                    self.m["hip"] + r * 0.3)
                 mats = [self.mat("fur", fur)]
                 if tail in ("fox", "nian"):
                     mats.append(self.mat("tail tip", animal.get("tip", animal.get("belly", "#ffffff"))))
@@ -627,15 +832,21 @@ class Rig:
         head = self._head(r, shape=(1.0, 0.96, 0.96), chin=0.0)
         beak_mat = self.mat("beak", b.get("beak", "#f29a2e"), rim=0.4)
         pivot = geo.empty(f"{self.id}.beak", (0, -r * 0.9, -r * 0.18), head, self.collection)
-        upper = geo.cone(f"{self.id}.beak_top", r * 0.2, 0.0, r * 0.36, (0, 0, 0), beak_mat, parent=pivot,
-                         collection=self.collection, segments=16)
-        upper.rotation_euler = (math.radians(100), 0, 0)
-        upper.scale = (1.0, 0.55, 1.0)
         lower_pivot = geo.empty(f"{self.id}.jaw", (0, 0, -r * 0.02), pivot, self.collection)
-        lower = geo.cone(f"{self.id}.beak_low", r * 0.16, 0.0, r * 0.28, (0, 0, 0), beak_mat, parent=lower_pivot,
-                         collection=self.collection, segments=16)
-        lower.rotation_euler = (math.radians(98), 0, 0)
-        lower.scale = (1.0, 0.45, 1.0)
+        if b.get("bill") == "flat":   # a duck's broad, flat bill
+            upper = geo.ellipsoid(f"{self.id}.beak_top", (r * 0.3, r * 0.42, r * 0.09), (0, -r * 0.3, r * 0.02),
+                                  beak_mat, parent=pivot, collection=self.collection, rings=12, segments=24)
+            lower = geo.ellipsoid(f"{self.id}.beak_low", (r * 0.26, r * 0.36, r * 0.06), (0, -r * 0.26, -r * 0.03),
+                                  beak_mat, parent=lower_pivot, collection=self.collection, rings=10, segments=20)
+        else:
+            upper = geo.cone(f"{self.id}.beak_top", r * 0.2, 0.0, r * 0.36, (0, 0, 0), beak_mat, parent=pivot,
+                             collection=self.collection, segments=16)
+            upper.rotation_euler = (math.radians(100), 0, 0)
+            upper.scale = (1.0, 0.55, 1.0)
+            lower = geo.cone(f"{self.id}.beak_low", r * 0.16, 0.0, r * 0.28, (0, 0, 0), beak_mat,
+                             parent=lower_pivot, collection=self.collection, segments=16)
+            lower.rotation_euler = (math.radians(98), 0, 0)
+            lower.scale = (1.0, 0.45, 1.0)
         self.ink(upper, 0.6)
         self.ink(lower, 0.6)
         self.beak = lower_pivot
@@ -653,10 +864,12 @@ class Rig:
                               self.chest, self.collection)
             length = m["arm"]
             pts = [(side * length * u, 0.0, -length * 0.15 * u * u) for u in np.linspace(0, 1, 8)]
-            flip = geo.tube(f"{self.id}.flipper", pts, geo.taper(8, r * 0.2, r * 0.05, bulge=r * 0.05), back,
-                            segments=10, flatten=0.28, twist_up=(0, 1, 0), parent=pivot, collection=self.collection)
+            radii = geo.taper(8, r * 0.2, r * 0.05, bulge=r * 0.05)
+            flip = geo.tube(f"{self.id}.flipper", pts, radii, back, segments=10, flatten=0.28, twist_up=(0, 1, 0),
+                            parent=pivot, collection=self.collection)
             self.ink(flip, 0.7)
             self.wings[side] = pivot
+            self.flippers[side] = (flip, radii)
             fl, fh = m["foot"]
             foot = geo.ellipsoid(f"{self.id}.foot_{label}", (fl * 0.6, fl, fh), material=feet, parent=self.root,
                                  collection=self.collection, rings=10, segments=16, squash_bottom=0.5)
@@ -777,7 +990,7 @@ class Rig:
         """Accessory objects by kind, so a scarf or earmuffs can be put on mid-film."""
         out = {}
         for obj in self.root.children_recursive:
-            for kind in ("scarf", "muff", "glasses", "bow", "ribbon"):
+            for kind in ("scarf", "muff", "glasses", "bow", "ribbon", "hat", "mustache", "backpack"):
                 if f".{kind}" in obj.name:
                     out.setdefault("earmuffs" if kind == "muff" else kind, []).append(obj)
         return out
@@ -892,12 +1105,11 @@ class Rig:
             shoulder_local = Vector((side * m["shoulder"][0], 0.0, m["shoulder"][1] - m["chest"]))
             shoulder = chest @ shoulder_local
             spec = arms.get(label, {})
-            if spec.get("world") is not None:
-                target = self._to_local(spec["world"])
-            else:
-                offset = Vector(spec.get("hand", rest_hand(m, side)))
-                target = chest @ (shoulder_local + offset)
-            pole = chest.to_3x3() @ Vector(spec.get("pole", (side * 0.3, 0.6, -0.2)))
+            offset = Vector(spec.get("hand", rest_hand(m, side)))
+            target = chest @ (shoulder_local + offset)
+            if spec.get("world") is not None:   # reaching for a point in the world eases in and out
+                target = target.lerp(self._to_local(spec["world"]), max(0.0, min(1.0, spec.get("w", 1.0))))
+            pole = chest.to_3x3() @ Vector(spec.get("pole", (side * 0.45, 0.35, -0.8)))
             elbow, wrist = solve_two_bone(shoulder, target, upper, upper, shoulder + pole)
             pts = geo.bezier(shoulder, elbow, wrist, 10)
             lr = m.get("limb_r", r * 0.12)
@@ -926,6 +1138,12 @@ class Rig:
             spread = w.get("spread", 0.2)
             pivot.rotation_euler = (w.get("sweep", 0.0), side * (1.25 - spread * 1.2 - flap),
                                     side * w.get("twist", 0.0))
+            # A flipper is not a board: its tip trails behind each beat and whips through at the turn.
+            flip, radii = self.flippers[side]
+            length, curl = self.m["arm"], w.get("curl", 0.0)
+            pts = [(side * length * u, 0.0, -length * (0.15 * u * u - 0.35 * curl * u ** 2.2))
+                   for u in np.linspace(0, 1, 8)]
+            geo.update_tube(flip, pts, radii, twist_up=(0, 1, 0))
         legs = pose.get("legs", {})
         for label, parts in self.limbs.items():
             leg = legs.get(label, {})
@@ -952,7 +1170,8 @@ class Rig:
             shoulder.rotation_quaternion = opened.slerp(folded, max(0.0, min(1.0, fold)))
             # A folded wing tucks its hand over its arm: draw it shorter, so the tips end just past the tail.
             shoulder.scale = (1 - 0.5 * fold, 1 - 0.2 * fold, 1)
-            elbow.rotation_euler = (0, -side * (flap - 0.35) * 0.45 * (1 - fold), side * fold * 0.1)
+            curl = w.get("curl", 0.0)
+            elbow.rotation_euler = (0, -side * ((flap - 0.35) * 0.45 - curl * 0.5) * (1 - fold), side * fold * 0.1)
         m = self.m
         legs = pose.get("legs", {})
         body = self.body_matrix(pose)
@@ -961,9 +1180,9 @@ class Rig:
             leg = legs.get(label, {})
             foot = Vector(leg.get("foot", (side * m["hip_x"], 0.0, 0.0)))
             hip = body @ Vector((side * m["hip_x"], 0.0, 0.0))
-            tucked = leg.get("tuck", 0.0)
-            if tucked:
-                foot = hip + Vector((0, 0.08, -0.05))
+            tucked = max(0.0, min(1.0, leg.get("tuck", 0.0)))
+            if tucked:   # legs draw up under the body in flight
+                foot = foot.lerp(hip + Vector((0, 0.08, -0.05)), tucked)
             knee = (hip + foot) / 2 + Vector((0, 0.03, 0))
             geo.update_tube(parts["leg"], geo.bezier(hip, knee, foot + Vector((0, 0, m["foot"][1])), 6),
                             m["height"] * 0.018)
@@ -979,10 +1198,17 @@ class Rig:
         pts = []
         for i in range(12):
             u = i / 11
-            curl = (0.9 if kind == "cat" else 0.45) * u * u
+            if kind == "pig":   # a corkscrew
+                a = u * 2.6 * math.pi + wag * 0.6
+                pts.append(base + Vector((math.cos(a) * size * 1.6 * u, length * u * 0.8,
+                                          math.sin(a) * size * 1.6 * u + length * 0.15 * u)))
+                continue
+            curl = {"cat": 0.9, "dog": 1.0, "mouse": 0.25}.get(kind, 0.45) * u * u
             pts.append(base + Vector((math.sin(wag * u * 1.6) * length * u * 0.5,
                                       length * u * (0.75 - 0.25 * lift),
                                       length * (curl * (0.6 + lift) - 0.08 * u))))
-        bulge = size * (0.6 if kind != "cat" else 0.05)
-        radii = geo.taper(12, size * 0.55, size * 0.15 if kind != "cat" else size * 0.8, bulge=bulge, power=1.5)
+        bulge = size * (0.6 if kind not in ("cat", "mouse", "pig") else 0.05)
+        tip = {"cat": 0.8, "mouse": 0.35, "pig": 0.7, "dog": 0.35}.get(kind, 0.15)
+        radii = geo.taper(12, size * 0.55 if kind not in ("mouse", "pig") else size, size * tip, bulge=bulge,
+                          power=1.5)
         geo.update_tube(obj, pts, radii)
