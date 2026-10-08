@@ -4,6 +4,8 @@ CodeCinema command line.
     codecinema list                          list the registered films with their steps and requirements
     codecinema run <film> [step] [args ...]  run a film's step (default: all), e.g. `codecinema run nightrevels audio`
     codecinema new <id> [--render]           create a film from scene data; add --render to produce it immediately
+    codecinema new <id> --template cartoon   start a screenplay-driven 3D cartoon (Blender, voices, score)
+    codecinema library [kind]                browse characters, sets, props, actions, expressions, sounds and music
     codecinema customize <film> [--render]   change a film's renderer, story and look without editing Python
     codecinema studio                        open the local visual editor: choose, customize and render
     codecinema presets                       list the starter looks and output options
@@ -58,6 +60,20 @@ def cmd_new(a):
     if os.path.exists(dest):
         print(f"{dest} already exists")
         return 1
+    if a.template == "cartoon":
+        if a.render:
+            problems = diagnostics.starter_problems("blender")
+            if problems:
+                print("\n".join(problems), file=sys.stderr)
+                return 1
+        script = json.loads(Path(a.story).read_text(encoding="utf-8")) if a.story else None
+        projects.create_cartoon(dest, title=a.title, screenplay=script, quality=a.quality)
+        print(f"Created {os.path.relpath(dest)} · cartoon screenplay", flush=True)
+        if a.render:
+            return films.Film(dest).run("all", ["--open"] if a.open else [])
+        print(f"Edit {os.path.relpath(dest)}/screenplay.json, then: codecinema run {a.id} all\n"
+              f"Quick look: codecinema run {a.id} plan && codecinema run {a.id} stills")
+        return 0
     try:
         seconds = starters.duration(a.duration if a.duration is not None else 12.0)
         if a.accent is not None and not re.fullmatch(r"#[0-9a-fA-F]{6}", a.accent):
@@ -92,6 +108,74 @@ def cmd_new(a):
             print(f"The project is saved. After fixing the error, retry: codecinema run {a.id} all", file=sys.stderr)
         return result
     print(f"Render: codecinema run {a.id} all\nCustomize: {os.path.relpath(dest)}/scenes.json")
+    return 0
+
+
+def _library(kind):
+    """(name, description) rows for one library, imported lazily."""
+    if kind == "characters":
+        from codecinema.cartoon import cast
+        return [(name, f"[{plan}] {desc}") for name, plan, desc in cast.catalog()]
+    if kind in ("sets", "props"):
+        from codecinema.cartoon import sets
+        return sets.catalog()[kind]
+    if kind == "times":
+        from codecinema.cartoon import sets
+        return [(name, f"sun {r['sun'][2]} at {r['sun'][1]}°, sky {r['sky'][0]} → {r['sky'][1]}")
+                for name, r in sets.TIMES.items()]
+    if kind == "effects":
+        from codecinema.cartoon import sets
+        return [(name, "") for name in sets.FX] + [("snow", "scene weather: \"weather\": \"snow\"")]
+    if kind == "actions":
+        from codecinema.cartoon import motion
+        rows = [(name, motion.NOTES.get(name) or (fn.__doc__ or "").strip().split("\n")[0])
+                for name, fn in sorted(motion.ACTIONS.items())]
+        return rows + [(gait, "travel gait: {\"who\": ..., \"%s\": <place or path>}" % gait) for gait in motion.GAITS]
+    if kind == "expressions":
+        from codecinema.cartoon import faces
+        return [(name, "eyes {} · brows {} · mouth {}".format(*cells)) for name, cells in faces.EXPRESSIONS.items()]
+    if kind == "sounds":
+        from codecinema.audio import sfx
+        return [(row["name"], row["description"]) for row in sfx.catalog()]
+    if kind == "ambience":
+        from codecinema.audio import ambience
+        return [(row["name"], row["description"]) for row in ambience.catalog()]
+    if kind == "instruments":
+        from codecinema.audio import instruments
+        return [(row["name"], f"[{row['family']}, {row['source']}] {row['description']}") for row in instruments.catalog()]
+    if kind == "styles":
+        from codecinema.audio import composer
+        return [(name, f"lead {style.get('lead', '?')}, tempo {style.get('tempo', '?')}")
+                for name, style in sorted(composer.STYLES.items())]
+    if kind == "voices":
+        from codecinema.audio import babble, speech
+        rows = [(name, "cartoon voice (no speech model needed)") for name in babble.PROFILES]
+        rows.append(("speech engines", f"neural: {'yes' if speech.local_available() else 'no'} · system: "
+                                       f"{speech.system_backend() or 'none'} · recordings: always"))
+        return rows
+    raise ValueError(f"Unknown library '{kind}'")
+
+
+LIBRARIES = ("characters", "sets", "times", "props", "actions", "expressions", "effects", "sounds", "ambience",
+             "instruments", "styles", "voices")
+
+
+def cmd_library(a):
+    if a.sheet:
+        from codecinema.cartoon.sheet import character_sheet
+        names = a.names.split(",") if a.names else None
+        print(character_sheet(a.sheet, names), flush=True)
+        return 0
+    kinds = [a.kind] if a.kind else LIBRARIES
+    for kind in kinds:
+        rows = _library(kind)
+        if a.kind:
+            for name, desc in rows:
+                print(f"{name:22s} {desc}")
+        else:
+            print(f"{kind:12s} {len(rows):3d}  " + ", ".join(name for name, _ in rows[:8]) + (" …" if len(rows) > 8 else ""))
+    if not a.kind:
+        print("\nShow one library: codecinema library characters   ·   character sheet: codecinema library --sheet cast.png")
     return 0
 
 
@@ -157,6 +241,15 @@ def cmd_check(a):
         ok &= bool(found) or not need
         print(f"  [{'ok' if found else ('!!' if need else '--')}] {tool:8s} {p if found else 'not found'}"
               + ("" if need else "   (only needed by Blender films)"))
+    if ok:
+        from codecinema.audio import soundfont, speech
+        from codecinema.runtime import downloads
+        bank = downloads.cache_root() / soundfont.BANK_NAME
+        print(f"  [{'ok' if bank.is_file() else '--'}] sound bank  "
+              + (str(bank) if bank.is_file() else "downloads on first use (32 MB); offline films use synthesized instruments"))
+        backend = speech.system_backend()
+        print(f"  [{'ok' if backend else '--'}] speech      system voice: {backend or 'none (Linux: install espeak-ng)'}"
+              f" · neural voice: {'installed' if speech.local_available() else 'not installed'} · babble: always")
     print("\nall good" if ok else "\nsome checks failed")
     if missing_tools:
         print(diagnostics.ffmpeg_help())
@@ -181,6 +274,8 @@ def main(argv=None):
     r.add_argument("args", nargs=argparse.REMAINDER, help="Options passed to the step, e.g. --quality preview")
     n = sub.add_parser("new", help="Create a film from scene data; add --render to produce it immediately")
     n.add_argument("id")
+    n.add_argument("--template", choices=("story", "cartoon"), default="story",
+                   help="story: illustrated scenes; cartoon: a screenplay with characters, sets and dialogue")
     n.add_argument("--renderer", default="skia", help="Rendering backend (see codecinema renderers)")
     n.add_argument("--story", help="Import scene JSON, then apply any explicitly supplied story options")
     n.add_argument("--title")
@@ -209,10 +304,14 @@ def main(argv=None):
     studio = sub.add_parser("studio", help="Open the local visual editor: choose, customize and render")
     studio.add_argument("--port", type=int, default=8787)
     studio.add_argument("--no-open", action="store_true", help="Print the address without opening a browser")
+    lib = sub.add_parser("library", help="Browse characters, sets, props, actions, expressions, sounds and music")
+    lib.add_argument("kind", nargs="?", choices=LIBRARIES)
+    lib.add_argument("--sheet", metavar="PNG", help="Render the character library as a picture (needs Blender)")
+    lib.add_argument("--names", help="Comma-separated characters for --sheet (default: all)")
     sub.add_parser("check", help="Check the toolchain and Python packages")
     a = ap.parse_args(argv)
     try:
-        return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check,
+        return {"list": cmd_list, "run": cmd_run, "new": cmd_new, "check": cmd_check, "library": cmd_library,
                 "presets": cmd_presets, "renderers": cmd_renderers, "customize": cmd_customize, "studio": cmd_studio}[a.cmd](a)
     except (OSError, ValueError) as exc:
         print(f"codecinema: {exc}", file=sys.stderr)

@@ -41,7 +41,7 @@ def resolve_path(value, film):
 
 def resource_dir(name):
     """Shared source resources, or their bundled copies in an installed wheel."""
-    if name not in ("studio", "scaffold"):
+    if name not in ("studio", "scaffold", "fonts"):
         raise ValueError(f"Unknown framework resource: {name}")
     for base in (PACKAGE_ROOT / "_assets", IMPORT_ROOT / "assets" / "_shared"):
         path = base / name

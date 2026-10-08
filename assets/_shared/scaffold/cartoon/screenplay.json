@@ -1,0 +1,45 @@
+{
+ "version": 1,
+ "title": "Hello, Meadow",
+ "language": "English",
+ "subtitle": "en",
+ "fps": 24,
+ "seed": 7,
+ "cast": {
+  "mei": {"from": "girl", "name": "Mei"},
+  "pip": {"from": "cat", "name": "Pip"}
+ },
+ "sets": {"meadow": {"from": "meadow"}},
+ "music": {"themes": {
+  "hello": {"key": "G", "mode": "major", "tempo": 112, "meter": 4,
+            "melody": "G4/q. D4/e G4/e A4/e B4/q | E5/q. D5/e C5/q E5/q | D5/q B4/e G4/e B4/q D5/q | A4/q. B4/e A4/h | G4/q. D4/e G4/e A4/e B4/q | E5/q. D5/e C5/q G5/q | F#5/q. E5/e D5/q C5/q | B4/q A4/q G4/h",
+            "chords": "G | C | G/B | D | G | C | D7 | G"}}},
+ "scenes": [
+  {"id": "hello", "set": "meadow", "time": "morning",
+   "music": {"style": "playful", "theme": "hello", "intensity": 0.6, "end_with": "button"},
+   "start": {"mei": {"at": [-3.0, 1.0], "facing": 90, "face": "happy"},
+             "pip": {"at": [-4.2, 1.6], "facing": 90, "face": "happy"}},
+   "shots": [
+    {"id": "arrive", "dur": 6.0, "transition": "fade_in",
+     "camera": {"size": "wide", "on": ["mei", "pip"], "side": "front_right", "angle": "slight_high", "move": "follow"},
+     "title": {"text": "Hello, Meadow", "sub": "made with CodeCinema", "style": "main", "start": 0.8, "dur": 4.5},
+     "do": [{"t": 0.3, "who": "mei", "walk": [[-1.0, 0.2], [0.0, 0.0]], "dur": 4.6},
+            {"t": 0.6, "who": "pip", "walk": [[-1.8, 0.8], [-0.8, 0.6]], "dur": 4.6}]},
+    {"id": "wave", "dur": 5.0,
+     "camera": {"size": "medium", "on": ["mei"], "bearing": 0, "move": "push"},
+     "do": [{"t": 0.0, "who": "mei", "turn": "front"},
+            {"t": 0.4, "who": "mei", "act": "wave", "dur": 2.2},
+            {"t": 0.6, "who": "mei", "say": "Hello! Welcome to the meadow.", "mood": "happy"},
+            {"t": 3.2, "who": "mei", "face": "joy"}]},
+    {"id": "hop", "dur": 4.5,
+     "camera": {"size": "full", "on": ["pip", "mei"], "bearing": 10, "angle": "low"},
+     "do": [{"t": 0.3, "who": "pip", "turn": "front"},
+            {"t": 0.6, "who": "pip", "act": "jump", "dur": 1.0, "height": 0.4},
+            {"t": 0.6, "sfx": "boing"},
+            {"t": 1.0, "who": "pip", "face": "excited"},
+            {"t": 1.8, "who": "mei", "act": "laugh", "dur": 2.0},
+            {"t": 1.8, "who": "mei", "face": "laugh"},
+            {"t": 2.0, "who": "mei", "vocal": "giggle", "mood": "happy"}]}
+   ]}
+ ]
+}

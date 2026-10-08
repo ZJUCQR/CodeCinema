@@ -51,6 +51,8 @@ jobs:
           assert settings.load(root/'films/ci-preview')['video']['width']==360"
       - name: Render a short sample
         if: runner.os == 'Linux'
+        env:
+          CODECINEMA_AUDIO_SOUNDBANK: "off"
         run: |
           codecinema run ci-preview all
           python -c "from pathlib import Path; assert Path('assets/ci-preview/film/ci-preview.mp4').is_file(); assert not Path('films/ci-preview/assets').exists()"
@@ -79,7 +81,3 @@ jobs:
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
           from codecinema.runtime import media; from codecinema.workspace import films; from codecinema import cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
-      - name: Validate Xishen chronology and continuity
-        run: >
-          python -c "import sys; sys.path.insert(0,'codecinema/productions/xishen');
-          import story; print(story.validate())"

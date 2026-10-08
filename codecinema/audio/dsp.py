@@ -543,6 +543,27 @@ def lp_sweep(x, fc, n_bank=14, fmin=150.0, fmax=20000.0, order=2):
     return out
 
 
+def lp_varying(x, fc, q=0.7071, spacing=0.25):
+    """time-varying resonant RBJ low-pass (mono or stereo): crossfade between fixed low-passes `spacing` octaves
+    apart over the range of fc (array or scalar).  Vectorised and zipper-free for slow cutoff curves."""
+    x = np.asarray(x, dtype=np.float64)
+    fc = np.broadcast_to(np.asarray(fc, dtype=np.float64), (x.shape[-1],))
+    lo, hi = float(np.min(fc)), float(np.max(fc))
+    if hi / max(lo, 1e-9) < 1.03:
+        return biquad(x, "lp", 0.5 * (lo + hi), q)
+    m = int(np.ceil(np.log2(hi / lo) / spacing)) + 1
+    cuts = np.geomspace(lo, hi, m)
+    pos = np.interp(np.log(fc), np.log(cuts), np.arange(m))
+    i0 = np.minimum(np.floor(pos).astype(int), m - 2)
+    fr = pos - i0
+    out = np.zeros_like(x)
+    for i in np.unique(np.concatenate([i0, i0 + 1])):
+        w = np.where(i0 == i, 1.0 - fr, 0.0) + np.where(i0 + 1 == i, fr, 0.0)
+        if np.any(w > 0):
+            out += biquad(x, "lp", cuts[i], q) * w
+    return out
+
+
 def onepole(x, fc):
     """one-pole lowpass smoother (fc in Hz), works on control signals too"""
     a = np.exp(-TWO_PI * fc / SR)
@@ -741,6 +762,9 @@ REVERB_PRESETS = {
                    echoes=[], bands=(1.25, 1.0, 0.62, 0.33), tail_gain=1.0, build=0.05),
     "huge":   dict(rt60=8.0, length=11.0, predelay=0.065, n_er=24, er_span=0.28, er_gain=0.45,
                    echoes=[(0.41, 0.12), (0.79, 0.08)], bands=(1.3, 1.0, 0.6, 0.3), tail_gain=1.0, build=0.35),
+    # a furnished room: dense early reflections, short warm tail
+    "room":   dict(rt60=0.5, length=1.1, predelay=0.005, n_er=14, er_span=0.025, er_gain=0.7,
+                   echoes=[], bands=(1.0, 0.9, 0.7, 0.45), tail_gain=0.7, build=0.008),
 }
 _IR_CACHE = {}
 _BAND_EDGES = (250.0, 1500.0, 5000.0)
@@ -955,6 +979,34 @@ def saturate(x, amount=0.3):
     k = 1.0 + 4.0 * amount
     y = np.tanh(k * x + 0.15 * amount) - np.tanh(0.15 * amount)
     return y / k
+
+
+# =====================================================================================  loudness
+def k_weight(x):
+    """ITU-R BS.1770 K-weighting: the +4 dB high-frequency pre-filter and the 38 Hz RLB high-pass"""
+    sos = np.vstack([biquad_sos("highshelf", 1500.0, 0.7071, 4.0), biquad_sos("hp", 38.0, 0.5)])
+    return signal.sosfilt(sos, np.asarray(x, dtype=np.float64), axis=-1)
+
+
+def fast_loudness(x, window=0.1, hop=0.025):
+    """K-weighted loudness (LUFS scale, channels summed) in sliding windows -> array of values per hop.
+    A mono clip is measured as it sounds panned to the centre (equal power, -3 dB per channel)."""
+    x = np.asarray(x, dtype=np.float64)
+    y = k_weight(as_stereo(x) if x.ndim == 2 else np.vstack([x, x]) * np.sqrt(0.5))
+    p = (y * y).sum(axis=0)
+    w, h = max(1, n_of(window)), max(1, n_of(hop))
+    if len(p) < w:
+        p = np.pad(p, (0, w - len(p)))
+    c = np.concatenate([[0.0], np.cumsum(p)])
+    starts = np.arange(0, len(p) - w + 1, h)
+    ms = (c[starts + w] - c[starts]) / w
+    return -0.691 + 10.0 * np.log10(ms + 1e-20)
+
+
+def loudness_peak(x, window=0.1):
+    """the loudest `window` of a clip on the K-weighted LUFS scale -- a level measure that treats short impacts
+    and long textures alike (what a listener compares when one sound follows another)"""
+    return float(np.max(fast_loudness(x, window)))
 
 
 # =====================================================================================  timeline

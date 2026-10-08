@@ -49,10 +49,12 @@ ROOT = _find_film_dir()               # the active film's content directory
 DEFAULTS = {
     "paths": {"out_dir": "out"},
     "tools": {"blender": "", "ffmpeg": "", "ffprobe": "", "python": ""},
-    "fonts": {"calligraphy": "", "weibei": "", "kaiti": "", "song": "", "ui": "", "mono": ""},
+    "fonts": {"calligraphy": "", "weibei": "", "kaiti": "", "song": "", "ui": "", "mono": "", "display": "",
+              "display_cjk": ""},
     "video": {"width": 1920, "height": 1080, "fps": 24, "codec": "libx264", "crf": 16, "preset": "slow",
               "pix_fmt": "yuv420p", "audio_bitrate": "320k"},
-    "audio": {"sample_rate": 48000, "target_lufs": -14.0, "true_peak_db": -1.0},
+    "audio": {"sample_rate": 48000, "target_lufs": -14.0, "true_peak_db": -1.0,
+              "soundbank": "auto"},   # "auto" (download GeneralUser GS once, else synthesize) | "off" | path to an .sf2
 }
 
 # conventional aliases honoured in addition to the prefixed variables
@@ -170,12 +172,19 @@ FONT_CANDIDATES = {
            "NotoSans-Regular.ttf"],
     "mono": ["Menlo.ttc", "consola.ttf", "DejaVuSansMono.ttf", "LiberationMono-Regular.ttf",
              "NotoSansMono-Regular.ttf"],
+    # Bundled in assets/_shared/fonts (SIL Open Font License), so titles look the same on every platform.
+    "display": ["Fredoka.ttf", "Arial Rounded Bold.ttf", "DejaVuSans-Bold.ttf", "Arial.ttf"],
+    "display_cjk": ["ZCOOLKuaiLe-Regular.ttf", "LXGWWenKai-Regular.ttf", "NotoSansCJK-Regular.ttc", "PingFang.ttc",
+                    "msyh.ttc", "Songti.ttc"],
 }
 
 
 def _font_dirs():
     home = os.path.expanduser("~")
-    dirs = [str(film_assets(ROOT) / "fonts"), os.path.join(REPO, "assets", "_shared", "fonts")]
+    package = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # The workspace's shared fonts, then the copies bundled with the package (wheel or source checkout).
+    dirs = [str(film_assets(ROOT) / "fonts"), os.path.join(REPO, "assets", "_shared", "fonts"),
+            os.path.join(package, "_assets", "fonts"), os.path.join(os.path.dirname(package), "assets", "_shared", "fonts")]
     if sys.platform == "darwin":
         dirs += ["/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Library/Fonts",
                  os.path.join(home, "Library", "Fonts")]
@@ -204,7 +213,8 @@ def _font_index():
 
 
 def font(role):
-    """Font file for a role ('calligraphy' | 'weibei' | 'kaiti' | 'song' | 'ui' | 'mono'): the settings/env value if set,
+    """Font file for a role ('calligraphy' | 'weibei' | 'kaiti' | 'song' | 'ui' | 'mono' | 'display' | 'display_cjk'):
+    the settings/env value if set,
     else the first known candidate found on this machine, else ''."""
     explicit = get("fonts", role, "")
     if explicit:

@@ -3,6 +3,7 @@
 <p align="center">
   <a href="https://zjucqr.github.io/CodeCinema/"><strong>Project page</strong></a> ·
   <a href="#quick-start"><strong>Quick start</strong></a> ·
+  <a href="#cartoons">Cartoon films</a> ·
   <a href="#framework">Framework</a> ·
   <a href="README.zh-CN.md">简体中文</a>
 </p>
@@ -23,17 +24,17 @@
 
 ---
 
-CodeCinema is an extensible, open-source filmmaking framework for picture, music, sound and the final cut. Write your story in the local Studio, choose Skia or Blender, and turn your scenes into an MP4 with music and optional voices.
+CodeCinema is an extensible, open-source filmmaking framework for picture, music, sound and the final cut. Write your story in the local Studio, choose Skia or Blender, and turn your scenes into an MP4 with music and optional voices. Or write a screenplay for a 3D cartoon: cast characters from the library, pick sets and shot sizes, and CodeCinema animates, voices, scores and mixes the film.
 
-Film folders hold story data. Media lives in the root `assets/<film-id>/` directory. The framework owns the renderers, sound and assembly, so you can make a film without copying or writing production scripts. Developers can add rendering backends through plugins.
+Film folders hold story data. Media lives in the root `assets/<film-id>/` directory. The framework owns the renderers, characters, sound and assembly, so you can make a film without copying or writing production scripts. Developers can add rendering backends through plugins.
 
 ## ✨ Highlights
 
-- 🪄 **From a look to a finished film.** Eight animated styles with editable text, colors, timing and camera moves.
-- 🎨 **Choose your frame.** Create landscape, portrait or square videos.
-- 🎼 **Picture and sound together.** Generate music and effects, with optional voices and recordings.
+- 🎭 **Cartoon films from a screenplay.** 14 library characters, 7 sets, 13 times of day, 54 actions, 12 gaits and 28 expressions, with automatic framing, lip sync, Foley and subtitles.
+- 🪄 **From a look to a finished film.** Eight animated styles with editable text, colors, timing and camera moves, in landscape, portrait or square.
+- 🎼 **A real sound library.** A sampled orchestra plus synthesized Chinese and Japanese instruments, 16 music styles, 71 sound effects, 12 ambience beds and cartoon voices, mixed to broadcast loudness.
 - 🧩 **Choose your renderer.** Switch between Skia 2D and Blender 3D, use your own Blender scenes, or install a renderer plugin.
-- 💻 **Runs locally.** Available on macOS, Linux and Windows. No API key is needed for the core workflow.
+- 💻 **Runs locally on macOS, Linux and Windows.** System voices work on all three. No API key is needed.
 - ♻️ **Made for iteration.** Reopen saved projects in Studio or run individual production steps from the command line.
 
 <a id="quick-start"></a>
@@ -103,6 +104,20 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
 <table width="100%">
   <tr>
     <td width="50%" valign="top">
+      <a href="films/pebble/README.md"><img src="assets/_shared/images/examples/pebble.jpg" width="100%" alt="Pebble"></a>
+      <h3><a href="films/pebble/README.md">Pebble</a></h3>
+      <p>A little penguin who cannot fly dives into the sea to save his friend, and finds that his sky was there all along.</p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/#pebble">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/pebble">Download</a> · <a href="films/pebble/README.md">Film guide</a></p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="films/nian/README.md"><img src="assets/_shared/images/examples/nian.jpg" width="100%" alt="Nian"></a>
+      <h3><a href="films/nian/README.md">Nian</a></h3>
+      <p>On New Year's Eve a girl meets the legendary beast Nian, who wears the red scarf her grandmother gave him sixty winters ago.</p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/#nian">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nian">Download</a> · <a href="films/nian/README.md">Film guide</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
       <a href="films/silvergrass/README.md"><img src="assets/_shared/images/examples/silvergrass.jpg" width="100%" alt="Duel in the Silver Grass"></a>
       <h3><a href="films/silvergrass/README.md">Duel in the Silver Grass</a></h3>
       <p>A masterless shinobi faces an old sword master in a sea of silver grass, through Blade, Fire and Thunder.</p>
@@ -113,14 +128,6 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
       <h3><a href="films/nightrevels/README.md">The Night Revels of Han Xizai, Cat Edition</a></h3>
       <p>A night banquet painted on silk, where every guest is a cat and a kitten painter spies on them.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#nightrevels">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">Download</a> · <a href="films/nightrevels/README.md">Film guide</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="films/xishen/README.md"><img src="assets/_shared/images/examples/xishen.jpg" width="100%" alt="I Am Not the God of Drama"></a>
-      <h3><a href="films/xishen/README.md">I Am Not the God of Drama</a></h3>
-      <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment.</p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/#xishen">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
     </td>
   </tr>
 </table>
@@ -150,6 +157,48 @@ Prefer the terminal? Run these commands from the repository root to create a fil
 
 Use `--story path/to/scenes.json` with `new` or `customize` to import a storyline. Explicit title, caption, duration and style options override the imported values. Scene data stays in `films/<id>/`, and media stays in `assets/<id>/`. Backend choices and production settings stay in the root `pyproject.toml`.
 
+<a id="cartoons"></a>
+
+## 🎭 Cartoon films
+
+A cartoon film is a screenplay: a cast chosen from the character library, sets from the set library, and scenes made of shots. Each shot names a camera and lists timed beats. Install [Blender 5.2 or later](https://www.blender.org/download/), then start from the example screenplay:
+
+```bash
+.venv/bin/python -m codecinema new myshort --template cartoon
+.venv/bin/python -m codecinema run myshort all
+```
+
+Edit `films/myshort/screenplay.json`. A shot reads like a shooting script:
+
+```json
+{"id": "wave", "dur": 5.0, "camera": {"size": "medium", "on": ["mei"], "move": "push"},
+ "do": [{"t": 0.4, "who": "mei", "act": "wave", "dur": 2.2},
+        {"t": 0.6, "who": "mei", "say": "Hello! Welcome to the meadow.", "mood": "happy"},
+        {"t": 3.2, "who": "mei", "face": "joy"}]}
+```
+
+| A beat can | Example |
+| --- | --- |
+| Move a character | `{"who": "mei", "walk": "gate"}`, also `run`, `sneak`, `tiptoe`, `hop`, `waddle`, `fly`, `swim` |
+| Act and emote | `{"who": "mei", "act": "cheer", "dur": 2}`, `{"who": "mei", "face": "teary"}`, `{"who": "mei", "look": "pip"}` |
+| Speak | `{"who": "mei", "say": "...", "mood": "tender", "zh": "..."}`, or a wordless `{"vocal": "giggle"}` |
+| Use props and effects | `{"prop": "lantern", "hold": "mei"}`, `{"fx": "fireworks", "at": [0, 30], "dur": 8}` |
+| Add sound | `{"sfx": "splash_big", "at": "shore"}`; footsteps are added automatically |
+
+Cameras take a size (`extreme_wide` to `extreme_close`), a side or bearing, an angle and a move (`push`, `pull`, `orbit_left`, `crane_up`, `follow`, `handheld` and more). The camera frames its subjects and steps around trees, houses and bystanders. Scenes carry a set, a time of day, an ambience bed and a music cue in one of the styles. Themes are written in note names, such as `"D5/q B4/e G4/e A4/h"`.
+
+Browse the libraries from the terminal, or render the character library as a picture:
+
+```bash
+.venv/bin/python -m codecinema library
+.venv/bin/python -m codecinema library actions
+.venv/bin/python -m codecinema library --sheet characters.png
+```
+
+![The character library](assets/_shared/images/characters.jpg)
+
+Work in steps: `plan` checks the screenplay and warns about lines that overlap, `stills` renders one frame per shot as a storyboard, and `render --preview` renders a half-size pass. `--frames 12s,40s` renders single moments. Rendering uses EEVEE by default. On a machine without a GPU, set `engine = "cycles"` under the film's `settings.render` in `pyproject.toml`; Cycles is slower and shades more softly.
+
 <a id="framework"></a>
 
 ## 🧩 Framework
@@ -159,7 +208,9 @@ The framework separates film content from production code:
 - **Content:** scene order, captions, narration, timing and assets belong to each film.
 - **Production:** a shared scene clock connects planning, rendered frames, music, speech, assembly and quality checks.
 - **Renderers:** Skia and Blender turn scenes into frames through the same interface. Installed plugins appear in `codecinema renderers` and Studio.
-- **Production packs:** the three examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain story data, with media in `assets/<id>/`.
+- **Cartoons:** [codecinema/cartoon](codecinema/cartoon) compiles screenplays, animates library characters, directs the camera and drives Blender. Characters, sets, props, actions and expressions are data that a screenplay can override.
+- **Sound:** [codecinema/audio](codecinema/audio) holds the instruments, composer, sound effects, ambience, cartoon voices, speech and the mixer shared by every film.
+- **Production packs:** the two authored examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain story data, with media in `assets/<id>/`.
 
 The examples use specialized production packs and keep their existing commands. Their choreography cannot be switched automatically between backends. New Studio projects use the shared pipeline and can change renderer without moving their content. Existing projects with custom entry scripts remain runnable.
 
@@ -181,13 +232,19 @@ Start with Quick preview or a few still frames. Blender rendering takes longer t
 
 In Studio, expand Add a voice on a scene card to write dialogue, choose a voice and describe its mood, such as “warm and curious” or “nervous but composed.” Allow enough time for each line and listen to a sample before producing a longer film. Leave the text empty for music only.
 
-On an Apple Silicon Mac, install the local expressive speech pack from the repository root, then restart Studio:
+Speech works on every platform. CodeCinema uses, in order: a recording you supply, a local expressive voice when installed, the system voice (macOS `say`, Windows SAPI, or `espeak-ng` on Linux), and finally cartoon babble, which needs nothing installed. On an Apple Silicon Mac, install the expressive speech pack from the repository root, then restart Studio:
 
 ```bash
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-The first spoken render downloads the voice model. Later renders can reuse existing takes, and no API key is needed. For recorded speech, put a WAV file in `assets/<film-id>/voices/` and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Recordings work on all platforms.
+The first spoken render downloads the voice model. Cartoon characters can also get a voice designed from a description. For recorded speech, put a WAV file in `assets/<film-id>/voices/` and set the scene’s `narration.recording` filename and `narration.text` in `scenes.json`. Cartoon films store their takes with `run <film> voices --keep-voices`, so a film made on one computer sounds the same on any other.
+
+<a id="sound"></a>
+
+## 🎼 Sound
+
+The score is written as data and played by a sampled orchestra: CodeCinema plays the General MIDI sound bank [GeneralUser GS](https://www.schristiancollins.com/generaluser.php) by S. Christian Collins with its own SoundFont player. The bank, 32 MB, downloads once on first use. Offline, or with `CODECINEMA_AUDIO_SOUNDBANK=off`, the score uses the built-in synthesized instruments. `codecinema library instruments`, `styles`, `sounds` and `ambience` list what is available. Every film is mixed with dialogue ducking and mastered to its loudness target.
 
 ## 🗂 Project layout
 
@@ -220,21 +277,25 @@ CodeCinema/
 │   │   ├── server.py           # HTTP API and media delivery
 │   │   └── jobs.py             # project state and background render jobs
 │   ├── renderers/              # Skia, Blender and renderer plugin interface
-│   ├── audio/                  # music, effects, speech and performance timing
+│   ├── cartoon/                # screenplay films: libraries, motion, camera, voices, finishing
+│   │   └── blender/            # characters, sets, props and effects built in Blender
+│   ├── audio/                  # instruments, composer, sound effects, ambience, voices and mixer
 │   └── productions/            # authored example production packs
 │       ├── silvergrass/        # choreography, Blender scenes and post-production
-│       ├── nightrevels/        # painted characters, scroll animation and music
-│       └── xishen/             # cast, acting, speech timing and episode assembly
+│       └── nightrevels/        # painted characters, scroll animation and music
 ├── films/                    # story data and generated working files
+│   ├── pebble/               # Pebble (cartoon screenplay)
+│   ├── nian/                 # Nian (cartoon screenplay)
 │   ├── silvergrass/          # Duel in the Silver Grass
-│   ├── nightrevels/          # The Night Revels of Han Xizai, Cat Edition
-│   └── xishen/               # I Am Not the God of Drama
+│   └── nightrevels/          # The Night Revels of Han Xizai, Cat Edition
 ├── assets/                   # all media, grouped by film
+│   ├── pebble/               # Pebble artwork and voice recordings
+│   ├── nian/                 # Nian artwork and voice recordings
 │   ├── silvergrass/          # Duel in the Silver Grass media
 │   ├── nightrevels/          # The Night Revels media
-│   ├── xishen/               # episode artwork, recordings and finished MP4s
 │   └── _shared/              # resources shared by the framework and website
 │       ├── images/           # branding and README illustrations
+│       ├── fonts/            # open-licensed display fonts for titles
 │       ├── studio/           # editor interface and look thumbnails
 │       ├── scaffold/         # starting files for new films
 │       └── site/             # website styles, scripts and preview media

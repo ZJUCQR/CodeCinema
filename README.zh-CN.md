@@ -3,6 +3,7 @@
 <p align="center">
   <a href="https://zjucqr.github.io/CodeCinema/zh/"><strong>项目主页</strong></a> ·
   <a href="#quick-start"><strong>快速开始</strong></a> ·
+  <a href="#cartoons">动画短片</a> ·
   <a href="#framework">框架概览</a> ·
   <a href="README.md">English</a>
 </p>
@@ -23,17 +24,17 @@
 
 ---
 
-CodeCinema 是可扩展的开源影片制作框架，将画面、音乐、声音与最终剪辑连接起来。在本地 Studio 中编排故事，选择 Skia 或 Blender，为镜头添加文字、配乐和可选配音，再生成 MP4。
+CodeCinema 是可扩展的开源影片制作框架，将画面、音乐、声音与最终剪辑连接起来。在本地 Studio 中编排故事，选择 Skia 或 Blender，为镜头添加文字、配乐和可选配音，再生成 MP4。也可以为 3D 动画短片写一份剧本：从角色库选演员，挑选场景和景别，CodeCinema 负责动画、配音、配乐与混音。
 
-影片文件夹保存故事数据，媒体素材统一放在根目录 `assets/<影片 ID>/`。框架统一提供渲染器、声音和合成流程，无需复制或编写制作脚本。开发者可以通过插件扩展渲染技术。
+影片文件夹保存故事数据，媒体素材统一放在根目录 `assets/<影片 ID>/`。框架统一提供渲染器、角色、声音和合成流程，无需复制或编写制作脚本。开发者可以通过插件扩展渲染技术。
 
 ## ✨ 亮点
 
-- 🪄 **从场景到成片**：八种动态风格，可调整文字、配色、时长与镜头。
-- 🎨 **自由选择画幅**：支持横屏、竖屏和方形视频。
-- 🎼 **画面与声音一起制作**：生成配乐和音效，也可加入配音与录音。
+- 🎭 **用剧本做动画短片**：14 个角色、7 个场景、13 种时段光线、54 种动作、12 种步态、28 种表情，自动构图、口型、拟音与字幕。
+- 🪄 **从场景到成片**：八种动态风格，可调整文字、配色、时长与镜头，支持横屏、竖屏和方形。
+- 🎼 **真正的声音库**：采样管弦乐团与合成的中国、日本乐器，16 种音乐风格、71 种音效、12 种环境声与卡通嗓音，按播出响度混音。
 - 🧩 **选择渲染技术**：切换 Skia 2D 与 Blender 3D，使用自己的 Blender 场景，也可安装渲染插件。
-- 💻 **本地运行**：支持 macOS、Linux 和 Windows，基础出片无需 API Key。
+- 💻 **在 macOS、Linux 和 Windows 本地运行**：三个平台都能使用系统语音，无需 API Key。
 - ♻️ **持续修改与迭代**：在 Studio 中重新打开作品，也可通过命令行分步运行制作流程。
 
 <a id="quick-start"></a>
@@ -103,6 +104,20 @@ py -3.12 -m venv .venv
 <table width="100%">
   <tr>
     <td width="50%" valign="top">
+      <a href="films/pebble/README.zh-CN.md"><img src="assets/_shared/images/examples/pebble.jpg" width="100%" alt="小企鹅飞起来"></a>
+      <h3><a href="films/pebble/README.zh-CN.md">小企鹅飞起来</a></h3>
+      <p>不会飞的小企鹅跳进大海去救朋友，才发现自己的天空一直都在那里。</p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#pebble">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/pebble">下载</a> · <a href="films/pebble/README.zh-CN.md">制作指南</a></p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="films/nian/README.zh-CN.md"><img src="assets/_shared/images/examples/nian.jpg" width="100%" alt="年"></a>
+      <h3><a href="films/nian/README.zh-CN.md">年</a></h3>
+      <p>除夕夜，小女孩遇见了传说中的年兽，它围着的红围巾，是奶奶六十年前送给它的。</p>
+      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#nian">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nian">下载</a> · <a href="films/nian/README.zh-CN.md">制作指南</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
       <a href="films/silvergrass/README.zh-CN.md"><img src="assets/_shared/images/examples/silvergrass.jpg" width="100%" alt="芒原决战"></a>
       <h3><a href="films/silvergrass/README.zh-CN.md">芒原决战</a></h3>
       <p>落日芒草原上，无主之忍对决年迈的剑豪，分为剑、焰、雷三幕。</p>
@@ -113,14 +128,6 @@ py -3.12 -m venv .venv
       <h3><a href="films/nightrevels/README.zh-CN.md">韩熙载夜宴图 · 猫</a></h3>
       <p>一场画在绢上的夜宴，每位宾客都是猫，还有一只小猫画师在偷偷作画。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#nightrevels">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/nightrevels">下载</a> · <a href="films/nightrevels/README.zh-CN.md">制作指南</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="films/xishen/README.zh-CN.md"><img src="assets/_shared/images/examples/xishen.jpg" width="100%" alt="我不是戏神"></a>
-      <h3><a href="films/xishen/README.zh-CN.md">我不是戏神</a></h3>
-      <p>从陈伶雨夜归家、剧院噩梦到第一次编导演练。</p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#xishen">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
     </td>
   </tr>
 </table>
@@ -150,6 +157,48 @@ py -3.12 -m venv .venv
 
 在 `new` 或 `customize` 后添加 `--story path/to/scenes.json` 可导入自己的分镜。显式指定的标题、字幕、时长和风格选项会覆盖导入值。剧情保存在 `films/<id>/`，素材保存在 `assets/<id>/`，渲染器和制作设置统一保存在根目录 `pyproject.toml`。
 
+<a id="cartoons"></a>
+
+## 🎭 动画短片
+
+动画短片就是一份剧本：从角色库挑选演员，从场景库挑选场景，再由一个个镜头组成各场戏。每个镜头指定机位，并列出带时间的动作。安装 [Blender 5.2 或更新版本](https://www.blender.org/download/)后，从示例剧本开始：
+
+```bash
+.venv/bin/python -m codecinema new myshort --template cartoon
+.venv/bin/python -m codecinema run myshort all
+```
+
+编辑 `films/myshort/screenplay.json`。一个镜头读起来就像分镜脚本：
+
+```json
+{"id": "wave", "dur": 5.0, "camera": {"size": "medium", "on": ["mei"], "move": "push"},
+ "do": [{"t": 0.4, "who": "mei", "act": "wave", "dur": 2.2},
+        {"t": 0.6, "who": "mei", "say": "Hello! Welcome to the meadow.", "mood": "happy"},
+        {"t": 3.2, "who": "mei", "face": "joy"}]}
+```
+
+| 动作节拍 | 示例 |
+| --- | --- |
+| 移动角色 | `{"who": "mei", "walk": "gate"}`，也可用 `run`、`sneak`、`tiptoe`、`hop`、`waddle`、`fly`、`swim` |
+| 表演与表情 | `{"who": "mei", "act": "cheer", "dur": 2}`、`{"who": "mei", "face": "teary"}`、`{"who": "mei", "look": "pip"}` |
+| 说话 | `{"who": "mei", "say": "……", "mood": "tender", "en": "..."}`，或无台词的 `{"vocal": "giggle"}` |
+| 道具与特效 | `{"prop": "lantern", "hold": "mei"}`、`{"fx": "fireworks", "at": [0, 30], "dur": 8}` |
+| 音效 | `{"sfx": "splash_big", "at": "shore"}`，脚步声会自动添加 |
+
+机位可设置景别（`extreme_wide` 到 `extreme_close`）、方位或朝向、角度与运动（`push`、`pull`、`orbit_left`、`crane_up`、`follow`、`handheld` 等）。摄像机会自动构图，并绕开树木、房屋和旁人。每场戏指定场景、时段、环境声和一种风格的配乐；主题旋律用音名书写，例如 `"D5/q B4/e G4/e A4/h"`。
+
+在终端浏览素材库，或把角色库渲染成一张图：
+
+```bash
+.venv/bin/python -m codecinema library
+.venv/bin/python -m codecinema library actions
+.venv/bin/python -m codecinema library --sheet characters.png
+```
+
+![角色库](assets/_shared/images/characters.jpg)
+
+建议分步制作：`plan` 检查剧本并提示台词重叠，`stills` 每个镜头渲染一帧作为分镜表，`render --preview` 快速渲染半尺寸全片，`--frames 12s,40s` 只渲染几个时刻。默认使用 EEVEE 渲染；没有显卡的机器可在 `pyproject.toml` 该影片的 `settings.render` 中设置 `engine = "cycles"`，速度较慢，明暗更柔和。
+
 <a id="framework"></a>
 
 ## 🧩 框架概览
@@ -159,7 +208,9 @@ py -3.12 -m venv .venv
 - **内容：** 镜头顺序、字幕、台词、时长和素材属于各部影片。
 - **制作流程：** 统一的分镜时钟连接规划、画面、配乐、配音、合成与成片检查。
 - **渲染器：** Skia 与 Blender 通过同一接口输出画面。已安装的插件会显示在 `codecinema renderers` 和 Studio 中。
-- **制作包：** 三部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据，素材放在 `assets/<id>/`。
+- **动画短片：** [codecinema/cartoon](codecinema/cartoon) 负责编译剧本、驱动角色库动画、调度摄像机并控制 Blender。角色、场景、道具、动作和表情都是数据，剧本可以覆盖任意部分。
+- **声音：** [codecinema/audio](codecinema/audio) 提供乐器、作曲、音效、环境声、卡通嗓音、语音与混音，所有影片共用。
+- **制作包：** 两部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据，素材放在 `assets/<id>/`。
 
 示例影片保留原有制作命令，并使用专门设计的制作包。它们的动作编排无法自动切换到另一种后端。新建 Studio 项目使用共享管线，可以直接更换渲染器。以前带有自定义入口脚本的项目仍可运行。
 
@@ -181,13 +232,19 @@ py -3.12 -m venv .venv
 
 在 Studio 的分镜卡片中展开“添加配音”，填写台词、选择声音并描述情绪，例如“温柔而好奇”或“紧张但克制”。为台词留足时长，制作较长影片前先试听声音。台词留空时生成配乐版。
 
-Apple Silicon Mac 可在仓库根目录安装本地情绪语音包，然后重启 Studio：
+配音在所有平台都可用。CodeCinema 依次使用：你提供的录音、已安装的本地情绪语音、系统语音（macOS `say`、Windows SAPI 或 Linux 的 `espeak-ng`），最后是无需任何安装的卡通嗓音。Apple Silicon Mac 可在仓库根目录安装情绪语音包，然后重启 Studio：
 
 ```bash
 .venv/bin/python -m pip install -e ".[speech]"
 ```
 
-首次配音会下载语音模型，后续制作可复用已有配音，无需 API Key。使用录音时，将 WAV 文件放入 `assets/<影片 ID>/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。各平台均可使用录音。
+首次配音会下载语音模型。动画角色还可以根据一段文字描述设计嗓音。使用录音时，将 WAV 文件放入 `assets/<影片 ID>/voices/`，并在 `scenes.json` 对应分镜中设置 `narration.recording` 文件名与 `narration.text` 台词。动画短片用 `run <影片> voices --keep-voices` 保存配音，在一台电脑上做好的影片，换到任何电脑上声音都一样。
+
+<a id="sound"></a>
+
+## 🎼 声音
+
+配乐以数据形式写成，由采样管弦乐团演奏：CodeCinema 用自带的 SoundFont 播放器演奏 S. Christian Collins 的 General MIDI 音色库 [GeneralUser GS](https://www.schristiancollins.com/generaluser.php)。音色库 32 MB，首次使用时下载一次；离线或设置 `CODECINEMA_AUDIO_SOUNDBANK=off` 时改用内置合成乐器。`codecinema library instruments`、`styles`、`sounds` 和 `ambience` 可列出全部素材。每部影片都会在对白时自动压低音乐，并按响度目标完成母带处理。
 
 ## 🗂 项目结构
 
@@ -220,21 +277,25 @@ CodeCinema/
 │   │   ├── server.py           # HTTP 接口与媒体响应
 │   │   └── jobs.py             # 项目状态与后台制作任务
 │   ├── renderers/              # Skia、Blender 与渲染插件接口
-│   ├── audio/                  # 配乐、音效、配音与表演时序
+│   ├── cartoon/                # 剧本动画：素材库、动作、摄像机、配音与成片
+│   │   └── blender/            # 在 Blender 中搭建角色、场景、道具与特效
+│   ├── audio/                  # 乐器、作曲、音效、环境声、嗓音与混音
 │   └── productions/            # 示例影片的制作包
 │       ├── silvergrass/        # 动作、Blender 场景与后期
-│       ├── nightrevels/        # 角色绘制、长卷动画与音乐
-│       └── xishen/             # 角色、表演、配音与多集合成
+│       └── nightrevels/        # 角色绘制、长卷动画与音乐
 ├── films/                    # 故事数据与生成的工作文件
+│   ├── pebble/               # 《小企鹅飞起来》（动画剧本）
+│   ├── nian/                 # 《年》（动画剧本）
 │   ├── silvergrass/          # 《芒原决战》
-│   ├── nightrevels/          # 《韩熙载夜宴图 · 猫》
-│   └── xishen/               # 《我不是戏神》
+│   └── nightrevels/          # 《韩熙载夜宴图 · 猫》
 ├── assets/                   # 全部媒体素材，按影片归类
+│   ├── pebble/               # 小企鹅飞起来的配图与配音录音
+│   ├── nian/                 # 年的配图与配音录音
 │   ├── silvergrass/          # 芒原决战的素材
 │   ├── nightrevels/          # 韩熙载夜宴图的素材
-│   ├── xishen/               # 剧集配图、录音与 MP4 成片
 │   └── _shared/              # 框架与网站的公共资源
 │       ├── images/           # 品牌图与 README 配图
+│       ├── fonts/            # 开源授权的片名字体
 │       ├── studio/           # 编辑器界面与风格缩略图
 │       ├── scaffold/         # 新影片的初始文件
 │       └── site/             # 网站样式、脚本与预览媒体

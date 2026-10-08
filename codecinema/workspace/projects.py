@@ -16,6 +16,40 @@ from codecinema.workspace import story as starters
 from codecinema.workspace.paths import film_assets, resource_dir
 
 
+CARTOON_STEPS = ["plan", "voices", "stills", "render", "audio", "assemble", "qc", "all"]
+
+
+def create_cartoon(path, *, title=None, screenplay=None, quality="standard"):
+    """Create a screenplay-driven cartoon film (Blender) from the starter screenplay or a supplied one."""
+    path = Path(path).absolute()
+    if path.parent.name != "films" or not re.fullmatch(r"[a-z][a-z0-9_-]*", path.name):
+        raise ValueError("Create films under films/<id>, using lower-case letters, digits, '-' or '_'")
+    if os.path.lexists(path) or os.path.lexists(film_assets(path)):
+        raise ValueError(f"{path.name} already exists; choose a new ID")
+    data = copy.deepcopy(screenplay) if screenplay is not None else json.loads(
+        (resource_dir("scaffold") / "cartoon" / "screenplay.json").read_text(encoding="utf-8"))
+    if title:
+        data["title"] = title
+    from codecinema.cartoon import screenplay as compiler
+    compiler.Compiler(copy.deepcopy(data)).compile()
+    width, height = starters.dimensions("landscape", quality)
+    with registry.edit(path) as document:
+        films = document.setdefault("tool", {}).setdefault("codecinema", {}).setdefault("films", {})
+        if path.name in films:
+            raise ValueError(f"{path.name} already exists; choose a new ID")
+        films[path.name] = {
+            "title": data.get("title", path.name), "description": "A screenplay-driven cartoon.",
+            "production": "cartoon", "renderer": "blender", "steps": CARTOON_STEPS,
+            "requires": ["blender>=5.2", "ffmpeg"],
+            "settings": {"paths": {"out_dir": "out", "final_video": f"assets/{path.name}/film/{path.name}.mp4"},
+                         "render": {"engine": "eevee", "samples": 16, "samples_preview": 8, "jobs": 1},
+                         "video": {"width": width, "height": height, "crf": 18, "preset": "medium"},
+                         "audio": {"sample_rate": 48000, "target_lufs": -16.0, "true_peak_db": -1.0}}}
+        path.mkdir(parents=True)
+        (path / "screenplay.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    return path
+
+
 def create(path, *, title, preset, seconds, format_name, quality, accent=None, subtitle=None, renderer="skia", story=None):
     """Create a film folder and register its settings in the workspace configuration."""
     path = Path(path).absolute()
@@ -57,7 +91,7 @@ def create(path, *, title, preset, seconds, format_name, quality, accent=None, s
             with tempfile.TemporaryDirectory(prefix=".codecinema-", dir=path.parent) as temporary:
                 staged = Path(temporary) / path.name
                 source = resource_dir("scaffold")
-                shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+                shutil.copytree(source, staged, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "cartoon"))
                 for file in staged.rglob("*.md"):
                     content = file.read_text(encoding="utf-8")
                     content = content.replace("__FILM_ID__", path.name).replace("__FILM_TITLE__", title)

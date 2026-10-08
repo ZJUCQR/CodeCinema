@@ -25,6 +25,10 @@ def main():
         from codecinema.engine.pipeline import main as produce
 
         return produce(args)
+    elif film.production == "cartoon":
+        from codecinema.cartoon.run import main as produce
+
+        return produce(args)
     else:
         entry = source_root(film.production) / "run.py"
     sys.path.insert(0, str(entry.parent))

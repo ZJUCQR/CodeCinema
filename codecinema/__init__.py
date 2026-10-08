@@ -9,7 +9,7 @@ from importlib import import_module
 
 from codecinema.workspace.paths import REPO, films_dir, project_root
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __all__ = ["__version__", "REPO", "films_dir", "project_root"]
 
 _ALIASES = {

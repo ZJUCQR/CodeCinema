@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codecinema"
-version = "2.0.0"
-description = "CodeCinema: a framework for making complete short films with code (picture, music, sound, titles, master)"
+version = "2.1.0"
+description = "CodeCinema: a framework for making complete short films and screenplay-driven cartoons with code (picture, music, sound, titles, master)"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "ZJUCQR" }]
 requires-python = ">=3.12"
-keywords = ["procedural-animation", "generative-art", "blender", "sound-synthesis", "short-film", "framework"]
+keywords = ["procedural-animation", "generative-art", "blender", "sound-synthesis", "short-film", "framework",
+            "cartoon", "screenplay", "soundfont"]
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
@@ -173,39 +174,6 @@ sample_rate = 48000
 target_lufs = -14.0
 true_peak_db = -1.0
 
-[tool.codecinema.films.xishen]
-title = "I Am Not the God of Drama"
-title_zh = "我不是戏神"
-description = "Three reproducible motion-comic episodes adapting chapters 1–6, with a shared cast, continuity ledger, Mandarin narration, score and subtitles."
-production = "xishen"
-renderer = "skia"
-env_prefix = "XISHEN"
-steps = ["plan", "stills", "render", "audio", "assemble", "qc", "all"]
-requires = ["ffmpeg"]
-
-[tool.codecinema.films.xishen.settings.paths]
-out_dir = "out"
-final_video = "assets/xishen/film/xishen_complete.mp4"
-
-[tool.codecinema.films.xishen.settings.video]
-width = 1920
-height = 1080
-fps = 24
-crf = 18
-preset = "fast"
-audio_bitrate = "256k"
-
-[tool.codecinema.films.xishen.settings.render]
-jobs = 3
-
-[tool.codecinema.films.xishen.settings.audio]
-sample_rate = 48000
-target_lufs = -16.0
-true_peak_db = -1.0
-narration = "auto"
-voice = "Tingting"
-speech_rate = 185
-
 [tool.codecinema.starter]
 description = "A configurable three-scene starter with synthesized music."
 production = "story"
@@ -225,4 +193,68 @@ preset = "medium"
 
 [tool.codecinema.starter.settings.audio]
 sample_rate = 48000
+true_peak_db = -1.0
+
+[tool.codecinema.films.pebble]
+title = "Pebble"
+title_zh = "小企鹅飞起来"
+description = "An English-language 3D cartoon: a penguin who cannot fly dives to save his friend and discovers his sky is the sea."
+production = "cartoon"
+renderer = "blender"
+steps = ["plan", "voices", "stills", "render", "audio", "assemble", "qc", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[tool.codecinema.films.pebble.settings.paths]
+out_dir = "out"
+final_video = "assets/pebble/film/Pebble.mp4"
+
+[tool.codecinema.films.pebble.settings.render]
+engine = "eevee"                    # "cycles" renders without a GPU (softer shading, slower)
+samples = 24                        # EEVEE anti-aliasing samples per frame
+samples_preview = 8
+preview_scale = 0.5                 # `render --preview`: half-size frames for a quick full pass
+jobs = 2                            # parallel Blender processes
+
+[tool.codecinema.films.pebble.settings.video]
+width = 1920
+height = 1080
+crf = 18
+preset = "slow"
+audio_bitrate = "256k"
+
+[tool.codecinema.films.pebble.settings.audio]
+sample_rate = 48000
+target_lufs = -16.0
+true_peak_db = -1.0
+
+[tool.codecinema.films.nian]
+title = "Nian"
+title_zh = "年"
+description = "A Mandarin-language 3D cartoon: on New Year's Eve a girl meets the legendary beast Nian, who wears the red scarf her grandmother gave him sixty winters ago."
+production = "cartoon"
+renderer = "blender"
+steps = ["plan", "voices", "stills", "render", "audio", "assemble", "qc", "all"]
+requires = ["blender>=5.2", "ffmpeg"]
+
+[tool.codecinema.films.nian.settings.paths]
+out_dir = "out"
+final_video = "assets/nian/film/Nian.mp4"
+
+[tool.codecinema.films.nian.settings.render]
+engine = "eevee"                    # "cycles" renders without a GPU (softer shading, slower)
+samples = 24
+samples_preview = 8
+preview_scale = 0.5
+jobs = 2
+
+[tool.codecinema.films.nian.settings.video]
+width = 1920
+height = 1080
+crf = 18
+preset = "slow"
+audio_bitrate = "256k"
+
+[tool.codecinema.films.nian.settings.audio]
+sample_rate = 48000
+target_lufs = -16.0
 true_peak_db = -1.0

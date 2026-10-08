@@ -1,0 +1,2547 @@
+{
+ "version": 1,
+ "title": "年",
+ "title_local": "Nian",
+ "language": "Chinese",
+ "subtitle": "zh",
+ "fps": 24,
+ "seed": 23,
+ "cast": {
+  "xiaoman": {
+   "from": "girl",
+   "name": "小满",
+   "voice": {
+    "profile": "girl",
+    "speaker": "Vivian",
+    "pitch": 0.0,
+    "design": "一个七岁的中国小女孩，声音清脆明亮，天真好奇，说普通话。"
+   }
+  },
+  "nainai": {
+   "from": "grandma",
+   "name": "奶奶",
+   "voice": {
+    "profile": "grandma",
+    "speaker": "Serena",
+    "pitch": -1.5,
+    "design": null,
+    "direction": "用七十多岁慈祥老奶奶的语气，声音温和，略带沙哑。"
+   }
+  },
+  "nian": {
+   "from": "nian",
+   "name": "年",
+   "accessories": [
+    {
+     "kind": "scarf",
+     "color": "#c0392b",
+     "faded": 0.4
+    },
+    {
+     "kind": "earmuffs",
+     "color": "#f6c6d6",
+     "band": "#d14a6c",
+     "azimuth": 84,
+     "elevation": 28,
+     "size": 1.5
+    }
+   ]
+  },
+  "cub": {
+   "from": "nian_cub",
+   "name": "小年兽",
+   "accessories": [
+    {
+     "kind": "scarf",
+     "color": "#d23a2e",
+     "faded": 0.0
+    }
+   ]
+  },
+  "young": {
+   "from": "girl",
+   "name": "小时候的奶奶",
+   "height": 1.12,
+   "hair": {
+    "style": "braids",
+    "color": "#24170f"
+   },
+   "face": {
+    "iris": "#4a2f22",
+    "iris_light": "#b98a5a"
+   },
+   "outfit": {
+    "top": "#5b7f6f",
+    "top_style": "padded",
+    "trim": "#d9c79e",
+    "bottom": "#3d3a4a",
+    "bottom_style": "pants",
+    "shoes": "#3a2a24"
+   },
+   "accessories": [
+    {
+     "kind": "scarf",
+     "color": "#d23a2e",
+     "faded": 0.0
+    }
+   ],
+   "voice": {
+    "profile": "girl",
+    "speaker": null,
+    "design": null
+   }
+  },
+  "dashu": {
+   "from": "man",
+   "name": "大叔",
+   "outfit": {
+    "top": "#6b3a2a",
+    "top_style": "padded",
+    "trim": "#d9c79e",
+    "bottom": "#2e2a33",
+    "bottom_style": "pants",
+    "shoes": "#2b2222"
+   },
+   "voice": {
+    "profile": "man",
+    "speaker": "Uncle_Fu",
+    "pitch": 0.0,
+    "design": null,
+    "direction": "北方农村大叔，嗓门洪亮。"
+   }
+  },
+  "erge": {
+   "from": "man",
+   "name": "二哥",
+   "height": 1.42,
+   "hair": {
+    "style": "spiky",
+    "color": "#1f1a18"
+   },
+   "outfit": {
+    "top": "#2f4a6a",
+    "top_style": "padded",
+    "trim": "#c9b98a",
+    "bottom": "#2e2a33",
+    "bottom_style": "pants",
+    "shoes": "#2b2222"
+   },
+   "voice": {
+    "profile": "man",
+    "speaker": null,
+    "design": null
+   }
+  }
+ },
+ "sets": {
+  "village": {
+   "from": "snow_village",
+   "marks": {
+    "hide": [
+     2.6,
+     -3.9
+    ],
+    "corner": [
+     -4.8,
+     -2.6
+    ],
+    "seat": [
+     7.0,
+     -5.0
+    ],
+    "girl": [
+     5.9,
+     -4.7
+    ],
+    "gran": [
+     8.1,
+     -4.8
+    ]
+   }
+  },
+  "kitchen": {
+   "from": "room"
+  },
+  "forest": {
+   "from": "snow_forest",
+   "marks": {
+    "meet": [
+     -1.0,
+     -0.6
+    ],
+    "nian_spot": [
+     1.0,
+     1.9
+    ],
+    "trees_out": [
+     1.6,
+     6.0
+    ],
+    "between": [
+     -0.2,
+     0.5
+    ],
+    "line": [
+     -4.8,
+     -2.2
+    ],
+    "line2": [
+     -5.6,
+     -1.4
+    ]
+   }
+  }
+ },
+ "props": {
+  "bowl": {
+   "from": "bowl"
+  },
+  "table_bowl": {
+   "from": "bowl",
+   "dumplings": 7
+  },
+  "lantern": {
+   "from": "hand_lantern"
+  },
+  "lantern_nn": {
+   "from": "hand_lantern"
+  },
+  "crackers1": {
+   "from": "firecrackers"
+  },
+  "crackers2": {
+   "from": "firecrackers"
+  },
+  "scarf": {
+   "from": "scarf",
+   "color": "#d23a2e"
+  },
+  "muffs": {
+   "from": "earmuffs"
+  },
+  "bowl2": {
+   "from": "bowl"
+  }
+ },
+ "scenes": [
+  {
+   "id": "eve",
+   "set": "village",
+   "time": "night",
+   "ambience": "snow_night_village",
+   "music": {
+    "style": "festive_chinese",
+    "theme": "festival",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 112,
+    "intensity": 0.45,
+    "variation": "light",
+    "end_with": "fade"
+   },
+   "start": {},
+   "shots": [
+    {
+     "id": "establish",
+     "dur": 7.0,
+     "camera": {
+      "from": [
+       7,
+       -18,
+       9.5
+      ],
+      "to": [
+       4,
+       -13,
+       4.2
+      ],
+      "look": [
+       0,
+       3,
+       3.5
+      ],
+      "look_to": [
+       0,
+       2,
+       2.4
+      ],
+      "lens": 28
+     },
+     "do": [
+      {
+       "t": 2.5,
+       "sfx": "firecracker_string",
+       "at": [
+        30,
+        20
+       ],
+       "gain_db": -16
+      },
+      {
+       "t": 5.0,
+       "sfx": "firecracker_string",
+       "at": [
+        -35,
+        25
+       ],
+       "gain_db": -18
+      }
+     ],
+     "title": {
+      "text": "年",
+      "sub": "NIAN",
+      "style": "main",
+      "start": 1.2,
+      "dur": 5.2,
+      "size": 0.2
+     },
+     "transition": "fade_in"
+    }
+   ]
+  },
+  {
+   "id": "kitchen",
+   "set": "kitchen",
+   "time": "interior_night",
+   "ambience": "interior_warm",
+   "space": "room",
+   "music": {
+    "style": "tender_chinese",
+    "theme": "nian",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 72,
+    "intensity": 0.4,
+    "end_with": "ring",
+    "hits": [
+     {
+      "t": 38.0,
+      "kind": "swell"
+     }
+    ]
+   },
+   "start": {
+    "nainai": {
+     "at": "stool_l",
+     "facing": 90,
+     "face": "tender",
+     "act": "sit",
+     "params": {
+      "seat": 0.4
+     }
+    },
+    "xiaoman": {
+     "at": "stool_r",
+     "facing": -90,
+     "face": "happy",
+     "act": "sit",
+     "params": {
+      "seat": 0.4
+     }
+    }
+   },
+   "props": {
+    "table_bowl": {
+     "place": [
+      0.0,
+      0.62,
+      0.76
+     ]
+    }
+   },
+   "shots": [
+    {
+     "id": "dumplings",
+     "dur": 5.0,
+     "camera": {
+      "size": "full",
+      "on": [
+       "nainai",
+       "xiaoman"
+      ],
+      "side": 270,
+      "bearing": 0,
+      "angle": "slight_high"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "act": "knead",
+       "dur": 30,
+       "height": -0.42
+      },
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "act": "knead",
+       "dur": 21,
+       "height": -0.32
+      },
+      {
+       "t": 1.0,
+       "who": "xiaoman",
+       "look": "nainai"
+      },
+      {
+       "t": 1.2,
+       "who": "nainai",
+       "look": "xiaoman"
+      }
+     ],
+     "transition": "fade"
+    },
+    {
+     "id": "legend",
+     "dur": 5.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nainai"
+      ],
+      "side": "front_left"
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "nainai",
+       "say": "每年除夕，年兽都会从山里下来。",
+       "mood": "tender",
+       "en": "Every New Year's Eve, the Nian comes down from the mountains."
+      }
+     ]
+    },
+    {
+     "id": "eat",
+     "dur": 4.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "face": "surprised"
+      },
+      {
+       "t": 0.3,
+       "who": "xiaoman",
+       "say": "它……会吃人吗？",
+       "mood": "scared",
+       "en": "Does it... eat people?"
+      }
+     ]
+    },
+    {
+     "id": "red",
+     "dur": 6.0,
+     "camera": {
+      "size": "medium_close",
+      "on": [
+       "nainai"
+      ],
+      "side": "front_left",
+      "move": "push",
+      "amount": 0.4
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "face": "calm"
+      },
+      {
+       "t": 0.2,
+       "who": "nainai",
+       "say": "传说它怕红色，也怕响声。",
+       "mood": "wise",
+       "en": "They say it fears the color red, and loud noise."
+      }
+     ]
+    },
+    {
+     "id": "listen",
+     "dur": 6.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right",
+      "move": "push",
+      "amount": 0.4
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "look": "nainai"
+      },
+      {
+       "t": 0.2,
+       "who": "xiaoman",
+       "face": "wide/raised/small_o"
+      },
+      {
+       "t": 0.3,
+       "who": "nainai",
+       "say": "所以家家户户，都贴春联，放鞭炮。",
+       "mood": "wise",
+       "en": "So every family hangs red couplets and lights firecrackers."
+      },
+      {
+       "t": 3.6,
+       "who": "xiaoman",
+       "act": "nod",
+       "dur": 1.2
+      }
+     ]
+    },
+    {
+     "id": "why",
+     "dur": 4.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "face": "curious"
+      },
+      {
+       "t": 0.3,
+       "who": "xiaoman",
+       "act": "tilt",
+       "dur": 3.0
+      },
+      {
+       "t": 0.4,
+       "who": "xiaoman",
+       "say": "那它为什么还要来呢？",
+       "mood": "curious",
+       "en": "Then why does it still come?"
+      }
+     ]
+    },
+    {
+     "id": "searching",
+     "dur": 7.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nainai"
+      ],
+      "side": "front_left",
+      "move": "push",
+      "amount": 0.7
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "act": "hold",
+       "dur": 7.0,
+       "height": -0.4
+      },
+      {
+       "t": 0.6,
+       "who": "nainai",
+       "look": "window"
+      },
+      {
+       "t": 1.0,
+       "who": "nainai",
+       "face": "tender"
+      },
+      {
+       "t": 2.0,
+       "who": "nainai",
+       "say": "也许……它是在找什么吧。",
+       "mood": "tender",
+       "en": "Perhaps... it is looking for something."
+      }
+     ]
+    },
+    {
+     "id": "window",
+     "dur": 3.5,
+     "camera": {
+      "from": [
+       0.6,
+       0.4,
+       1.4
+      ],
+      "look": [
+       0.0,
+       3.0,
+       1.75
+      ],
+      "lens": 40
+     },
+     "do": []
+    }
+   ]
+  },
+  {
+   "id": "sneak",
+   "set": "village",
+   "time": "night",
+   "ambience": "snow_night_village",
+   "music": {
+    "style": "mystery",
+    "theme": "nian",
+    "key": "A",
+    "mode": "yu",
+    "tempo": 96,
+    "intensity": 0.5,
+    "variation": "light",
+    "end_with": "fade"
+   },
+   "start": {
+    "xiaoman": {
+     "at": "home_door",
+     "facing": "front",
+     "face": "determined"
+    },
+    "dashu": {
+     "at": [
+      7.6,
+      -6.2
+     ],
+     "facing": -60,
+     "face": "determined"
+    },
+    "erge": {
+     "at": [
+      9.0,
+      -5.4
+     ],
+     "facing": -100,
+     "face": "happy"
+    }
+   },
+   "props": {
+    "bowl": {
+     "hold": "xiaoman",
+     "hand": "r",
+     "offset": [
+      0,
+      0,
+      -0.04
+     ]
+    },
+    "lantern": {
+     "hold": "xiaoman",
+     "hand": "l"
+    },
+    "crackers1": {
+     "hold": "dashu",
+     "hand": "r"
+    },
+    "crackers2": {
+     "hold": "erge",
+     "hand": "l"
+    }
+   },
+   "shots": [
+    {
+     "id": "door",
+     "dur": 4.5,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front",
+      "angle": "high"
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "who": "xiaoman",
+       "sneak": "yard",
+       "dur": 3.2
+      },
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "act": "hold",
+       "dur": 4.5,
+       "height": -0.25
+      },
+      {
+       "t": 3.4,
+       "who": "xiaoman",
+       "act": "look_around",
+       "dur": 1.1
+      }
+     ],
+     "transition": "fade"
+    },
+    {
+     "id": "villagers",
+     "dur": 5.0,
+     "camera": {
+      "from": [
+       0.6,
+       -7.4,
+       1.5
+      ],
+      "look": [
+       5.0,
+       -4.6,
+       1.0
+      ],
+      "lens": 30
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "sneak": "hide",
+       "dur": 1.8
+      },
+      {
+       "t": 1.9,
+       "who": "xiaoman",
+       "act": "peek",
+       "dur": 3.0,
+       "side": "r"
+      },
+      {
+       "t": 1.9,
+       "who": "xiaoman",
+       "look": "dashu"
+      },
+      {
+       "t": 0.5,
+       "who": "dashu",
+       "say": "子时一到，咱们就放鞭炮，把年兽吓跑！",
+       "mood": "excited",
+       "en": "At midnight we light the firecrackers and scare the Nian away!"
+      },
+      {
+       "t": 0.4,
+       "who": "erge",
+       "act": "nod",
+       "dur": 1.5
+      }
+     ]
+    },
+    {
+     "id": "tiptoe",
+     "dur": 4.5,
+     "camera": {
+      "size": "full",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "right",
+      "move": "follow"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "tiptoe": [
+        "corner",
+        "lane_west",
+        "gate"
+       ],
+       "dur": 4.5
+      },
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "face": "determined"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "forest",
+   "set": "forest",
+   "time": "moonlight",
+   "ambience": "snow_forest_night",
+   "space": "forest",
+   "music": {
+    "style": "night",
+    "theme": "nian",
+    "key": "A",
+    "mode": "yu",
+    "tempo": 70,
+    "intensity": 0.55,
+    "end_with": "cut",
+    "hits": [
+     {
+      "t": 67.5,
+      "kind": "stinger"
+     }
+    ]
+   },
+   "start": {
+    "xiaoman": {
+     "at": "path_in",
+     "facing": "meet",
+     "face": "worried"
+    },
+    "nian": {
+     "at": "trees_out",
+     "facing": "nian_spot",
+     "face": "curious"
+    }
+   },
+   "props": {
+    "bowl": {
+     "hold": "xiaoman",
+     "hand": "r",
+     "offset": [
+      0,
+      0,
+      -0.04
+     ]
+    },
+    "lantern": {
+     "hold": "xiaoman",
+     "hand": "l"
+    }
+   },
+   "shots": [
+    {
+     "id": "woods",
+     "dur": 5.5,
+     "camera": {
+      "from": [
+       -11,
+       -9,
+       2.2
+      ],
+      "to": [
+       -10,
+       -8.4,
+       2.0
+      ],
+      "look": [
+       -2,
+       1,
+       1.0
+      ],
+      "lens": 30
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nian",
+       "hide": true
+      },
+      {
+       "t": 0.3,
+       "who": "xiaoman",
+       "walk": "meet",
+       "dur": 5.0
+      },
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "act": "hold",
+       "dur": 5.5,
+       "height": -0.25
+      }
+     ]
+    },
+    {
+     "id": "listen",
+     "dur": 3.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_left"
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "sfx": "creature_step",
+       "at": "trees_out",
+       "gain_db": -2
+      },
+      {
+       "t": 0.6,
+       "who": "xiaoman",
+       "act": "look_around",
+       "dur": 2.4
+      },
+      {
+       "t": 0.6,
+       "who": "xiaoman",
+       "face": "scared"
+      }
+     ]
+    },
+    {
+     "id": "reveal",
+     "dur": 5.0,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "xiaoman",
+       "nian"
+      ],
+      "side": "back",
+      "angle": "low",
+      "lens": 26
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "nian",
+       "show": true,
+       "at": "trees_out"
+      },
+      {
+       "t": 0.3,
+       "who": "nian",
+       "face": "curious"
+      },
+      {
+       "t": 0.4,
+       "who": "nian",
+       "walk": "nian_spot",
+       "dur": 3.0,
+       "speed": 0.7
+      },
+      {
+       "t": 0.6,
+       "sfx": "creature_step",
+       "at": "trees_out"
+      },
+      {
+       "t": 1.2,
+       "who": "xiaoman",
+       "look": "nian"
+      },
+      {
+       "t": 1.4,
+       "who": "xiaoman",
+       "face": "shocked"
+      },
+      {
+       "t": 1.5,
+       "who": "xiaoman",
+       "vocal": "gasp",
+       "mood": "scared"
+      },
+      {
+       "t": 1.6,
+       "who": "xiaoman",
+       "act": "scared",
+       "dur": 3.4
+      },
+      {
+       "t": 3.5,
+       "who": "nian",
+       "turn": "xiaoman",
+       "turn_dur": 0.8
+      }
+     ]
+    },
+    {
+     "id": "eyes",
+     "dur": 3.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nian"
+      ],
+      "side": "front",
+      "angle": "low"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nian",
+       "look": "xiaoman"
+      },
+      {
+       "t": 0.4,
+       "who": "nian",
+       "act": "sniff",
+       "dur": 2.6
+      },
+      {
+       "t": 0.5,
+       "who": "nian",
+       "vocal": "sniff",
+       "mood": "curious"
+      }
+     ]
+    },
+    {
+     "id": "offer",
+     "dur": 5.5,
+     "camera": {
+      "size": "medium",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "look": "nian"
+      },
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "act": "tremble",
+       "dur": 2.0
+      },
+      {
+       "t": 1.5,
+       "who": "xiaoman",
+       "face": "worried"
+      },
+      {
+       "t": 2.0,
+       "who": "xiaoman",
+       "act": "offer",
+       "dur": 3.5,
+       "height": 0.1
+      },
+      {
+       "t": 2.2,
+       "who": "xiaoman",
+       "say": "你……你饿了吗？",
+       "mood": "tender",
+       "en": "Are... are you hungry?"
+      }
+     ]
+    },
+    {
+     "id": "taste",
+     "dur": 6.0,
+     "camera": {
+      "size": "full",
+      "on": [
+       "xiaoman",
+       "nian"
+      ],
+      "side": "right",
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "act": "offer",
+       "dur": 3.0,
+       "height": 0.1
+      },
+      {
+       "t": 0.2,
+       "who": "nian",
+       "act": "crouch",
+       "dur": 4.0,
+       "depth": 0.3
+      },
+      {
+       "t": 0.6,
+       "who": "nian",
+       "act": "reach",
+       "dur": 1.4,
+       "hand": "r",
+       "params": {
+        "at": [
+         -0.62,
+         -0.2,
+         0.72
+        ]
+       }
+      },
+      {
+       "t": 2.0,
+       "who": "nian",
+       "act": "eat",
+       "dur": 2.5
+      },
+      {
+       "t": 2.0,
+       "who": "nian",
+       "face": "joy"
+      },
+      {
+       "t": 2.3,
+       "who": "nian",
+       "vocal": "rumble_happy",
+       "mood": "happy"
+      },
+      {
+       "t": 3.0,
+       "who": "xiaoman",
+       "face": "laugh"
+      },
+      {
+       "t": 3.1,
+       "who": "xiaoman",
+       "vocal": "giggle",
+       "mood": "happy"
+      }
+     ]
+    },
+    {
+     "id": "scarf",
+     "dur": 4.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "face": "curious"
+      },
+      {
+       "t": 0.2,
+       "who": "xiaoman",
+       "say": "咦？你戴着红围巾……你不怕红色吗？",
+       "mood": "curious",
+       "en": "Huh? You're wearing a red scarf... aren't you afraid of red?"
+      }
+     ]
+    },
+    {
+     "id": "treasure",
+     "dur": 5.0,
+     "camera": {
+      "size": "medium_close",
+      "on": [
+       "nian"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "who": "nian",
+       "act": "hand_on_heart",
+       "dur": 4.6
+      },
+      {
+       "t": 0.3,
+       "who": "nian",
+       "face": "tender"
+      },
+      {
+       "t": 1.8,
+       "who": "nian",
+       "act": "shake",
+       "dur": 1.6
+      },
+      {
+       "t": 1.9,
+       "who": "nian",
+       "vocal": "hmm",
+       "mood": "tender"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bang",
+   "set": "forest",
+   "time": "moonlight",
+   "ambience": "snow_forest_night",
+   "space": "forest",
+   "music": {
+    "style": "tension",
+    "theme": "nian",
+    "key": "A",
+    "mode": "minor",
+    "tempo": 132,
+    "intensity": 0.9,
+    "end_with": "cut"
+   },
+   "start": {
+    "xiaoman": {
+     "at": "meet",
+     "facing": "nian",
+     "face": "happy"
+    },
+    "nian": {
+     "at": "nian_spot",
+     "facing": "xiaoman",
+     "face": "tender"
+    },
+    "dashu": {
+     "at": [
+      -9.5,
+      -3.6
+     ],
+     "facing": "nian",
+     "face": "angry"
+    },
+    "erge": {
+     "at": [
+      -10.2,
+      -2.6
+     ],
+     "facing": "nian",
+     "face": "determined"
+    }
+   },
+   "props": {
+    "crackers1": {
+     "hold": "dashu",
+     "hand": "r"
+    },
+    "crackers2": {
+     "hold": "erge",
+     "hand": "l"
+    },
+    "lantern": {
+     "hold": "xiaoman",
+     "hand": "l"
+    }
+   },
+   "shots": [
+    {
+     "id": "bang",
+     "dur": 3.0,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "xiaoman",
+       "nian"
+      ],
+      "side": "front_left",
+      "angle": "eye",
+      "handheld": true
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "fx": "firecracker_burst",
+       "at": [
+        -5.5,
+        -2.8,
+        0.6
+       ],
+       "dur": 2.8
+      },
+      {
+       "t": 0.2,
+       "sfx": "firecracker_string",
+       "at": [
+        -5.5,
+        -2.8
+       ],
+       "gain_db": 2
+      },
+      {
+       "t": 0.4,
+       "who": "nian",
+       "face": "shocked"
+      },
+      {
+       "t": 0.4,
+       "who": "xiaoman",
+       "face": "shocked"
+      },
+      {
+       "t": 0.4,
+       "who": "xiaoman",
+       "act": "surprise",
+       "dur": 1.0
+      }
+     ]
+    },
+    {
+     "id": "ears",
+     "dur": 4.0,
+     "camera": {
+      "size": "medium",
+      "on": [
+       "nian"
+      ],
+      "side": "front",
+      "angle": "high",
+      "handheld": true
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nian",
+       "act": "cover_ears",
+       "dur": 9.0
+      },
+      {
+       "t": 0.0,
+       "who": "nian",
+       "face": "crying"
+      },
+      {
+       "t": 0.3,
+       "who": "nian",
+       "vocal": "whimper",
+       "mood": "scared"
+      },
+      {
+       "t": 0.0,
+       "fx": "firecracker_burst",
+       "at": [
+        -5.5,
+        -2.8,
+        0.6
+       ],
+       "dur": 4.0
+      },
+      {
+       "t": 0.0,
+       "sfx": "firecracker_string",
+       "at": [
+        -5.5,
+        -2.8
+       ],
+       "gain_db": -2
+      }
+     ]
+    },
+    {
+     "id": "charge",
+     "dur": 3.5,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "dashu",
+       "erge"
+      ],
+      "side": "front",
+      "angle": "low"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "dashu",
+       "run": "line",
+       "dur": 2.0
+      },
+      {
+       "t": 0.1,
+       "who": "erge",
+       "run": "line2",
+       "dur": 2.1
+      },
+      {
+       "t": 1.2,
+       "who": "dashu",
+       "say": "年兽来了！快放鞭炮！",
+       "mood": "shout",
+       "en": "The Nian is here! Light the firecrackers!"
+      }
+     ]
+    },
+    {
+     "id": "stand",
+     "dur": 5.0,
+     "camera": {
+      "size": "full",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right",
+      "angle": "low",
+      "move": "push",
+      "amount": 0.5
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "run": "between",
+       "dur": 1.0
+      },
+      {
+       "t": 1.0,
+       "who": "xiaoman",
+       "turn": "dashu"
+      },
+      {
+       "t": 1.1,
+       "who": "xiaoman",
+       "act": "shield",
+       "dur": 9.0
+      },
+      {
+       "t": 1.1,
+       "who": "xiaoman",
+       "face": "determined"
+      },
+      {
+       "t": 1.3,
+       "who": "xiaoman",
+       "say": "不要！别放了！它不是坏的！",
+       "mood": "pleading",
+       "en": "Stop! Don't light them! It isn't bad!"
+      }
+     ]
+    },
+    {
+     "id": "hush",
+     "dur": 3.5,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "dashu",
+       "erge",
+       "xiaoman"
+      ],
+      "side": "front",
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "dashu",
+       "act": "surprise",
+       "dur": 1.2
+      },
+      {
+       "t": 0.0,
+       "who": "dashu",
+       "face": "surprised"
+      },
+      {
+       "t": 0.2,
+       "who": "erge",
+       "face": "surprised"
+      },
+      {
+       "t": 1.5,
+       "who": "xiaoman",
+       "face": "teary"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scarf",
+   "set": "forest",
+   "time": "moonlight",
+   "ambience": "snow_forest_night",
+   "space": "forest",
+   "music": {
+    "style": "flashback",
+    "theme": "nian",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 66,
+    "intensity": 0.35,
+    "end_with": "ring"
+   },
+   "start": {
+    "xiaoman": {
+     "at": "between",
+     "facing": "dashu",
+     "face": "teary"
+    },
+    "nian": {
+     "at": "nian_spot",
+     "facing": "xiaoman",
+     "face": "sad",
+     "act": "crouch",
+     "params": {
+      "depth": 0.25
+     }
+    },
+    "dashu": {
+     "at": "line",
+     "facing": "nian",
+     "face": "surprised"
+    },
+    "erge": {
+     "at": "line2",
+     "facing": "nian",
+     "face": "surprised"
+    },
+    "nainai": {
+     "at": [
+      -9.5,
+      -3.0
+     ],
+     "facing": "nian",
+     "face": "worried"
+    }
+   },
+   "props": {
+    "lantern_nn": {
+     "hold": "nainai",
+     "hand": "l"
+    },
+    "crackers1": {
+     "hold": "dashu",
+     "hand": "r"
+    },
+    "crackers2": {
+     "hold": "erge",
+     "hand": "l"
+    }
+   },
+   "shots": [
+    {
+     "id": "arrives",
+     "dur": 5.0,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "nainai",
+       "nian"
+      ],
+      "side": "back_left",
+      "angle": "eye",
+      "move": "follow"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "walk": [
+        [
+         -6.5,
+         -1.2
+        ],
+        [
+         -1.6,
+         0.4
+        ]
+       ],
+       "dur": 4.6,
+       "speed": 0.6
+      },
+      {
+       "t": 2.0,
+       "who": "dashu",
+       "look": "nainai"
+      },
+      {
+       "t": 2.2,
+       "who": "erge",
+       "look": "nainai"
+      }
+     ]
+    },
+    {
+     "id": "sees",
+     "dur": 5.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nainai"
+      ],
+      "side": "front_right",
+      "move": "push",
+      "amount": 0.6
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "look": [
+        1.0,
+        1.9,
+        1.4
+       ]
+      },
+      {
+       "t": 0.6,
+       "who": "nainai",
+       "face": "surprised"
+      },
+      {
+       "t": 2.0,
+       "who": "nainai",
+       "face": "moved"
+      },
+      {
+       "t": 2.2,
+       "who": "nainai",
+       "say": "这条围巾……",
+       "mood": "moved",
+       "en": "This scarf..."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "memory",
+   "set": "forest",
+   "time": "memory",
+   "grade": "memory",
+   "ambience": "snow_forest_night",
+   "space": "memory",
+   "weather": "snow",
+   "music": {
+    "style": "flashback",
+    "theme": "nian",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 66,
+    "intensity": 0.5,
+    "end_with": "ring"
+   },
+   "start": {
+    "young": {
+     "at": [
+      -3.2,
+      -1.4
+     ],
+     "facing": "cub",
+     "face": "curious"
+    },
+    "cub": {
+     "at": [
+      0.4,
+      0.8
+     ],
+     "facing": "young",
+     "face": "sad",
+     "act": "shiver",
+     "dur": 9.0
+    }
+   },
+   "shots": [
+    {
+     "id": "cub",
+     "dur": 5.0,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "young",
+       "cub"
+      ],
+      "side": "back_right",
+      "angle": "slight_high"
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "young",
+       "walk": [
+        -0.5,
+        0.0
+       ],
+       "dur": 3.8
+      },
+      {
+       "t": 0.6,
+       "who": "cub",
+       "vocal": "whimper",
+       "mood": "sad"
+      },
+      {
+       "t": 3.2,
+       "who": "young",
+       "face": "worried"
+      }
+     ],
+     "transition": "fade_white"
+    },
+    {
+     "id": "unwrap",
+     "dur": 4.5,
+     "camera": {
+      "size": "medium",
+      "on": [
+       "young"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "young",
+       "face": "tender"
+      },
+      {
+       "t": 0.6,
+       "who": "young",
+       "act": "wrap",
+       "dur": 1.2,
+       "params": {
+        "at": [
+         -0.5,
+         0.0,
+         0.8
+        ]
+       }
+      },
+      {
+       "t": 1.6,
+       "who": "young",
+       "unwear": "scarf"
+      },
+      {
+       "t": 1.6,
+       "prop": "scarf",
+       "hold": "young",
+       "hand": "r",
+       "offset": [
+        0.08,
+        0,
+        0
+       ]
+      },
+      {
+       "t": 1.8,
+       "who": "young",
+       "act": "offer",
+       "dur": 2.6,
+       "height": -0.05
+      }
+     ]
+    },
+    {
+     "id": "gift",
+     "dur": 6.0,
+     "camera": {
+      "size": "full",
+      "on": [
+       "young",
+       "cub"
+      ],
+      "side": "right"
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "who": "young",
+       "act": "wrap",
+       "dur": 2.2,
+       "params": {
+        "at": "cub"
+       }
+      },
+      {
+       "t": 2.3,
+       "prop": "scarf",
+       "hide": true
+      },
+      {
+       "t": 2.3,
+       "who": "cub",
+       "wear": "scarf"
+      },
+      {
+       "t": 2.5,
+       "who": "cub",
+       "face": "excited"
+      },
+      {
+       "t": 2.6,
+       "who": "cub",
+       "act": "hop",
+       "dur": 1.4
+      },
+      {
+       "t": 2.7,
+       "who": "cub",
+       "vocal": "rumble_happy",
+       "mood": "happy"
+      },
+      {
+       "t": 2.8,
+       "who": "young",
+       "face": "joy"
+      },
+      {
+       "t": 4.0,
+       "who": "cub",
+       "act": "hug",
+       "dur": 2.0
+      }
+     ]
+    },
+    {
+     "id": "bye",
+     "dur": 5.0,
+     "camera": {
+      "size": "wide",
+      "on": [
+       "young",
+       "cub"
+      ],
+      "side": "front",
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "cub",
+       "run": [
+        [
+         1.8,
+         3.4
+        ],
+        [
+         2.6,
+         6.2
+        ]
+       ],
+       "dur": 2.6
+      },
+      {
+       "t": 3.0,
+       "who": "cub",
+       "turn": "young"
+      },
+      {
+       "t": 3.2,
+       "who": "cub",
+       "act": "wave",
+       "dur": 1.8
+      },
+      {
+       "t": 0.6,
+       "who": "young",
+       "act": "wave",
+       "dur": 3.6
+      },
+      {
+       "t": 0.6,
+       "who": "young",
+       "face": "happy"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "return",
+   "set": "forest",
+   "time": "moonlight",
+   "ambience": "snow_forest_night",
+   "space": "forest",
+   "music": {
+    "style": "tender_chinese",
+    "theme": "nian",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 68,
+    "intensity": 0.7,
+    "end_with": "ring",
+    "variation": "full"
+   },
+   "start": {
+    "xiaoman": {
+     "at": [
+      -0.9,
+      -0.3
+     ],
+     "facing": "nainai",
+     "face": "moved"
+    },
+    "nian": {
+     "at": "nian_spot",
+     "facing": "nainai",
+     "face": "teary",
+     "act": "crouch",
+     "params": {
+      "depth": 0.25
+     }
+    },
+    "nainai": {
+     "at": [
+      -0.4,
+      0.9
+     ],
+     "facing": "nian",
+     "face": "moved"
+    },
+    "dashu": {
+     "at": "line",
+     "facing": "nian",
+     "face": "surprised"
+    },
+    "erge": {
+     "at": "line2",
+     "facing": "nian",
+     "face": "surprised"
+    }
+   },
+   "props": {
+    "lantern_nn": {
+     "hold": "nainai",
+     "hand": "l"
+    }
+   },
+   "shots": [
+    {
+     "id": "youcame",
+     "dur": 6.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nainai"
+      ],
+      "side": "front_left"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "look": "nian"
+      },
+      {
+       "t": 0.4,
+       "who": "nainai",
+       "say": "原来……你每年都回来，是来看我的？",
+       "mood": "moved",
+       "en": "So... every year you came back... to see me?"
+      }
+     ],
+     "transition": "fade_white"
+    },
+    {
+     "id": "nod",
+     "dur": 4.5,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nian"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nian",
+       "look": "nainai"
+      },
+      {
+       "t": 0.5,
+       "who": "nian",
+       "act": "nod",
+       "dur": 2.0,
+       "rate": 0.7
+      },
+      {
+       "t": 0.6,
+       "who": "nian",
+       "vocal": "whimper",
+       "mood": "moved"
+      },
+      {
+       "t": 0.8,
+       "fx": "tears",
+       "at": "nian",
+       "dur": 1.2,
+       "params": {}
+      }
+     ]
+    },
+    {
+     "id": "touch",
+     "dur": 5.5,
+     "camera": {
+      "size": "full",
+      "on": [
+       "nainai",
+       "nian"
+      ],
+      "side": "right",
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "who": "nian",
+       "act": "bow",
+       "dur": 5.0
+      },
+      {
+       "t": 0.8,
+       "who": "nainai",
+       "act": "pat",
+       "dur": 4.0,
+       "hand": "r",
+       "params": {
+        "at": [
+         0.35,
+         1.45,
+         1.45
+        ]
+       }
+      },
+      {
+       "t": 1.0,
+       "who": "nian",
+       "face": "calm"
+      },
+      {
+       "t": 1.4,
+       "who": "nian",
+       "vocal": "rumble_happy",
+       "mood": "tender"
+      }
+     ]
+    },
+    {
+     "id": "understand",
+     "dur": 4.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "xiaoman"
+      ],
+      "side": "front_right"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "look": "nainai"
+      },
+      {
+       "t": 0.4,
+       "who": "xiaoman",
+       "act": "hand_on_heart",
+       "dur": 3.4
+      },
+      {
+       "t": 0.6,
+       "who": "xiaoman",
+       "face": "moved"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "feast",
+   "set": "village",
+   "time": "night",
+   "ambience": "snow_night_village",
+   "music": {
+    "style": "festive_chinese",
+    "theme": "festival",
+    "key": "D",
+    "mode": "gong",
+    "tempo": 120,
+    "intensity": 0.85,
+    "end_with": "ring",
+    "variation": "full"
+   },
+   "start": {
+    "nian": {
+     "at": "seat",
+     "facing": 0,
+     "face": "happy",
+     "act": "sit",
+     "params": {
+      "seat": 0.0
+     }
+    },
+    "xiaoman": {
+     "at": "girl",
+     "facing": "nian",
+     "face": "happy"
+    },
+    "nainai": {
+     "at": "gran",
+     "facing": "nian",
+     "face": "tender"
+    },
+    "dashu": {
+     "at": [
+      4.4,
+      -2.8
+     ],
+     "facing": "nian",
+     "face": "happy"
+    },
+    "erge": {
+     "at": [
+      9.6,
+      -2.9
+     ],
+     "facing": "nian",
+     "face": "happy"
+    }
+   },
+   "props": {
+    "muffs": {
+     "hold": "xiaoman",
+     "hand": "r"
+    },
+    "bowl2": {
+     "hold": "dashu",
+     "hand": "r",
+     "offset": [
+      0,
+      0,
+      -0.04
+     ]
+    }
+   },
+   "shots": [
+    {
+     "id": "square",
+     "dur": 5.0,
+     "camera": {
+      "from": [
+       7.0,
+       0.8,
+       3.0
+      ],
+      "to": [
+       7.3,
+       0.2,
+       2.8
+      ],
+      "look": [
+       7.0,
+       -4.8,
+       1.2
+      ],
+      "lens": 30
+     },
+     "do": [
+      {
+       "t": 0.3,
+       "who": "dashu",
+       "walk": [
+        6.0,
+        -3.8
+       ],
+       "dur": 2.6
+      },
+      {
+       "t": 0.3,
+       "who": "dashu",
+       "act": "offer",
+       "dur": 4.0,
+       "height": -0.1
+      },
+      {
+       "t": 2.0,
+       "who": "nian",
+       "face": "joy"
+      },
+      {
+       "t": 2.2,
+       "who": "nian",
+       "vocal": "rumble_happy",
+       "mood": "happy"
+      }
+     ],
+     "transition": "fade"
+    },
+    {
+     "id": "muffs",
+     "dur": 5.5,
+     "camera": {
+      "size": "full",
+      "on": [
+       "xiaoman",
+       "nian"
+      ],
+      "bearing": 10
+     },
+     "do": [
+      {
+       "t": 0.2,
+       "who": "nian",
+       "act": "bow",
+       "dur": 3.4
+      },
+      {
+       "t": 0.6,
+       "who": "xiaoman",
+       "act": "reach",
+       "dur": 2.2,
+       "hand": "r",
+       "params": {
+        "at": [
+         6.55,
+         -4.75,
+         1.6
+        ]
+       }
+      },
+      {
+       "t": 2.6,
+       "prop": "muffs",
+       "hide": true
+      },
+      {
+       "t": 2.6,
+       "who": "nian",
+       "wear": "earmuffs"
+      },
+      {
+       "t": 2.8,
+       "who": "nian",
+       "face": "cute"
+      },
+      {
+       "t": 2.8,
+       "who": "nian",
+       "blush": 0.9
+      },
+      {
+       "t": 3.0,
+       "who": "xiaoman",
+       "face": "joy"
+      },
+      {
+       "t": 3.2,
+       "who": "xiaoman",
+       "vocal": "giggle",
+       "mood": "happy"
+      }
+     ]
+    },
+    {
+     "id": "bloom",
+     "dur": 5.5,
+     "camera": {
+      "from": [
+       7.2,
+       -8.6,
+       0.5
+      ],
+      "look": [
+       7.0,
+       8,
+       8.0
+      ],
+      "lens": 22,
+      "exact": true
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "fx": "fireworks",
+       "at": [
+        6,
+        26,
+        0
+       ],
+       "dur": 18.0,
+       "params": {
+        "count": 14
+       }
+      },
+      {
+       "t": 0.4,
+       "sfx": "firework",
+       "at": [
+        6,
+        26
+       ],
+       "gain_db": -4
+      },
+      {
+       "t": 2.6,
+       "sfx": "firework",
+       "at": [
+        0,
+        28
+       ],
+       "gain_db": -6
+      },
+      {
+       "t": 0.5,
+       "who": "nian",
+       "look": [
+        7,
+        20,
+        16
+       ]
+      },
+      {
+       "t": 0.5,
+       "who": "xiaoman",
+       "look": [
+        7,
+        20,
+        16
+       ]
+      },
+      {
+       "t": 0.5,
+       "who": "nainai",
+       "look": [
+        7,
+        20,
+        16
+       ]
+      },
+      {
+       "t": 1.2,
+       "who": "nian",
+       "face": "excited"
+      }
+     ]
+    },
+    {
+     "id": "together",
+     "dur": 5.0,
+     "camera": {
+      "size": "full",
+      "on": [
+       "xiaoman",
+       "nian",
+       "nainai"
+      ],
+      "bearing": 0,
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "walk": [
+        6.3,
+        -5.5
+       ],
+       "dur": 1.6
+      },
+      {
+       "t": 0.2,
+       "who": "nainai",
+       "walk": [
+        7.7,
+        -5.6
+       ],
+       "dur": 1.8
+      },
+      {
+       "t": 1.7,
+       "who": "xiaoman",
+       "turn": 0,
+       "turn_dur": 0.5
+      },
+      {
+       "t": 1.9,
+       "who": "nainai",
+       "turn": 0,
+       "turn_dur": 0.5
+      },
+      {
+       "t": 1.8,
+       "who": "xiaoman",
+       "act": "sit",
+       "dur": 20
+      },
+      {
+       "t": 2.0,
+       "who": "nainai",
+       "act": "sit",
+       "dur": 20
+      },
+      {
+       "t": 2.2,
+       "who": "xiaoman",
+       "act": "lean",
+       "dur": 20,
+       "roll": 0.18
+      },
+      {
+       "t": 2.6,
+       "sfx": "firework",
+       "at": [
+        10,
+        30
+       ],
+       "gain_db": -8
+      }
+     ]
+    },
+    {
+     "id": "notred",
+     "dur": 4.5,
+     "camera": {
+      "size": "medium",
+      "on": [
+       "xiaoman",
+       "nainai"
+      ],
+      "bearing": 0,
+      "angle": "eye"
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "xiaoman",
+       "look": "nainai"
+      },
+      {
+       "t": 0.2,
+       "who": "xiaoman",
+       "face": "tender"
+      },
+      {
+       "t": 0.3,
+       "who": "xiaoman",
+       "say": "奶奶，原来年兽怕的不是红色。",
+       "mood": "tender",
+       "en": "Grandma... so the Nian was never afraid of red."
+      }
+     ]
+    },
+    {
+     "id": "alone",
+     "dur": 6.0,
+     "camera": {
+      "size": "close",
+      "on": [
+       "nainai"
+      ],
+      "bearing": -50,
+      "move": "push",
+      "amount": 0.5
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "who": "nainai",
+       "look": "xiaoman"
+      },
+      {
+       "t": 0.3,
+       "who": "nainai",
+       "face": "tender"
+      },
+      {
+       "t": 0.6,
+       "who": "nainai",
+       "say": "它怕的，是一个人过年。",
+       "mood": "tender",
+       "en": "What it feared... was spending the New Year alone."
+      },
+      {
+       "t": 3.6,
+       "who": "nainai",
+       "look": "nian"
+      }
+     ]
+    },
+    {
+     "id": "end",
+     "dur": 8.0,
+     "camera": {
+      "from": [
+       7.0,
+       -7.4,
+       1.4
+      ],
+      "to": [
+       7.0,
+       -7.6,
+       7.5
+      ],
+      "look": [
+       7.0,
+       -4.8,
+       1.0
+      ],
+      "look_to": [
+       7.0,
+       12.0,
+       9.0
+      ],
+      "lens": 26,
+      "exact": true
+     },
+     "do": [
+      {
+       "t": 0.0,
+       "fx": "fireworks",
+       "at": [
+        6,
+        26,
+        0
+       ],
+       "dur": 8.0,
+       "params": {
+        "count": 8
+       }
+      },
+      {
+       "t": 0.6,
+       "sfx": "firework",
+       "at": [
+        6,
+        26
+       ],
+       "gain_db": -6
+      },
+      {
+       "t": 3.0,
+       "sfx": "firework",
+       "at": [
+        0,
+        28
+       ],
+       "gain_db": -8
+      }
+     ],
+     "title": {
+      "text": "年 · 完",
+      "style": "end",
+      "start": 3.0,
+      "dur": 5.0,
+      "dim": 0.0,
+      "credits": [
+       "用 CodeCinema 编写、搭景、配乐与配音"
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "music": {
+  "themes": {
+   "nian": {
+    "key": "D",
+    "mode": "gong",
+    "tempo": 76,
+    "meter": 4,
+    "melody": "A4/q. B4/e D5/q B4/e A4/e | F#4/q A4/e F#4/e E4/h | D4/q. E4/e F#4/q A4/q | B4/e A4/e F#4/e A4/e E4/h | A4/q. B4/e D5/q E5/e D5/e | B4/q D5/e B4/e A4/h | F#4/e A4/e B4/e A4/e F#4/q E4/e F#4/e | D4/h. r/q",
+    "chords": "D | Bm A | D | Bm A | D | G A | Bm A | D"
+   },
+   "festival": {
+    "key": "D",
+    "mode": "gong",
+    "tempo": 132,
+    "meter": "2/4",
+    "melody": "A5/s B5/s A5/e F#5/e A5/e | D6/e. E6/s D6/e B5/e | A5/e B5/e A5/s F#5/s E5/e | E5/q. F#5/e | A5/s B5/s A5/e F#5/e A5/e | D6/e. E6/s D6/e B5/e | B5/e A5/e E5/e F#5/e | D5/q. r/e | B5/e. A5/s B5/e D6/e | A5/e F#5/e E5/e F#5/e | E5/s F#5/s E5/e B4/e E5/e | A4/e. B4/s A4/q | D5/e E5/e F#5/e A5/e | B5/e. A5/s B5/e D6/e | E6/e. D6/s B5/e A5/e | D6/q. r/e",
+    "chords": "D | D | Bm | A | D | D | A | D | G | D | Em | A | D | Bm | A | D"
+   }
+  }
+ },
+ "credits": [
+  "用 CodeCinema 编写、搭景、配乐与配音",
+  "Made with CodeCinema"
+ ]
+}

@@ -18,6 +18,8 @@ Skia projects do not require Blender. Blender projects require Blender 5.2 or la
 - For a starter look, update the preset data in `codecinema/workspace/story.py` and the rendering palette in `codecinema/renderers/palettes.py`. Include an actual rendered thumbnail for Studio.
 - For an editor improvement, update `codecinema/studio/server.py`, `codecinema/studio/jobs.py` or `assets/_shared/studio/`. Check both languages and a narrow mobile viewport.
 - For a renderer, implement the plugin interface below. Keep backend code in the framework or an installed package and keep film folders free of production scripts.
+- For the cartoon libraries, see [Cartoon libraries](#cartoon-libraries) below. Check a change with `codecinema library --sheet` and a storyboard from `codecinema run <film> stills`.
+- For sound, add instruments, styles, effects, ambience beds or voice profiles in `codecinema/audio/`. Render the audition files with `python -m codecinema.audio.demo <folder>` and look at the spectrogram sheets as well as listening.
 - For documentation, keep English and Chinese setup instructions consistent. Describe the current behavior and provide commands a newcomer can copy.
 
 Generated videos, render caches, recordings and local settings stay outside Git. A release contains finished MP4s. Development reports stay local.
@@ -42,12 +44,13 @@ Open a focused pull request explaining the problem, the resulting behavior and t
 - `runtime/` wraps external programs, file locks and dependency checks.
 - `studio/` separates HTTP handling in `server.py` from background jobs in `jobs.py`. Frontend resources live in the root `assets/_shared/studio/`.
 - `renderers/` supplies picture backends, `audio/` supplies sound, and `productions/` holds the authored example packs.
+- `cartoon/` turns screenplays into plans, motion, camera direction, dialogue takes and finished masters. Its `blender/` subpackage runs only inside Blender; everything else is plain Python, so plans, Foley and subtitles never need Blender.
 
 Keep package initializers lightweight. In particular, importing `codecinema` must not load film settings, graphics or audio libraries. The worker sets the active film before importing its pipeline. Settings reads and Blender helpers must work in Blender's Python without the Studio or optional speech dependencies.
 
 New extensions should use the grouped module paths, for example `codecinema.workspace.settings`, `codecinema.engine.context` and `codecinema.runtime.media`. The older `from codecinema import settings, media` convenience imports remain lazy aliases of the same module objects. Direct imports of the former flat modules should move to the new paths. The CLI commands and `codecinema.renderers` plugin entry-point group are unchanged.
 
-Keep UI files under `assets/_shared/studio/` and starting film files under `assets/_shared/scaffold/`. The build hook in `codecinema/runtime/build.py` bundles only these two resource folders into wheels. `MANIFEST.in` includes them in source distributions. Check their inclusion in a built wheel and run from a separate workspace, since repository imports can conceal missing packaged files.
+Keep UI files under `assets/_shared/studio/`, starting film files under `assets/_shared/scaffold/` and open-licensed title fonts under `assets/_shared/fonts/`. The build hook in `codecinema/runtime/build.py` bundles only these three resource folders into wheels. `MANIFEST.in` includes them in source distributions. Check their inclusion in a built wheel and run from a separate workspace, since repository imports can conceal missing packaged files.
 
 ## Renderer plugins
 
@@ -82,6 +85,20 @@ class Renderer:
 Install the package into the same environment as CodeCinema, then run `.venv/bin/python -m codecinema new demo --renderer myrenderer --render`. Restart Studio to discover new plugins. Plugin frames include their own captions if desired. The built-in Skia and Blender backends share a caption compositor.
 
 For `.blend` input, a scene can contain a `blender` object with `file`, optional `scene`, optional `camera` and `frame_start` (default 1). The file path is relative to `assets/<film-id>/`, for example `scenes/world.blend`. Pack textures and linked resources inside Blender. The framework samples the source animation at its native frame rate and uses the film's selected output dimensions.
+
+## Cartoon libraries
+
+Screenplay films build everything from small, data-first libraries. Each entry has a name, a short description and plain values, so a screenplay can use it as is or override a part of it with `"from"`:
+
+| Library | Where | Add an entry |
+| --- | --- | --- |
+| Characters | `codecinema/cartoon/cast.py` (`ARCHETYPES`) | a body plan (`biped`, `penguin`, `bird`), proportions, colors, face, hair, outfit, accessories and voice |
+| Faces and expressions | `codecinema/cartoon/faces.py` | a cell painter for `EYES`, `BROWS` or `MOUTHS`, then an entry in `EXPRESSIONS` |
+| Actions | `codecinema/cartoon/motion.py` | an `act_<name>(tau, dur, params, track)` returning a partial pose, plus a line in `NOTES` |
+| Sets, times and props | `codecinema/cartoon/sets.py` and `codecinema/cartoon/blender/sets.py`, `props.py` | data in `SETS`, `TIMES` or `PROPS`, then a `_build_<kind>` method in Blender |
+| Sounds and music | `codecinema/audio/` | an effect in `sfx.py`, a bed in `ambience.py`, an instrument in `instruments.py` or a style in `composer.py` |
+
+Keep ground shapes in `sets.ground_height`, the one function shared by the set builder, the motion planner and the camera, so feet stay on the terrain. Actions receive the character's proportions through `track.m`; express hand targets relative to arm length so they work for every body. A new body plan needs a builder and a pose method in `blender/cast.py` and proportions in `cast.metrics`.
 
 ## Authored production packs
 
