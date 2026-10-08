@@ -87,14 +87,29 @@ def read(path):
     except ImportError:
         return []
     logging.getLogger("fontTools").setLevel(logging.ERROR)     # odd timestamps and tables in system fonts are fine
+    source = None
     try:
         if str(path).lower().endswith((".ttc", ".otc")):
-            fonts = TTCollection(path, lazy=True).fonts
+            source = TTCollection(path, lazy=True)
+            fonts = source.fonts
         else:
-            fonts = [TTFont(path, lazy=True)]
+            source = TTFont(path, lazy=True)
+            fonts = [source]
         return [_describe(font, i, path) for i, font in enumerate(fonts)]
     except Exception:           # noqa: BLE001 - a damaged or unsupported font file is ignored, as font managers do
         return []
+    finally:
+        _close(source)
+
+
+def _close(font):
+    """Release the file now: fontTools objects hold it open until garbage collection, and Windows cannot replace or
+    delete an open file."""
+    try:
+        if font is not None:
+            font.close()
+    except Exception:           # noqa: BLE001 - closing is best effort
+        pass
 
 
 def _index_file():
@@ -175,16 +190,20 @@ def charset(path, index=0):
         from fontTools.ttLib import TTFont
     except ImportError:
         return None
+    font = None
     try:
         font = TTFont(path, lazy=True, fontNumber=index)
         return frozenset(font.getBestCmap() or {})
     except Exception:           # noqa: BLE001 - unreadable character map: let the renderer try
         return None
+    finally:
+        _close(font)
 
 
 @functools.lru_cache(maxsize=128)
 def axes(path, index=0):
     """Variation axes as ((tag, minimum, default, maximum), ...) in the font's order; () for static fonts."""
+    font = None
     try:
         from fontTools.ttLib import TTFont
         font = TTFont(path, lazy=True, fontNumber=index)
@@ -193,6 +212,8 @@ def axes(path, index=0):
         return tuple((a.axisTag, a.minValue, a.defaultValue, a.maxValue) for a in font["fvar"].axes)
     except Exception:           # noqa: BLE001 - no fontTools or an unreadable table: draw the default instance
         return ()
+    finally:
+        _close(font)
 
 
 def clear():

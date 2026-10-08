@@ -129,6 +129,11 @@ def clear():
     _FOUND.clear()
     _NOTES.clear()
     index.clear()
+    # Cached PIL fonts and skia typefaces keep their files open (Windows cannot replace or delete those).
+    for name, caches in (("draw", ("pil_font",)), ("shaping", ("typeface", "line"))):
+        module = sys.modules.get(f"codecinema.typography.{name}")
+        for cache in caches if module is not None else ():
+            getattr(module, cache).cache_clear()
 
 
 # ------------------------------------------------------------------------------------------------ finding one face
