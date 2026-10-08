@@ -198,7 +198,7 @@ The first spoken render downloads the voice model. Later renders can reuse exist
 
 ## 🗂 Project layout
 
-The framework, individual films and presentation site have separate homes. Use this map to find the part you want to change:
+The framework and film content have separate homes. Use this map to find the part you want to change:
 
 ```text
 CodeCinema/
@@ -231,14 +231,6 @@ CodeCinema/
 │   ├── nightrevels/          # The Night Revels of Han Xizai, Cat Edition
 │   ├── xishen/               # I Am Not the God of Drama
 │   └── beacon/               # The Last Beacon
-├── assets/images/            # branding, previews and README illustrations
-├── site/                     # bilingual project page
-│   ├── index.html            # English homepage
-│   ├── zh/                   # Chinese homepage
-│   └── build.py              # site assembly and release video downloads
-├── .github/                  # automation and contribution templates
-│   ├── workflows/            # cross-platform CI and Pages deployment
-│   └── ISSUE_TEMPLATE/       # bug reports and feature requests
 ├── pyproject.toml            # dependencies and all film configurations
 ├── CONTRIBUTING.md           # development and contribution guidance
 └── LICENSE                   # MIT license

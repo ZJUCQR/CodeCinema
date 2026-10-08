@@ -198,7 +198,7 @@ Apple Silicon Mac 可在仓库根目录安装本地情绪语音包，然后重�
 
 ## 🗂 项目结构
 
-框架、影片和展示网站分别组织，便于找到需要修改的部分：
+框架与影片内容分开组织，便于找到需要修改的部分：
 
 ```text
 CodeCinema/
@@ -231,14 +231,6 @@ CodeCinema/
 │   ├── nightrevels/          # 《韩熙载夜宴图 · 猫》
 │   ├── xishen/               # 《我不是戏神》
 │   └── beacon/               # 《守灯人》
-├── assets/images/            # 品牌图片、预览与 README 配图
-├── site/                     # 双语项目主页
-│   ├── index.html            # 英文主页
-│   ├── zh/                   # 中文主页
-│   └── build.py              # 网站构建与已发布视频下载
-├── .github/                  # 自动化流程与贡献模板
-│   ├── workflows/            # 跨平台 CI 与 Pages 部署
-│   └── ISSUE_TEMPLATE/       # 问题报告与功能建议模板
 ├── pyproject.toml            # 依赖与所有影片配置
 ├── CONTRIBUTING.md           # 开发与贡献说明
 └── LICENSE                   # MIT 许可证
