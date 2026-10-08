@@ -224,7 +224,7 @@ class SetBuild:
                              for i in range(21)] + [(7, 14)]
         verts, faces = [], []
         for y, z in prof:
-            verts += [(-15, y, z), (15, y, z)]
+            verts += [(-30, y, z), (30, y, z)]
         for i in range(len(prof) - 1):
             faces.append((2 * i, 2 * i + 1, 2 * i + 3, 2 * i + 2))
         cyc = self.obj("cyc", verts, faces, [floor, back])

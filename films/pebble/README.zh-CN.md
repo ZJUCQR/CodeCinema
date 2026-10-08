@@ -14,7 +14,7 @@
 
 [English](README.md) · **简体中文**
 
-<img src="../../assets/pebble/images/poster.jpg" width="92%" alt="小企鹅 Pebble 仰望海鸥">
+<img src="../../assets/pebble/images/poster.jpg" width="92%" alt="小企鹅 Pebble 在水下开心地飞翔">
 
 </div>
 

@@ -370,11 +370,16 @@ def main(argv=None):
                         help="Store takes as recordings in assets/<film>/voices so every platform reproduces them")
     parser.add_argument("--open", action="store_true", help="Open the finished film")
     options = parser.parse_args(argv)
+    from codecinema.cartoon.screenplay import ScreenplayError
     production = Production(options)
     steps = STEPS if options.step == "all" else (options.step,)
     for step in steps:
         print(f"== {step}", flush=True)
-        getattr(production, f"cmd_{step}")()
+        try:
+            getattr(production, f"cmd_{step}")()
+        except ScreenplayError as exc:        # a mistake in screenplay.json: the message names the scene, shot and beat
+            print(f"error: {exc}", file=sys.stderr, flush=True)
+            return 1
     if options.open and production.final.is_file():
         if sys.platform == "darwin":
             subprocess.run(["open", str(production.final)])

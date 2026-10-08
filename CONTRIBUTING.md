@@ -50,7 +50,7 @@ Keep package initializers lightweight. In particular, importing `codecinema` mus
 
 New extensions should use the grouped module paths, for example `codecinema.workspace.settings`, `codecinema.engine.context` and `codecinema.runtime.media`. The older `from codecinema import settings, media` convenience imports remain lazy aliases of the same module objects. Direct imports of the former flat modules should move to the new paths. The CLI commands and `codecinema.renderers` plugin entry-point group are unchanged.
 
-Keep UI files under `assets/_shared/studio/`, starting film files under `assets/_shared/scaffold/` and open-licensed title fonts under `assets/_shared/fonts/`. The build hook in `codecinema/runtime/build.py` bundles only these three resource folders into wheels. `MANIFEST.in` includes them in source distributions. Check their inclusion in a built wheel and run from a separate workspace, since repository imports can conceal missing packaged files.
+Keep UI files under `assets/_shared/studio/`, starting film files under `assets/_shared/scaffold/` and open-licensed title fonts under `assets/_shared/fonts/`. The build hook in `codecinema/runtime/build.py` bundles only these three resource folders into wheels and source distributions. Check their inclusion in a built wheel and run from a separate workspace, since repository imports can conceal missing packaged files.
 
 ## Renderer plugins
 

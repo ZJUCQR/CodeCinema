@@ -260,6 +260,12 @@ _LIST = [
     Instrument("guqin", "chinese", "guqin silk zither (slide_in, harmonic)", _guqin, None, 36, 79, "decay", 1.0,
                ("slide_in", "harmonic"), sampled=False),
     Instrument("yangqin", "chinese", "yangqin hammered dulcimer", _m("yangqin"), (0, 15), 48, 96, "decay", 0.5),
+    # Japanese instruments
+    Instrument("koto", "japanese", "koto: thirteen-string zither", _p("guzheng"), (0, 107), 45, 93, "decay", 0.5),
+    Instrument("shamisen", "japanese", "shamisen: three-string lute with a snapping plectrum attack", _p("banjo"),
+               (0, 106), 48, 88, "decay", 0.15),
+    Instrument("shakuhachi", "japanese", "shakuhachi: breathy end-blown bamboo flute", _w("shakuhachi"), (0, 77),
+               60, 88, "sustain", 0.12, vibrato=(16.0, 4.6, 0.4), scoop=-50.0),
     # drum kit
     Instrument("kick", "drums", "kick drum", _drum(perc.kick), (128, 0, 36), kind="drum", arts=_DRUM_ARTS),
     Instrument("snare", "drums", "snare drum", _drum(perc.snare), (128, 0, 38), kind="drum", arts=_DRUM_ARTS),

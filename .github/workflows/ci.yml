@@ -69,6 +69,13 @@ jobs:
           assert abs(sum(s['duration_s'] for s in data['scenes'])-6)<1e-9;
           assert registry.definitions(Path.cwd())['ci-import']['title']==data['title'];
           assert source.read_bytes()==before"
+      - name: Plan the cartoon films and a cartoon starter
+        shell: bash
+        run: |
+          codecinema run pebble plan
+          codecinema run nian plan
+          codecinema new ci-cartoon --template cartoon
+          codecinema run ci-cartoon plan
       - name: Byte-compile the framework and films
         run: python -m compileall -q codecinema
       - name: List rendering backends

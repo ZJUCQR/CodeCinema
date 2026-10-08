@@ -14,7 +14,7 @@
 
 **English** · [简体中文](README.zh-CN.md)
 
-<img src="../../assets/pebble/images/poster.jpg" width="92%" alt="Pebble the penguin looks up at the gulls">
+<img src="../../assets/pebble/images/poster.jpg" width="92%" alt="Pebble beams as he flies underwater">
 
 </div>
 

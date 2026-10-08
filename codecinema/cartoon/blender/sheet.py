@@ -24,10 +24,13 @@ stage = SetBuild("stage", sets.resolve({"from": "stage"}, "stage"), look)
 Lighting("stage", "studio", look).activate(scene)
 col = bpy.data.collections.new("Cast")
 scene.collection.children.link(col)
-x, placed = 0.0, []
-for row in JOB["characters"]:
+rows = JOB["characters"]
+widths = [max(r["metrics"]["height"] * 0.55, r["metrics"]["torso_r"] * 2.4)
+          + (0.6 if r["spec"]["plan"] == "bird" else 0.0) for r in rows]
+span = sum(widths) + 0.3 * len(widths)
+x, placed = -span / 2, []                   # centered on the stage, which is built around the origin
+for row, width in zip(rows, widths):
     m = row["metrics"]
-    width = max(m["height"] * 0.55, m["torso_r"] * 2.4) + (0.6 if row["spec"]["plan"] == "bird" else 0.0)
     x += width / 2
     rig = cast.Rig(row["id"], row["spec"], m, look, row["atlas"], col)
     track = motion.Track(row["id"], row["spec"], m, [{"t": 0, "type": "place", "at": [x, 0]}])
@@ -42,9 +45,9 @@ scene.collection.objects.link(cam)
 scene.camera = cam
 tallest = max(h for _, _, h in placed)
 cam.data.type = "ORTHO"
-cam.data.ortho_scale = max(x * 1.04, tallest * 1.3 * JOB["width"] / JOB["height"])
+cam.data.ortho_scale = max(span * 1.04, tallest * 1.3 * JOB["width"] / JOB["height"])
 visible = cam.data.ortho_scale * JOB["height"] / JOB["width"]
-cam.location = (x / 2 - 0.15, -20, visible * 0.5 - visible * 0.16)
+cam.location = (-0.15, -20, visible * 0.5 - visible * 0.16)
 cam.rotation_euler = (math.radians(90), 0, 0)
 bpy.context.view_layer.update()
 labels = []

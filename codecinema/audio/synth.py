@@ -674,6 +674,8 @@ WINDS = {
                   buzz=0.18),
     "harmonica": dict(slope=(1.3, 0.85), even=0.9, formants=[(1100, 5.0, 1.3), (2600, 4.0, 1.5)], breath=0.08,
                       chiff=0.05, vib=(6, 6.0, 0.3), attack=0.03, release=0.06, hp=200, scoop=-30, tremolo=(5.5, 0.18)),
+    "shakuhachi": dict(slope=(3.2, 2.2), even=0.55, formants=[(900, 3.0, 1.2)], breath=0.18, chiff=0.2,
+                       vib=(16, 4.6, 0.4), attack=0.08, release=0.12, hp=180, scoop=-50),
 }
 
 
