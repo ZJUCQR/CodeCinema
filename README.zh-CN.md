@@ -122,12 +122,6 @@ py -3.12 -m venv .venv
       <p>从陈伶雨夜归家、剧院噩梦到第一次编导演练。</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/zh/#xishen">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">下载</a> · <a href="films/xishen/README.zh-CN.md">制作指南</a></p>
     </td>
-    <td width="50%" valign="top">
-      <a href="films/beacon/README.zh-CN.md"><img src="assets/_shared/images/examples/beacon.jpg" width="100%" alt="守灯人"></a>
-      <h3><a href="films/beacon/README.zh-CN.md">守灯人</a></h3>
-      <p>云海上的瓷白机械守灯人唤醒古老星环，远方的一点光给出了回应。</p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/zh/#beacon">观看</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">下载</a> · <a href="films/beacon/README.zh-CN.md">制作指南</a></p>
-    </td>
   </tr>
 </table>
 
@@ -165,7 +159,7 @@ py -3.12 -m venv .venv
 - **内容：** 镜头顺序、字幕、台词、时长和素材属于各部影片。
 - **制作流程：** 统一的分镜时钟连接规划、画面、配乐、配音、合成与成片检查。
 - **渲染器：** Skia 与 Blender 通过同一接口输出画面。已安装的插件会显示在 `codecinema renderers` 和 Studio 中。
-- **制作包：** 四部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据，素材放在 `assets/<id>/`。
+- **制作包：** 三部示例的角色造型、动作和配乐实现集中在 [codecinema/productions](codecinema/productions)，影片目录只保留故事数据，素材放在 `assets/<id>/`。
 
 示例影片保留原有制作命令，并使用专门设计的制作包。它们的动作编排无法自动切换到另一种后端。新建 Studio 项目使用共享管线，可以直接更换渲染器。以前带有自定义入口脚本的项目仍可运行。
 
@@ -179,7 +173,7 @@ py -3.12 -m venv .venv
 
 要使用自己的角色和动画，将 `.blend` 文件放入 `assets/<影片 ID>/`，例如 `assets/<影片 ID>/scenes/world.blend`。在分镜卡片中展开“Blender 场景”，填写 `scenes/world.blend` 和可选的摄像机名称，路径相对于该影片的素材目录。建议在 Blender 中打包外部素材，便于跨电脑使用。框架会按场景原有帧率读取动画。
 
-先用快速预览或少量静帧检查构图。Blender 渲染比 Skia 更慢，耗时取决于场景复杂度、分辨率与硬件。[《守灯人》说明](films/beacon/README.zh-CN.md) 展示了更完整的人物与镜头制作。
+先用快速预览或少量静帧检查构图。Blender 渲染比 Skia 更慢，耗时取决于场景复杂度、分辨率与硬件。[《芒原决战》说明](films/silvergrass/README.zh-CN.md) 展示了更完整的人物与镜头制作。
 
 <a id="speech"></a>
 
@@ -228,17 +222,14 @@ CodeCinema/
 │   ├── renderers/              # Skia、Blender 与渲染插件接口
 │   ├── audio/                  # 配乐、音效、配音与表演时序
 │   └── productions/            # 示例影片的制作包
-│       ├── beacon/             # 角色、天文台、表演与配乐
 │       ├── silvergrass/        # 动作、Blender 场景与后期
 │       ├── nightrevels/        # 角色绘制、长卷动画与音乐
 │       └── xishen/             # 角色、表演、配音与多集合成
 ├── films/                    # 故事数据与生成的工作文件
 │   ├── silvergrass/          # 《芒原决战》
 │   ├── nightrevels/          # 《韩熙载夜宴图 · 猫》
-│   ├── xishen/               # 《我不是戏神》
-│   └── beacon/               # 《守灯人》
+│   └── xishen/               # 《我不是戏神》
 ├── assets/                   # 全部媒体素材，按影片归类
-│   ├── beacon/               # 守灯人的配图与 MP4 成片
 │   ├── silvergrass/          # 芒原决战的素材
 │   ├── nightrevels/          # 韩熙载夜宴图的素材
 │   ├── xishen/               # 剧集配图、录音与 MP4 成片

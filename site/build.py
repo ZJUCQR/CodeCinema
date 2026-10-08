@@ -20,7 +20,6 @@ ROOT = Path(__file__).resolve().parent.parent
 FILMS = {
     "film": ("films", ("SilverGrass.mp4",)),
     "nightrevels": ("films", ("NightRevels.mp4",)),
-    "beacon": ("films", ("TheLastBeacon.mp4",)),
     "xishen": ("xishen/assets/film", ("ep01.mp4", "ep02.mp4", "ep03.mp4", "xishen_complete.mp4")),
 }
 
@@ -61,7 +60,7 @@ def build(output, repo):
             shutil.copy2(source, target)
     shutil.copytree(ROOT / "assets/_shared/site", output, dirs_exist_ok=True)
     shutil.copytree(ROOT / "assets/_shared/images", output / "img")
-    for film in ("silvergrass", "nightrevels", "beacon"):
+    for film in ("silvergrass", "nightrevels"):
         shutil.copytree(ROOT / f"assets/{film}/images", output / f"img/{film}")
     xishen = output / "xishen"
     xishen.mkdir(exist_ok=True)

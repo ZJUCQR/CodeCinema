@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from codecinema.workspace.paths import films_dir
 
-BUILTINS = ("beacon", "nightrevels", "silvergrass", "xishen")
+BUILTINS = ("nightrevels", "silvergrass", "xishen")
 
 
 def source_root(name):

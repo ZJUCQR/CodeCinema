@@ -122,12 +122,6 @@ These commands use the virtual environment directly. On Windows, replace `-3.12`
       <p>Chen Ling&#x27;s rain-soaked return, a watching audience and his first directing experiment.</p>
       <p><a href="https://zjucqr.github.io/CodeCinema/#xishen">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/xishen">Download</a> · <a href="films/xishen/README.md">Film guide</a></p>
     </td>
-    <td width="50%" valign="top">
-      <a href="films/beacon/README.md"><img src="assets/_shared/images/examples/beacon.jpg" width="100%" alt="The Last Beacon"></a>
-      <h3><a href="films/beacon/README.md">The Last Beacon</a></h3>
-      <p>A porcelain keeper rekindles a celestial observatory above the clouds. A distant light answers.</p>
-      <p><a href="https://zjucqr.github.io/CodeCinema/#beacon">Watch</a> · <a href="https://github.com/ZJUCQR/CodeCinema/releases/tag/beacon">Download</a> · <a href="films/beacon/README.md">Film guide</a></p>
-    </td>
   </tr>
 </table>
 
@@ -165,7 +159,7 @@ The framework separates film content from production code:
 - **Content:** scene order, captions, narration, timing and assets belong to each film.
 - **Production:** a shared scene clock connects planning, rendered frames, music, speech, assembly and quality checks.
 - **Renderers:** Skia and Blender turn scenes into frames through the same interface. Installed plugins appear in `codecinema renderers` and Studio.
-- **Production packs:** the four examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain story data, with media in `assets/<id>/`.
+- **Production packs:** the three examples retain their authored character designs, choreography and sound in [codecinema/productions](codecinema/productions). Their film folders contain story data, with media in `assets/<id>/`.
 
 The examples use specialized production packs and keep their existing commands. Their choreography cannot be switched automatically between backends. New Studio projects use the shared pipeline and can change renderer without moving their content. Existing projects with custom entry scripts remain runnable.
 
@@ -179,7 +173,7 @@ Install [Blender 5.2 or later](https://www.blender.org/download/), then choose *
 
 To use your own characters or animation, save a `.blend` file under `assets/<film-id>/`, for example `assets/<film-id>/scenes/world.blend`. On its scene card, expand Blender scene and enter `scenes/world.blend` and an optional camera name. Paths are relative to that film’s asset directory. Pack external resources in Blender so the project can move between computers. Your scene animation is sampled using its own frame rate.
 
-Start with Quick preview or a few still frames. Blender rendering takes longer than Skia and depends on scene complexity, resolution and hardware. The [Last Beacon guide](films/beacon/README.md) demonstrates a more elaborate authored production.
+Start with Quick preview or a few still frames. Blender rendering takes longer than Skia and depends on scene complexity, resolution and hardware. The [Duel in the Silver Grass guide](films/silvergrass/README.md) demonstrates a more elaborate authored production.
 
 <a id="speech"></a>
 
@@ -228,17 +222,14 @@ CodeCinema/
 │   ├── renderers/              # Skia, Blender and renderer plugin interface
 │   ├── audio/                  # music, effects, speech and performance timing
 │   └── productions/            # authored example production packs
-│       ├── beacon/             # character, observatory, performance and score
 │       ├── silvergrass/        # choreography, Blender scenes and post-production
 │       ├── nightrevels/        # painted characters, scroll animation and music
 │       └── xishen/             # cast, acting, speech timing and episode assembly
 ├── films/                    # story data and generated working files
 │   ├── silvergrass/          # Duel in the Silver Grass
 │   ├── nightrevels/          # The Night Revels of Han Xizai, Cat Edition
-│   ├── xishen/               # I Am Not the God of Drama
-│   └── beacon/               # The Last Beacon
+│   └── xishen/               # I Am Not the God of Drama
 ├── assets/                   # all media, grouped by film
-│   ├── beacon/               # The Last Beacon artwork and finished MP4
 │   ├── silvergrass/          # Duel in the Silver Grass media
 │   ├── nightrevels/          # The Night Revels media
 │   ├── xishen/               # episode artwork, recordings and finished MP4s

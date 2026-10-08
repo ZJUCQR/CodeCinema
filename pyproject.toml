@@ -206,34 +206,6 @@ narration = "auto"
 voice = "Tingting"
 speech_rate = 185
 
-[tool.codecinema.films.beacon]
-title = "The Last Beacon"
-title_zh = "守灯人"
-description = "A wordless Blender short: a porcelain keeper rekindles an observatory above the clouds."
-production = "beacon"
-renderer = "blender"
-steps = ["check", "still", "render", "audio", "assemble", "all"]
-requires = ["blender>=5.2", "ffmpeg"]
-
-[tool.codecinema.films.beacon.settings.paths]
-out_dir = "out"
-final_video = "assets/beacon/film/TheLastBeacon.mp4"
-
-[tool.codecinema.films.beacon.settings.tools]
-blender = ""
-ffmpeg = ""
-ffprobe = ""
-
-[tool.codecinema.films.beacon.settings.render]
-samples_final = 48
-samples_preview = 24
-exposure = -0.4
-
-[tool.codecinema.films.beacon.settings.art]
-porcelain = [0.72, 0.79, 0.75]
-brass = [0.52, 0.28, 0.085]
-scarf = [0.38, 0.035, 0.027]
-
 [tool.codecinema.starter]
 description = "A configurable three-scene starter with synthesized music."
 production = "story"

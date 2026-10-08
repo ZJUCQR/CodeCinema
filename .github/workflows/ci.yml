@@ -79,8 +79,6 @@ jobs:
           import config, settings, procutil, dsp, instruments, timeline, assemble, titles;
           from codecinema.runtime import media; from codecinema.workspace import films; from codecinema import cli;
           print('silvergrass shots', len(config.SHOTS), 'sample rate', dsp.SR)"
-      - name: Synthesize the Blender example soundtrack without Blender
-        run: codecinema run beacon audio
       - name: Validate Xishen chronology and continuity
         run: >
           python -c "import sys; sys.path.insert(0,'codecinema/productions/xishen');
