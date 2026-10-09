@@ -319,9 +319,7 @@ CodeCinema/
 │       ├── studio/           # editor interface and look thumbnails
 │       ├── scaffold/         # starting files for new films
 │       └── site/             # website styles, scripts and preview media
-├── tests/                    # test suite (pytest), no Blender or network needed
 ├── pyproject.toml            # dependencies and all film configurations
-├── CHANGELOG.md              # notable changes by release
 ├── CONTRIBUTING.md           # development and contribution guidance
 └── LICENSE                   # MIT license
 ```
@@ -339,7 +337,7 @@ Each film uses `assets/<id>/images/` for illustrations and `assets/<id>/film/` f
 
 ## Contributing
 
-Improvements to looks, Studio, renderers, libraries and documentation are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and checks; `pip install -e ".[dev]"` and `python -m pytest` run the test suite. Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md), and security issues are reported privately as described in [SECURITY.md](SECURITY.md). Use [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) for bugs and feature ideas, and include a screenshot or short clip when discussing a visual change.
+Improvements to looks, Studio, renderers, libraries and documentation are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and checks. Use [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) for bugs and feature ideas, and include a screenshot or short clip when discussing a visual change.
 
 ## 📜 License
 

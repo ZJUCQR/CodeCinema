@@ -2,8 +2,10 @@
 
     python3 site/build.py --output /tmp/codecinema-site
 
-Requires an authenticated GitHub CLI. Release assets are checked before a
-deployment, and their IDs version video URLs when a master is replaced.
+Requires an authenticated GitHub CLI and FFmpeg. Release assets are checked
+before a deployment, and their IDs version video URLs when a master is
+replaced. Each release holds only its finished film; the web player's
+subtitles are extracted from the film's own subtitle tracks.
 """
 from __future__ import annotations
 
@@ -18,11 +20,13 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 FILMS = {
-    "pebble": ("films", ("Pebble.mp4", "Pebble.en.vtt", "Pebble.zh.vtt")),
-    "nian": ("films", ("Nian.mp4", "Nian.en.vtt", "Nian.zh.vtt")),
+    "pebble": ("films", ("Pebble.mp4",)),
+    "nian": ("films", ("Nian.mp4",)),
     "film": ("films", ("SilverGrass.mp4",)),
     "nightrevels": ("films", ("NightRevels.mp4",)),
 }
+# Subtitle track language (ISO 639-2) -> the suffix the pages use, as in Pebble.zh.vtt
+LANGUAGES = {"eng": "en", "chi": "zh", "zho": "zh"}
 
 
 def sha256(path):
@@ -31,6 +35,20 @@ def sha256(path):
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             h.update(block)
     return h.hexdigest()
+
+
+def subtitles(video):
+    """Write each subtitle track of a finished film as <name>.<lang>.vtt beside it, for the web player."""
+    probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "s", "-show_entries",
+                            "stream=index:stream_tags=language", "-of", "json", str(video)],
+                           check=True, capture_output=True, text=True)
+    for stream in json.loads(probe.stdout).get("streams", []):
+        lang = LANGUAGES.get(stream.get("tags", {}).get("language", ""))
+        if lang:
+            target = video.with_name(f"{video.stem}.{lang}.vtt")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(video), "-map", f"0:{stream['index']}",
+                            "-c:s", "webvtt", str(target)], check=True)
+            print(f"Extracted {target.name}", flush=True)
 
 
 def build(output, repo):
@@ -82,6 +100,7 @@ def build(output, repo):
                 raise ValueError(f"{tag}/{name}: download differs from the release")
             ids.append(str(asset["id"]))
             print(f"Verified {tag}/{name}: {asset['size']:,} bytes", flush=True)
+            subtitles(path)
 
     revision = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
                               check=True, capture_output=True, text=True).stdout.strip()

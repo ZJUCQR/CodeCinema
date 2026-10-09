@@ -1,6 +1,6 @@
 # Contributing to CodeCinema
 
-CodeCinema welcomes improvements to templates, Studio, renderer integrations, shared production tools and documentation. Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md); report security problems privately as described in [SECURITY.md](SECURITY.md).
+CodeCinema welcomes improvements to templates, Studio, renderer integrations, shared production tools and documentation.
 
 ## Set up
 
@@ -11,7 +11,7 @@ Follow the [getting-started guide](README.md#quick-start) for Python 3.12+, FFmp
 .venv/bin/python -m codecinema studio
 ```
 
-The `dev` extra adds pytest, Ruff and the package builder. Skia projects do not require Blender. Blender projects require Blender 5.2 or later.
+The `dev` extra adds Ruff and the package builder. Skia projects do not require Blender. Blender projects require Blender 5.2 or later.
 
 ## Make a change
 
@@ -27,13 +27,12 @@ Generated videos, render caches, recordings and local settings stay outside Git.
 ## Check your work
 
 ```bash
-.venv/bin/python -m pytest
 .venv/bin/python -m compileall -q codecinema
 .venv/bin/python -m codecinema list
 .venv/bin/python -m codecinema new checkfilm --preset aurora --duration 3 --quality preview --render
 ```
 
-The tests need neither Blender nor a network connection; set `CODECINEMA_AUDIO_SOUNDBANK=off` to test the synthesized instruments. For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI runs the tests, project creation, imports and the cartoon plans on macOS, Linux and Windows, and renders a short sample on Linux. Notable changes go in [CHANGELOG.md](CHANGELOG.md).
+Set `CODECINEMA_AUDIO_SOUNDBANK=off` to hear the synthesized instruments. For media changes, inspect the sample's picture, sound and duration. Use a temporary workspace to check behavior such as preserving an existing master or handling an invalid project. CI checks project creation, imports and the cartoon plans on macOS, Linux and Windows, and renders a short sample on Linux.
 
 Open a focused pull request explaining the problem, the resulting behavior and the checks you ran. Include a screenshot or short preview when the visual result changes. Report bugs in [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) with your OS, Python and FFmpeg versions, the command or Studio action, and the relevant error message. Remove private paths and credentials from logs.
 
@@ -103,7 +102,7 @@ Keep ground shapes in `sets.ground_height`, the one function shared by the set b
 
 Characters are assembled from shared parts, so a new one is usually data. Body shapes (`SHAPES`: egg, pear, barrel, slim, broad, round) reshape the torso and shoulders, `HAIR_STYLES` and `HATS` dress the head, `ACCESSORIES` add glasses, a scarf, earmuffs, a ribbon, a hat, a moustache, a bow tie or a backpack, and `animal` entries pick ears, snouts and tails (cat, fox, rabbit, dog, bear, mouse, pig, nian). The `sheet` entry poses the character for `codecinema library --sheet`.
 
-An action only describes the pose it aims for. The motion layer does the rest: springy entry and exit with a little overshoot (`DAMPING`), a wind-up for actions in `WIND_UP`, minimum transition times for big changes of posture (`MIN_FADE`), arcs for the hands, follow-through on heads, ears, tails, flippers and scarves, squash and stretch, weight shifts, eye movements and gestures while speaking. Keep repeated beats at or below `MAX_BEAT` so they read at 24 fps. `codecinema run <film> plan` warns about moves that are too fast for their gait, and `tests/test_cartoon.py` checks every example film for sudden jumps inside shots.
+An action only describes the pose it aims for. The motion layer does the rest: springy entry and exit with a little overshoot (`DAMPING`), a wind-up for actions in `WIND_UP`, minimum transition times for big changes of posture (`MIN_FADE`), arcs for the hands, follow-through on heads, ears, tails, flippers and scarves, squash and stretch, weight shifts, eye movements and gestures while speaking. Keep repeated beats at or below `MAX_BEAT` so they read at 24 fps. `codecinema run <film> plan` warns about moves that are too fast for their gait.
 
 ## Authored production packs
 

@@ -42,6 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install FFmpeg (the player's subtitles come from the films' own tracks)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Assemble the site (the films come from their releases)
         env:
           GH_TOKEN: ${{ github.token }}

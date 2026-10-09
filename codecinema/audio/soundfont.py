@@ -30,7 +30,9 @@ from codecinema.audio import dsp
 from codecinema.audio.dsp import SR
 
 BANK_NAME = "soundbanks/GeneralUser-GS.sf2"
-BANK_URL = "https://github.com/ZJUCQR/CodeCinema/releases/download/soundbank/GeneralUser-GS.sf2"
+# The author's own repository, pinned to the commit that published v2.0.3 (the checksum below is verified).
+BANK_URL = ("https://raw.githubusercontent.com/mrbumpy409/GeneralUser-GS/"
+            "97049183643d5fc5a9322a69c5b09efb667c6c3a/GeneralUser-GS.sf2")
 BANK_SHA256 = "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe"
 BANK_SIZE = 32319396
 BANK_CREDIT = "GeneralUser GS v2.0.3 by S. Christian Collins"

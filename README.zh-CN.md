@@ -319,9 +319,7 @@ CodeCinema/
 │       ├── studio/           # 编辑器界面与风格缩略图
 │       ├── scaffold/         # 新影片的初始文件
 │       └── site/             # 网站样式、脚本与预览媒体
-├── tests/                    # 测试（pytest），无需 Blender 或网络
 ├── pyproject.toml            # 依赖与所有影片配置
-├── CHANGELOG.md              # 各版本的重要变更
 ├── CONTRIBUTING.md           # 开发与贡献说明
 └── LICENSE                   # MIT 许可证
 ```
@@ -339,7 +337,7 @@ CodeCinema/
 
 ## 参与贡献
 
-欢迎改进场景、Studio、渲染器、素材库和文档。请先阅读[贡献指南](CONTRIBUTING.md)，了解开发环境与验证方式；`pip install -e ".[dev]"` 后运行 `python -m pytest` 即可执行测试。参与者请遵守[行为准则](CODE_OF_CONDUCT.md)，安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。提出问题或功能建议时，请在 [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) 中描述使用场景，涉及视觉修改时可附上截图或短片。
+欢迎改进场景、Studio、渲染器、素材库和文档。请先阅读[贡献指南](CONTRIBUTING.md)，了解开发环境与验证方式。提出问题或功能建议时，请在 [GitHub Issues](https://github.com/ZJUCQR/CodeCinema/issues) 中描述使用场景，涉及视觉修改时可附上截图或短片。
 
 ## 📜 许可
 
